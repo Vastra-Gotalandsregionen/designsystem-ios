@@ -1,5 +1,5 @@
 import XCTest
-@testable import designsystem_ios
+@testable import designsystem
 
 final class designsystem_iosTests: XCTestCase {
     func testExample() throws {
