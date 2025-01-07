@@ -1,0 +1,31 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: Bump Version
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  version-bump:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Make script executable and run it
+        run: |
+          chmod +x versioning.sh
+          ./versioning.sh
+
+      - name: Push changes and tags
+        run: |
+          git push origin main --tags
