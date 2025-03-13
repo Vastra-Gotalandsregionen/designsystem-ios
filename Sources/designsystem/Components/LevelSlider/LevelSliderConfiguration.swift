@@ -32,13 +32,6 @@ public struct LevelSliderConfiguration {
     }
 }
 
-public struct Level: Identifiable {
-    public let id: String
-    let index: Int
-    let background: Color
-    let selected: Color
-}
-
 //MARK: Pre-configured sliders.
 public extension LevelSliderConfiguration {
     static var headache: LevelSliderConfiguration {
