@@ -35,19 +35,19 @@ public struct LevelSlider: View {
     }
     
     func getHoveredIndex(location: CGPoint) -> Int? {
-
+        
         /// Default itemWidth
         let itemWidth: CGFloat = elementWidth
-
+        
         for index in 0...levels.count-1 {
             let itemStartX = CGFloat(index) * (itemWidth)
             let itemEndX = itemStartX + itemWidth
-
+            
             if location.x >= itemStartX && location.x <= itemEndX {
                 return index
             }
         }
-
+        
         return nil
     }
     
@@ -88,7 +88,7 @@ public struct LevelSlider: View {
                                                   bottomTrailingRadius: 4,
                                                   topTrailingRadius: 4,
                                                   strokeWidth: 2)
-                                    .stroke(level.selected, lineWidth: 2)
+                                .stroke(level.selected, lineWidth: 2)
                             }
                         }
                 } else if index == levels.count-1 {
@@ -137,49 +137,128 @@ public struct LevelSlider: View {
     }
 }
 
-#Preview ("Slidah") {
+#Preview {
     
     @Previewable @State var selectedIndexHeadache: Int? = nil
+    @Previewable @State var selectedIndexDermatology: Int? = nil
+    @Previewable @State var selectedIndexReumatology: Int? = nil
+    @Previewable @State var selectedIndexCustom: Int? = 0
     
-    
-    @Previewable @State var selectedIndexDermatology: Int? = 0
-    
-     return NavigationStack {
+    return NavigationStack {
         ScrollView {
             VStack (spacing: 32) {
-                VGRShape(backgroundColor: Color.Accent.purpleSurfaceMinimal) {
-                    Text("Hur mådde du som värst?")
+                
+                //MARK: - This example represents what we have in Migraine.
+                VGRShape(backgroundColor: Color.Primary.blueSurfaceMinimal) {
+                    Text("Migraine")
                         .font(.headline)
                         .padding(.horizontal, 16)
                         .padding(.top, 16)
-                    VStack(spacing: 6) {
-                        Text("Smärtnivå: \(selectedIndexHeadache)")
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(selectedIndexHeadache.map { "Smärtnivå \($0)" } ?? "Smärtnivå: ")
                             .font(.body)
                             .fontWeight(.medium)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 12)
+                        
                         LevelSlider(
                             selectedIndex: $selectedIndexHeadache,
                             configuration: .headache) { newIndex in
                                 print("SelectedIndex: \(newIndex)")
-                        }
+                            }
+                        
+                        Text(selectedIndexHeadache.map { "Level \($0)" } ?? "Inget valt")
+                            .font(.subheadline)
+                            .foregroundStyle(Color.Neutral.textVariant)
                     }
                     .padding(16)
                     .background(Color.Elevation.elevation1)
                     .cornerRadius(8)
                 }
                 
+                //MARK: - This example represents what we have in Dermatology.
                 VGRShape(backgroundColor: Color.Accent.purpleSurfaceMinimal) {
-                    Text("Hur mycket kliar, svider, bränns och sticker din hud idag?")
+                    Text("Dermatology")
                         .font(.headline)
                         .padding(.horizontal, 16)
                         .padding(.top, 16)
                     VStack(spacing: 12) {
                         LevelSlider(selectedIndex: $selectedIndexDermatology, configuration: .dermatology) { newIndex in
-                                print("SelectedIndex: \(newIndex)")
+                            print("SelectedIndex: \(newIndex)")
                         }
                         
-                        Text(selectedIndexDermatology.map { "Level \($0)" } ?? "Level -")
+                        Text(selectedIndexDermatology.map { "Level \($0)" } ?? "Inget valt")
+                            .font(.subheadline)
+                            .foregroundStyle(Color.Neutral.textVariant)
+                        
+                    }
+                    .padding(16)
+                    .background(Color.Elevation.elevation1)
+                    .cornerRadius(8)
+                }
+                
+                //MARK: - This example represents what we have in Reumatology.
+                VGRShape(backgroundColor: Color.Accent.brownSurfaceMinimal) {
+                    Text("Reumatology")
+                        .font(.headline)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                    VStack(spacing: 12) {
+                        LevelSlider(selectedIndex: $selectedIndexReumatology, configuration: .reumatology) { newIndex in
+                            print("SelectedIndex: \(newIndex)")
+                        }
+                        
+                        Text(selectedIndexReumatology.map { "Level \($0)" } ?? "Inget valt")
+                            .font(.subheadline)
+                            .foregroundStyle(Color.Neutral.textVariant)
+                        
+                    }
+                    .padding(16)
+                    .background(Color.Elevation.elevation1)
+                    .cornerRadius(8)
+                }
+                
+                //MARK: - This example represents a completely custom configuration.
+                VGRShape(backgroundColor: Color.Accent.cyanSurfaceMinimal) {
+                    Text("Custom - (Default 0)")
+                        .font(.headline)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                    VStack(spacing: 12) {
+                        LevelSlider(
+                            selectedIndex: $selectedIndexCustom,
+                            configuration: LevelSliderConfiguration(
+                                range: 0...9,
+                                backgroundRanges: [
+                                    0...0 : Color.Accent.brownSurface,
+                                    1...1 : Color.Accent.cyanSurface,
+                                    2...2 : Color.Accent.greenSurface,
+                                    3...3 : Color.Accent.orangeSurface,
+                                    4...4 : Color.Accent.pinkSurface,
+                                    5...5 : Color.Accent.purpleSurface,
+                                    6...6 : Color.Accent.redSurface,
+                                    7...7 : Color.Accent.yellowSurface,
+                                    8...8 : Color.Accent.brownSurface,
+                                    9...9 : Color.Accent.cyanSurface
+                                    
+                                ],
+                                selectedRanges: [
+                                    0...0 : Color.Accent.brown,
+                                    1...1 : Color.Accent.cyan,
+                                    2...2 : Color.Accent.green,
+                                    3...3 : Color.Accent.orange,
+                                    4...4 : Color.Accent.pink,
+                                    5...5 : Color.Accent.purple,
+                                    6...6 : Color.Accent.red,
+                                    7...7 : Color.Accent.yellow,
+                                    8...8 : Color.Accent.brown,
+                                    9...9 : Color.Accent.cyan
+                                ])
+                        ) { newIndex in
+                            print("SelectedIndex: \(newIndex)")
+                        }
+                        
+                        Text(selectedIndexCustom.map { "Level \($0)" } ?? "Level -")
                             .font(.subheadline)
                             .foregroundStyle(Color.Neutral.textVariant)
                         
@@ -190,7 +269,7 @@ public struct LevelSlider: View {
                 }
             }
         }
-        .navigationTitle("LevelPickerview")
+        .navigationTitle("LevelPicker")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

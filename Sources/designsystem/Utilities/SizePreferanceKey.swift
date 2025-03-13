@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 
-//TODO preconcurrency, mainactor, what
 public struct SizePreferenceKey: @preconcurrency PreferenceKey {
     @MainActor public static var defaultValue: CGSize = .zero
 
