@@ -12,29 +12,28 @@ public struct LevelSliderConfiguration {
         self.backgroundRanges = backgroundRanges
         self.selectedRanges = selectedRanges
     }
-    
-    public func backgroundColor(for index: Int) -> Color {
-        for (colorRange, color) in backgroundRanges {
+
+    private func color(for index:Int, in colorRange: [ClosedRange<Int>: Color]) -> Color {
+        for (colorRange, color) in colorRange {
             if colorRange.contains(index) {
                 return color
             }
         }
         return Color.gray
     }
+
+    public func backgroundColor(for index: Int) -> Color {
+        return color(for: index, in: backgroundRanges)
+    }
     
     public func selectedColor(for index: Int) -> Color {
-        for (range, color) in selectedRanges {
-            if range.contains(index) {
-                return color
-            }
-        }
-        return Color.gray
+        return color(for: index, in: selectedRanges)
     }
 }
 
 //MARK: Pre-configured sliders.
 public extension LevelSliderConfiguration {
-    static var headache: LevelSliderConfiguration {
+    static var migraine: LevelSliderConfiguration {
         LevelSliderConfiguration(
             range: 0...5,
             backgroundRanges: [
