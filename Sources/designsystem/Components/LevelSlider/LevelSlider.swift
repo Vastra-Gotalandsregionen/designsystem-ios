@@ -3,11 +3,14 @@ import SwiftUI
 public struct LevelSlider: View {
     
     @Binding public var selectedIndex: Int?
+    public var isDeselectable: Bool = true
     public let configuration: LevelSliderConfiguration
     public let action: ((Int) -> Void)?
     
     @State private var elementWidth: CGFloat = 56
-    
+
+    private let generator = UIImpactFeedbackGenerator(style: .soft)
+
     private var levels: [Level] {
         configuration.range.map { index in
             Level(id: "\(index)",
@@ -24,6 +27,12 @@ public struct LevelSlider: View {
                     if self.selectedIndex != index {
                         self.selectedIndex = index
                         playSelectionChangedHaptic()
+                    } else {
+                        /// Make a single tap toggle the selectedIndex
+                        if isDeselectable && val.translation.width == 0 {
+                            self.selectedIndex = nil
+                            playSelectionChangedHaptic()
+                        }
                     }
                 }
             }
@@ -52,13 +61,16 @@ public struct LevelSlider: View {
     }
     
     private func playSelectionChangedHaptic() {
-        let generator = UIImpactFeedbackGenerator(style: .soft)
         generator.impactOccurred()
     }
     
     
-    public init(selectedIndex: Binding<Int?>, configuration: LevelSliderConfiguration, action: ((Int) -> Void)? = nil) {
+    public init(selectedIndex: Binding<Int?>,
+                isDeselectable: Bool = true,
+                configuration: LevelSliderConfiguration,
+                action: ((Int) -> Void)? = nil) {
         self._selectedIndex = selectedIndex
+        self.isDeselectable = isDeselectable
         self.configuration = configuration
         self.action = action
     }
@@ -134,12 +146,22 @@ public struct LevelSlider: View {
             .fontWeight(.semibold)
         }
         .gesture(drag)
+        .overlay(
+            GeometryReader { proxy in
+                Color.clear
+                    .preference(key: SizePreferenceKey.self, value: proxy.size)
+            }
+        )
+        .onPreferenceChange(SizePreferenceKey.self) { newSize in
+            DispatchQueue.main.async {
+                self.elementWidth = newSize.width / CGFloat(levels.count)
+            }
+        }
     }
 }
 
 #Preview {
-    
-    @Previewable @State var selectedIndexHeadache: Int? = nil
+    @Previewable @State var selectedIndexHeadache: Int? = 0
     @Previewable @State var selectedIndexDermatology: Int? = nil
     @Previewable @State var selectedIndexReumatology: Int? = nil
     @Previewable @State var selectedIndexCustom: Int? = 0
@@ -163,7 +185,8 @@ public struct LevelSlider: View {
                         
                         LevelSlider(
                             selectedIndex: $selectedIndexHeadache,
-                            configuration: .headache) { newIndex in
+                            isDeselectable: false,
+                            configuration: .migraine) { newIndex in
                                 print("SelectedIndex: \(newIndex)")
                             }
                         
