@@ -33,6 +33,7 @@ public struct VGRButton: View {
         let label: String
         let icon: Image?
         let isEnabled: Bool
+        let isLoading: Bool
         let accessibilityHint: String
         let action: () -> Void
     }
@@ -44,6 +45,7 @@ public struct VGRButton: View {
         label: String,
         icon: Image? = nil,
         isEnabled: Binding<Bool> = .constant(true),
+        isLoading: Binding<Bool> = .constant(false),
         accessibilityHint: String = "",
         variant: VGRButtonVariant = .primary,
         action: @escaping () -> Void
@@ -52,6 +54,7 @@ public struct VGRButton: View {
             label: label,
             icon: icon,
             isEnabled: isEnabled.wrappedValue,
+            isLoading: isLoading.wrappedValue,
             accessibilityHint: accessibilityHint,
             action: action
         )
@@ -69,16 +72,25 @@ public struct VGRButton: View {
 public struct PrimaryVGRButtonStyle: VGRButtonVariantProtocol {
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
-            HStack(spacing: 8) {
-                if let icon = configuration.icon {
-                    icon
-                        .resizable()
-                        .frame(width: 16, height: 16)
-                        .foregroundStyle(Color.Neutral.textInverted)
-                        .accessibilityHidden(true)
+            ZStack {
+                HStack(spacing: 8) {
+                    if let icon = configuration.icon {
+                        icon
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                            .foregroundStyle(Color.Neutral.textInverted)
+                            .accessibilityHidden(true)
+                    }
+
+                    Text(configuration.label)
+                        .font(.headline)
                 }
-                Text(configuration.label)
-                    .font(.headline)
+                .opacity(configuration.isLoading ? 0 : 1)
+
+                ProgressView()
+                    .tint(Color.Neutral.textInverted)
+                    .opacity(configuration.isLoading ? 1 : 0)
+                    .accessibilityHidden(true)
             }
             .foregroundStyle(Color.Neutral.textInverted)
             .padding()
@@ -87,22 +99,31 @@ public struct PrimaryVGRButtonStyle: VGRButtonVariantProtocol {
             .cornerRadius(16)
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
-        .disabled(!configuration.isEnabled)
+        .disabled(!configuration.isEnabled || configuration.isLoading)
     }
 }
 
 public struct SecondaryVGRButtonVariant: VGRButtonVariantProtocol {
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
-            HStack(spacing: 8) {
-                if let icon = configuration.icon {
-                    icon
-                        .resizable()
-                        .frame(width: 16, height: 16)
-                        .accessibilityHidden(true)
+            ZStack {
+                HStack(spacing: 8) {
+                    if let icon = configuration.icon {
+                        icon
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                            .accessibilityHidden(true)
+                    }
+                    
+                    Text(configuration.label)
+                        .font(.headline)
                 }
-                Text(configuration.label)
-                    .font(.headline)
+                .opacity(configuration.isLoading ? 0 : 1)
+                
+                ProgressView()
+                    .tint(Color.Primary.action)
+                    .opacity(configuration.isLoading ? 1 : 0)
+                    .accessibilityHidden(true)
             }
             .foregroundColor(Color.Primary.action)
             .padding()
@@ -113,22 +134,31 @@ public struct SecondaryVGRButtonVariant: VGRButtonVariantProtocol {
             )
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
-        .disabled(!configuration.isEnabled)
+        .disabled(!configuration.isEnabled || configuration.isLoading)
     }
 }
 
 public struct VerticalButtonVariant: VGRButtonVariantProtocol {
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
-            VStack(spacing: 8) {
-                if let icon = configuration.icon {
-                    icon
-                        .resizable()
-                        .frame(width: 16, height: 16)
-                        .accessibilityHidden(true)
+            ZStack {
+                VStack(spacing: 8) {
+                    if let icon = configuration.icon {
+                        icon
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                            .accessibilityHidden(true)
+                    }
+                    
+                    Text(configuration.label)
+                        .font(.headline)
                 }
-                Text(configuration.label)
-                    .font(.headline)
+                .opacity(configuration.isLoading ? 0 : 1)
+                
+                ProgressView()
+                    .tint(Color.Neutral.text)
+                    .opacity(configuration.isLoading ? 1 : 0)
+                    .accessibilityHidden(true)
             }
             .foregroundStyle(Color.Neutral.text)
             .padding()
@@ -137,22 +167,30 @@ public struct VerticalButtonVariant: VGRButtonVariantProtocol {
             .cornerRadius(16)
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
-        .disabled(!configuration.isEnabled)
+        .disabled(!configuration.isEnabled || configuration.isLoading)
     }
 }
 
 public struct TertiaryVGRButtonVariant: VGRButtonVariantProtocol {
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
-            HStack(spacing: 8) {
-                if let icon = configuration.icon {
-                    icon
-                        .resizable()
-                        .frame(width: 16, height: 16)
-                        .accessibilityHidden(true)
+            ZStack {
+                HStack(spacing: 8) {
+                    if let icon = configuration.icon {
+                        icon
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                            .accessibilityHidden(true)
+                    }
+                    Text(configuration.label)
+                        .font(.headline)
                 }
-                Text(configuration.label)
-                    .font(.headline)
+                .opacity(configuration.isLoading ? 0 : 1)
+                
+                ProgressView()
+                    .tint(Color.Primary.action)
+                    .opacity(configuration.isLoading ? 1 : 0)
+                    .accessibilityHidden(true)
             }
             .foregroundColor(Color.Primary.action)
             .padding()
@@ -161,7 +199,7 @@ public struct TertiaryVGRButtonVariant: VGRButtonVariantProtocol {
             .cornerRadius(12)
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
-        .disabled(!configuration.isEnabled)
+        .disabled(!configuration.isEnabled || configuration.isLoading)
     }
 }
 
@@ -171,6 +209,7 @@ public struct TertiaryVGRButtonVariant: VGRButtonVariantProtocol {
     @Previewable @State var isSecondaryEnabled: Bool = false
     @Previewable @State var isVerticalEnabled: Bool = false
     @Previewable @State var isTertiaryEnabled: Bool = false
+    @Previewable @State var isLoading: Bool = true
     
     ScrollView {
         VGRShape(backgroundColor: Color.Elevation.background) {
@@ -180,10 +219,14 @@ public struct TertiaryVGRButtonVariant: VGRButtonVariantProtocol {
                 })
                 
                 VGRButton(label: "Primary With Icon", icon: Image(systemName: "heart"), variant: .primary) {
-                    print("Tapped with icon")
+                    isLoading.toggle()
                 }
                 
                 VGRButton(label: "Primary Disabled", icon: Image(systemName: "heart"), isEnabled: $isPrimaryEnabled, variant: .primary, action: {})
+                
+                VGRButton(label: "Primary Loading", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .primary, action: {
+                    isLoading.toggle()
+                })
                 
                 VGRButton(label: "Secondary", variant: .secondary, action: {
                     isSecondaryEnabled.toggle()
@@ -193,12 +236,19 @@ public struct TertiaryVGRButtonVariant: VGRButtonVariantProtocol {
                 
                 VGRButton(label: "Secondary disabled", icon: Image(systemName: "heart"), isEnabled: $isSecondaryEnabled, variant: .secondary, action: {})
                 
+                VGRButton(label: "Secondary loading", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .secondary, action: {
+                    isLoading.toggle()
+                })
                 
                 VGRButton(label: "Vertical with Icon", icon: Image( systemName: "heart"), variant: .vertical) {
                     isVerticalEnabled.toggle()
                 }
                 
                 VGRButton(label: "Vertical with icon disabled", icon: Image(systemName: "heart"), isEnabled: $isVerticalEnabled, variant: .vertical) {
+                    print("Tapped with icon")
+                }
+                
+                VGRButton(label: "Vertical Loading", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .vertical) {
                     print("Tapped with icon")
                 }
                 
@@ -211,6 +261,10 @@ public struct TertiaryVGRButtonVariant: VGRButtonVariantProtocol {
                 }
                 
                 VGRButton(label: "Tertiary Disabled", icon: Image(systemName: "heart"), isEnabled: $isTertiaryEnabled, variant: .tertiary) {
+                    print("Tapped with icon")
+                }
+                
+                VGRButton(label: "Tertiary Loading", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .tertiary) {
                     print("Tapped with icon")
                 }
             }
