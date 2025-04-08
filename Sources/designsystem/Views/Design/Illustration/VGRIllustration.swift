@@ -1,8 +1,5 @@
 import SwiftUI
 
-// TODO: - Kolla med UX om detta är nödvändigt dunno (size cat)
-// TODO: - Lottie?
-
 // MARK: - Size Category Enum
 
 /// Represents predefined size categories for the illustration.

@@ -6,10 +6,6 @@ struct VGRCallout: View {
     
     @Environment(\.dynamicTypeSize) var dynamicTypeSize
     
-    var shouldUseVStack: Bool {
-        dynamicTypeSize >= .xxLarge || dynamicTypeSize >= .accessibility2
-    }
-    
     /// Defines different visual styles for the callout, supporting information and warning types with optional icons or illustrations.
     public enum CalloutVariant {
         case information
@@ -80,10 +76,12 @@ struct VGRCallout: View {
             
         case .informationWithIllustration(let illustration), .warningWithIllustration(let illustration):
             Group {
-                if shouldUseVStack {
-                    VStack(alignment: .leading, spacing: 16) {
-                        illustration
-                        text
+                if dynamicTypeSize >= .xxxLarge {
+                    HStack(alignment: .top, spacing: 16) {
+                        VStack (alignment: .leading) {
+                            illustration
+                            text
+                        }
                         VGRCalloutDismissButton(dismiss: dismiss)
                     }
                 } else {
