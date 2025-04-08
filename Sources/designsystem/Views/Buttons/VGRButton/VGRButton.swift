@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// A protocol defining a button variant's style.
+/// Each conforming type provides a custom SwiftUI view based on the provided configuration.
 public protocol VGRButtonVariantProtocol {
     associatedtype Body: View
     func makeBody(configuration: VGRButton.Configuration) -> Body
@@ -7,28 +9,32 @@ public protocol VGRButtonVariantProtocol {
     typealias Configuration = VGRButton.Configuration
 }
 
+/// Enum representing available visual styles (variants) for a `VGRButton`.
 public enum VGRButtonVariant {
     case primary
     case secondary
     case vertical
     case tertiary
     
+    /// Resolves the enum case to a concrete implementation of `VGRButtonVariantProtocol`.
     func resolve() -> any VGRButtonVariantProtocol {
         switch self {
         case .primary:
-            return PrimaryVGRButtonStyle()
+            return PrimaryButtonStyle()
         case .secondary:
-            return SecondaryVGRButtonVariant()
+            return SecondaryButtonVariant()
         case .vertical:
             return VerticalButtonVariant()
         case .tertiary:
-            return TertiaryVGRButtonVariant()
+            return TertiaryButtonVariant()
         }
     }
 }
 
+/// A configurable button component supporting different styles (variants), optional icons, loading state, and accessibility features.
 public struct VGRButton: View {
     
+    /// Stores configuration details for rendering a `VGRButton`, including label, icon, state, and action.
     public struct Configuration {
         let label: String
         let icon: Image?
@@ -41,6 +47,15 @@ public struct VGRButton: View {
     private let configuration: Configuration
     private var variant: any VGRButtonVariantProtocol
     
+    /// Creates a `VGRButton` instance.
+    /// - Parameters:
+    ///   - label: The button's text label.
+    ///   - icon: An optional icon shown before the label.
+    ///   - isEnabled: A binding to control the button's enabled state.
+    ///   - isLoading: A binding to control the button's loading state.
+    ///   - accessibilityHint: An accessibility hint describing the button's purpose.
+    ///   - variant: The button's visual variant.
+    ///   - action: The closure executed when the button is tapped.
     public init(
         label: String,
         icon: Image? = nil,
@@ -61,15 +76,16 @@ public struct VGRButton: View {
         self.variant = variant.resolve()
     }
     
+    /// Returns the styled button view by delegating to the selected variant.
     public var body: some View {
         AnyView(variant.makeBody(configuration: configuration))
             .accessibilityHint(configuration.accessibilityHint)
-        
-        //TODO: - Not sure if its a great idea to have a11yhint here, needs to be tested in device
     }
 }
 
-public struct PrimaryVGRButtonStyle: VGRButtonVariantProtocol {
+public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
+    /// A primary style button.
+    /// - Note: Use this style for the main action button with a prominent appearance.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -103,7 +119,9 @@ public struct PrimaryVGRButtonStyle: VGRButtonVariantProtocol {
     }
 }
 
-public struct SecondaryVGRButtonVariant: VGRButtonVariantProtocol {
+public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
+    /// A secondary style button.
+    /// - Note: Use this style for secondary actions that are less prominent.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -139,6 +157,8 @@ public struct SecondaryVGRButtonVariant: VGRButtonVariantProtocol {
 }
 
 public struct VerticalButtonVariant: VGRButtonVariantProtocol {
+    /// A vertical style button.
+    /// - Note: Use this style for buttons that arrange content vertically, suitable for specific layouts.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -171,7 +191,9 @@ public struct VerticalButtonVariant: VGRButtonVariantProtocol {
     }
 }
 
-public struct TertiaryVGRButtonVariant: VGRButtonVariantProtocol {
+public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
+    /// A tertiary style button.
+    /// - Note: Use this style for less emphasized actions, often used alongside primary and secondary buttons.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {

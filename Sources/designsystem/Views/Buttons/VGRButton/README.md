@@ -89,5 +89,3 @@ VGRButton(label: "Skicka", icon: Image(systemName: "paperplane"), variant: .prim
 2. Lägg till fallet i `VGRButtonVariant` och returnera din variant i `.resolve()`
 
 ---
-
-Made with ❤️ by [Ditt Team / Företag]
