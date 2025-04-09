@@ -1,27 +1,40 @@
 import SwiftUI
 
+/// En återanvändbar stepper-komponent som låter användaren öka eller minska ett numeriskt värde.
+/// Stödjer valfri feedback och långtryck med accelererande upprepning.
 public struct VGRStepper : View {
+    
+    @State private var repeatTimer: Timer?
+    @State private var accelerationStep: Int = 0
+    
+    /// En bindning till det numeriska värdet som ska justeras.
     @Binding var value: Double
     
+    /// Stegvärdet som ökar eller minskar värdet.
     let step: Double
+    /// Tillåtet spann för värdet.
     let range: ClosedRange<Double>
+    /// Enhetstext som visas efter värdet.
     var unit: String = ""
+    /// Om långtryck med accelererande upprepning är aktiverat.
+    let allowRepeatTap: Bool
+    /// Tillgänglighetsenhet som läses upp av VoiceOver.
     var accessibilityUnit: String = ""
     
     var activeColor: Color = Color.Primary.action
     var inactiveColor: Color = Color.Primary.action.opacity(0.1)
     
+    /// Ökar det aktuella värdet med stegvärdet.
     private func increase() {
         if self.value < range.upperBound {
             self.value = self.value + self.step
-            self.feedback()
         }
     }
     
+    /// Minskar det aktuella värdet med stegvärdet.
     private func decrease() {
         if self.value > range.lowerBound {
             self.value -= self.step
-            self.feedback()
         }
     }
     
@@ -37,14 +50,24 @@ public struct VGRStepper : View {
         return "\(self.value.formatted()) \(self.accessibilityUnit)"
     }
     
-    public init(value: Binding<Double>, step: Double, range: ClosedRange<Double>, unit: String, accessibilityUnit: String) {
+    /// Skapar en ny instans av `VGRStepper`.
+    /// - Parameters:
+    ///   - value: En bindning till det numeriska värdet som ska justeras.
+    ///   - step: Stegvärdet som ökar eller minskar värdet.
+    ///   - range: Tillåtet spann för värdet.
+    ///   - unit: Enhetstext som visas efter värdet.
+    ///   - allowRepeatTap: Om långtryck med accelererande upprepning är aktiverat.
+    ///   - accessibilityUnit: Tillgänglighetsenhet som läses upp av VoiceOver.
+    public init(value: Binding<Double>, step: Double, range: ClosedRange<Double>, unit: String, allowRepeatTap: Bool = false, accessibilityUnit: String) {
         self._value = value
         self.step = step
         self.range = range
         self.unit = unit
+        self.allowRepeatTap = allowRepeatTap
         self.accessibilityUnit = accessibilityUnit
     }
     
+    /// Innehåller visuell representation av stepper-komponenten.
     public var body: some View {
         HStack {
             Button {
@@ -58,8 +81,23 @@ public struct VGRStepper : View {
                     .accessibilityHidden(true)
             }
             .disabled(!canDecrease)
-            .accessibilityLabel("general.decrease")
+            .accessibilityLabel(LocalizedHelper.localized(forKey: "general.decrease"))
             .buttonStyle(.borderless)
+            .onTapGesture {
+                performHapticFeedback()
+            }
+            .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 25, perform: {}, onPressingChanged: { isPressing in
+                guard allowRepeatTap else { return }
+                if isPressing {
+                    startRepeating({
+                        Task { @MainActor in
+                            self.tryDecrease()
+                        }
+                    }, isFirst: true)
+                } else {
+                    stopRepeating()
+                }
+            })
             
             Text("\(value.formatted()) \(unit)")
                 .font(.body)
@@ -79,8 +117,23 @@ public struct VGRStepper : View {
                     .accessibilityHidden(true)
             }
             .disabled(!canIncrease)
-            .accessibilityLabel("general.increase")
+            .accessibilityLabel(LocalizedHelper.localized(forKey: "general.increase"))
             .buttonStyle(.borderless)
+            .onTapGesture {
+                performHapticFeedback()
+            }
+            .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 25, perform: {}, onPressingChanged: { isPressing in
+                guard allowRepeatTap else { return }
+                if isPressing {
+                    startRepeating({
+                        Task { @MainActor in
+                            self.tryIncrease()
+                        }
+                    }, isFirst: true)
+                } else {
+                    stopRepeating()
+                }
+            })
         }
         .background(Color.Primary.blueSurfaceMinimal)
         .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -98,9 +151,59 @@ public struct VGRStepper : View {
         })
     }
     
-    func feedback() {
+    /// Utför haptisk feedback när användaren trycker på knapparna.
+    func performHapticFeedback() {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
+    }
+    
+    /// Försöker öka värdet om det är möjligt.
+    @MainActor
+    private func tryIncrease() {
+        if canIncrease {
+            increase()
+        }
+    }
+    
+    /// Försöker minska värdet om det är möjligt.
+    @MainActor
+    private func tryDecrease() {
+        if canDecrease {
+            decrease()
+        }
+    }
+    
+    /// Startar upprepning av en åtgärd med accelererande intervall.
+    /// - Parameters:
+    ///   - action: Åtgärden som ska upprepas.
+    ///   - isFirst: Om det är första gången åtgärden startas.
+    @MainActor
+    private func startRepeating(_ action: @escaping @Sendable () -> Void, isFirst: Bool = false) {
+        if isFirst {
+            accelerationStep = 0
+        }
+        
+        stopRepeating()
+        
+        let interval = max(0.05, 0.3 * pow(0.85, Double(accelerationStep)))
+        
+        repeatTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [self] _ in
+            
+            Task { @MainActor in
+                if self.accelerationStep == 0 {
+                    self.performHapticFeedback()
+                }
+                action()
+                self.accelerationStep += 1
+                self.startRepeating(action)
+            }
+        }
+    }
+    
+    /// Stoppar upprepning av åtgärden.
+    private func stopRepeating() {
+        repeatTimer?.invalidate()
+        repeatTimer = nil
     }
 }
 
@@ -115,7 +218,7 @@ public struct VGRStepper : View {
             VStack (spacing: 40) {
                 VGRStepper(value: $value1, step: 0.5, range: 0 ... 5, unit: "x 1 g", accessibilityUnit: "gånger 1 gram")
                 
-                VGRStepper(value: $value2, step: 1.0, range: 0 ... 100, unit: "handflator", accessibilityUnit: "hanftlaror")
+                VGRStepper(value: $value2, step: 1.0, range: 0 ... 100, unit: "handflator", allowRepeatTap: true, accessibilityUnit: "handflator")
                 
                 VGRStepper(value: $value3, step: 5, range: 0 ... 25, unit: "x 1 g", accessibilityUnit: "gånger 1 gram")
                 
