@@ -30,7 +30,7 @@ struct VGRCalloutShape<Content: View>: View {
     ///   - variant: Formvarianten (information eller varning).
     ///   - content: En vybyggare som tillhandahåller innehållet.
     init(variant: CalloutShapeVariant,
-        @ViewBuilder _ content: () -> Content) {
+         @ViewBuilder _ content: () -> Content) {
         self.variant = variant
         self.content = content()
     }

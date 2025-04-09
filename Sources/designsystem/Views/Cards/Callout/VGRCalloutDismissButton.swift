@@ -14,18 +14,18 @@ public struct VGRCalloutDismissButton: View {
     
     /// - Returns: En stylad cirkulär knapp med ett "x"-symbol.
     public var body: some View {
-            Button(action: dismiss) {
-                Circle()
-                    .stroke(lineWidth: 2)
-                    .frame(width: 30, height: 30)
-                    .overlay {
-                        Image(systemName: "xmark")
-                            .font(.footnote)
-                            .fontWeight(.bold)
-                    }
-                    .foregroundStyle(Color.Primary.action)
-            }
-            .accessibilityLabel("") //TODO: - Localize "Stäng"
+        Button(action: dismiss) {
+            Circle()
+                .stroke(lineWidth: 2)
+                .frame(width: 30, height: 30)
+                .overlay {
+                    Image(systemName: "xmark")
+                        .font(.footnote)
+                        .fontWeight(.bold)
+                }
+                .foregroundStyle(Color.Primary.action)
+        }
+        .accessibilityLabel(LocalizedHelper.localized(forKey: "general.close"))
     }
 }
 

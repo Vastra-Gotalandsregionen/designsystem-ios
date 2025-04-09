@@ -66,7 +66,7 @@ _Tips:_ Du kan alltid återställa detta senare.
     let attributedAlternative = try? AttributedString(
         markdown: markdownAlternative,
         options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
-        
+    
     let text: VGRCalloutText = VGRCalloutText(
         header: try! AttributedString(markdown: "_Header_"),
         description: attributedAlternative!)
