@@ -35,7 +35,6 @@ struct VGRShape<Content: View>: View {
                 topTrailingRadius: bend.contains(.topTrailing) ? radius : 0
             )
         )
-
     }
 }
 
