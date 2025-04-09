@@ -17,7 +17,7 @@ public struct VGRStepper : View {
     /// Enhetstext som visas efter värdet.
     var unit: String = ""
     /// Om långtryck med accelererande upprepning är aktiverat.
-    let allowRepeatTap: Bool
+    let isRepeatOnHoldEnabled: Bool
     /// Tillgänglighetsenhet som läses upp av VoiceOver.
     var accessibilityUnit: String = ""
     
@@ -56,14 +56,14 @@ public struct VGRStepper : View {
     ///   - step: Stegvärdet som ökar eller minskar värdet.
     ///   - range: Tillåtet spann för värdet.
     ///   - unit: Enhetstext som visas efter värdet.
-    ///   - allowRepeatTap: Om långtryck med accelererande upprepning är aktiverat.
+    ///   - isRepeatOnHoldEnabled: Om långtryck med accelererande upprepning är aktiverat.
     ///   - accessibilityUnit: Tillgänglighetsenhet som läses upp av VoiceOver.
-    public init(value: Binding<Double>, step: Double, range: ClosedRange<Double>, unit: String, allowRepeatTap: Bool = false, accessibilityUnit: String) {
+    public init(value: Binding<Double>, step: Double, range: ClosedRange<Double>, unit: String, isRepeatOnHoldEnabled: Bool = false, accessibilityUnit: String) {
         self._value = value
         self.step = step
         self.range = range
         self.unit = unit
-        self.allowRepeatTap = allowRepeatTap
+        self.isRepeatOnHoldEnabled = isRepeatOnHoldEnabled
         self.accessibilityUnit = accessibilityUnit
     }
     
@@ -87,7 +87,7 @@ public struct VGRStepper : View {
                 performHapticFeedback()
             }
             .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 25, perform: {}, onPressingChanged: { isPressing in
-                guard allowRepeatTap else { return }
+                guard isRepeatOnHoldEnabled else { return }
                 if isPressing {
                     startRepeating({
                         Task { @MainActor in
@@ -123,7 +123,7 @@ public struct VGRStepper : View {
                 performHapticFeedback()
             }
             .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 25, perform: {}, onPressingChanged: { isPressing in
-                guard allowRepeatTap else { return }
+                guard isRepeatOnHoldEnabled else { return }
                 if isPressing {
                     startRepeating({
                         Task { @MainActor in
@@ -218,7 +218,7 @@ public struct VGRStepper : View {
             VStack (spacing: 40) {
                 VGRStepper(value: $value1, step: 0.5, range: 0 ... 5, unit: "x 1 g", accessibilityUnit: "gånger 1 gram")
                 
-                VGRStepper(value: $value2, step: 1.0, range: 0 ... 100, unit: "handflator", allowRepeatTap: true, accessibilityUnit: "handflator")
+                VGRStepper(value: $value2, step: 1.0, range: 0 ... 100, unit: "handflator", isRepeatOnHoldEnabled: true, accessibilityUnit: "handflator")
                 
                 VGRStepper(value: $value3, step: 5, range: 0 ... 25, unit: "x 1 g", accessibilityUnit: "gånger 1 gram")
                 
