@@ -1,23 +1,24 @@
 import SwiftUI
 
-/// A view displaying styled callout text with optional header and required description.
-/// Used in `VGRCallout` to present informative or warning messages.
+/// En vy som visar stylad callout-text med valfri rubrik och obligatorisk beskrivning.
+/// Används i `VGRCallout` för att presentera informativa eller varningsmeddelanden.
 public struct VGRCalloutText: View {
-    /// An optional attributed header text displayed at the top of the callout.
-    /// A required attributed description text displayed below the header.
+    /// En valfri attributerad rubrik som visas överst i callouten.
+    /// En obligatorisk attributerad beskrivning som visas under rubriken.
     public let header: AttributedString?
     public let description: AttributedString
     
-    /// Creates a `VGRCalloutText` view.
+    /// Skapar en `VGRCalloutText`-vy.
     /// - Parameters:
-    ///   - header: Optional header text styled as a headline.
-    ///   - description: Required description text styled as a footnote.
-    public init(header: AttributedString? = nil, description: AttributedString) {
+    ///   - header: Valfri rubrik stylad som en rubriktext.
+    ///   - description: Obligatorisk beskrivning stylad som fotnot.
+    public init(header: AttributedString? = nil,
+                description: AttributedString) {
         self.header = header
         self.description = description
     }
     
-    /// Composes the visual layout of the header and description.
+    /// Komponerar den visuella layouten för rubriken och beskrivningen.
     public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             if let header = header {
@@ -58,11 +59,18 @@ Läs vår [integritetspolicy](https://example.com) innan du fortsätter.
 _Tips:_ Du kan alltid återställa detta senare.
 """
     
-    let attributed = try? AttributedString(markdown: markdown,
-                                           options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
+    let attributed = try? AttributedString(
+        markdown: markdown,
+        options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
     
-    let attributedAlternative = try? AttributedString(markdown: markdownAlternative,
-                                                      options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
+    let attributedAlternative = try? AttributedString(
+        markdown: markdownAlternative,
+        options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
+        
+    let text: VGRCalloutText = VGRCalloutText(
+        header: try! AttributedString(markdown: "_Header_"),
+        description: attributedAlternative!)
+    
     ScrollView {
         VGRShape {
             VStack(spacing: 32) {
@@ -72,6 +80,13 @@ _Tips:_ Du kan alltid återställa detta senare.
                 VGRCalloutShape(variant: .warning) {
                     VGRCalloutText(header: "Hello", description: "World")
                 }
+                
+                VGRCallout(text: text, button: VGRButton(label: "Tap meee", action: {
+                    print("Tapped")
+                }), variant: .informationWithIllustration(VGRIllustration(assetName: "illustration_presence"))) {
+                    print("Dismissed")
+                }
+                
                 VGRCalloutShape(variant: .information) {
                     let header: AttributedString = {
                         var string = AttributedString("Bold Header")

@@ -1,23 +1,23 @@
 import SwiftUI
 
-/// Represents the background style of a callout shape.
-/// - `information`: Uses the surface color for informational messages.
-/// - `warning`: Uses the surface color for warning messages.
+/// Representerar bakgrundsstilen för en callout-form.
+/// - `information`: Använder ytfärg för informationsmeddelanden.
+/// - `warning`: Använder ytfärg för varningsmeddelanden.
 public enum CalloutShapeVariant {
     case information
     case warning
 }
 
-/// A container view that applies styling and background color based on the `CalloutShapeVariant`.
-/// Used as the outer shell of a `VGRCallout` to give visual context (e.g. warning or informational background).
+/// En container-vy som applicerar stil och bakgrundsfärg baserat på `CalloutShapeVariant`.
+/// Används som det yttre skalet i en `VGRCallout` för att ge visuell kontext (t.ex. varning eller information).
 struct VGRCalloutShape<Content: View>: View {
     
-    /// The visual style of the callout shape (information or warning).
+    /// Den visuella stilen för callout-formen (information eller varning).
     let variant: CalloutShapeVariant
-    /// The inner content displayed within the shaped background.
+    /// Innehållet som visas inom den formade bakgrunden.
     let content: Content
     
-    /// Determines the background color based on the selected `CalloutShapeVariant`.
+    /// Bestämmer bakgrundsfärgen baserat på vald `CalloutShapeVariant`.
     var backgroundColor: Color {
         switch variant {
         case .information: return Color.Status.informationSurface
@@ -25,19 +25,17 @@ struct VGRCalloutShape<Content: View>: View {
         }
     }
     
-    /// Creates a `VGRCalloutShape` with the given variant and inner content.
+    /// Skapar en `VGRCalloutShape` med angiven variant och innehåll.
     /// - Parameters:
-    ///   - variant: The shape variant (information or warning).
-    ///   - content: A view builder providing the inner view content.
-    init(
-        variant: CalloutShapeVariant,
-        @ViewBuilder _ content: () -> Content
-    ) {
+    ///   - variant: Formvarianten (information eller varning).
+    ///   - content: En vybyggare som tillhandahåller innehållet.
+    init(variant: CalloutShapeVariant,
+        @ViewBuilder _ content: () -> Content) {
         self.variant = variant
         self.content = content()
     }
     
-    /// Composes the view layout with padding, background, and shape styling.
+    /// Komponerar vy-layouten med padding, bakgrund och formad stil.
     var body: some View {
         VStack (spacing: 16) {
             content

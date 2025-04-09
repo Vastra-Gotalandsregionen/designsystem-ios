@@ -1,12 +1,12 @@
 import SwiftUI
 
-/// A callout view used to display informative or warning messages with optional icons, illustrations, and actions.
-/// Supports different layout variants including plain, icon-based, and illustration-based appearances.
+/// En callout-vy som används för att visa informativa eller varningsmeddelanden med valfria ikoner, illustrationer och åtgärder.
+/// Stöder olika layoutvarianter inklusive enkel, ikonbaserad och illustrationsbaserad presentation.
 struct VGRCallout: View {
     
     @Environment(\.dynamicTypeSize) var dynamicTypeSize
     
-    /// Defines different visual styles for the callout, supporting information and warning types with optional icons or illustrations.
+    /// Definierar olika visuella stilar för callouten, stöder information och varning med valfria ikoner eller illustrationer.
     public enum CalloutVariant {
         case information
         case informationWithIllustration(VGRIllustration)
@@ -16,7 +16,7 @@ struct VGRCallout: View {
         case warningWithIcon(VGRIcon)
     }
     
-    /// Maps the `CalloutVariant` to a corresponding `CalloutShapeVariant`.
+    /// Översätter `CalloutVariant` till motsvarande `CalloutShapeVariant`.
     var shape: CalloutShapeVariant {
         switch variant {
         case .information, .informationWithIllustration(_), .informationWithIcon(_):
@@ -31,12 +31,12 @@ struct VGRCallout: View {
     let variant: CalloutVariant
     let dismiss: (() -> Void)?
     
-    /// Initializes a `VGRCallout` with the given content and style.
+    /// Initierar en `VGRCallout` med angivet innehåll och stil.
     /// - Parameters:
-    ///   - text: The main content text of the callout, including optional header and description.
-    ///   - button: An optional action button shown beneath the text.
-    ///   - variant: The visual variant of the callout (e.g. information, warning, with icon or illustration).
-    ///   - dismiss: An optional closure called when the callout is dismissed.
+    ///   - text: Den huvudsakliga texten i callouten, inklusive valfri rubrik och beskrivning.
+    ///   - button: En valfri åtgärdsknapp som visas under texten.
+    ///   - variant: Den visuella varianten av callouten (t.ex. information, varning, med ikon eller illustration).
+    ///   - dismiss: En valfri closure som anropas när callouten stängs.
     public init(text: VGRCalloutText,
                 button: VGRButton? = nil,
                 variant: CalloutVariant,
@@ -47,7 +47,7 @@ struct VGRCallout: View {
         self.dismiss = dismiss
     }
     
-    /// The main view body of the `VGRCallout`, rendered with appropriate shape and content layout.
+    /// Den huvudsakliga vykroppen för `VGRCallout`, renderas med lämplig form och layout.
     var body: some View {
         VGRCalloutShape(variant: shape) {
             
@@ -57,21 +57,25 @@ struct VGRCallout: View {
         }
     }
     
-    /// The internal layout logic that adapts the callout's content based on its variant.
+    /// Den interna layoutlogiken som anpassar calloutens innehåll beroende på vald variant.
     @ViewBuilder
     var content: some View {
         switch variant {
         case .information, .warning:
             HStack(alignment: .top, spacing: 16) {
                 text
-                VGRCalloutDismissButton(dismiss: dismiss)
+                if let dismiss = dismiss {
+                    VGRCalloutDismissButton(dismiss: dismiss)
+                }
             }
             
         case .informationWithIcon(let icon), .warningWithIcon(let icon):
             HStack(alignment: .top, spacing: 16) {
                 icon
                 text
-                VGRCalloutDismissButton(dismiss: dismiss)
+                if let dismiss = dismiss {
+                    VGRCalloutDismissButton(dismiss: dismiss)
+                }
             }
             
         case .informationWithIllustration(let illustration), .warningWithIllustration(let illustration):
@@ -82,7 +86,9 @@ struct VGRCallout: View {
                             illustration
                             text
                         }
-                        VGRCalloutDismissButton(dismiss: dismiss)
+                        if let dismiss = dismiss {
+                            VGRCalloutDismissButton(dismiss: dismiss)
+                        }
                     }
                 } else {
                     HStack(alignment: .top, spacing: 16) {
@@ -90,7 +96,9 @@ struct VGRCallout: View {
                             illustration
                             text
                         }
-                        VGRCalloutDismissButton(dismiss: dismiss)
+                        if let dismiss = dismiss {
+                            VGRCalloutDismissButton(dismiss: dismiss)
+                        }
                     }
                 }
             }
@@ -111,7 +119,7 @@ struct VGRCallout: View {
     }
     
     let illustration: VGRIllustration = VGRIllustration(assetName: "illustration_presence")
-
+    
     
     ScrollView {
         
@@ -171,8 +179,8 @@ struct VGRCallout: View {
                 VGRCallout(
                     text: descriptionWithHeader,
                     button: button, variant: .warningWithIllustration(illustration)) {
-                    print("Dismiss")
-                }
+                        print("Dismiss")
+                    }
             }
         }
     }
@@ -188,18 +196,18 @@ struct VGRCallout: View {
                 
                 VGRCallout(text: VGRCalloutText(
                     description: "Simplest version of the Callout-Component"),
-                               variant: .warning
+                           variant: .warning
                 )
                 
                 VGRCallout(text: VGRCalloutText(
                     description: "Simple noteview with a long descriptive text very interesting and a lot of text keep going yes very interesting and informative"),
-                               variant: .warningWithIcon(VGRIcon(source: .asset(name: "chatbubble", bundle: .module)))
+                           variant: .warningWithIcon(VGRIcon(source: .asset(name: "chatbubble", bundle: .module)))
                 )
                 
                 VGRCallout(text: VGRCalloutText(
                     header: "This is a header!",
                     description: "Same but with a header! Simple noteview with a long descriptive text very interesting and a lot of text keep going yes very interesting and informative"),
-                               variant: .warningWithIcon(VGRIcon(source: .asset(name: "chatbubble", bundle: .module)))
+                           variant: .warningWithIcon(VGRIcon(source: .asset(name: "chatbubble", bundle: .module)))
                 )
             }
         }

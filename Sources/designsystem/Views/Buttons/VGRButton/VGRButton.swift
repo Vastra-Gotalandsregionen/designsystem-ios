@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// A protocol defining a button variant's style.
-/// Each conforming type provides a custom SwiftUI view based on the provided configuration.
+/// Ett protokoll som definierar en knappvariants stil.
+/// Varje typ som implementerar detta protokoll tillhandahåller en anpassad SwiftUI-vy baserat på given konfiguration.
 public protocol VGRButtonVariantProtocol {
     associatedtype Body: View
     func makeBody(configuration: VGRButton.Configuration) -> Body
@@ -9,14 +9,14 @@ public protocol VGRButtonVariantProtocol {
     typealias Configuration = VGRButton.Configuration
 }
 
-/// Enum representing available visual styles (variants) for a `VGRButton`.
+/// Enum som representerar tillgängliga visuella stilar (varianter) för en `VGRButton`.
 public enum VGRButtonVariant {
     case primary
     case secondary
     case vertical
     case tertiary
     
-    /// Resolves the enum case to a concrete implementation of `VGRButtonVariantProtocol`.
+    /// Returnerar en konkret implementation av `VGRButtonVariantProtocol` baserat på enum-fallet.
     func resolve() -> any VGRButtonVariantProtocol {
         switch self {
         case .primary:
@@ -31,10 +31,10 @@ public enum VGRButtonVariant {
     }
 }
 
-/// A configurable button component supporting different styles (variants), optional icons, loading state, and accessibility features.
+/// En konfigurerbar knappkomponent som stödjer olika stilar (varianter), valfria ikoner, laddningstillstånd och tillgänglighetsfunktioner.
 public struct VGRButton: View {
     
-    /// Stores configuration details for rendering a `VGRButton`, including label, icon, state, and action.
+    /// Innehåller konfigurationsdetaljer för att rendera en `VGRButton`, inklusive label, ikon, tillstånd och åtgärd.
     public struct Configuration {
         let label: String
         let icon: Image?
@@ -47,15 +47,15 @@ public struct VGRButton: View {
     private let configuration: Configuration
     private var variant: any VGRButtonVariantProtocol
     
-    /// Creates a `VGRButton` instance.
+    /// Skapar en `VGRButton`-instans.
     /// - Parameters:
-    ///   - label: The button's text label.
-    ///   - icon: An optional icon shown before the label.
-    ///   - isEnabled: A binding to control the button's enabled state.
-    ///   - isLoading: A binding to control the button's loading state.
-    ///   - accessibilityHint: An accessibility hint describing the button's purpose.
-    ///   - variant: The button's visual variant.
-    ///   - action: The closure executed when the button is tapped.
+    ///   - label: Knappens textetikett.
+    ///   - icon: En valfri ikon som visas före etiketten.
+    ///   - isEnabled: En binding som styr om knappen är aktiv.
+    ///   - isLoading: En binding som styr om knappen visar laddning.
+    ///   - accessibilityHint: En tillgänglighetshjälptext som beskriver knappens syfte.
+    ///   - variant: Knappens visuella variant.
+    ///   - action: Closure som körs när knappen trycks.
     public init(
         label: String,
         icon: Image? = nil,
@@ -76,7 +76,7 @@ public struct VGRButton: View {
         self.variant = variant.resolve()
     }
     
-    /// Returns the styled button view by delegating to the selected variant.
+    /// Returnerar den stylade knappvyn genom att delegera till den valda varianten.
     public var body: some View {
         AnyView(variant.makeBody(configuration: configuration))
             .accessibilityHint(configuration.accessibilityHint)
@@ -84,8 +84,8 @@ public struct VGRButton: View {
 }
 
 public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
-    /// A primary style button.
-    /// - Note: Use this style for the main action button with a prominent appearance.
+    /// En primär stil knapp.
+    /// - Not: Använd denna stil för huvudsakliga åtgärder med framträdande utseende.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -120,8 +120,8 @@ public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
 }
 
 public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
-    /// A secondary style button.
-    /// - Note: Use this style for secondary actions that are less prominent.
+    /// En sekundär stil knapp.
+    /// - Not: Använd denna stil för sekundära åtgärder som är mindre framträdande.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -157,8 +157,8 @@ public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
 }
 
 public struct VerticalButtonVariant: VGRButtonVariantProtocol {
-    /// A vertical style button.
-    /// - Note: Use this style for buttons that arrange content vertically, suitable for specific layouts.
+    /// En vertikal stil knapp.
+    /// - Not: Använd denna stil för knappar som arrangerar innehåll vertikalt, lämplig för specifika layouter.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -192,8 +192,8 @@ public struct VerticalButtonVariant: VGRButtonVariantProtocol {
 }
 
 public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
-    /// A tertiary style button.
-    /// - Note: Use this style for less emphasized actions, often used alongside primary and secondary buttons.
+    /// En tertiär stil knapp.
+    /// - Not: Använd denna stil för mindre betonade åtgärder, ofta använda tillsammans med primära och sekundära knappar.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -236,58 +236,58 @@ public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
     ScrollView {
         VGRShape(backgroundColor: Color.Elevation.background) {
             VStack(spacing: 16) {
-                VGRButton(label: "Primary", action: {
+                VGRButton(label: "Primär", action: {
                     isPrimaryEnabled.toggle()
                 })
                 
-                VGRButton(label: "Primary With Icon", icon: Image(systemName: "heart"), variant: .primary) {
+                VGRButton(label: "Primär med ikon", icon: Image(systemName: "heart"), variant: .primary) {
                     isLoading.toggle()
                 }
                 
-                VGRButton(label: "Primary Disabled", icon: Image(systemName: "heart"), isEnabled: $isPrimaryEnabled, variant: .primary, action: {})
+                VGRButton(label: "Primär inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isPrimaryEnabled, variant: .primary, action: {})
                 
-                VGRButton(label: "Primary Loading", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .primary, action: {
+                VGRButton(label: "Primär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .primary, action: {
                     isLoading.toggle()
                 })
                 
-                VGRButton(label: "Secondary", variant: .secondary, action: {
+                VGRButton(label: "Sekundär", variant: .secondary, action: {
                     isSecondaryEnabled.toggle()
                 })
                 
-                VGRButton(label: "Secondary With Icon", icon: Image( systemName: "heart"), variant: .secondary, action: {})
+                VGRButton(label: "Sekundär med ikon", icon: Image(systemName: "heart"), variant: .secondary, action: {})
                 
-                VGRButton(label: "Secondary disabled", icon: Image(systemName: "heart"), isEnabled: $isSecondaryEnabled, variant: .secondary, action: {})
+                VGRButton(label: "Sekundär inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isSecondaryEnabled, variant: .secondary, action: {})
                 
-                VGRButton(label: "Secondary loading", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .secondary, action: {
+                VGRButton(label: "Sekundär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .secondary, action: {
                     isLoading.toggle()
                 })
                 
-                VGRButton(label: "Vertical with Icon", icon: Image( systemName: "heart"), variant: .vertical) {
+                VGRButton(label: "Vertikal med ikon", icon: Image(systemName: "heart"), variant: .vertical) {
                     isVerticalEnabled.toggle()
                 }
                 
-                VGRButton(label: "Vertical with icon disabled", icon: Image(systemName: "heart"), isEnabled: $isVerticalEnabled, variant: .vertical) {
-                    print("Tapped with icon")
+                VGRButton(label: "Vertikal med ikon inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isVerticalEnabled, variant: .vertical) {
+                    print("Tryckt med ikon")
                 }
                 
-                VGRButton(label: "Vertical Loading", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .vertical) {
-                    print("Tapped with icon")
+                VGRButton(label: "Vertikal laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .vertical) {
+                    print("Tryckt med ikon")
                 }
                 
-                VGRButton(label: "Tertiary", variant: .tertiary) {
+                VGRButton(label: "Tertiär", variant: .tertiary) {
                     isTertiaryEnabled.toggle()
                 }
                 
-                VGRButton(label: "Tertiary with icon", icon: Image(systemName: "heart"), variant: .tertiary) {
+                VGRButton(label: "Tertiär med ikon", icon: Image(systemName: "heart"), variant: .tertiary) {
                     isTertiaryEnabled.toggle()
                 }
                 
-                VGRButton(label: "Tertiary Disabled", icon: Image(systemName: "heart"), isEnabled: $isTertiaryEnabled, variant: .tertiary) {
-                    print("Tapped with icon")
+                VGRButton(label: "Tertiär inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isTertiaryEnabled, variant: .tertiary) {
+                    print("Tryckt med ikon")
                 }
                 
-                VGRButton(label: "Tertiary Loading", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .tertiary) {
-                    print("Tapped with icon")
+                VGRButton(label: "Tertiär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .tertiary) {
+                    print("Tryckt med ikon")
                 }
             }
             .padding(.vertical, 32)

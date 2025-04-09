@@ -62,7 +62,7 @@ VGRCallout
 ├── VGRIcon                 // Ikon från asset eller SF Symbol
 ├── VGRIllustration         // Illustration i olika storlekar
 ├── VGRButton               // Valfri åtgärdsknapp
-├── DismissButton           // Stäng-knapp (xmark)
+├── DismissButton           // Valfri stäng-knapp (xmark)
 └── VGRCalloutShape         // Bakgrund baserat på variant
 ```
 
@@ -75,10 +75,6 @@ VGRCallout
 // Texten är korrekt stylad via .headline och .footnote
 // DismissButton visas endast om dismiss-closure anges
 // Layout byts från HStack → VStack vid stor text:
-@Environment(\.dynamicTypeSize) var dynamicTypeSize
-var shouldUseVStack: Bool {
-    dynamicTypeSize >= .xxLarge || dynamicTypeSize >= .accessibility2
-}
 ```
 
 ---
