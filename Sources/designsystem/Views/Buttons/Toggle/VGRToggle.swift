@@ -1,21 +1,41 @@
 import SwiftUI
 
+/// En anpassad toggle-komponent enligt VGR:s designsystem.
+///
+/// Visar en titel, valfri beskrivning och en toggle med anpassat utseende.
+/// Komponenten är byggd för att passa in visuellt med andra VGR-komponenter.
+///
+/// Exempel:
+/// ```swift
+/// @State var isOn = false
+///
+/// VGRToggle(isOn: $isOn, text: "Aktivera notiser", description: "Få en påminnelse varje dag.")
+/// ```
 public struct VGRToggle: View {
     
+    /// Bindning till togglens tillstånd.
     @Binding var isOn: Bool
-    let text: String
+    
+    /// Titeln som visas till vänster om togglen.
+    let title: String
+    
+    /// En valfri beskrivningstext under titeln.
     let description: String
     
+    /// - Parameters:
+     ///   - isOn: En bindning till en `Bool` som styr togglens tillstånd.
+     ///   - text: Huvudtexten som visas i komponenten.
+     ///   - description: En valfri beskrivning som visas under huvudtexten.
     public init(isOn: Binding<Bool>, text: String, description: String = "") {
         self._isOn = isOn
-        self.text = text
+        self.title = text
         self.description = description
     }
     
     public var body: some View {
         HStack {
             VStack (alignment: .leading, spacing: 0) {
-                Text(text)
+                Text(title)
                     .font(.body)
                     .fontWeight(.medium)
                     .foregroundStyle(Color.Neutral.text)
@@ -53,5 +73,14 @@ public struct VGRToggle: View {
 #Preview {
     @Previewable @State var isOn: Bool = false
     
-    VGRToggle(isOn: $isOn, text: "Hej hopp")
+    ScrollView {
+        VGRShape {
+            VStack (spacing: 32) {
+                VGRToggle(isOn: $isOn, text: "Hej hopp")
+                
+                VGRToggle(isOn: $isOn, text: "Hej hopp", description: "Någon slags information")
+            }
+            .padding(.vertical, 32)
+        }
+    }
 }
