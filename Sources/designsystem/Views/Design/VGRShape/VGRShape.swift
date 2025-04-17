@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct VGRShape<Content: View>: View {
+public struct VGRShape<Content: View>: View {
     let content: Content
     var backgroundColor: Color = Color.Primary.blueSurfaceMinimal
     var bend: [Alignment]
     var radius: CGFloat = 40
 
-    init(bend: [Alignment] = [.topLeading],
+    public init(bend: [Alignment] = [.topLeading],
          backgroundColor: Color? = nil,
          radius: CGFloat = 40,
          @ViewBuilder _ content: () -> Content) {
@@ -20,7 +20,7 @@ struct VGRShape<Content: View>: View {
 
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             content
         }

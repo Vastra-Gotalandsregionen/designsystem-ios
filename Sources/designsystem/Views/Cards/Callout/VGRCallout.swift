@@ -2,7 +2,7 @@ import SwiftUI
 
 /// En callout-vy som används för att visa informativa eller varningsmeddelanden med valfria ikoner, illustrationer och åtgärder.
 /// Stöder olika layoutvarianter inklusive enkel, ikonbaserad och illustrationsbaserad presentation.
-struct VGRCallout: View {
+public struct VGRCallout: View {
     
     @Environment(\.dynamicTypeSize) var dynamicTypeSize
     
@@ -48,7 +48,7 @@ struct VGRCallout: View {
     }
     
     /// Den huvudsakliga vykroppen för `VGRCallout`, renderas med lämplig form och layout.
-    var body: some View {
+    public var body: some View {
         VGRCalloutShape(variant: shape) {
             
             content
