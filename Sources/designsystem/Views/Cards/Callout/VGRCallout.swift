@@ -9,10 +9,10 @@ struct VGRCallout: View {
     /// Definierar olika visuella stilar för callouten, stöder information och varning med valfria ikoner eller illustrationer.
     public enum CalloutVariant {
         case information
-        case informationWithIllustration(VGRIllustration)
+        case informationWithIllustration(VGRCalloutIllustration)
         case informationWithIcon(VGRIcon)
         case warning
-        case warningWithIllustration(VGRIllustration)
+        case warningWithIllustration(VGRCalloutIllustration)
         case warningWithIcon(VGRIcon)
     }
     
@@ -118,7 +118,7 @@ struct VGRCallout: View {
         print("Hello")
     }
     
-    let illustration: VGRIllustration = VGRIllustration(assetName: "illustration_presence")
+    let illustration: VGRCalloutIllustration = VGRCalloutIllustration(assetName: "illustration_presence")
     
     
     ScrollView {

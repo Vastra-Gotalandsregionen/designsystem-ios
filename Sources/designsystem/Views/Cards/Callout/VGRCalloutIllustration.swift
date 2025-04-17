@@ -1,33 +1,14 @@
 import SwiftUI
 
-// MARK: - Size Category Enum
+// MARK: - Illustration View
 
-/// Represents predefined size categories for the illustration.
-public enum VGRIllustrationSizeCategory {
-    case small
-    case regular
-    case large
-    
-    /// Returns the corresponding CGFloat value for the size.
-    var value: CGFloat {
-        switch self {
-        case .small: return 50
-        case .regular: return 100
-        case .large: return 150
-        }
-    }
-}
-
-// MARK: - VGRIllustration View
-
-/// A reusable illustration component that renders an asset with fixed size options.
+/// A reusable illustration component that renders an asset for Callouts.
 /// Can be used both inside an SPM package and in host apps thanks to the configurable bundle.
-public struct VGRIllustration: View {
+public struct VGRCalloutIllustration: View {
     
     // MARK: Properties
     
     private let assetName: String
-    private let size: VGRIllustrationSizeCategory
     private let bundle: Bundle
     
     // MARK: Init
@@ -40,11 +21,9 @@ public struct VGRIllustration: View {
     ///   - bundle: The bundle to load the image from. Defaults to `.module` (for SPM).
     public init(
         assetName: String,
-        size: VGRIllustrationSizeCategory = .regular,
         bundle: Bundle? = nil
     ) {
         self.assetName = assetName
-        self.size = size
         self.bundle = bundle ?? .module
     }
     
@@ -54,7 +33,7 @@ public struct VGRIllustration: View {
         Image(assetName, bundle: bundle)
             .resizable()
             .scaledToFit()
-            .frame(width: size.value, height: size.value)
+            .frame(width: 100, height: 100)
             .accessibilityHidden(true)
     }
 }
@@ -62,5 +41,5 @@ public struct VGRIllustration: View {
 // MARK: - Preview
 
 #Preview {
-    VGRIllustration(assetName: "illustration_presenting")
+    VGRCalloutIllustration(assetName: "illustration_presenting")
 }

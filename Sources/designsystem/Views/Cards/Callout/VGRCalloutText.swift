@@ -83,7 +83,7 @@ _Tips:_ Du kan alltid återställa detta senare.
                 
                 VGRCallout(text: text, button: VGRButton(label: "Tap meee", action: {
                     print("Tapped")
-                }), variant: .informationWithIllustration(VGRIllustration(assetName: "illustration_presence"))) {
+                }), variant: .informationWithIllustration(VGRCalloutIllustration(assetName: "illustration_presence"))) {
                     print("Dismissed")
                 }
                 
