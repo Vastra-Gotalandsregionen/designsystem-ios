@@ -1,5 +1,7 @@
 import SwiftUI
 
+//MARK: OLD COMPONENT
+
 public struct CalloutView<Icon: View>: View {
     private let icon: Icon
     let title: String
