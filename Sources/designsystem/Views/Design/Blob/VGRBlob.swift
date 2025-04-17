@@ -1,10 +1,14 @@
 import SwiftUI
 import Lottie
 
-struct Blob: View {
+public struct Blob: View {
     @Binding var state: Int?
+    
+    public init(state: Binding<Int?>) {
+        self._state = state
+    }
 
-    var body: some View {
+    public var body: some View {
         LottieView(animation: .named("blob_animation", bundle: .module))
             .playing(
                 .fromFrame(
