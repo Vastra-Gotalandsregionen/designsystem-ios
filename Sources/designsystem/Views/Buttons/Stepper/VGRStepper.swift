@@ -105,6 +105,8 @@ public struct VGRStepper : View {
                 .lineLimit(1)
                 .frame(maxWidth: .infinity)
                 .foregroundStyle(Color.Neutral.text)
+                .contentTransition(.numericText(value: value))
+                .animation(.default, value: value)
             
             Button {
                 increase()
