@@ -1,37 +1,21 @@
 import SwiftUI
 
-/// Representerar bakgrundsstilen för en callout-form.
-/// - `information`: Använder ytfärg för informationsmeddelanden.
-/// - `warning`: Använder ytfärg för varningsmeddelanden.
-public enum CalloutShapeVariant {
-    case information
-    case warning
-}
-
 /// En container-vy som applicerar stil och bakgrundsfärg baserat på `CalloutShapeVariant`.
 /// Används som det yttre skalet i en `VGRCallout` för att ge visuell kontext (t.ex. varning eller information).
 struct VGRCalloutShape<Content: View>: View {
     
-    /// Den visuella stilen för callout-formen (information eller varning).
-    let variant: CalloutShapeVariant
+    /// Bakgrundsfärgen för komponenten
+    let backgroundColor: Color
     /// Innehållet som visas inom den formade bakgrunden.
     let content: Content
-    
-    /// Bestämmer bakgrundsfärgen baserat på vald `CalloutShapeVariant`.
-    var backgroundColor: Color {
-        switch variant {
-        case .information: return Color.Status.informationSurface
-        case .warning: return Color.Status.warningSurface
-        }
-    }
     
     /// Skapar en `VGRCalloutShape` med angiven variant och innehåll.
     /// - Parameters:
     ///   - variant: Formvarianten (information eller varning).
     ///   - content: En vybyggare som tillhandahåller innehållet.
-    init(variant: CalloutShapeVariant,
+    init(backgroundColor: Color,
          @ViewBuilder _ content: () -> Content) {
-        self.variant = variant
+        self.backgroundColor = backgroundColor
         self.content = content()
     }
     
@@ -49,10 +33,10 @@ struct VGRCalloutShape<Content: View>: View {
 
 #Preview {
     VGRShape {
-        VGRCalloutShape(variant: .information) {
+        VGRCalloutShape(backgroundColor: Color.Primary.blueSurfaceMinimal) {
             VGRCalloutText(header: "Hello", description: "World")
         }
-        VGRCalloutShape(variant: .warning) {
+        VGRCalloutShape(backgroundColor: Color.Accent.purpleSurfaceMinimal) {
             VGRCalloutText(header: "Hello", description: "World")
         }
     }

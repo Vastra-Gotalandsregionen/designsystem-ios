@@ -74,20 +74,20 @@ _Tips:_ Du kan alltid återställa detta senare.
     ScrollView {
         VGRShape {
             VStack(spacing: 32) {
-                VGRCalloutShape(variant: .information) {
+                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
                     VGRCalloutText(header: "Hello", description: "World")
                 }
-                VGRCalloutShape(variant: .warning) {
+                VGRCalloutShape(backgroundColor: Color.Status.informationSurface) {
                     VGRCalloutText(header: "Hello", description: "World")
                 }
                 
                 VGRCallout(text: text, button: VGRButton(label: "Tap meee", action: {
                     print("Tapped")
-                }), variant: .informationWithIllustration(VGRCalloutIllustration(assetName: "illustration_presence"))) {
+                }), variant: .illustration(VGRCalloutIllustration(assetName: "illustration_presence"))) {
                     print("Dismissed")
                 }
                 
-                VGRCalloutShape(variant: .information) {
+                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
                     let header: AttributedString = {
                         var string = AttributedString("Bold Header")
                         string.font = .system(size: 18, weight: .bold)
@@ -104,7 +104,7 @@ _Tips:_ Du kan alltid återställa detta senare.
                     
                     VGRCalloutText(header: header, description: description)
                 }
-                VGRCalloutShape(variant: .warning) {
+                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
                     let header: AttributedString = {
                         var string = AttributedString("⚠️ Attention")
                         string.font = .system(size: 16, weight: .semibold)
@@ -122,13 +122,13 @@ _Tips:_ Du kan alltid återställa detta senare.
                     VGRCalloutText(header: header, description: description)
                 }
                 
-                VGRCalloutShape(variant: .warning) {
-                    
+                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
+
                     VGRCalloutText(description: attributed!)
                     
                 }
                 
-                VGRCalloutShape (variant: .information) {
+                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
                     VGRCalloutText(description: attributedAlternative!)
                 }
             }
