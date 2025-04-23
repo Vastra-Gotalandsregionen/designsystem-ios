@@ -3,7 +3,7 @@ import SwiftUI
 /// En callout-vy som används för att visa informativa eller varningsmeddelanden med valfria ikoner, illustrationer och åtgärder.
 /// Stöder olika layoutvarianter inklusive enkel, ikonbaserad och illustrationsbaserad presentation.
 public struct VGRCallout: View {
-    
+
     @Environment(\.dynamicTypeSize) var dynamicTypeSize
     
     /// Definierar olika visuella stilar för callouten, stöder information och varning med valfria ikoner eller illustrationer.
@@ -15,6 +15,7 @@ public struct VGRCallout: View {
     
     let text: VGRCalloutText
     let button: VGRButton?
+    let disclosureGroup: AnyView?
     let backgroundColor: Color
     let variant: CalloutVariant
     let dismiss: (() -> Void)?
@@ -25,15 +26,19 @@ public struct VGRCallout: View {
     ///   - button: En valfri åtgärdsknapp som visas under texten.
     ///   - variant: Den visuella varianten av callouten (t.ex. information, varning, med ikon eller illustration).
     ///   - dismiss: En valfri closure som anropas när callouten stängs.
-    public init(text: VGRCalloutText,
-                button: VGRButton? = nil,
-                backgroundColor: Color = Color.Status.informationSurface,
-                variant: CalloutVariant,
-                dismiss: (() -> Void)? = nil) {
-        self.variant = variant
+    public init(
+        text: VGRCalloutText,
+        button: VGRButton? = nil,
+        disclosureGroup: AnyView? = nil,
+        backgroundColor: Color = Color.Status.informationSurface,
+        variant: CalloutVariant,
+        dismiss: (() -> Void)? = nil
+    ) {
         self.text = text
         self.button = button
+        self.disclosureGroup = disclosureGroup
         self.backgroundColor = backgroundColor
+        self.variant = variant
         self.dismiss = dismiss
     }
     
@@ -42,6 +47,8 @@ public struct VGRCallout: View {
         VGRCalloutShape(backgroundColor: backgroundColor) {
             
             content
+            
+            disclosureGroup
             
             button
         }
@@ -124,6 +131,16 @@ public struct VGRCallout: View {
                 
                 VGRCallout(
                     text: descriptionWithHeader,
+                    variant: .icon(chatBubble)
+                )
+                
+                VGRCallout(
+                    text: description,
+                    disclosureGroup: AnyView(
+                        VGRDisclosureGroup(title: "Mer info") {
+                            Text("Blablablablalbalbal")
+                        }
+                    ),
                     variant: .icon(chatBubble)
                 )
                 
