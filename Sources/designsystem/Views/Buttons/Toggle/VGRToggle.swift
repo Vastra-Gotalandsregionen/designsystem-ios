@@ -62,6 +62,7 @@ public struct VGRToggle: View {
                 .cornerRadius(20)
                 .onTapGesture {
                     isOn.toggle()
+                    Haptics.lightImpact() 
                 }
         }
         .padding(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
