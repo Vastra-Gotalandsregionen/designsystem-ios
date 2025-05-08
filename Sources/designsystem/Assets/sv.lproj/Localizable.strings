@@ -2,3 +2,81 @@
 "general.decrease" = "Minska";
 "general.increase" = "Öka";
 
+/* Body Picker */
+"bodypicker.title" = "Välj kroppsdelar";
+"bodypicker.front" = "Framsida";
+"bodypicker.back" = "Baksida";
+"bodypicker.side.left" = "Vänster";
+"bodypicker.side.right" = "Höger";
+
+"bodypicker.front.head" = "Huvud";
+"bodypicker.front.face" = "Ansikte";
+"bodypicker.front.face_features" = "Ansikte";
+"bodypicker.front.throat" = "Hals";
+"bodypicker.front.scalp" = "Hårbotten";
+
+"bodypicker.front.upper_body" = "Överkropp";
+"bodypicker.front.torso" = "Torso";
+"bodypicker.front.pelvis" = "Genitalier";
+"bodypicker.front.right_armpit" = "Armhåla";
+"bodypicker.front.left_armpit" = "Armhåla";
+
+"bodypicker.front.left_arm" = "Arm";
+"bodypicker.front.left_upper_arm" = "Överarm";
+"bodypicker.front.left_armfold" = "Armveck";
+"bodypicker.front.left_under_arm" = "Underarm";
+"bodypicker.front.left_palm" = "Handflata";
+
+"bodypicker.front.right_arm" =  "Arm";
+"bodypicker.front.right_upper_arm" = "Överarm";
+"bodypicker.front.right_armfold" = "Armveck";
+"bodypicker.front.right_under_arm" = "Underarm";
+"bodypicker.front.right_palm" = "Handflata";
+
+"bodypicker.front.left_leg" = "Ben";
+"bodypicker.front.left_thigh" = "Lår";
+"bodypicker.front.left_knee" = "Knä";
+"bodypicker.front.left_calf" = "Skenben";
+"bodypicker.front.left_foot" = "Fot";
+
+"bodypicker.front.right_leg" = "Ben";
+"bodypicker.front.right_thigh" = "Lår";
+"bodypicker.front.right_knee" = "Knä";
+"bodypicker.front.right_calf" = "Skenben";
+"bodypicker.front.right_foot" = "Fot";
+
+
+"bodypicker.back.head" = "Huvud";
+"bodypicker.back.neck" = "Nacke";
+"bodypicker.back.of_head" = "Bakhuvud";
+"bodypicker.back.scalp" = "Hårbotten";
+
+"bodypicker.back.torso" = "Torso";
+"bodypicker.back.back" = "Rygg";
+"bodypicker.back.pelvis" = "Skinkor";
+
+"bodypicker.back.left_arm" = "Arm";
+"bodypicker.back.left_armpit" = "Armhåla";
+"bodypicker.back.left_upper_arm" = "Överarm";
+"bodypicker.back.left_arm_elbow" = "Armbåge";
+"bodypicker.back.left_under_arm" = "Underarm";
+"bodypicker.back.left_back_of_hand" = "Hand";
+
+"bodypicker.back.right_arm" = "Arm";
+"bodypicker.back.right_armpit" = "Armhåla";
+"bodypicker.back.right_upper_arm" = "Överarm";
+"bodypicker.back.right_arm_elbow" = "Armbåge";
+"bodypicker.back.right_under_arm" = "Underarm";
+"bodypicker.back.right_back_of_hand" = "Hand";
+
+"bodypicker.back.left_leg" = "Ben";
+"bodypicker.back.left_thigh" = "Lår";
+"bodypicker.back.left_hollow_of_knee" = "Knäveck";
+"bodypicker.back.left_calf" = "Vad";
+"bodypicker.back.left_foot" = "Häl";
+
+"bodypicker.back.right_leg" = "Ben";
+"bodypicker.back.right_thigh" = "Lår";
+"bodypicker.back.right_hollow_of_knee" = "Knäveck";
+"bodypicker.back.right_calf" = "Vad";
+"bodypicker.back.right_foot" = "Häl";

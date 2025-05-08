@@ -15,6 +15,13 @@ public extension String {
         return prefix(1).uppercased() + lowercased().dropFirst()
     }
 
+    var localizedBundle: String {
+        /// Get the bundle for the current class (eg. Shared package)
+        let bundle = Bundle.module
+        return NSLocalizedString(self, tableName: "Localizable", bundle: bundle, comment: "")
+    }
+
+
 }
 
 public class LocalizedHelper {

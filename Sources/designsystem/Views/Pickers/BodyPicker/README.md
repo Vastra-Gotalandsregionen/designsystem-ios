@@ -1,0 +1,19 @@
+# BodyPickerView
+
+`BodyPickerView` är en SwiftUI-komponent som gör det möjligt för användare att visuellt välja delar av kroppen, både fram- och baksida, via en interaktiv kroppsvy.
+
+## Funktionalitet
+
+- **Segmenterad vy**: Användare kan växla mellan fram- och baksida av kroppen med hjälp av en `Picker`.
+- **Markeringslogik**: Markerade kroppsdelar färgläggs och kantmarkeras med särskilda färger.
+- **Overlay-stöd**: Frontvyn innehåller valbara överlägg, t.ex. ansiktsdetaljer.
+
+## Användning
+
+```swift
+@State var frontSelected: Set<BodyPart> = []
+@State var backSelected: Set<BodyPart> = []
+
+BodyPickerView(frontSelectedParts: $frontSelected,
+               backSelectedParts: $backSelected)
+```
