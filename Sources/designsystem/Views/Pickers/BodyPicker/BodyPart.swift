@@ -13,19 +13,31 @@ import SwiftUI
 /// ```
 ///
 /// You can use this to render shapes, handle selections, and manage hierarchical body part relationships.
-enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
+public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
     case back(BodyPart.Back)
     case front(BodyPart.Front)
 
-    var id: String {
+    public var id: String {
         switch self {
             case .front(let part): return "front.\(part.rawValue)"
             case .back(let part): return "back.\(part.rawValue)"
         }
     }
+    
+    public static func fromID(_ id: String) -> BodyPart? {
+            if id.starts(with: "front.") {
+                let key = id.replacingOccurrences(of: "front.", with: "")
+                return BodyPart.Front(rawValue: key).map { .front($0) }
+            } else if id.starts(with: "back.") {
+                let key = id.replacingOccurrences(of: "back.", with: "")
+                return BodyPart.Back(rawValue: key).map { .back($0) }
+            } else {
+                return nil
+            }
+        }
 
     /// frontHierarchy describes the front body as a dictionary of parent-children relationships
-    static let frontHierarchy: [BodyPart: [BodyPart]] = [
+    public static let frontHierarchy: [BodyPart: [BodyPart]] = [
         .front(.head): [.front(.scalp), .front(.face), .front(.throat)],
         .front(.upperBody): [.front(.torso), .front(.rightArmPit), .front(.leftArmPit), .front(.pelvisFront)],
         .front(.leftArm): [.front(.leftUpperArm), .front(.leftArmFold), .front(.leftUnderArm), .front(.leftPalm)],
@@ -34,7 +46,7 @@ enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
         .front(.rightLeg): [.front(.rightThigh), .front(.rightKnee), .front(.rightCalf), .front(.rightFoot)],
     ]
 
-    static let neutralFront: [BodyPart] = [
+    public static let neutralFront: [BodyPart] = [
         BodyPart.front(.head),
         BodyPart.front(.throat),
         BodyPart.front(.leftArm),
@@ -50,7 +62,7 @@ enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
     ]
 
     /// backHierarchy describes the back body as a dictionary of parent-children relationships
-    static let backHierarchy: [BodyPart: [BodyPart]] = [
+    public static let backHierarchy: [BodyPart: [BodyPart]] = [
         .back(.head): [.back(.scalp), .back(.backOfHead), .back(.neck)],
         .back(.back): [.back(.torso), .back(.rightArmPit), .back(.leftArmPit), .back(.pelvisBack)],
         .back(.leftArm): [.back(.leftUpperArm), .back(.leftArmElbow), .back(.leftUnderArm), .back(.leftBackOfHand)],
@@ -59,7 +71,7 @@ enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
         .back(.rightLeg): [.back(.rightThigh), .back(.rightHollowOfKnee), .back(.rightCalf), .back(.rightFoot)],
     ]
 
-    static let neutralBack: [BodyPart] = [
+    public static let neutralBack: [BodyPart] = [
         BodyPart.back(.head),
         BodyPart.back(.neck),
         BodyPart.back(.leftArm),
@@ -74,14 +86,14 @@ enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
         BodyPart.back(.rightFoot),
     ]
 
-    enum BodySide: String {
+    public enum BodySide: String {
         case left = "side.left"
         case right = "side.right"
         case notApplicable
     }
 
     /// returns a side for body parts that need to distinguish between sides (left & right), for example legs & arms
-    var side: BodySide {
+    public var side: BodySide { //TODO: Behöver lägga till alla
         switch self {
             case .front(.leftArm), .front(.leftLeg), .back(.leftArm), .back(.leftLeg), .front(.leftArmPit), .back(.leftArmPit):
                 return .left
@@ -99,7 +111,7 @@ enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
     }
 
     /// Returns the proper UIBezierPath for the current bodyPart
-    var path: UIBezierPath {
+    public var path: UIBezierPath {
         switch self {
             case .back(let back):
                 return back.path
@@ -108,7 +120,7 @@ enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
         }
     }
 
-    enum Back: String, CaseIterable, Sendable, Equatable {
+    public enum Back: String, CaseIterable, Sendable, Equatable {
         case head = "head",
              neck = "neck",
              backOfHead = "of_head",
@@ -608,7 +620,7 @@ enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
         }
     }
 
-    enum Front: String, CaseIterable, Sendable, Equatable {
+    public enum Front: String, CaseIterable, Sendable, Equatable {
         case head = "head",
              face = "face",
              faceFeatures = "face_features",
@@ -645,7 +657,7 @@ enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
              rightCalf = "right_calf",
              rightFoot = "right_foot"
 
-        var path: UIBezierPath {
+        public var path: UIBezierPath {
             switch self {
                 case .faceFeatures:
                     let facePath = UIBezierPath()

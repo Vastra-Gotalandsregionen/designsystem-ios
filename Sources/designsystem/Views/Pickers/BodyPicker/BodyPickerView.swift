@@ -12,7 +12,7 @@ import SwiftUI
 ///   - fillColorSelection: The fill color used to highlight selected body parts.
 ///   - strokeColor: The stroke color for body parts.
 ///   - strokeColorSelection: The stroke color for selected body parts.
-struct BodyPickerView: View {
+public struct BodyPickerView: View {
     @Binding var frontSelectedParts: Set<BodyPart>
     @Binding var backSelectedParts: Set<BodyPart>
 
@@ -20,17 +20,23 @@ struct BodyPickerView: View {
     var fillColorSelection: Color = Color.Accent.pinkGraphic
     var strokeColor: Color = Color.black
     var strokeColorSelection: Color = Color.black
-
+    
     @State private var bodySide: Int = 0
-
-    var body: some View {
+    
+    public init(frontSelectedParts: Binding<Set<BodyPart>>,
+        backSelectedParts: Binding<Set<BodyPart>>) {
+            self._frontSelectedParts = frontSelectedParts
+            self._backSelectedParts = backSelectedParts
+        }
+    
+    public var body: some View {
         VStack {
             Picker("bodypicker.title".localizedBundle, selection: $bodySide) {
                 Text("bodypicker.front".localizedBundle).tag(0)
                 Text("bodypicker.back".localizedBundle).tag(1)
             }
             .pickerStyle(.segmented)
-
+            
             HStack(alignment: .center) {
                 if bodySide == 0 {
                     BodyView(selectedParts: $frontSelectedParts,
@@ -52,7 +58,7 @@ struct BodyPickerView: View {
                 }
             }
             .padding(.top, 32)
-
+            
         }
         .padding(16)
         .cornerRadius(16)
@@ -62,7 +68,7 @@ struct BodyPickerView: View {
 #Preview {
     @Previewable @State var frontSelectedParts: Set<BodyPart> = []
     @Previewable @State var backSelectedParts: Set<BodyPart> = []
-
+    
     NavigationStack {
         ScrollView {
             BodyPickerView(frontSelectedParts: $frontSelectedParts,
