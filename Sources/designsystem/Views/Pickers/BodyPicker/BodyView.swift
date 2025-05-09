@@ -6,7 +6,7 @@ import SwiftUI
 /// selected regions. Tapping a container region opens a modal sheet for selecting
 /// its child parts.
 ///
-/// Use `bodyHierarchy`, `bodyModel`, and `overlayParts` to configure the visible body layout.
+/// Use `bodyHierarchy`, `bodyParts`, and `overlayParts` to configure the visible body layout.
 struct BodyView: View {
 
     @Binding var selectedParts: Set<BodyPart>
@@ -15,7 +15,7 @@ struct BodyView: View {
     let bodyHierarchy: [BodyPart: [BodyPart]]
 
     /// The flat list of body parts used to render the base shape of the body.
-    let bodyModel: [BodyPart]
+    let bodyParts: [BodyPart]
 
     /// Overlay-only parts such as face features that should be drawn but not selectable.
     var overlayParts: [BodyPart] = []
@@ -38,21 +38,28 @@ struct BodyView: View {
         bodyHierarchy.keys.contains(part) ? part : bodyHierarchy.first(where: { $0.value.contains(part) })?.key
     }
 
+    func selectBodyPart(_ part: BodyPart) {
+        if let cnt = getContainer(part) {
+            parentBodyPart = cnt
+        }
+    }
+
     var body: some View {
         VStack {
             ZStack {
                 /// Draw the default body shape
-                ForEach(bodyModel, id: \.self) { model in
-                    BodyPartShape(bodyPart: model)
+                ForEach(bodyParts, id: \.self) { bodyPart in
+                    BodyPartShape(bodyPart: bodyPart)
                         .fill(fillColor)
-                        .stroke(strokeColor, lineWidth: selectedParts.contains(model) ? 0 : 1)
-                        .contentShape(BodyPartShape(bodyPart: model))
+                        .stroke(strokeColor, lineWidth: selectedParts.contains(bodyPart) ? 0 : 1)
+                        .contentShape(BodyPartShape(bodyPart: bodyPart))
                         .onTapGesture {
-                            if let cnt = getContainer(model) {
-                                parentBodyPart = cnt
-                            }
+                            selectBodyPart(bodyPart)
                         }
-                        .accessibilityLabel(model.id)
+                        .accessibilityLabel("bodypicker.\(bodyPart.id)".localizedBundle)
+                        .accessibilityAction(named: "bodypicker.select".localizedBundle, {
+                            selectBodyPart(bodyPart)
+                        })
                 }
 
                 /// Draw the selected body parts, in correct order to avoid overlap
@@ -102,7 +109,7 @@ struct BodyView: View {
         ScrollView {
             BodyView(selectedParts: $selectedBodyParts,
                      bodyHierarchy: BodyPart.frontHierarchy,
-                     bodyModel: BodyPart.neutralFront,
+                     bodyParts: BodyPart.neutralFront,
                      overlayParts: [.front(.faceFeatures)],
                      fillColor: Color(red: 231/255, green: 225/255, blue: 223/255),
                      fillColorSelection: Color(red: 238/255, green: 100/255, blue: 146/255),
@@ -111,6 +118,7 @@ struct BodyView: View {
         }
         .frame(maxWidth: .infinity)
         .background(.cyan)
+        .navigationTitle("bodypicker.title".localizedBundle)
     }
 }
 
@@ -121,7 +129,7 @@ struct BodyView: View {
         ScrollView {
             BodyView(selectedParts: $selectedBodyParts,
                      bodyHierarchy: BodyPart.backHierarchy,
-                     bodyModel: BodyPart.neutralBack,
+                     bodyParts: BodyPart.neutralBack,
                      overlayParts: [],
                      fillColor: Color(red: 231/255, green: 225/255, blue: 223/255),
                      fillColorSelection: Color(red: 238/255, green: 100/255, blue: 146/255),
@@ -130,5 +138,6 @@ struct BodyView: View {
         }
         .frame(maxWidth: .infinity)
         .background(.cyan)
+        .navigationTitle("bodypicker.title".localizedBundle)
     }
 }
