@@ -78,7 +78,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
         BodyPart.back(.leftBackOfHand),
         BodyPart.back(.rightArm),
         BodyPart.back(.rightBackOfHand),
-        BodyPart.back(.torso),
+        BodyPart.back(.back),
         BodyPart.back(.pelvisBack),
         BodyPart.back(.leftLeg),
         BodyPart.back(.leftFoot),
@@ -105,42 +105,9 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
     }
 
     /// used for sorting when drawing, to avoid overlapping body parts
-    public var drawOrder: Int {
-        switch self {
-            case .front(.head),
-                    .front(.face),
-                    .front(.throat),
-                    .front(.torso),
-                    .front(.upperBody),
-                    .front(.pelvisFront),
-                    .front(.leftLeg),
-                    .front(.rightLeg),
-                    .front(.leftArm),
-                    .front(.rightArm): return 0
-
-            case .front(.leftPalm),
-                    .front(.rightPalm): return 2
-
-            case .front(.scalp): return 3
-
-            case .back(.head),
-                    .back(.backOfHead),
-                    .back(.neck),
-                    .back(.torso),
-                    .back(.back),
-                    .back(.pelvisBack),
-                    .back(.leftLeg),
-                    .back(.rightLeg),
-                    .back(.leftArm),
-                    .back(.rightArm): return 0
-
-            case .back(.leftBackOfHand),
-                    .back(.rightBackOfHand): return 2
-
-            case .back(.scalp): return 3
-
-            default: return 10
-        }
+    var drawOrder: Int {
+        let isLowerOrder = BodyPart.neutralBack.contains(self) || BodyPart.neutralFront.contains(self) || self == .front(.torso) || self == .back(.torso)
+        return isLowerOrder ? 0 : 1
     }
 
     /// Returns the proper UIBezierPath for the current bodyPart
@@ -203,7 +170,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     rightFootPath.addCurve(to: CGPoint(x: 128.84, y: 609.51), controlPoint1: CGPoint(x: 138.78, y: 614.11), controlPoint2: CGPoint(x: 128.84, y: 609.51))
                     rightFootPath.addLine(to: CGPoint(x: 128.84, y: 609.52))
                     rightFootPath.close()
-                    return rightFootPath.reversing()
+                    return rightFootPath
 
                 case .rightCalf:
                     let rightCalfPath = UIBezierPath()
@@ -219,7 +186,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     rightCalfPath.addCurve(to: CGPoint(x: 166.13, y: 486.92), controlPoint1: CGPoint(x: 166.09, y: 486.87), controlPoint2: CGPoint(x: 166.11, y: 486.89))
                     rightCalfPath.addLine(to: CGPoint(x: 166.12, y: 486.91))
                     rightCalfPath.close()
-                    return rightCalfPath.reversing()
+                    return rightCalfPath
 
                 case .rightHollowOfKnee:
                     let rightKneePath = UIBezierPath()
@@ -232,7 +199,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     rightKneePath.addLine(to: CGPoint(x: 166.9, y: 451.05))
                     rightKneePath.addLine(to: CGPoint(x: 166.91, y: 451.06))
                     rightKneePath.close()
-                    return rightKneePath.reversing()
+                    return rightKneePath
 
                 case .rightThigh:
                     let rightThighPath = UIBezierPath()
@@ -244,7 +211,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     rightThighPath.addCurve(to: CGPoint(x: 180.38, y: 329.35), controlPoint1: CGPoint(x: 179.44, y: 387.02), controlPoint2: CGPoint(x: 182.77, y: 321.39))
                     rightThighPath.addLine(to: CGPoint(x: 180.37, y: 329.35))
                     rightThighPath.close()
-                    return rightThighPath.reversing()
+                    return rightThighPath
 
                 case .rightLeg:
                     let rightLegPath = UIBezierPath()
@@ -267,7 +234,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     rightLegPath.addCurve(to: CGPoint(x: 128, y: 474.98), controlPoint1: CGPoint(x: 127.97, y: 585.94), controlPoint2: CGPoint(x: 126.2, y: 493.29))
                     rightLegPath.addLine(to: CGPoint(x: 128, y: 474.99))
                     rightLegPath.close()
-                    return rightLegPath.reversing()
+                    return rightLegPath
 
                 case .leftFoot:
                     let leftFootPath = UIBezierPath()
@@ -304,7 +271,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     leftLegPath.addCurve(to: CGPoint(x: 114.39, y: 474.98), controlPoint1: CGPoint(x: 114.42, y: 585.94), controlPoint2: CGPoint(x: 116.19, y: 493.29))
                     leftLegPath.addLine(to: CGPoint(x: 114.39, y: 474.99))
                     leftLegPath.close()
-                    return leftLegPath.reversing()
+                    return leftLegPath
 
 
                 case .leftCalf:
@@ -468,7 +435,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     rightHandPath.addCurve(to: CGPoint(x: 220.44, y: 307.89), controlPoint1: CGPoint(x: 199.5, y: 307.89), controlPoint2: CGPoint(x: 208.76, y: 302.61))
                     rightHandPath.addLine(to: CGPoint(x: 220.43, y: 307.87))
                     rightHandPath.close()
-                    return rightHandPath.reversing()
+                    return rightHandPath
 
                 case .rightArm:
                     let rightArmPath = UIBezierPath()
@@ -591,7 +558,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     leftArmPitPath.addCurve(to: CGPoint(x: 84.59, y: 187.32), controlPoint1: CGPoint(x: 73.42, y: 207.7), controlPoint2: CGPoint(x: 81.86, y: 198.45))
                     leftArmPitPath.addCurve(to: CGPoint(x: 79.31, y: 157.9), controlPoint1: CGPoint(x: 87.32, y: 176.19), controlPoint2: CGPoint(x: 86.01, y: 162.65))
                     leftArmPitPath.close()
-                    return leftArmPitPath.reversing()
+                    return leftArmPitPath
 
                 case .head, .backOfHead:
                     let headPath = UIBezierPath()
@@ -621,7 +588,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     headPath.addLine(to: CGPoint(x: 89.05, y: 24.09))
                     headPath.addCurve(to: CGPoint(x: 91.3, y: 17.45), controlPoint1: CGPoint(x: 89.68, y: 21.79), controlPoint2: CGPoint(x: 90.43, y: 19.51))
                     headPath.close()
-                    return headPath.reversing()
+                    return headPath
 
                 case .neck:
                     let neckPath = UIBezierPath()
@@ -636,7 +603,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     neckPath.addCurve(to: CGPoint(x: 138.69, y: 95.85), controlPoint1: CGPoint(x: 139.99, y: 105.7), controlPoint2: CGPoint(x: 138.65, y: 100.66))
                     neckPath.addLine(to: CGPoint(x: 138.69, y: 95.85))
                     neckPath.close()
-                    return neckPath.reversing()
+                    return neckPath
 
                 case .scalp:
                     let scalpPath = UIBezierPath()
@@ -648,7 +615,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     scalpPath.addCurve(to: CGPoint(x: 133.85, y: 3.05), controlPoint1: CGPoint(x: 147.74, y: 13.6), controlPoint2: CGPoint(x: 142.56, y: 6.72))
                     scalpPath.addLine(to: CGPoint(x: 133.84, y: 3.05))
                     scalpPath.close()
-                    return scalpPath.reversing()
+                    return scalpPath
             }
         }
     }
@@ -912,7 +879,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     leftArmPitPath.addCurve(to: CGPoint(x: 161.84, y: 158.96), controlPoint1: CGPoint(x: 153.77, y: 177.33), controlPoint2: CGPoint(x: 155.09, y: 163.73))
                     leftArmPitPath.close()
 
-                    return leftArmPitPath.reversing()
+                    return leftArmPitPath
 
                 case .pelvisFront:
                     let pelvisFrontPath = UIBezierPath()
@@ -1142,7 +1109,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     fullRightLegPath.addLine(to: CGPoint(x: 113.06, y: 475.37))
                     fullRightLegPath.close()
 
-                    return fullRightLegPath.reversing()
+                    return fullRightLegPath
 
                 case .rightThigh:
                     let rightThighPath = UIBezierPath()
@@ -1245,7 +1212,7 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
                     fullLeftLegPath.close()
 
 
-                    return fullLeftLegPath.reversing()
+                    return fullLeftLegPath
 
                 case .leftThigh:
                     let leftThighPath = UIBezierPath()
