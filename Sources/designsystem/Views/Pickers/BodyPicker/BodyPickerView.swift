@@ -16,7 +16,7 @@ struct BodyPickerView: View {
     @Binding var frontSelectedParts: Set<BodyPart>
     @Binding var backSelectedParts: Set<BodyPart>
 
-    var fillColor: Color = Color(red: 231/255, green: 225/255, blue: 223/255)
+    var fillColor: Color = Color.Accent.brownSurface
     var fillColorSelection: Color = Color.Accent.pinkGraphic
     var strokeColor: Color = Color.black
     var strokeColorSelection: Color = Color.black
@@ -35,7 +35,7 @@ struct BodyPickerView: View {
                 if bodySide == 0 {
                     BodyView(selectedParts: $frontSelectedParts,
                              bodyHierarchy: BodyPart.frontHierarchy,
-                             bodyModel: BodyPart.neutralFront,
+                             bodyParts: BodyPart.neutralFront,
                              overlayParts: [.front(.faceFeatures)],
                              fillColor: fillColor,
                              fillColorSelection: fillColorSelection,
@@ -44,7 +44,7 @@ struct BodyPickerView: View {
                 } else {
                     BodyView(selectedParts: $backSelectedParts,
                              bodyHierarchy: BodyPart.backHierarchy,
-                             bodyModel: BodyPart.neutralBack,
+                             bodyParts: BodyPart.neutralBack,
                              fillColor: fillColor,
                              fillColorSelection: fillColorSelection,
                              strokeColor: strokeColor,

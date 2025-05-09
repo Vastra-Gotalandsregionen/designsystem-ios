@@ -1,11 +1,13 @@
 "general.close" = "Stäng";
 "general.decrease" = "Minska";
 "general.increase" = "Öka";
+"general.selected" = "Vald";
 
 /* Body Picker */
 "bodypicker.title" = "Välj kroppsdelar";
 "bodypicker.front" = "Framsida";
 "bodypicker.back" = "Baksida";
+"bodypicker.select" = "Välj kroppsdel";
 "bodypicker.side.left" = "Vänster";
 "bodypicker.side.right" = "Höger";
 
