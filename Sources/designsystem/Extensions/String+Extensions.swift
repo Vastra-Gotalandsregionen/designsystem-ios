@@ -38,18 +38,18 @@ public class LocalizedHelper {
         return String(format: locStr, arguments: arguments)
     }
     
-    public static func localizedAttributed(forKey key: String) -> AttributedString {
-            let localizedString = NSLocalizedString(key, tableName: "Localizable", bundle: .module, value: "NOPE", comment: "")
-            
-            do {
-                return try AttributedString(markdown: localizedString)
-            } catch {
-                return AttributedString(localizedString) // Fallback ifall Markdown skulle faila
-            }
+    public static func localizedAttributed(forKey key: String, bundle: Bundle) -> AttributedString {
+        let localizedString = NSLocalizedString(key, tableName: "Localizable", bundle: bundle, value: "NOPE", comment: "")
+        
+        do {
+            return try AttributedString(markdown: localizedString)
+        } catch {
+            return AttributedString(localizedString) // fallback om markdown failar
         }
+    }
     
-    public static func localizedBulletList(forKey key: String) -> [AttributedString] {
-           let localizedString = NSLocalizedString(key, tableName: "Localizable", bundle: .module, value: "NOPE", comment: "")
+    public static func localizedBulletList(forKey key: String, bundle: Bundle) -> [AttributedString] {
+           let localizedString = NSLocalizedString(key, tableName: "Localizable", bundle: bundle, value: "NOPE", comment: "")
            let lines = localizedString.components(separatedBy: "\n")
            
            return lines.compactMap { line in
