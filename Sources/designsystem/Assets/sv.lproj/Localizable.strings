@@ -10,6 +10,8 @@
 "bodypicker.select" = "Välj kroppsdel";
 "bodypicker.side.left" = "Vänster";
 "bodypicker.side.right" = "Höger";
+"bodypicker.summary" = "Kropp där följande kroppsdelar är valda: %@";
+"bodypicker.summary.none" = "Kropp där inga kroppsdelar är valda";
 
 "bodypicker.front.head" = "Huvud";
 "bodypicker.front.face" = "Ansikte";

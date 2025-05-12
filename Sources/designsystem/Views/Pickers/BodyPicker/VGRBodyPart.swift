@@ -2,20 +2,20 @@ import SwiftUI
 
 /// Represents a specific selectable area on the human body, used for visual segmentation.
 ///
-/// A `BodyPart` can represent both front and back views of the body, allowing for
+/// A `VGRBodyPart` can represent both front and back views of the body, allowing for
 /// consistent identification of areas for interaction, selection, or annotation.
 ///
 /// Each case should be associated with a side (`front` or `back`) and a specific anatomical region.
 ///
 /// Example usage:
 /// ```swift
-/// let part = BodyPart.front(.leftArm)
+/// let part = VGRBodyPart.front(.leftArm)
 /// ```
 ///
 /// You can use this to render shapes, handle selections, and manage hierarchical body part relationships.
-public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
-    case back(BodyPart.Back)
-    case front(BodyPart.Front)
+public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
+    case back(VGRBodyPart.Back)
+    case front(VGRBodyPart.Front)
 
     public var id: String {
         switch self {
@@ -23,21 +23,21 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
             case .back(let part): return "back.\(part.rawValue)"
         }
     }
-    
-    public static func fromID(_ id: String) -> BodyPart? {
-            if id.starts(with: "front.") {
-                let key = id.replacingOccurrences(of: "front.", with: "")
-                return BodyPart.Front(rawValue: key).map { .front($0) }
-            } else if id.starts(with: "back.") {
-                let key = id.replacingOccurrences(of: "back.", with: "")
-                return BodyPart.Back(rawValue: key).map { .back($0) }
-            } else {
-                return nil
-            }
+
+    public static func fromID(_ id: String) -> VGRBodyPart? {
+        if id.starts(with: "front.") {
+            let key = id.replacingOccurrences(of: "front.", with: "")
+            return VGRBodyPart.Front(rawValue: key).map { .front($0) }
+        } else if id.starts(with: "back.") {
+            let key = id.replacingOccurrences(of: "back.", with: "")
+            return VGRBodyPart.Back(rawValue: key).map { .back($0) }
+        } else {
+            return nil
         }
+    }
 
     /// frontHierarchy describes the front body as a dictionary of parent-children relationships
-    public static let frontHierarchy: [BodyPart: [BodyPart]] = [
+    public static let frontHierarchy: [VGRBodyPart: [VGRBodyPart]] = [
         .front(.head): [.front(.scalp), .front(.face), .front(.throat)],
         .front(.upperBody): [.front(.torso), .front(.rightArmPit), .front(.leftArmPit), .front(.pelvisFront)],
         .front(.leftArm): [.front(.leftUpperArm), .front(.leftArmFold), .front(.leftUnderArm), .front(.leftPalm)],
@@ -46,23 +46,23 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
         .front(.rightLeg): [.front(.rightThigh), .front(.rightKnee), .front(.rightCalf), .front(.rightFoot)],
     ]
 
-    public static let neutralFront: [BodyPart] = [
-        BodyPart.front(.head),
-        BodyPart.front(.throat),
-        BodyPart.front(.leftArm),
-        BodyPart.front(.leftPalm),
-        BodyPart.front(.rightArm),
-        BodyPart.front(.rightPalm),
-        BodyPart.front(.upperBody),
-        BodyPart.front(.pelvisFront),
-        BodyPart.front(.leftLeg),
-        BodyPart.front(.leftFoot),
-        BodyPart.front(.rightLeg),
-        BodyPart.front(.rightFoot)
+    public static let neutralFront: [VGRBodyPart] = [
+        VGRBodyPart.front(.head),
+        VGRBodyPart.front(.throat),
+        VGRBodyPart.front(.leftArm),
+        VGRBodyPart.front(.leftPalm),
+        VGRBodyPart.front(.rightArm),
+        VGRBodyPart.front(.rightPalm),
+        VGRBodyPart.front(.upperBody),
+        VGRBodyPart.front(.pelvisFront),
+        VGRBodyPart.front(.leftLeg),
+        VGRBodyPart.front(.leftFoot),
+        VGRBodyPart.front(.rightLeg),
+        VGRBodyPart.front(.rightFoot)
     ]
 
     /// backHierarchy describes the back body as a dictionary of parent-children relationships
-    public static let backHierarchy: [BodyPart: [BodyPart]] = [
+    public static let backHierarchy: [VGRBodyPart: [VGRBodyPart]] = [
         .back(.head): [.back(.scalp), .back(.backOfHead), .back(.neck)],
         .back(.back): [.back(.torso), .back(.rightArmPit), .back(.leftArmPit), .back(.pelvisBack)],
         .back(.leftArm): [.back(.leftUpperArm), .back(.leftArmElbow), .back(.leftUnderArm), .back(.leftBackOfHand)],
@@ -71,42 +71,38 @@ public enum BodyPart: Sendable, Equatable, Hashable, Identifiable {
         .back(.rightLeg): [.back(.rightThigh), .back(.rightHollowOfKnee), .back(.rightCalf), .back(.rightFoot)],
     ]
 
-    public static let neutralBack: [BodyPart] = [
-        BodyPart.back(.head),
-        BodyPart.back(.neck),
-        BodyPart.back(.leftArm),
-        BodyPart.back(.leftBackOfHand),
-        BodyPart.back(.rightArm),
-        BodyPart.back(.rightBackOfHand),
-        BodyPart.back(.back),
-        BodyPart.back(.pelvisBack),
-        BodyPart.back(.leftLeg),
-        BodyPart.back(.leftFoot),
-        BodyPart.back(.rightLeg),
-        BodyPart.back(.rightFoot),
+    public static let neutralBack: [VGRBodyPart] = [
+        VGRBodyPart.back(.head),
+        VGRBodyPart.back(.neck),
+        VGRBodyPart.back(.leftArm),
+        VGRBodyPart.back(.leftBackOfHand),
+        VGRBodyPart.back(.rightArm),
+        VGRBodyPart.back(.rightBackOfHand),
+        VGRBodyPart.back(.back),
+        VGRBodyPart.back(.pelvisBack),
+        VGRBodyPart.back(.leftLeg),
+        VGRBodyPart.back(.leftFoot),
+        VGRBodyPart.back(.rightLeg),
+        VGRBodyPart.back(.rightFoot),
     ]
 
+    /// returns a side for body parts that need to distinguish between sides (left & right), for example legs & arms
     public enum BodySide: String {
         case left = "side.left"
         case right = "side.right"
         case notApplicable
     }
 
-    /// returns a side for body parts that need to distinguish between sides (left & right), for example legs & arms
-    public var side: BodySide { //TODO: Behöver lägga till alla
-        switch self {
-            case .front(.leftArm), .front(.leftLeg), .back(.leftArm), .back(.leftLeg), .front(.leftArmPit), .back(.leftArmPit):
-                return .left
-            case .front(.rightArm), .front(.rightLeg), .back(.rightArm), .back(.rightLeg), .front(.rightArmPit), .back(.rightArmPit):
-                return .right
-            default:
-                return .notApplicable
-        }
+    public var side: BodySide {
+        let id = self.id
+        if id.contains("left") { return .left }
+        if id.contains("right") { return .right }
+        return .notApplicable
     }
 
     /// used for sorting when drawing, to avoid overlapping body parts
-    var drawOrder: Int {
-        let isLowerOrder = BodyPart.neutralBack.contains(self) || BodyPart.neutralFront.contains(self) || self == .front(.torso) || self == .back(.torso)
+    public var drawOrder: Int {
+        let isLowerOrder = VGRBodyPart.neutralBack.contains(self) || VGRBodyPart.neutralFront.contains(self) || self == .front(.torso) || self == .back(.torso)
         return isLowerOrder ? 0 : 1
     }
 

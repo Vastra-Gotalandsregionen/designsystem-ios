@@ -5,18 +5,18 @@ import SwiftUI
 /// Tapping the parent selects or deselects all children. Tapping individual children updates
 /// their selection state and may affect the parent's selection state. The selection state is
 /// managed locally and changes are propagated through the `onChange` callback.
-struct BodyPartSelectionView: View {
+struct VGRBodyPartSelectionView: View {
 
-    let parent: BodyPart
-    let children: [BodyPart]
+    let parent: VGRBodyPart
+    let children: [VGRBodyPart]
 
-    @State var localSelection: Set<BodyPart>
-    let onChange: (Set<BodyPart>) -> Void
+    @State var localSelection: Set<VGRBodyPart>
+    let onChange: (Set<VGRBodyPart>) -> Void
 
-    init(parent: BodyPart,
-         children: [BodyPart],
-         selection: Set<BodyPart>,
-         onChange: @escaping (Set<BodyPart>) -> Void) {
+    init(parent: VGRBodyPart,
+         children: [VGRBodyPart],
+         selection: Set<VGRBodyPart>,
+         onChange: @escaping (Set<VGRBodyPart>) -> Void) {
         
         self.parent = parent
         self.children = children
@@ -27,7 +27,7 @@ struct BodyPartSelectionView: View {
     }
 
     /// selectBodyPart handles selection and deselection of individual bodyparts aswell as grouped bodyparts
-    func selectBodyPart(_ part: BodyPart, isParent: Bool = false) {
+    func selectBodyPart(_ part: VGRBodyPart, isParent: Bool = false) {
         if isParent {
             let shouldDeselect = localSelection.contains(parent)
             if shouldDeselect {
@@ -64,9 +64,9 @@ struct BodyPartSelectionView: View {
                     Divider()
                         .background(Color.Neutral.divider)
 
-
                     Item(part: child, isSelected: localSelection.contains(child))
-                        .padding(.horizontal, 32)
+                        .padding(.leading, 32)
+                        .padding(.trailing, 16)
                         .padding(.vertical, 16)
                         .onTapGesture {
                             selectBodyPart(child)
@@ -83,7 +83,7 @@ struct BodyPartSelectionView: View {
     }
 
     private struct Item: View {
-        let part: BodyPart
+        let part: VGRBodyPart
         let isSelected: Bool
 
         var a11yLabel: String {
@@ -118,10 +118,10 @@ struct BodyPartSelectionView: View {
 }
 
 #Preview {
-    let parent: BodyPart = .front(.leftArm)
-    let children: [BodyPart] = [.front(.leftUpperArm), .front(.leftArmFold), .front(.leftUnderArm), .front(.leftPalm)]
+    let parent: VGRBodyPart = .front(.leftArm)
+    let children: [VGRBodyPart] = [.front(.leftUpperArm), .front(.leftArmFold), .front(.leftUnderArm), .front(.leftPalm)]
 
-    BodyPartSelectionView(parent: parent, children: children, selection: [.front(.leftUpperArm)]) { selected in
+    VGRBodyPartSelectionView(parent: parent, children: children, selection: [.front(.leftUpperArm)]) { selected in
         for part in selected { print("- ", part.id) }
     }
 }
