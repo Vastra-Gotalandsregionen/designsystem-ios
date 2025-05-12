@@ -1,6 +1,6 @@
-# BodyPickerView
+# VGRBodyPickerView
 
-`BodyPickerView` är en SwiftUI-komponent som gör det möjligt för användare att visuellt välja delar av kroppen, både fram- och baksida, via en interaktiv kroppsvy.
+`VGRBodyPickerView` är en SwiftUI-komponent som gör det möjligt för användare att visuellt välja delar av kroppen, både fram- och baksida, via en interaktiv kroppsvy.
 
 ## Funktionalitet
 
@@ -11,9 +11,14 @@
 ## Användning
 
 ```swift
-@State var frontSelected: Set<BodyPart> = []
-@State var backSelected: Set<BodyPart> = []
+@State var frontSelected: Set<VGRBodyPart> = []
+@State var backSelected: Set<VGRBodyPart> = []
 
 BodyPickerView(frontSelectedParts: $frontSelected,
                backSelectedParts: $backSelected)
 ```
+
+
+# VGRBodyView
+
+`VGRBodyView` är en SwiftUI-komponent som gör det att visa en kropp (både fram- och baksida) med valda delar.

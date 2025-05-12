@@ -10,7 +10,13 @@ public extension String {
     func localizedFormat(arguments: CVarArg...) -> String {
         return String(format: localized, arguments: arguments)
     }
-    
+
+    func localizedBundleFormat(arguments: CVarArg...) -> String {
+        let bundle = Bundle.module
+        let locStr = NSLocalizedString(self, tableName: "Localizable", bundle: bundle, value: "", comment: "")
+        return String(format: locStr, arguments: arguments)
+    }
+
     var capitalizeFirstLetterRestLowercase: String {
         return prefix(1).uppercased() + lowercased().dropFirst()
     }
@@ -20,7 +26,6 @@ public extension String {
         let bundle = Bundle.module
         return NSLocalizedString(self, tableName: "Localizable", bundle: bundle, comment: "")
     }
-
 
 }
 

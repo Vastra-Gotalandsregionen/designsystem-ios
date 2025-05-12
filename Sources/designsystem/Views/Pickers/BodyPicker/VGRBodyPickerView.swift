@@ -12,23 +12,23 @@ import SwiftUI
 ///   - fillColorSelection: The fill color used to highlight selected body parts.
 ///   - strokeColor: The stroke color for body parts.
 ///   - strokeColorSelection: The stroke color for selected body parts.
-public struct BodyPickerView: View {
-    @Binding var frontSelectedParts: Set<BodyPart>
-    @Binding var backSelectedParts: Set<BodyPart>
+public struct VGRBodyPickerView: View {
+    @Binding var frontSelectedParts: Set<VGRBodyPart>
+    @Binding var backSelectedParts: Set<VGRBodyPart>
 
     var fillColor: Color = Color.Accent.brownSurface
     var fillColorSelection: Color = Color.Accent.pinkGraphic
     var strokeColor: Color = Color.black
     var strokeColorSelection: Color = Color.black
-    
+
     @State private var bodySide: Int = 0
-    
-    public init(frontSelectedParts: Binding<Set<BodyPart>>,
-        backSelectedParts: Binding<Set<BodyPart>>) {
-            self._frontSelectedParts = frontSelectedParts
-            self._backSelectedParts = backSelectedParts
-        }
-    
+
+    public init(frontSelectedParts: Binding<Set<VGRBodyPart>>,
+                backSelectedParts: Binding<Set<VGRBodyPart>>) {
+        self._frontSelectedParts = frontSelectedParts
+        self._backSelectedParts = backSelectedParts
+    }
+
     public var body: some View {
         VStack {
             Picker("bodypicker.title".localizedBundle, selection: $bodySide) {
@@ -36,29 +36,29 @@ public struct BodyPickerView: View {
                 Text("bodypicker.back".localizedBundle).tag(1)
             }
             .pickerStyle(.segmented)
-            
+
             HStack(alignment: .center) {
                 if bodySide == 0 {
-                    BodyView(selectedParts: $frontSelectedParts,
-                             bodyHierarchy: BodyPart.frontHierarchy,
-                             bodyParts: BodyPart.neutralFront,
-                             overlayParts: [.front(.faceFeatures)],
-                             fillColor: fillColor,
-                             fillColorSelection: fillColorSelection,
-                             strokeColor: strokeColor,
-                             strokeColorSelection: strokeColorSelection)
+                    VGRBodySelectionView(selectedParts: $frontSelectedParts,
+                                      bodyHierarchy: VGRBodyPart.frontHierarchy,
+                                      bodyParts: VGRBodyPart.neutralFront,
+                                      overlayParts: [.front(.faceFeatures)],
+                                      fillColor: fillColor,
+                                      fillColorSelection: fillColorSelection,
+                                      strokeColor: strokeColor,
+                                      strokeColorSelection: strokeColorSelection)
                 } else {
-                    BodyView(selectedParts: $backSelectedParts,
-                             bodyHierarchy: BodyPart.backHierarchy,
-                             bodyParts: BodyPart.neutralBack,
-                             fillColor: fillColor,
-                             fillColorSelection: fillColorSelection,
-                             strokeColor: strokeColor,
-                             strokeColorSelection: strokeColorSelection)
+                    VGRBodySelectionView(selectedParts: $backSelectedParts,
+                                      bodyHierarchy: VGRBodyPart.backHierarchy,
+                                      bodyParts: VGRBodyPart.neutralBack,
+                                      fillColor: fillColor,
+                                      fillColorSelection: fillColorSelection,
+                                      strokeColor: strokeColor,
+                                      strokeColorSelection: strokeColorSelection)
                 }
             }
             .padding(.top, 32)
-            
+
         }
         .padding(16)
         .cornerRadius(16)
@@ -66,12 +66,12 @@ public struct BodyPickerView: View {
 }
 
 #Preview {
-    @Previewable @State var frontSelectedParts: Set<BodyPart> = []
-    @Previewable @State var backSelectedParts: Set<BodyPart> = []
-    
+    @Previewable @State var frontSelectedParts: Set<VGRBodyPart> = []
+    @Previewable @State var backSelectedParts: Set<VGRBodyPart> = []
+
     NavigationStack {
         ScrollView {
-            BodyPickerView(frontSelectedParts: $frontSelectedParts,
+            VGRBodyPickerView(frontSelectedParts: $frontSelectedParts,
                            backSelectedParts: $backSelectedParts)
             .background(Color.Elevation.elevation1)
             .clipShape(RoundedRectangle(cornerRadius: 16))

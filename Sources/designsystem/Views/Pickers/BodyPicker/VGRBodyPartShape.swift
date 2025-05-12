@@ -3,10 +3,10 @@ import SwiftUI
 
 /// A `Shape` that renders a specific body part using a vector path.
 ///
-/// The shape is based on a `BodyPart` and normalized to fit the given
+/// The shape is based on a `VGRBodyPart` and normalized to fit the given
 /// rectangle while preserving aspect ratio. 
-struct BodyPartShape: Shape {
-    let bodyPart: BodyPart
+struct VGRBodyPartShape: Shape {
+    let bodyPart: VGRBodyPart
 
     func path(in rect: CGRect) -> Path {
         let bpath = UIBezierPath()
