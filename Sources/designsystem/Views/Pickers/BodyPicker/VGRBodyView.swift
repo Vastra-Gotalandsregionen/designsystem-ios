@@ -77,6 +77,7 @@ public struct VGRBodyView: View {
                 /// Draw non-selectable overlay parts (such as facial features)
                 ForEach(overlayParts, id:\.self) { part in
                     VGRBodyPartShape(bodyPart: part)
+                        .stroke(strokeColor, lineWidth: strokeWidth)
                         .accessibilityHidden(true)
                 }
             }
