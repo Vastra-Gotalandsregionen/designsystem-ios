@@ -7,12 +7,12 @@ import SwiftUI
 /// its child parts.
 ///
 /// Use `bodyHierarchy`, `bodyParts`, and `overlayParts` to configure the visible body layout.
-struct VGRBodySelectionView: View {
+struct VGRBodyPartDataSelectionView: View {
 
     @Binding var selectedParts: Set<VGRBodyPart>
 
     /// The hierarchy defining which body parts are containers and their child parts.
-    let bodyHierarchy: [VGRBodyPart: [VGRBodyPart]]
+    let bodyHierarchy: [VGRBodyPartData]
 
     /// The flat list of body parts used to render the base shape of the body.
     let bodyParts: [VGRBodyPart]
@@ -35,7 +35,8 @@ struct VGRBodySelectionView: View {
     ///
     /// If the part itself is a container, it returns the part.
     func getContainer(_ part: VGRBodyPart) -> VGRBodyPart? {
-        bodyHierarchy.keys.contains(part) ? part : bodyHierarchy.first(where: { $0.value.contains(part) })?.key
+//        bodyHierarchy.keys.contains(part) ? part : bodyHierarchy.first(where: { $0.value.contains(part) })?.key
+        return nil
     }
 
     func selectBodyPart(_ part: VGRBodyPart) {
@@ -82,23 +83,23 @@ struct VGRBodySelectionView: View {
         }
         .frame(maxWidth: .infinity)
         /// Modal sheet for selecting children of a container part
-        .sheet(item: $parentBodyPart) {
-            print("dismissing")
-        } content: { part in
-            VGRBodyPartSelectionView(parent: part,
-                                     children: bodyHierarchy[part] ?? [],
-                                     selection: selectedParts) { selection in
-                print("Selection changed: \(selection)")
-
-                /// Remove the parent and its children from the main selection
-                selectedParts.subtract([part] + (bodyHierarchy[part] ?? []))
-
-                /// Add the updated selection
-                selectedParts.formUnion(selection)
-            }
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-        }
+//        .sheet(item: $parentBodyPart) {
+//            print("dismissing")
+//        } content: { part in
+//            VGRBodyPartSelectionView(parent: part,
+//                                     children: bodyHierarchy[part] ?? [],
+//                                     selection: selectedParts) { selection in
+//                print("Selection changed: \(selection)")
+//
+//                /// Remove the parent and its children from the main selection
+//                selectedParts.subtract([part] + (bodyHierarchy[part] ?? []))
+//
+//                /// Add the updated selection
+//                selectedParts.formUnion(selection)
+//            }
+//            .presentationDetents([.medium, .large])
+//            .presentationDragIndicator(.visible)
+//        }
     }
 }
 
@@ -119,26 +120,5 @@ struct VGRBodySelectionView: View {
         .frame(maxWidth: .infinity)
         .background(.cyan)
         .navigationTitle("bodypicker.title".localizedBundle)
-    }
-}
-
-#Preview("Back") {
-    @Previewable @State var selectedBodyParts: Set<VGRBodyPart> = [.back(.leftArmElbow)]
-
-    NavigationStack {
-        ScrollView {
-            VGRBodySelectionView(selectedParts: $selectedBodyParts,
-                     bodyHierarchy: VGRBodyPart.backHierarchy,
-                     bodyParts: VGRBodyPart.neutralBack,
-                     overlayParts: [],
-                     fillColor: Color(red: 231/255, green: 225/255, blue: 223/255),
-                     fillColorSelection: Color(red: 238/255, green: 100/255, blue: 146/255),
-                     strokeColor: Color.black,
-                     strokeColorSelection: Color.black)
-        }
-        .frame(maxWidth: .infinity)
-        .background(.cyan)
-        .navigationTitle("bodypicker.title".localizedBundle)
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
