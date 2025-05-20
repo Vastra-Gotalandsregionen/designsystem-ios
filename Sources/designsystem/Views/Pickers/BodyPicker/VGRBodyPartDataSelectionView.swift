@@ -1,124 +1,139 @@
 import SwiftUI
 
-/// A view that displays a segmented human body (front or back) with selectable regions.
+/// A view that displays a parent body part and its child parts as selectable items.
 ///
-/// The view renders a vector body layout using `VGRBodyPartShape`s and highlights
-/// selected regions. Tapping a container region opens a modal sheet for selecting
-/// its child parts.
-///
-/// Use `bodyHierarchy`, `bodyParts`, and `overlayParts` to configure the visible body layout.
+/// Tapping the parent selects or deselects all children. Tapping individual children updates
+/// their selection state and may affect the parent's selection state. The selection state is
+/// managed locally and changes are propagated through the `onChange` callback.
 struct VGRBodyPartDataSelectionView: View {
 
-    @Binding var selectedParts: Set<VGRBodyPart>
+    let orientation: VGRBodyOrientation
+    let parent: VGRBodyPartData
+    let children: [VGRBodyPartData]
 
-    /// The hierarchy defining which body parts are containers and their child parts.
-    let bodyHierarchy: [VGRBodyPartData]
-
-    /// The flat list of body parts used to render the base shape of the body.
-    let bodyParts: [VGRBodyPart]
-
-    /// Overlay-only parts such as face features that should be drawn but not selectable.
-    var overlayParts: [VGRBodyPart] = []
-
-    let fillColor: Color
-    let fillColorSelection: Color
-    let strokeColor: Color
-    let strokeColorSelection: Color
-
-    /// Whether to show the modal sheet for container part selection.
-    @State private var showModal: Bool = false
-
-    /// The container body part currently being edited in the modal.
-    @State private var parentBodyPart: VGRBodyPart? = nil
-
-    /// Returns the container (parent) body part for a given part.
-    ///
-    /// If the part itself is a container, it returns the part.
-    func getContainer(_ part: VGRBodyPart) -> VGRBodyPart? {
-//        bodyHierarchy.keys.contains(part) ? part : bodyHierarchy.first(where: { $0.value.contains(part) })?.key
-        return nil
+    /// filteredChildren returns the VGRBodyPartData elements that are in the current orientation
+    var filteredChildren: [VGRBodyPartData] {
+        children.filter { $0.visualparts[orientation] != nil }
     }
 
-    func selectBodyPart(_ part: VGRBodyPart) {
-        if let cnt = getContainer(part) {
-            parentBodyPart = cnt
+    @State var localSelection: Set<String>
+    let onChange: (Set<String>) -> Void
+
+    init(_ orientation: VGRBodyOrientation,
+         parent: VGRBodyPartData,
+         children: [VGRBodyPartData],
+         selection: Set<String>,
+         onChange: @escaping (Set<String>) -> Void) {
+
+        self.orientation = orientation
+        self.parent = parent
+        self.children = children
+        self.onChange = onChange
+
+        let filtered = children.filter { $0.visualparts[orientation] != nil }
+        let tempSelection = selection.intersection([parent.id] + filtered.map { $0.id })
+        self.localSelection = State(initialValue: tempSelection).wrappedValue
+    }
+
+    /// selectBodyPart handles selection and deselection of individual bodyparts aswell as grouped bodyparts
+    func selectBodyPart(_ part: String, isParent: Bool = false) {
+        if isParent {
+            let shouldDeselect = localSelection.contains(parent.id)
+            if shouldDeselect {
+                localSelection.remove(parent.id)
+                localSelection.subtract(filteredChildren.map { $0.id })
+            } else {
+                localSelection.insert(parent.id)
+                localSelection.formUnion(filteredChildren.map { $0.id })
+            }
+        } else {
+            localSelection.formSymmetricDifference([part])
+
+            if filteredChildren.map({ $0.id }).allSatisfy(localSelection.contains) {
+                localSelection.insert(parent.id)
+            } else {
+                localSelection.remove(parent.id)
+            }
         }
+
+        onChange(localSelection)
     }
 
     var body: some View {
-        VStack {
-            ZStack {
-                /// Draw the default body shape
-                ForEach(bodyParts, id: \.self) { bodyPart in
-                    VGRBodyPartShape(bodyPart: bodyPart)
-                        .fill(fillColor)
-                        .stroke(strokeColor, lineWidth: selectedParts.contains(bodyPart) ? 0 : 1)
-                        .contentShape(VGRBodyPartShape(bodyPart: bodyPart))
+        VStack(alignment: .leading) {
+            VStack(spacing: 0) {
+                Item(part: parent, isSelected: localSelection.contains(parent.id))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 16)
+                    .onTapGesture {
+                        selectBodyPart(parent.id, isParent: true)
+                    }
+
+                ForEach(Array(filteredChildren), id: \.id) { child in
+                    Divider()
+                        .background(Color.Neutral.divider)
+
+                    Item(part: child, isSelected: localSelection.contains(child.id))
+                        .padding(.leading, 32)
+                        .padding(.trailing, 16)
+                        .padding(.vertical, 16)
                         .onTapGesture {
-                            selectBodyPart(bodyPart)
+                            selectBodyPart(child.id)
                         }
-                        .accessibilityLabel("bodypicker.\(bodyPart.id)".localizedBundle)
-                        .accessibilityAction(named: "bodypicker.select".localizedBundle, {
-                            selectBodyPart(bodyPart)
-                        })
-                }
-
-                /// Draw the selected body parts, in correct order to avoid overlap
-                ForEach(selectedParts.sorted(by: { $0.drawOrder < $1.drawOrder }), id: \.self) { part in
-                    VGRBodyPartShape(bodyPart: part)
-                        .fill(fillColorSelection)
-                        .stroke(strokeColorSelection, lineWidth: 1)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-                }
-
-                /// Draw non-selectable overlay parts (such as facial features)
-                ForEach(overlayParts, id:\.self) { part in
-                    VGRBodyPartShape(bodyPart: part)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
                 }
             }
-            .frame(width: 296, height: 815)
+            .background(Color.Elevation.elevation1)
+            .cornerRadius(8)
         }
-        .frame(maxWidth: .infinity)
-        /// Modal sheet for selecting children of a container part
-//        .sheet(item: $parentBodyPart) {
-//            print("dismissing")
-//        } content: { part in
-//            VGRBodyPartSelectionView(parent: part,
-//                                     children: bodyHierarchy[part] ?? [],
-//                                     selection: selectedParts) { selection in
-//                print("Selection changed: \(selection)")
-//
-//                /// Remove the parent and its children from the main selection
-//                selectedParts.subtract([part] + (bodyHierarchy[part] ?? []))
-//
-//                /// Add the updated selection
-//                selectedParts.formUnion(selection)
-//            }
-//            .presentationDetents([.medium, .large])
-//            .presentationDragIndicator(.visible)
-//        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 32)
+        .frame(maxHeight: .infinity, alignment: .top)
+        .background(Color.Elevation.background)
+    }
+
+    private struct Item: View {
+        let part: VGRBodyPartData
+        let isSelected: Bool
+
+        var a11yLabel: String {
+            let name = "bodypicker.\(part.id)".localizedBundle
+            return isSelected ? "\(name), \("general.selected".localizedBundle)" : name
+        }
+
+        var body: some View {
+            HStack(spacing: 4) {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(Color.Primary.action)
+
+                Text("bodypicker.\(part.id)".localizedBundle)
+                    .font(.body.weight(.medium))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                if part.side != .notApplicable {
+                    Text("bodypicker.\(part.side.rawValue)".localizedBundle)
+                        .font(.caption2).fontWeight(.semibold)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .foregroundStyle(Color.Status.successText)
+                        .background(Color.Status.successSurface)
+                        .cornerRadius(46)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .accessibilityLabel(a11yLabel)
+        }
     }
 }
 
-#Preview("Front") {
-    @Previewable @State var selectedBodyParts: Set<VGRBodyPart> = [.front(.leftArmFold), .front(.scalp)]
+#Preview {
+    let parent: VGRBodyPartData = VGRBodyPartData.body.randomElement()!
+    let selected: Set<String> = [parent.subparts.randomElement()!.id]
 
-    NavigationStack {
-        ScrollView {
-            VGRBodySelectionView(selectedParts: $selectedBodyParts,
-                     bodyHierarchy: VGRBodyPart.frontHierarchy,
-                     bodyParts: VGRBodyPart.neutralFront,
-                     overlayParts: [.front(.faceFeatures)],
-                     fillColor: Color(red: 231/255, green: 225/255, blue: 223/255),
-                     fillColorSelection: Color(red: 238/255, green: 100/255, blue: 146/255),
-                     strokeColor: Color.black,
-                     strokeColorSelection: Color.black)
-        }
-        .frame(maxWidth: .infinity)
-        .background(.cyan)
-        .navigationTitle("bodypicker.title".localizedBundle)
+    VGRBodyPartDataSelectionView(.front,
+                                 parent: parent,
+                                 children: parent.subparts,
+                                 selection: selected) { selected in
+        for part in selected { print("- ", part) }
     }
 }

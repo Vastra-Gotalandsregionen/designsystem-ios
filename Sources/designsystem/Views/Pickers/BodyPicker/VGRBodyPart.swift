@@ -102,7 +102,7 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
 
     /// used for sorting when drawing, to avoid overlapping body parts
     public var drawOrder: Int {
-        let isLowerOrder = VGRBodyPart.neutralBack.contains(self) || VGRBodyPart.neutralFront.contains(self) || self == .front(.torso) || self == .back(.torso)
+        let isLowerOrder = VGRBodyPart.neutralBack.contains(self) || VGRBodyPart.neutralFront.contains(self) || self == .front(.torso) || self == .back(.torso) || self == .front(.face)
         return isLowerOrder ? 0 : 1
     }
 
