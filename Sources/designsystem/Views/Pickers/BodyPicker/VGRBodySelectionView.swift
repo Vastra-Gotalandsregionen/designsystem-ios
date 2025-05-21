@@ -13,6 +13,8 @@ struct VGRBodySelectionView: View {
 
     @Binding var selectedParts: Set<String>
 
+    /// drawableSelectedParts returns the VGRBodyParts that can be drawn using the
+    /// bodyHieararchy and the selectedParts property
     private var drawableSelectedParts: Set<VGRBodyPart> {
         func collect(from parts: [VGRBodyPartData]) -> [VGRBodyPart] {
             parts.flatMap { part in
@@ -61,7 +63,7 @@ struct VGRBodySelectionView: View {
     /// Returns the container (parent) body part for a given part.
     ///
     /// If the part itself is a container, it returns the part.
-    func getContainer(for visualPart: VGRBodyPart, in parts: [VGRBodyPartData]) -> VGRBodyPartData? {
+    private func getContainer(for visualPart: VGRBodyPart, in parts: [VGRBodyPartData]) -> VGRBodyPartData? {
         for dataPart in parts {
             /// Check current part
             if dataPart.visualparts.values.contains(visualPart) {
@@ -79,10 +81,34 @@ struct VGRBodySelectionView: View {
         return nil
     }
 
-    func selectBodyPart(_ part: VGRBodyPart) {
+    private func selectBodyPart(_ part: VGRBodyPart) {
         if let cnt = getContainer(for: part, in: bodyHierarchy) {
             parentBodyPart = cnt
         }
+    }
+
+    private func a11yLabel(for part: VGRBodyPart) -> String {
+        func findPart(matching part: VGRBodyPart, in parts: [VGRBodyPartData]) -> VGRBodyPartData? {
+            for data in parts {
+                /// Check if this data has the visual part
+                if data.visualparts.values.contains(part) {
+                    return data
+                }
+                /// Recursively search subparts
+                if let match = findPart(matching: part, in: data.subparts) {
+                    return match
+                }
+            }
+            return nil
+        }
+
+        guard let match = findPart(matching: part, in: VGRBodyPartData.body) else {
+            return "bodypicker.unknown".localizedBundle
+        }
+
+        let sideKey = match.side == .notApplicable ? "" : "bodypicker.side.\(match.side)".localizedBundle + " "
+        let nameKey = "bodypicker.\(match.id)".localizedBundle
+        return (sideKey + nameKey)
     }
 
     var body: some View {
@@ -92,12 +118,12 @@ struct VGRBodySelectionView: View {
                 ForEach(defaultBodyParts, id: \.self) { bodyPart in
                     VGRBodyPartShape(bodyPart: bodyPart)
                         .fill(fillColor)
-                        .stroke(strokeColor, lineWidth: strokeWidth)
+                        .stroke(strokeColor, lineWidth: drawableSelectedParts.contains(bodyPart) ? 0 : strokeWidth)
                         .contentShape(VGRBodyPartShape(bodyPart: bodyPart))
                         .onTapGesture {
                             selectBodyPart(bodyPart)
                         }
-                        .accessibilityLabel("bodypicker.\(bodyPart.id)".localizedBundle)
+                        .accessibilityLabel(a11yLabel(for: bodyPart))
                         .accessibilityAction(named: "bodypicker.select".localizedBundle, {
                             selectBodyPart(bodyPart)
                         })
@@ -127,11 +153,10 @@ struct VGRBodySelectionView: View {
         .sheet(item: $parentBodyPart) {
             print("dismissing")
         } content: { part in
-            VGRBodyPartDataSelectionView(orientation,
-                                         parent: part,
-                                         children: part.subparts,
-                                         selection: selectedParts) { selection in
-                print("Selection changed: \(selection)")
+            VGRBodyPartSelectionView(orientation,
+                                     parent: part,
+                                     children: part.subparts,
+                                     selection: selectedParts) { selection in
 
                 /// Remove the parent and its children from the main selection
                 selectedParts.subtract([part.id] + (part.subparts.map { $0.id }))

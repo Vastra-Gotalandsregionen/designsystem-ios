@@ -7,43 +7,46 @@ import SwiftUI
 /// managed locally and changes are propagated through the `onChange` callback.
 struct VGRBodyPartSelectionView: View {
 
-    let parent: VGRBodyPart
-    let children: [VGRBodyPart]
+    let orientation: VGRBodyOrientation
+    let parent: VGRBodyPartData
+    let children: [VGRBodyPartData]
 
-    @State var localSelection: Set<VGRBodyPart>
-    let onChange: (Set<VGRBodyPart>) -> Void
+    @State var localSelection: Set<String>
+    let onChange: (Set<String>) -> Void
 
-    init(parent: VGRBodyPart,
-         children: [VGRBodyPart],
-         selection: Set<VGRBodyPart>,
-         onChange: @escaping (Set<VGRBodyPart>) -> Void) {
-        
+    init(_ orientation: VGRBodyOrientation,
+         parent: VGRBodyPartData,
+         children: [VGRBodyPartData],
+         selection: Set<String>,
+         onChange: @escaping (Set<String>) -> Void) {
+
+        self.orientation = orientation
         self.parent = parent
         self.children = children
         self.onChange = onChange
 
-        let tempSelection = selection.intersection([parent] + children)
+        let tempSelection = selection.intersection([parent.id] + children.map { $0.id })
         self.localSelection = State(initialValue: tempSelection).wrappedValue
     }
 
     /// selectBodyPart handles selection and deselection of individual bodyparts aswell as grouped bodyparts
-    func selectBodyPart(_ part: VGRBodyPart, isParent: Bool = false) {
+    func selectBodyPart(_ part: String, isParent: Bool = false) {
         if isParent {
-            let shouldDeselect = localSelection.contains(parent)
+            let shouldDeselect = localSelection.contains(parent.id)
             if shouldDeselect {
-                localSelection.remove(parent)
-                localSelection.subtract(children)
+                localSelection.remove(parent.id)
+                localSelection.subtract(children.map { $0.id })
             } else {
-                localSelection.insert(parent)
-                localSelection.formUnion(children)
+                localSelection.insert(parent.id)
+                localSelection.formUnion(children.map { $0.id })
             }
         } else {
             localSelection.formSymmetricDifference([part])
 
-            if children.allSatisfy(localSelection.contains) {
-                localSelection.insert(parent)
+            if children.map({ $0.id }).allSatisfy(localSelection.contains) {
+                localSelection.insert(parent.id)
             } else {
-                localSelection.remove(parent)
+                localSelection.remove(parent.id)
             }
         }
 
@@ -53,23 +56,23 @@ struct VGRBodyPartSelectionView: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(spacing: 0) {
-                Item(part: parent, isSelected: localSelection.contains(parent))
+                Item(part: parent, isSelected: localSelection.contains(parent.id))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 16)
                     .onTapGesture {
-                        selectBodyPart(parent, isParent: true)
+                        selectBodyPart(parent.id, isParent: true)
                     }
 
                 ForEach(Array(children), id: \.id) { child in
                     Divider()
                         .background(Color.Neutral.divider)
 
-                    Item(part: child, isSelected: localSelection.contains(child))
+                    Item(part: child, isSelected: localSelection.contains(child.id))
                         .padding(.leading, 32)
                         .padding(.trailing, 16)
                         .padding(.vertical, 16)
                         .onTapGesture {
-                            selectBodyPart(child)
+                            selectBodyPart(child.id)
                         }
                 }
             }
@@ -83,7 +86,7 @@ struct VGRBodyPartSelectionView: View {
     }
 
     private struct Item: View {
-        let part: VGRBodyPart
+        let part: VGRBodyPartData
         let isSelected: Bool
 
         var a11yLabel: String {
@@ -101,7 +104,7 @@ struct VGRBodyPartSelectionView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 if part.side != .notApplicable {
-                    Text("bodypicker.\(part.side.rawValue)".localizedBundle)
+                    Text("bodypicker.side.\(part.side.rawValue)".localizedBundle)
                         .font(.caption2).fontWeight(.semibold)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
@@ -118,10 +121,13 @@ struct VGRBodyPartSelectionView: View {
 }
 
 #Preview {
-    let parent: VGRBodyPart = .front(.leftArm)
-    let children: [VGRBodyPart] = [.front(.leftUpperArm), .front(.leftArmFold), .front(.leftUnderArm), .front(.leftPalm)]
+    let parent: VGRBodyPartData = VGRBodyPartData.body.randomElement()!
+    let selected: Set<String> = [parent.subparts.randomElement()!.id]
 
-    VGRBodyPartSelectionView(parent: parent, children: children, selection: [.front(.leftUpperArm)]) { selected in
-        for part in selected { print("- ", part.id) }
+    VGRBodyPartSelectionView(.front,
+                             parent: parent,
+                             children: parent.subparts,
+                             selection: selected) { selected in
+        for part in selected { print("- ", part) }
     }
 }
