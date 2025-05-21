@@ -1,5 +1,8 @@
 import SwiftUI
 
+/// VGRBaseSegmentedControlView is a base component that can be used to build
+/// a variety of different pickers. It should not be used as-is, instead implement pickers using it.
+/// Have a look at the Preview to see whats possible.
 struct VGRBaseSegmentedControlView<Data, Content>: View where Data: Hashable, Content: View {
 
     let items: [Data]
@@ -112,7 +115,7 @@ struct VGRBaseSegmentedControlView<Data, Content>: View where Data: Hashable, Co
                             .foregroundStyle(selected ? Color.blue : Color.gray)
                             .overlay(
                                 Rectangle()
-                                    .frame(height: 3)
+                                    .frame(height: 2)
                                     .foregroundColor(selected ? .blue : .clear),
                                 alignment: .bottom
                             )
@@ -122,15 +125,42 @@ struct VGRBaseSegmentedControlView<Data, Content>: View where Data: Hashable, Co
                             }
                     }
                     .background(
-                       Rectangle().frame(height: 3).foregroundColor(.gray.opacity(0.3)), alignment: .bottom)
+                       Rectangle().frame(height: 2).foregroundColor(.gray.opacity(0.3)), alignment: .bottom)
                     .background(Color.Elevation.background)
                 } footer: {
-                    Text("\(selectedItem ?? "No selection")")
-                        .font(.body).fontWeight(.bold)
-                        .frame(maxWidth: .infinity)
+
+                    VStack(spacing: 0) {
+                        VGRBaseSegmentedControlView(items,
+                                                    insets: EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 0),
+                                                    selectedItem: $selectedItem) { item, selected in
+                            Label {
+                                Text(item)
+                                    .font(.footnote)
+                            } icon: {
+                                if selected {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(Color.white)
+                                }
+                            }
+                            .frame(idealWidth: 100)
+                            .frame(maxWidth: .infinity)
+                            .padding(8)
+                            .foregroundStyle(Color.white)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(selected ? Color.white : Color.white.opacity(0.2), lineWidth: 2)
+                            }
+                        }
                         .padding(.vertical, 32)
                         .background(Color.blue)
-                        .foregroundColor(.white)
+
+                        Text("\(selectedItem ?? "No selection")")
+                            .font(.body).fontWeight(.bold)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 32)
+                            .foregroundColor(.white)
+                            .background(Color.blue)
+                    }
                 }
             }
             .background(Color.Elevation.background)
