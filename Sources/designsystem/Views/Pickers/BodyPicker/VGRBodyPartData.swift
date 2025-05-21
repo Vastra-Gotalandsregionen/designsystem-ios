@@ -16,7 +16,7 @@ enum VGRBodySide: String {
     case notApplicable = ""
 }
 
-public enum VGRBodyOrientation : Sendable {
+public enum VGRBodyOrientation : String, Sendable, Hashable {
 	case front
 	case back
 }
