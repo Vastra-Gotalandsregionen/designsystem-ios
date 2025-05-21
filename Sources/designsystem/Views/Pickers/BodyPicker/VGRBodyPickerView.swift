@@ -16,7 +16,12 @@ public struct VGRBodyPickerView: View {
     var strokeWidth: CGFloat = 1
     var strokeColorSelection: Color = Color.black
 
-    @State private var orientation: VGRBodyOrientation = .front
+    @State private var orientationString: String?
+
+    var orientation: VGRBodyOrientation {
+        return orientationString == "bodypicker.front".localizedBundle ? .front : .back
+    }
+
 
     public init(selectedParts: Binding<Set<String>>) {
         self._selectedParts = selectedParts
@@ -24,11 +29,11 @@ public struct VGRBodyPickerView: View {
 
     public var body: some View {
         VStack {
-            Picker("bodypicker.title".localizedBundle, selection: $orientation) {
-                Text("bodypicker.front".localizedBundle).tag(VGRBodyOrientation.front)
-                Text("bodypicker.back".localizedBundle).tag(VGRBodyOrientation.back)
-            }
-            .pickerStyle(.segmented)
+            VGRSegmentedPicker(
+                items: ["bodypicker.front".localizedBundle,
+                        "bodypicker.back".localizedBundle],
+                selectedItem: $orientationString
+            )
 
             HStack(alignment: .center) {
                 VGRBodySelectionView(orientation: orientation,
@@ -40,7 +45,6 @@ public struct VGRBodyPickerView: View {
                                      strokeColorSelection: strokeColorSelection)
             }
             .padding(.top, 32)
-
         }
         .padding(16)
         .cornerRadius(16)
