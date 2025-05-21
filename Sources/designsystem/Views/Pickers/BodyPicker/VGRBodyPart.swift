@@ -24,28 +24,6 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
         }
     }
 
-    public static func fromID(_ id: String) -> VGRBodyPart? {
-        if id.starts(with: "front.") {
-            let key = id.replacingOccurrences(of: "front.", with: "")
-            return VGRBodyPart.Front(rawValue: key).map { .front($0) }
-        } else if id.starts(with: "back.") {
-            let key = id.replacingOccurrences(of: "back.", with: "")
-            return VGRBodyPart.Back(rawValue: key).map { .back($0) }
-        } else {
-            return nil
-        }
-    }
-
-    /// frontHierarchy describes the front body as a dictionary of parent-children relationships
-    public static let frontHierarchy: [VGRBodyPart: [VGRBodyPart]] = [
-        .front(.head): [.front(.scalp), .front(.face), .front(.throat)],
-        .front(.upperBody): [.front(.torso), .front(.rightArmPit), .front(.leftArmPit), .front(.pelvisFront)],
-        .front(.leftArm): [.front(.leftUpperArm), .front(.leftArmFold), .front(.leftUnderArm), .front(.leftPalm)],
-        .front(.rightArm): [.front(.rightUpperArm), .front(.rightArmFold), .front(.rightUnderArm), .front(.rightPalm)],
-        .front(.leftLeg): [.front(.leftThigh), .front(.leftKnee), .front(.leftCalf), .front(.leftFoot)],
-        .front(.rightLeg): [.front(.rightThigh), .front(.rightKnee), .front(.rightCalf), .front(.rightFoot)],
-    ]
-
     public static let neutralFront: [VGRBodyPart] = [
         VGRBodyPart.front(.head),
         VGRBodyPart.front(.throat),
@@ -59,16 +37,6 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
         VGRBodyPart.front(.leftFoot),
         VGRBodyPart.front(.rightLeg),
         VGRBodyPart.front(.rightFoot)
-    ]
-
-    /// backHierarchy describes the back body as a dictionary of parent-children relationships
-    public static let backHierarchy: [VGRBodyPart: [VGRBodyPart]] = [
-        .back(.head): [.back(.scalp), .back(.backOfHead), .back(.neck)],
-        .back(.back): [.back(.torso), .back(.rightArmPit), .back(.leftArmPit), .back(.pelvisBack)],
-        .back(.leftArm): [.back(.leftUpperArm), .back(.leftArmElbow), .back(.leftUnderArm), .back(.leftBackOfHand)],
-        .back(.rightArm): [.back(.rightUpperArm), .back(.rightArmElbow), .back(.rightUnderArm), .back(.rightBackOfHand)],
-        .back(.leftLeg): [.back(.leftThigh), .back(.leftHollowOfKnee), .back(.leftCalf), .back(.leftFoot)],
-        .back(.rightLeg): [.back(.rightThigh), .back(.rightHollowOfKnee), .back(.rightCalf), .back(.rightFoot)],
     ]
 
     public static let neutralBack: [VGRBodyPart] = [
@@ -86,23 +54,9 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
         VGRBodyPart.back(.rightFoot),
     ]
 
-    /// returns a side for body parts that need to distinguish between sides (left & right), for example legs & arms
-    public enum BodySide: String {
-        case left = "side.left"
-        case right = "side.right"
-        case notApplicable
-    }
-
-    public var side: BodySide {
-        let id = self.id
-        if id.contains("left") { return .left }
-        if id.contains("right") { return .right }
-        return .notApplicable
-    }
-
     /// used for sorting when drawing, to avoid overlapping body parts
     public var drawOrder: Int {
-        let isLowerOrder = VGRBodyPart.neutralBack.contains(self) || VGRBodyPart.neutralFront.contains(self) || self == .front(.torso) || self == .back(.torso)
+        let isLowerOrder = VGRBodyPart.neutralBack.contains(self) || VGRBodyPart.neutralFront.contains(self) || self == .front(.torso) || self == .back(.torso) || self == .front(.face)
         return isLowerOrder ? 0 : 1
     }
 
@@ -117,40 +71,40 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
     }
 
     public enum Back: String, CaseIterable, Sendable, Equatable {
-        case head = "head",
-             neck = "neck",
-             backOfHead = "of_head",
-             scalp = "scalp"
+        case head,
+             neck,
+             backOfHead,
+             scalp
 
-        case torso = "torso",
-             back = "back",
-             pelvisBack = "pelvis",
-             rightArmPit = "right_armpit",
-             leftArmPit = "left_armpit"
+        case torso,
+             back,
+             pelvisBack,
+             rightArmPit,
+             leftArmPit
 
-        case leftArm = "left_arm",
-             leftUpperArm = "left_upper_arm",
-             leftArmElbow = "left_arm_elbow",
-             leftUnderArm = "left_under_arm",
-             leftBackOfHand = "left_back_of_hand"
+        case leftArm,
+             leftUpperArm,
+             leftArmElbow,
+             leftUnderArm,
+             leftBackOfHand
 
-        case rightArm = "right_arm",
-             rightUpperArm = "right_upper_arm",
-             rightArmElbow = "right_arm_elbow",
-             rightUnderArm = "right_under_arm",
-             rightBackOfHand = "right_back_of_hand"
+        case rightArm,
+             rightUpperArm,
+             rightArmElbow,
+             rightUnderArm,
+             rightBackOfHand
 
-        case leftLeg = "left_leg",
-             leftThigh = "left_thigh",
-             leftHollowOfKnee = "left_hollow_of_knee",
-             leftCalf = "left_calf",
-             leftFoot = "left_foot"
+        case leftLeg,
+             leftThigh,
+             leftHollowOfKnee,
+             leftCalf,
+             leftFoot
 
-        case rightLeg = "right_leg",
-             rightThigh = "right_thigh",
-             rightHollowOfKnee = "right_hollow_of_knee",
-             rightCalf = "right_calf",
-             rightFoot = "right_foot"
+        case rightLeg,
+             rightThigh,
+             rightHollowOfKnee,
+             rightCalf,
+             rightFoot
 
         var path: UIBezierPath {
             switch self {

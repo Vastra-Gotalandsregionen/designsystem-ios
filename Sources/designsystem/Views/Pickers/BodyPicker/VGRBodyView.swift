@@ -5,49 +5,87 @@ import SwiftUI
 /// The view renders a vector body layout using `VGRBodyPartShape`s and highlights
 /// selected regions.
 ///
-/// Use `selectedParts`, `bodyParts`, and `overlayParts` to configure the visible body layout.
+/// Use `orientation` and `selectedParts` to configure the visible body layout.
 public struct VGRBodyView: View {
 
+    var orientation: VGRBodyOrientation
+
     /// List of selected parts (to be highlighted)
-    let selectedParts: Set<VGRBodyPart>
+    let selectedParts: Set<String>
+
+    private var drawableSelectedParts: Set<VGRBodyPart> {
+        func collect(from parts: [VGRBodyPartData]) -> [VGRBodyPart] {
+            parts.flatMap { part in
+                var result: [VGRBodyPart] = []
+
+                /// If selected, grab the visual part for current orientation
+                if selectedParts.contains(part.id),
+                   let visual = part.visualparts[orientation] {
+                    result.append(visual)
+                }
+
+                /// Recursively collect from subparts
+                result.append(contentsOf: collect(from: part.subparts))
+                return result
+            }
+        }
+
+        return Set(collect(from: VGRBodyPartData.body))
+    }
+
+    private var a11ySelectedParts: Set<VGRBodyPartData> {
+        func collect(from parts: [VGRBodyPartData]) -> [VGRBodyPartData] {
+            parts.flatMap { part in
+                var result: [VGRBodyPartData] = []
+
+                /// If selected and has a visual part for the orientation, include it
+                if selectedParts.contains(part.id),
+                   part.visualparts[orientation] != nil {
+                    result.append(part)
+                }
+
+                /// Recursively collect from subparts
+                result.append(contentsOf: collect(from: part.subparts))
+                return result
+            }
+        }
+
+        return Set(collect(from: VGRBodyPartData.body))
+    }
 
     /// The flat list of body parts used to render the base shape of the body.
-    let bodyParts: [VGRBodyPart]
+    private var defaultBodyParts: [VGRBodyPart] {
+        return orientation == .front ? VGRBodyPart.neutralFront : VGRBodyPart.neutralBack
+    }
 
     /// Overlay-only parts such as face features that should be drawn but not selectable.
-    var overlayParts: [VGRBodyPart] = []
+    private var overlayParts: [VGRBodyPart] {
+        return orientation == .front ? [.front(.faceFeatures)] : []
+    }
 
-    let fillColor: Color
-    let fillColorSelection: Color
-    let strokeColor: Color
-    var strokeWidth: CGFloat = 1
-    let strokeColorSelection: Color
+    var fillColor: Color
+    var fillColorSelection: Color
+    var strokeColor: Color
+    var strokeWidth: CGFloat
+    var strokeColorSelection: Color
 
     /// Returns a text summary of what body parts are selected
     var a11yLabel: String {
-        if selectedParts.count == 0 {
-            return "bodypicker.summary.none".localizedBundle
-        }
-        
-        let parts = selectedParts.map { part in
-            let prefix = part.side != .notApplicable ? "bodypicker.side.\(part.side)".localizedBundle : ""
-            let partName = "bodypicker.\(part.id)".localizedBundle
-            return [prefix.lowercased(), partName.lowercased()].joined(separator: " ")
-        }
-        return "bodypicker.summary".localizedBundleFormat(arguments: parts.joined(separator: ", "))
+        if a11ySelectedParts.count == 0 { return "bodypicker.summary.none".localizedBundle }
+        let parts = a11ySelectedParts.map { "bodypicker.\($0.id)".localizedBundle }
+        return "bodypicker.summary".localizedBundleFormat(arguments: ListFormatter.localizedString(byJoining: parts))
     }
 
-    public init(selectedParts: Set<VGRBodyPart>,
-                bodyParts: [VGRBodyPart],
-                overlayParts: [VGRBodyPart],
-                fillColor: Color,
-                fillColorSelection: Color,
-                strokeColor: Color,
+    public init(orientation: VGRBodyOrientation = .front,
+                selectedParts: Set<String>,
+                fillColor: Color = Color.Accent.brownSurface,
+                fillColorSelection: Color = Color.Accent.pinkGraphic,
+                strokeColor: Color = Color.black,
                 strokeWidth: CGFloat = 1,
-                strokeColorSelection: Color) {
+                strokeColorSelection: Color = Color.black) {
+
+        self.orientation = orientation
         self.selectedParts = selectedParts
-        self.bodyParts = bodyParts
-        self.overlayParts = overlayParts
         self.fillColor = fillColor
         self.fillColorSelection = fillColorSelection
         self.strokeColor = strokeColor
@@ -59,15 +97,15 @@ public struct VGRBodyView: View {
         VStack {
             ZStack {
                 /// Draw the default body shape
-                ForEach(bodyParts, id: \.self) { bodyPart in
+                ForEach(defaultBodyParts, id: \.self) { bodyPart in
                     VGRBodyPartShape(bodyPart: bodyPart)
                         .fill(fillColor)
-                        .stroke(strokeColor, lineWidth: selectedParts.contains(bodyPart) ? 0 : strokeWidth)
+                        .stroke(strokeColor, lineWidth: strokeWidth)
                         .accessibilityHidden(true)
                 }
 
                 /// Draw the selected body parts, in correct order to avoid overlap
-                ForEach(selectedParts.sorted(by: { $0.drawOrder < $1.drawOrder }), id: \.self) { part in
+                ForEach(drawableSelectedParts.sorted(by: { $0.drawOrder < $1.drawOrder }), id: \.self) { part in
                     VGRBodyPartShape(bodyPart: part)
                         .fill(fillColorSelection)
                         .stroke(strokeColorSelection, lineWidth: strokeWidth)
@@ -89,35 +127,21 @@ public struct VGRBodyView: View {
 }
 
 #Preview {
-    let selectedFrontBodyParts: Set<VGRBodyPart> = [.front(.leftArmFold), .front(.scalp)]
-    let selectedBackBodyParts: Set<VGRBodyPart> = [.back(.leftArmElbow), .back(.rightHollowOfKnee)]
+    let selectedParts: Set<String> = ["left.upper.leg", "head.scalp", "head.face", "right.under.arm", "right.foot", "right.knee", "right.hollow.of.knee"]
 
     NavigationStack {
         ScrollView {
             HStack {
-                VGRBodyView(selectedParts: selectedFrontBodyParts,
-                         bodyParts: VGRBodyPart.neutralFront,
-                         overlayParts: [.front(.faceFeatures)],
-                         fillColor: Color(red: 231/255, green: 225/255, blue: 223/255),
-                         fillColorSelection: Color(red: 238/255, green: 100/255, blue: 146/255),
-                         strokeColor: Color.black,
-                         strokeWidth: 0.5,
-                         strokeColorSelection: Color.black)
-                .frame(width: 100, height: 300)
+                VGRBodyView(orientation: .front, selectedParts: selectedParts, strokeWidth: 0.5)
+                    .frame(width: 100, height: 300)
 
-                VGRBodyView(selectedParts: selectedBackBodyParts,
-                         bodyParts: VGRBodyPart.neutralBack,
-                         overlayParts: [],
-                         fillColor: Color(red: 231/255, green: 225/255, blue: 223/255),
-                         fillColorSelection: Color(red: 238/255, green: 100/255, blue: 146/255),
-                         strokeColor: Color.black,
-                         strokeColorSelection: Color.black)
-                .frame(width: 100, height: 300)
+                VGRBodyView(orientation: .back, selectedParts: selectedParts)
+                    .frame(width: 100, height: 300)
             }
         }
         .frame(maxWidth: .infinity)
         .background(.cyan)
-        .navigationTitle("VGRBodyView")
+        .navigationTitle("VGRBodyDataView")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
