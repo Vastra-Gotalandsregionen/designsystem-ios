@@ -22,7 +22,6 @@ public struct VGRBodyPickerView: View {
         return orientationString == "bodypicker.front".localizedBundle ? .front : .back
     }
 
-
     public init(selectedParts: Binding<Set<String>>) {
         self._selectedParts = selectedParts
     }
