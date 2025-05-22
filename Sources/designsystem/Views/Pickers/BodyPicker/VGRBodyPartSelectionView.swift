@@ -108,8 +108,8 @@ struct VGRBodyPartSelectionView: View {
                         .font(.caption2).fontWeight(.semibold)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
-                        .foregroundStyle(Color.Status.successText)
-                        .background(Color.Status.successSurface)
+                        .foregroundStyle(part.side == .left ? Color.Status.errorText : Color.Status.successText)
+                        .background(part.side == .left ? Color.Status.errorSurface : Color.Status.successSurface)
                         .cornerRadius(46)
                 }
             }
