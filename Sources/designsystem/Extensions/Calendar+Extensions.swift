@@ -438,3 +438,16 @@ public extension Calendar {
     }
 
 }
+
+extension Calendar {
+    func weekIntervalExact(containing date: Date) -> DateInterval? {
+        guard let start = self.dateInterval(of: .weekOfYear, for: date)?.start,
+              let end = self.date(byAdding: DateComponents(day: 6), to: start),
+              let endOfDay = self.date(bySettingHour: 23, minute: 59, second: 59, of: end)
+        else {
+            return nil
+        }
+
+        return DateInterval(start: start, end: endOfDay)
+    }
+}

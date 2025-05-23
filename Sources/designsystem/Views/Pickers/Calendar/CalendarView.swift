@@ -7,13 +7,12 @@ struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
     let interval: DateInterval
     let data: [CalendarIndexKey: Data]
 
-    public init(
-        selectedIndex: Binding<CalendarIndexKey>,
-        interval: DateInterval,
-        data: [CalendarIndexKey : Data],
-        onTapDay: @escaping (CalendarIndexKey) -> Void,
-        day: @escaping (CalendarIndexKey, Data?, _: Bool, _: Bool) -> Content
-    ) {
+    public init(selectedIndex: Binding<CalendarIndexKey>,
+                interval: DateInterval,
+                data: [CalendarIndexKey : Data],
+                onTapDay: @escaping (CalendarIndexKey) -> Void,
+                day: @escaping (CalendarIndexKey, Data?, _: Bool, _: Bool) -> Content) {
+
         self._selectedIndex = selectedIndex
         self.interval = interval
         self.data = data
@@ -21,25 +20,35 @@ struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
         self.onTapDay = onTapDay
         self.dayBuilder = day
 
-        self.dates = self.interval.monthsIncluded().map { CalendarIndexKey(from: $0) }
+        self.months = self.interval.monthsIncluded().map { CalendarIndexKey(from: $0) }
     }
 
     /// Private
-    private let dates: [CalendarIndexKey]
+    private let months: [CalendarIndexKey]
     private let onTapDay: (CalendarIndexKey) -> Void
     private let dayBuilder: (CalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
 
     @State private var today: CalendarIndexKey = CalendarIndexKey(from: .now)
     @State private var scrollProxy: ScrollViewProxy? = nil
 
+    @State private var currentMonthTarget: String? = nil
+
     private func scrollToSelectedIndex(using proxy: ScrollViewProxy? = nil) {
         guard let proxy else { return }
 
         ///Scroll to target
         let targetMonth = "\(selectedIndex.year)-\(selectedIndex.month)"
+
+        /// Prevent unneccessary scrolling
+        if let currentMonthTarget = currentMonthTarget, currentMonthTarget == targetMonth {
+            print("Debounce")
+            return
+        }
+
         print("Scrolling")
         DispatchQueue.main.async {
             proxy.scrollTo(targetMonth, anchor: .top)
+            currentMonthTarget = targetMonth
         }
     }
     
@@ -47,7 +56,7 @@ struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 32) {
-                    ForEach(dates, id: \.self) { month in
+                    ForEach(months, id: \.self) { month in
                         CalendarMonthView(month: month,
                                           today: today,
                                           selectedIndex: $selectedIndex,
@@ -86,10 +95,12 @@ struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
         CalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
     ]
 
+    let today = CalendarIndexKey(from: .now)
+
     let maxInterval: DateInterval = Calendar.current.dateInterval(
         from: .now,
-        count: 6,
-        component: .month
+        count: 2,
+        component: .year
     )!
 
     NavigationStack {
@@ -116,12 +127,32 @@ struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
                     withAnimation {
                         calendarData[date] = .init(hasEvent: true, isRecurring: false)
                     }
-
                 }
             }
         }
-        .navigationDestination(item: $selectedWeekIndex) { val in
-            CalendarWeekView(selectedIndex: $selectedIndex)
+        .navigationDestination(item: $selectedWeekIndex) { weekIndex in
+            VStack {
+                CalendarWeekView(selectedIndex: $selectedIndex,
+                                 today: today,
+                                 data: calendarData) { index, data, current, selected in
+                    ExampleDayCell(date: index,
+                                   data: data,
+                                   current: current,
+                                   selected: selected)
+                }.padding(.horizontal, 12)
+
+                ScrollView {
+                    if let data = calendarData[selectedIndex] {
+                        VStack {
+                            ForEach(data.items, id: \.self) { item in
+                                Text(item.title)
+                            }
+                        }
+                    } else {
+                        Text("No data for selected date")
+                    }
+                }
+            }
         }
     }
 }

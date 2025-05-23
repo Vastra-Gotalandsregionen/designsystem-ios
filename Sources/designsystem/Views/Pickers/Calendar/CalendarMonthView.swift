@@ -13,18 +13,20 @@ struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: Vie
                 today: CalendarIndexKey,
                 selectedIndex: Binding<CalendarIndexKey>,
                 data: [CalendarIndexKey: Data] = [:],
+                using calendar: Calendar = .current,
                 onTapDay: @escaping (CalendarIndexKey) -> Void = { _ in },
                 @ViewBuilder day: @escaping (CalendarIndexKey, Data?, _: Bool, _: Bool) -> Content) {
         self.month = month
         self.today = today
         self._selectedIndex = selectedIndex
         self.data = data
+        self.calendar = calendar
         self.onTapDay = onTapDay
         self.dayBuilder = day
     }
 
     /// Private
-    private let calendar = Calendar.current
+    private let calendar: Calendar
     private let locale = Locale.current
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
 
@@ -79,11 +81,11 @@ struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: Vie
             }
         }
         .onAppear {
-            print("Appear: \(month.date.year)-\(month.date.month)")
+//            print("Appear: \(month.date.year)-\(month.date.month)")
             days = generateCalendarGrid(for: month.date)
         }
         .onDisappear {
-            print("Disappear: \(month.date.year)-\(month.date.month)")
+//            print("Disappear: \(month.date.year)-\(month.date.month)")
         }
     }
 

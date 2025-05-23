@@ -4,6 +4,22 @@ import SwiftUI
 struct ExampleCalendarData: Hashable {
     let hasEvent: Bool
     let isRecurring: Bool
+    
+    var items: [ExampleCalendarDetailData] = [
+        .init("Alfa", description: "Something alfa"),
+        .init("Beta", description: "Something beta"),
+        .init("Gamma", description: "Something gamma"),
+    ]
+}
+
+struct ExampleCalendarDetailData: Hashable {
+    let title: String
+    let description: String
+
+    init(_ title: String, description: String) {
+        self.title = title
+        self.description = description
+    }
 }
 
 struct ExampleDayCell: View {
