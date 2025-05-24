@@ -12,6 +12,10 @@ public struct CalendarIndexKey: Hashable, Equatable, Identifiable {
         "\(year)-\(month)-\(day)" // Unique string, e.g., "2025-6-26"
     }
 
+    public var monthID: String {
+        "\(year)-\(month)" 
+    }
+
 
     public init(year: Int, month: Int, day: Int) {
         self.year = year

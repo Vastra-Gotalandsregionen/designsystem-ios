@@ -5,6 +5,7 @@ struct CalendarWeekView<Data, Content>: View where Data: Hashable, Content: View
     /// Public
     let today: CalendarIndexKey
     let data: [CalendarIndexKey: Data]
+
     @Binding var selectedIndex: CalendarIndexKey
 
     public init(selectedIndex: Binding<CalendarIndexKey>,
@@ -82,6 +83,36 @@ struct CalendarWeekView<Data, Content>: View where Data: Hashable, Content: View
         }
     }
 
+    private func gotoToday() {
+        guard let firstDate = dates.first else { return }
+//        let todaysDate = Date.now
+        let compare = Calendar.current.compare(today.date, to: firstDate.date, toGranularity: .day)
+        if compare == .orderedSame { return }
+
+        animationDirection = compare == .orderedAscending
+
+        withAnimation {
+            if compare == .orderedAscending {
+                dates.insert(today, at: 0)
+                dates.removeLast()
+            } else {
+                dates.append(today)
+                dates.removeFirst()
+            }
+
+        } completion: {
+
+            self.weekInterval = calendar.weekIntervalExact(containing: today.date)
+            self.selectedIndex = today
+
+//            vm.selectedDate = todaysDate
+//            initialDate = todaysDate
+
+//            UIAccessibility.postPrioritizedAnnouncement(a11yLabel, withPriority: .high)
+//            focusedElement = vm.selectedDate.formatted(date: .numeric, time: .omitted)
+        }
+    }
+
     var body: some View {
         VStack {
 
@@ -122,6 +153,13 @@ struct CalendarWeekView<Data, Content>: View where Data: Hashable, Content: View
         }
         .navigationTitle(selectedIndex.id)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Idag") {
+                    gotoToday()
+                }
+            }
+        }
     }
 }
 
