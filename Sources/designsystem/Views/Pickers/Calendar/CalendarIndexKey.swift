@@ -4,9 +4,9 @@ import Foundation
 /// The reason for using it is to have a simple way of accessing the different elements in a date
 /// without having to resort to using the Calendar.
 public struct CalendarIndexKey: Hashable, Equatable, Identifiable {
-    var year: Int
-    var month: Int
-    var day: Int
+    public var year: Int
+    public var month: Int
+    public var day: Int
 
     public var id: String {
         "\(year)-\(month)-\(day)" // Unique string, e.g., "2025-6-26"
@@ -16,6 +16,11 @@ public struct CalendarIndexKey: Hashable, Equatable, Identifiable {
         "\(year)-\(month)" 
     }
 
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(year)
+        hasher.combine(month)
+        hasher.combine(day)
+    }
 
     public init(year: Int, month: Int, day: Int) {
         self.year = year

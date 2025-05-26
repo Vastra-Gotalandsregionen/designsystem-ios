@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarWeekView<Data, Content>: View where Data: Hashable, Content: View {
+public struct CalendarWeekView<Data, Content>: View where Data: Hashable, Content: View {
 
     /// Public
     let today: CalendarIndexKey
@@ -34,12 +34,6 @@ struct CalendarWeekView<Data, Content>: View where Data: Hashable, Content: View
 
     private func getDayCells(_ startDate: CalendarIndexKey) -> [CalendarIndexKey] {
         return startDate.date.datesForCurrentWeek(startingFrom: .monday).map { CalendarIndexKey(from: $0) }
-    }
-
-    private var dayCells: [CalendarIndexKey] {
-        guard let weekInterval else { return [] }
-        let days = calendar.daysBetween(weekInterval.start, endDate: weekInterval.end)
-        return days.map { CalendarIndexKey(from: $0) }
     }
 
     private func previousDate() {
@@ -105,15 +99,12 @@ struct CalendarWeekView<Data, Content>: View where Data: Hashable, Content: View
             self.weekInterval = calendar.weekIntervalExact(containing: today.date)
             self.selectedIndex = today
 
-//            vm.selectedDate = todaysDate
-//            initialDate = todaysDate
-
 //            UIAccessibility.postPrioritizedAnnouncement(a11yLabel, withPriority: .high)
 //            focusedElement = vm.selectedDate.formatted(date: .numeric, time: .omitted)
         }
     }
 
-    var body: some View {
+    public var body: some View {
         VStack {
 
             CalendarWeekHeaderView()
@@ -126,13 +117,12 @@ struct CalendarWeekView<Data, Content>: View where Data: Hashable, Content: View
                                        data[day],
                                        day.hashValue == today.hashValue,
                                        day.hashValue == selectedIndex.hashValue)
-                            .id(day.hashValue)
+                            .id(day.id)
                             .onTapGesture {
                                 selectedIndex = day
                             }
                         }
                         .fixedSize(horizontal: false, vertical: true)
-
                     }
                     .transition(
                         .asymmetric(
@@ -183,7 +173,7 @@ struct CalendarWeekView<Data, Content>: View where Data: Hashable, Content: View
                                data: data,
                                current: isCurrent,
                                selected: isSelected)
-
+                
             }.padding(.horizontal, 12)
 
             ScrollView {

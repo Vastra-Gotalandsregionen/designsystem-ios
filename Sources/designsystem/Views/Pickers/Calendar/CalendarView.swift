@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
+public struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
 
     /// Public
     @Binding var selectedIndex: CalendarIndexKey
@@ -10,64 +10,40 @@ struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
     public init(selectedIndex: Binding<CalendarIndexKey>,
                 interval: DateInterval,
                 data: [CalendarIndexKey : Data],
+                calendar: Calendar = .current,
                 onTapDay: @escaping (CalendarIndexKey) -> Void,
                 day: @escaping (CalendarIndexKey, Data?, _: Bool, _: Bool) -> Content) {
 
+        self.vm = .init(interval: interval, calendar: calendar)
         self._selectedIndex = selectedIndex
         self.interval = interval
         self.data = data
 
         self.onTapDay = onTapDay
         self.dayBuilder = day
-
-        self.months = self.interval.monthsIncluded().map { CalendarIndexKey(from: $0) }
         self.currentMonthTarget = selectedIndex.wrappedValue.monthID
     }
 
     /// Private
-    private let months: [CalendarIndexKey]
+    @State private var vm: CalendarViewModel
     private let onTapDay: (CalendarIndexKey) -> Void
     private let dayBuilder: (CalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
 
     @State private var today: CalendarIndexKey = CalendarIndexKey(from: .now)
-    @State private var scrollProxy: ScrollViewProxy? = nil
     @State private var currentMonthTarget: String? = nil
 
-    private func scrollToSelectedIndex(using proxy: ScrollViewProxy? = nil, force: Bool = false) {
-        guard let proxy else { return }
-
-        ///Scroll to target
-        let targetMonth = "\(selectedIndex.year)-\(selectedIndex.month)"
-
-        /// Prevent unneccessary scrolling
-//        if !force {
-//            if let currentMonthTarget = currentMonthTarget, currentMonthTarget == targetMonth {
-//                print("Debounce (\(currentMonthTarget)) == \(targetMonth))")
-//                return
-//            }
-//        }
-
-        currentMonthTarget = targetMonth
-
-        print("Scrolling")
-        DispatchQueue.main.async {
-            proxy.scrollTo(targetMonth, anchor: .top)
-        }
-    }
-
-    var body: some View {
+    public var body: some View {
         ScrollView {
             LazyVStack(spacing: 32) {
-                ForEach(months, id: \.self) { month in
+                ForEach(vm.months, id: \.id) { month in
                     CalendarMonthView(month: month,
                                       today: today,
                                       selectedIndex: $selectedIndex,
                                       data: data,
                                       onTapDay: onTapDay,
                                       day: dayBuilder)
+                    .id(month.idx.monthID)
                     .padding(.horizontal, 12)
-                    .id("\(month.year)-\(month.month)")
-
                 }
             }
             .scrollTargetLayout()
@@ -76,9 +52,9 @@ struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
         .background(Color.Elevation.background)
         .onDayChange { today = CalendarIndexKey(from: .now) }
         .onAppear {
-            currentMonthTarget = nil
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                print("Setting monthTarget to \(selectedIndex.monthID) (\(currentMonthTarget ?? "n/a"))")
+            DispatchQueue.main.async {
+                print("onAppear: Setting monthTarget to \(selectedIndex.monthID) (\(currentMonthTarget ?? "n/a"))")
+                currentMonthTarget = nil
                 currentMonthTarget = selectedIndex.monthID
             }
         }
@@ -86,9 +62,10 @@ struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Idag") {
                     DispatchQueue.main.async {
+                        currentMonthTarget = nil
                         selectedIndex = today
                         currentMonthTarget = selectedIndex.monthID
-                        print("Setting monthTarget to \(selectedIndex.monthID) (\(currentMonthTarget ?? "n/a"))")
+                        print("today: Setting monthTarget to \(selectedIndex.monthID) (\(currentMonthTarget ?? "n/a"))")
                     }
                 }
             }

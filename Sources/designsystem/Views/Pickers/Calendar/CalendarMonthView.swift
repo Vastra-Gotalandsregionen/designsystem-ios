@@ -3,13 +3,19 @@ import SwiftUI
 
 struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: View {
 
-    /// Public
-    let month: CalendarIndexKey
+    /// month contains information about the current months layout (days, padding)
+    let month: CalendarPeriodModel
+
+    /// today is the date/index for the current date
     let today: CalendarIndexKey
+
+    /// selectedIndex binds to a index key, used to detect changes in the currently selected day
     @Binding var selectedIndex: CalendarIndexKey
+
+    /// contains the data for each separate day
     let data: [CalendarIndexKey: Data]
 
-    public init(month: CalendarIndexKey,
+    public init(month: CalendarPeriodModel,
                 today: CalendarIndexKey,
                 selectedIndex: Binding<CalendarIndexKey>,
                 data: [CalendarIndexKey: Data] = [:],
@@ -33,22 +39,10 @@ struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: Vie
     private let onTapDay: (CalendarIndexKey) -> Void
     private let dayBuilder: (CalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
 
-    @State private var days: [Date?] = []
-
-    private var numPaddingCellsAtBeginning: Int {
-        let nilCountAtBeginning = days.prefix { $0 == nil }.count
-        return nilCountAtBeginning
-    }
-
-    private var dayCells: [CalendarIndexKey] {
-        let nonNilDates = days.compactMap { $0 }
-        let calendarKeys = nonNilDates.map { CalendarIndexKey(from: $0) }
-        return calendarKeys
-    }
 
     var body: some View {
         VStack(spacing: 8) {
-            Text(month.date.formatted(.dateTime.year().month()))
+            Text(month.idx.date.formatted(.dateTime.year().month()))
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundStyle(Color.Neutral.text)
@@ -61,17 +55,17 @@ struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: Vie
 
                 LazyVGrid(columns: columns, spacing: 8, pinnedViews: [.sectionHeaders]) {
 
-                    ForEach(0..<numPaddingCellsAtBeginning, id: \.self) { _ in
+                    ForEach(0..<month.leadingPadding, id: \.self) { _ in
                         Spacer()
                     }
                     .accessibilityHidden(true)
 
-                    ForEach(dayCells, id: \.self) { day in
+                    ForEach(self.month.days, id: \.self) { day in
                         dayBuilder(day,
                                    data[day],
                                    day.hashValue == today.hashValue,
                                    day.hashValue == selectedIndex.hashValue)
-                        .id(day.hashValue)
+                        .id(day.id)
                         .onTapGesture {
                             selectedIndex = day
                             onTapDay(day)
@@ -80,55 +74,25 @@ struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: Vie
                 }
             }
         }
-        .onAppear {
-//            print("Appear: \(month.date.year)-\(month.date.month)")
-            days = generateCalendarGrid(for: month.date)
-        }
-        .onDisappear {
-//            print("Disappear: \(month.date.year)-\(month.date.month)")
-        }
-    }
-
-    // MARK: - Calendar Grid Logic
-
-    private func generateCalendarGrid(for date: Date) -> [Date?] {
-        guard let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) else {
-            return []
-        }
-
-        let numberOfDays = calendar.range(of: .day, in: .month, for: date)?.count ?? 0
-        let startWeekday = calendar.component(.weekday, from: firstDay)
-        let firstWeekday = calendar.firstWeekday
-        let leadingEmpty = (startWeekday - firstWeekday + 7) % 7
-
-        var grid: [Date?] = Array(repeating: nil, count: leadingEmpty)
-        for day in 0..<numberOfDays {
-            if let date = calendar.date(byAdding: .day, value: day, to: firstDay) {
-                grid.append(calendar.startOfDay(for: date))
-            }
-        }
-
-        return grid
     }
 }
 
 
 #Preview {
-    @Previewable @State var selectedDate: Date = Calendar.current.date(2025,5,30)
     @Previewable @State var selectedIndex: CalendarIndexKey = CalendarIndexKey(from: Calendar.current.date(2025,5,30))
-
     @Previewable @State var calendarData: [CalendarIndexKey: ExampleCalendarData] = [
         CalendarIndexKey(year: 2025, month: 5, day: 20) : .init(hasEvent: true, isRecurring: false),
         CalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
     ]
 
-    let month: CalendarIndexKey = CalendarIndexKey(from: Calendar.current.date(2025,5,1))
-
+    let vm: CalendarViewModel = .init(interval: DateInterval(start: Calendar.current.date(2025,5,1),
+                                                             end: Calendar.current.date(2025,5,31)))
+    let firstMonth = vm.months.first!
     let today = CalendarIndexKey(from: Calendar.current.date(2025,5,15))
 
     NavigationStack {
         ScrollView {
-            CalendarMonthView(month: month,
+            CalendarMonthView(month: firstMonth,
                               today: today,
                               selectedIndex: $selectedIndex,
                               data: calendarData) { index in
