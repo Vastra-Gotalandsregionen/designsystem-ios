@@ -88,6 +88,8 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
         CalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
     ]
 
+    @Previewable @State var currentWeekID: String? = nil
+
     let today = CalendarIndexKey(from: .now)
 
     /// The total maximal range for the Calendar. Can be set arbitrarily.
@@ -103,7 +105,9 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
                      data: calendarData) { index in
 
             print("Tapped on \(index.id)")
+            currentWeekID = index.weekID
             selectedWeekIndex = index
+
 
         } day: { index, data, current, selected in
             ExampleDayCell(date: index,
@@ -127,24 +131,53 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
         }
         .navigationDestination(item: $selectedWeekIndex) { weekIndex in
             VStack {
-                CalendarWeekView(selectedIndex: $selectedIndex,
-                                 today: today,
-                                 data: calendarData) { index, data, current, selected in
-                    ExampleDayCell(date: index,
-                                   data: data,
-                                   current: current,
-                                   selected: selected)
-                }.padding(.horizontal, 12)
+                CalendarWeekView(
+                    currentWeekID: $currentWeekID,
+                    today: today,
+                    interval: maxInterval,
+                    data: calendarData,
+                    selectedDate: $selectedIndex) { data in
+                        /// Default height of a day cell
+                        guard let data else { return 42.0 }
+
+                        /// Calculate height of a day cell
+                        return 44.0 + (CGFloat(data.numItems) * 20.0) + (CGFloat(data.numItems-1) * 2.0)
+
+                    } dayBuilder: { index, data, current, selected in
+                        ExampleDayCell(date: index,
+                                       data: data,
+                                       current: current,
+                                       selected: selected)
+                    }
+                    .background(Color.Elevation.elevation1)
 
                 ScrollView {
-                    if let data = calendarData[selectedIndex] {
-                        VStack {
-                            ForEach(data.items, id: \.self) { item in
-                                Text(item.title)
+                    VStack {
+                        if let data = calendarData[selectedIndex] {
+                            VStack {
+                                ForEach(data.items, id: \.self) { item in
+                                    Text(item.title)
+                                }
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            Text("No data for selected date")
                         }
-                    } else {
-                        Text("No data for selected date")
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.Elevation.background)
+            }
+            .navigationTitle("Week")
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        withAnimation {
+                            selectedIndex = today
+                            currentWeekID = today.weekID
+                        }
+                    } label: {
+                        Text("Idag")
                     }
                 }
             }

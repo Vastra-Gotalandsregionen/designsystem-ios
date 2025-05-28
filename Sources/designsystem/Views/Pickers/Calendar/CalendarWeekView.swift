@@ -1,195 +1,210 @@
 import SwiftUI
 
-public struct CalendarWeekView<Data, Content>: View where Data: Hashable, Content: View {
+struct CalendarWeekView<Content, Data>: View where Data: Hashable, Content: View {
 
-    /// Public
-    let today: CalendarIndexKey
-    let data: [CalendarIndexKey: Data]
+    @Binding var selectedDate: CalendarIndexKey
+    @Binding var currentWeekID: String?
 
-    @Binding var selectedIndex: CalendarIndexKey
+    @State private var vm: CalendarViewModel
+    @State private var currentHeight: CGFloat = .zero
+    @FocusState private var focusedDay: CalendarIndexKey?
 
-    public init(selectedIndex: Binding<CalendarIndexKey>,
-                today: CalendarIndexKey,
-                data: [CalendarIndexKey : Data],
-                using calendar: Calendar = Calendar.current,
-                day: @escaping (CalendarIndexKey, Data?, _: Bool, _: Bool) -> Content) {
-        self.today = today
-        self._selectedIndex = selectedIndex
-        self.data = data
-        self.calendar = calendar
-        self.dayBuilder = day
-
-        self.weekInterval = calendar.weekIntervalExact(containing: selectedIndex.wrappedValue.date)
-        self.dates = [selectedIndex.wrappedValue]
-    }
-
-    /// Private
-    private let calendar: Calendar
+    private let today: CalendarIndexKey
+    private let data: [CalendarIndexKey: Data]
+    private let interval: DateInterval
+    private let heightRetrieval: (Data?) -> CGFloat
     private let dayBuilder: (CalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
-    @State private var weekInterval: DateInterval?
-    private let rows = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
+    private let insets: EdgeInsets
+    private let calendar: Calendar
 
-    @State private var dates: [CalendarIndexKey]
-    @State private var animationDirection: Bool = false
-
-    private func getDayCells(_ startDate: CalendarIndexKey) -> [CalendarIndexKey] {
-        return startDate.date.datesForCurrentWeek(startingFrom: .monday).map { CalendarIndexKey(from: $0) }
+    public init(
+        currentWeekID: Binding<String?>,
+        today: CalendarIndexKey,
+        interval: DateInterval,
+        data: [CalendarIndexKey: Data],
+        using calendar: Calendar = .current,
+        selectedDate: Binding<CalendarIndexKey>,
+        insets: EdgeInsets = EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16),
+        heightRetrieval: @escaping (Data?) -> CGFloat,
+        dayBuilder: @escaping (CalendarIndexKey, Data?, _: Bool, _: Bool) -> Content
+    ) {
+        self._currentWeekID = currentWeekID
+        self.vm = .init(interval: interval, calendar: calendar)
+        self.interval = interval
+        self.calendar = calendar
+        self.data = data
+        self.today = today
+        self._selectedDate = selectedDate
+        self.dayBuilder = dayBuilder
+        self.insets = insets
+        self.heightRetrieval = heightRetrieval
+        self.height = self.heightRetrieval(nil)
     }
 
-    private func previousDate() {
-        guard let firstDate = dates.first else { return }
-        let newDate = calendar.date(byAdding: .day, value: -7, to: firstDate.date)!
 
-        animationDirection = true
-
-        withAnimation {
-            dates.insert(CalendarIndexKey(from: newDate), at: 0)
-            dates.removeLast()
-        } completion: {
-
-            self.weekInterval = calendar.weekIntervalExact(containing: newDate)
-            if let weekInterval {
-                selectedIndex = CalendarIndexKey(from: weekInterval.end)
-            }
-
-//            UIAccessibility.postPrioritizedAnnouncement(a11yLabel, withPriority: .high)
-//            focusedElement = vm.selectedDate.formatted(date: .numeric, time: .omitted)
-        }
-    }
-
-    private func nextDate() {
-        guard let firstDate = dates.first else { return }
-        let newDate = calendar.date(byAdding: .day, value: 7, to: firstDate.date)!
-
-        animationDirection = false
-        withAnimation {
-            dates.append(CalendarIndexKey(from: newDate))
-            dates.removeFirst()
-        } completion: {
-
-            self.weekInterval = calendar.weekIntervalExact(containing: newDate)
-            if let weekInterval {
-                self.selectedIndex = CalendarIndexKey(from: weekInterval.start)
-            }
-
-//            UIAccessibility.postPrioritizedAnnouncement(a11yLabel, withPriority: .high)
-//            focusedElement = vm.selectedDate.formatted(date: .numeric, time: .omitted)
-        }
-    }
-
-    private func gotoToday() {
-        guard let firstDate = dates.first else { return }
-        let compare = Calendar.current.compare(today.date, to: firstDate.date, toGranularity: .day)
-        if compare == .orderedSame { return }
-
-        animationDirection = compare == .orderedAscending
-
-        withAnimation {
-            if compare == .orderedAscending {
-                dates.insert(today, at: 0)
-                dates.removeLast()
-            } else {
-                dates.append(today)
-                dates.removeFirst()
-            }
-
-        } completion: {
-
-            self.weekInterval = calendar.weekIntervalExact(containing: today.date)
-            self.selectedIndex = today
-
-//            UIAccessibility.postPrioritizedAnnouncement(a11yLabel, withPriority: .high)
-//            focusedElement = vm.selectedDate.formatted(date: .numeric, time: .omitted)
-        }
-    }
-
-    public var body: some View {
+    var body: some View {
         VStack {
-
             CalendarWeekHeaderView()
+                .padding(.leading, insets.leading)
+                .padding(.trailing, insets.trailing)
 
-            HStack {
-                ForEach(dates, id: \.self) { date in
-                    HStack(alignment: .top) {
-                        ForEach(getDayCells(date), id: \.self) { day in
-                            dayBuilder(day,
-                                       data[day],
-                                       day.hashValue == today.hashValue,
-                                       day.hashValue == selectedIndex.hashValue)
-                            .id(day.id)
-                            .onTapGesture {
-                                selectedIndex = day
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(alignment: .top, spacing: 0) {
+                    ForEach(vm.weeks, id: \.self) { week in
+                        HStack(alignment: .top, spacing: 2) {
+                            ForEach(week.days, id: \.self) { idx in
+                                dayBuilder(
+                                    idx,
+                                    data[idx],
+                                    idx == today,
+                                    idx == selectedDate
+                                )
+                                .id(idx.id)
+                                .focused($focusedDay, equals: idx)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    selectedDate = idx
+                                }
                             }
                         }
-                        .fixedSize(horizontal: false, vertical: true)
+                        .id(week.idx.weekID)
+                        .frame(height: maxHeight(for: week), alignment: .top)
+                        .padding(.leading, insets.leading)
+                        .padding(.trailing, insets.trailing)
+                        .containerRelativeFrame([.horizontal], alignment: .top)
+                        .accessibilityElement(children: .contain)
                     }
-                    .transition(
-                        .asymmetric(
-                            insertion: .move(edge: animationDirection ? .leading : .trailing),
-                            removal: .move(edge: animationDirection ? .trailing : .leading)
-                        )
-                    )
+                }
+                .frame(height: height, alignment: .top)
+                .scrollTargetLayout()
+            }
+            .scrollPosition(id: $currentWeekID)
+            .scrollTargetBehavior(.paging)
+            .onAppear {
+                let period = vm.periodForWeekID(currentWeekID)
+                height = maxHeight(for: period)
+
+                currentWeekID = selectedDate.weekID
+            }
+            .onChange(of: selectedDate) {
+                focusedDay = selectedDate
+            }
+            .onChange(of: currentWeekID) { o, n in
+                withAnimation(.easeInOut) {
+                    let period = vm.periodForWeekID(n)
+                    height = maxHeight(for: period)
+                }
+
+                if o != today.weekID && selectedDate == today { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    selectDay(old: o, new: n)
                 }
             }
         }
-        .onSwipe(minimumDistance: 40, coordinateSpace: .local) { direction in
-            if direction == .left {
-                nextDate()
-            }
-            if direction == .right {
-                previousDate()
-            }
+    }
+
+    private func selectDay(old: String?, new: String?) {
+        guard let new else { return }
+        guard let old else { return }
+
+        guard let newPeriod = vm.periodForWeekID(new) else { return }
+        guard let oldPeriod = vm.periodForWeekID(old) else { return }
+
+        let days = newPeriod.days
+        selectedDate = oldPeriod.idx.date > newPeriod.idx.date ? days.last! : days.first!
+    }
+
+    @State private var height: CGFloat
+
+    private func maxHeight(for period: CalendarPeriodModel?) -> CGFloat {
+        guard let period else {
+            return self.heightRetrieval(nil)
         }
-        .navigationTitle(selectedIndex.id)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Idag") {
-                    gotoToday()
-                }
-            }
-        }
+        return period.days.map { data[$0] }.map(heightRetrieval).max() ?? 0
     }
 }
 
+
 #Preview {
-    @Previewable @State var weekIndex: CalendarIndexKey = CalendarIndexKey(year: 2025, month: 4, day: 1)
-    @Previewable @State var selectedIndex: CalendarIndexKey = CalendarIndexKey(year: 2025, month: 4, day: 10)
+    @Previewable @State var currentWeekID: String? = nil
+    @Previewable @State var selectedDate: CalendarIndexKey = CalendarIndexKey(from: .now)
     @Previewable @State var calendarData: [CalendarIndexKey: ExampleCalendarData] = [
         CalendarIndexKey(year: 2025, month: 5, day: 20) : .init(hasEvent: true, isRecurring: false),
         CalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
+        CalendarIndexKey(year: 2025, month: 5, day: 27) : .init(hasEvent: true, isRecurring: false),
+        CalendarIndexKey(year: 2025, month: 5, day: 30) : .init(hasEvent: true, isRecurring: false),
     ]
 
-    let today = CalendarIndexKey(from: .now)
+    let today: CalendarIndexKey = CalendarIndexKey(from: .now)
+
+    /// The total maximal range for the Calendar. Can be set arbitrarily.
+    let maxInterval: DateInterval = Calendar.current.dateInterval(
+        from: .now,
+        count: 2,
+        component: .year
+    )!
 
     NavigationStack {
+
         VStack {
-            CalendarWeekView(selectedIndex: $selectedIndex,
+            CalendarWeekView(currentWeekID: $currentWeekID,
                              today: today,
-                             data: calendarData) { index, data, isCurrent, isSelected in
+                             interval: maxInterval,
+                             data: calendarData,
+                             selectedDate: $selectedDate,
+                             heightRetrieval: { data in
+                /// Default height of a day cell
+                guard let data else { return 42.0 }
 
-                ExampleDayCell(date: index,
-                               data: data,
-                               current: isCurrent,
-                               selected: isSelected)
-                
-            }.padding(.horizontal, 12)
+                /// Calculate height of a day cell
+                return 44.0 + (CGFloat(data.numItems) * 20.0) + (CGFloat(data.numItems-1) * 2.0)
 
-            ScrollView {
-                if let data = calendarData[selectedIndex] {
-                    VStack {
-                        ForEach(data.items, id: \.self) { item in
-                            Text(item.title)
+            }) { index, data, isCurrent, isSelected in
+
+                ExampleDayCell(date: index, data: data, current: isCurrent, selected: isSelected)
+                    .accessibilityHint("Double-tap to select this date")
+                    .accessibilityAddTraits(.isButton)
+            }
+        }
+        .background(Color.Elevation.elevation1)
+
+        ScrollView {
+            if let data = calendarData[selectedDate] {
+                VStack(spacing: 8) {
+                    ForEach(data.items) { item in
+                        HStack {
+                            VStack {
+                                Text(item.title)
+                                    .font(.body).fontWeight(.semibold)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text(item.description)
+                                    .font(.footnote).fontWeight(.regular)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
                         }
+                        .padding()
                     }
-                } else {
-                    Text("No data for selected date")
+                }
+            } else {
+                Text("No events on this particular day")
+                    .padding()
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .background(Color.Elevation.background)
+        .toolbar {
+            ToolbarItem {
+                Button {
+                    withAnimation {
+                        selectedDate = today
+                        currentWeekID = today.weekID
+                    }
+                } label: {
+                    Text("Idag")
                 }
             }
         }
-        .onChange(of: selectedIndex) {
-            /// Used for debugging that CalendarWeekView triggers change in selectedIndex
-            print("Changed weekIndex to: \(selectedIndex.id)")
-        }
+        .navigationTitle("CalendarWeekView")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

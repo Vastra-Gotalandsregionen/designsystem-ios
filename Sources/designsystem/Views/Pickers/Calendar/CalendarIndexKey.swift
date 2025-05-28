@@ -16,9 +16,11 @@ public struct CalendarIndexKey: Hashable, Equatable, Identifiable {
         "\(year)-\(month)" 
     }
 
+    private static let sharedCalendar = Calendar.current
+
     /// Returns a unique string identifying the ISO week of the year, e.g., "2025-W26"
     public var weekID: String {
-        let calendar = Calendar.current
+        let calendar = Self.sharedCalendar
         let date = self.date
         let weekOfYear = calendar.component(.weekOfYear, from: date)
         let yearForWeekOfYear = calendar.component(.yearForWeekOfYear, from: date)
@@ -38,14 +40,15 @@ public struct CalendarIndexKey: Hashable, Equatable, Identifiable {
     }
 
     public init(from date: Date) {
-        let calendar = Calendar.current
+        let calendar = Self.sharedCalendar
         self.year = calendar.component(.year, from: date)
         self.month = calendar.component(.month, from: date)
         self.day = calendar.component(.day, from: date)
     }
 
     public var date: Date {
-        return Calendar.current.date(self.year, self.month, self.day)
+        let calendar = Self.sharedCalendar
+        return calendar.date(self.year, self.month, self.day)
     }
 
     public static func == (lhs: CalendarIndexKey, rhs: CalendarIndexKey) -> Bool {

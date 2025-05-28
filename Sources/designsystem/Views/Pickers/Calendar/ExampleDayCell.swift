@@ -14,7 +14,8 @@ struct ExampleCalendarData: Hashable {
     let numItems: Int = Int.random(in: 1...3)
 }
 
-struct ExampleCalendarDetailData: Hashable {
+struct ExampleCalendarDetailData: Hashable, Identifiable {
+    var id: UUID = UUID()
     let title: String
     let description: String
 

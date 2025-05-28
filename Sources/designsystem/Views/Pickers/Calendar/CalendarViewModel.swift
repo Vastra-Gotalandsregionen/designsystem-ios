@@ -9,6 +9,8 @@ import SwiftUI
     private let calendar: Calendar
     private let interval: DateInterval
 
+    private var weekIDLookup: [String: CalendarPeriodModel] = [:]
+
     init(interval: DateInterval, calendar: Calendar = .current) {
         self.interval = interval
         self.calendar = calendar
@@ -18,8 +20,14 @@ import SwiftUI
 
     func periodForWeekID(_ weekID: String?) -> CalendarPeriodModel? {
         guard let weekID else { return nil }
-        let filtered = weeks.filter { $0.idx.weekID == weekID }
-        return filtered.first
+        if let p = weekIDLookup[weekID] { return p }
+
+        if let p = weeks.filter({ $0.idx.weekID == weekID }).first {
+            weekIDLookup[weekID] = p
+            return p
+        }
+
+        return nil
     }
 
     private func generateWeeks(for interval: DateInterval, calendar: Calendar) -> [CalendarPeriodModel] {
@@ -45,7 +53,7 @@ import SwiftUI
                 leadingPadding: 0
             ))
 
-            // Move to next week
+            /// Move to next week
             guard let nextWeekStart = calendar.date(byAdding: .weekOfYear, value: 1, to: currentWeekStart) else {
                 break
             }

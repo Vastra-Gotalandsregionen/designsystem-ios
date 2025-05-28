@@ -1,11 +1,8 @@
 import Foundation
 import SwiftUI
 
-/*
-    OnDayChange modifier
-    This modifier adds the convenience of having a single modifier that is called
-    whenever there are significant date-changes.
-*/
+/// OnDayChange modifier
+/// This modifier adds the convenience of having a single modifier that is called whenever there are significant date-changes.
 struct OnDayChangeModifier: ViewModifier {
     let action: () -> Void
 
