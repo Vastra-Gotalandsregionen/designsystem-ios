@@ -30,7 +30,7 @@ struct ExampleDayCell: View {
     @ScaledMetric private var circleSize: CGFloat = 32
     @ScaledMetric private var iconSize: CGFloat = 9
 
-    let date: CalendarIndexKey
+    let date: VGRCalendarIndexKey
     let data: ExampleCalendarData?
     var current: Bool = false
     var selected: Bool = false

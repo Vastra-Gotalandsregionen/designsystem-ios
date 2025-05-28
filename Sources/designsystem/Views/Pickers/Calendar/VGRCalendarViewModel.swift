@@ -1,15 +1,15 @@
 import Foundation
 import SwiftUI
 
-@Observable final class CalendarViewModel {
+@Observable final class VGRCalendarViewModel {
 
-    var months: [CalendarPeriodModel] = []
-    var weeks: [CalendarPeriodModel] = []
+    var months: [VGRCalendarPeriodModel] = []
+    var weeks: [VGRCalendarPeriodModel] = []
 
     private let calendar: Calendar
     private let interval: DateInterval
 
-    private var weekIDLookup: [String: CalendarPeriodModel] = [:]
+    private var weekIDLookup: [String: VGRCalendarPeriodModel] = [:]
 
     init(interval: DateInterval, calendar: Calendar = .current) {
         self.interval = interval
@@ -18,7 +18,7 @@ import SwiftUI
         self.weeks = self.generateWeeks(for: interval, calendar: calendar)
     }
 
-    func periodForWeekID(_ weekID: String?) -> CalendarPeriodModel? {
+    func periodForWeekID(_ weekID: String?) -> VGRCalendarPeriodModel? {
         guard let weekID else { return nil }
         if let p = weekIDLookup[weekID] { return p }
 
@@ -30,8 +30,8 @@ import SwiftUI
         return nil
     }
 
-    private func generateWeeks(for interval: DateInterval, calendar: Calendar) -> [CalendarPeriodModel] {
-        var weeks: [CalendarPeriodModel] = []
+    private func generateWeeks(for interval: DateInterval, calendar: Calendar) -> [VGRCalendarPeriodModel] {
+        var weeks: [VGRCalendarPeriodModel] = []
 
         guard let startOfFirstWeek = calendar.dateInterval(of: .weekOfYear, for: interval.start)?.start else {
             return []
@@ -40,15 +40,15 @@ import SwiftUI
         var currentWeekStart = startOfFirstWeek
 
         while currentWeekStart <= interval.end {
-            let days = (0..<7).compactMap { offset -> CalendarIndexKey? in
+            let days = (0..<7).compactMap { offset -> VGRCalendarIndexKey? in
                 guard let day = calendar.date(byAdding: .day, value: offset, to: currentWeekStart) else {
                     return nil
                 }
-                return CalendarIndexKey(from: day)
+                return VGRCalendarIndexKey(from: day)
             }
 
-            weeks.append(CalendarPeriodModel(
-                idx: CalendarIndexKey(from: currentWeekStart),
+            weeks.append(VGRCalendarPeriodModel(
+                idx: VGRCalendarIndexKey(from: currentWeekStart),
                 days: days,
                 leadingPadding: 0
             ))
@@ -64,11 +64,11 @@ import SwiftUI
         return weeks
     }
 
-    private func generateMonths(for interval: DateInterval, calendar: Calendar) -> [CalendarPeriodModel] {
+    private func generateMonths(for interval: DateInterval, calendar: Calendar) -> [VGRCalendarPeriodModel] {
         return interval.monthsIncluded().map { date in
             let result = generateCalendarGrid(for: date, calendar: calendar)
 
-            return CalendarPeriodModel(
+            return VGRCalendarPeriodModel(
                 idx: CalendarIndexKey(from: date),
                 days: result.dates,
                 leadingPadding: result.leadingPadding
@@ -76,7 +76,7 @@ import SwiftUI
         }
     }
 
-    private func generateCalendarGrid(for date: Date, calendar: Calendar) -> (leadingPadding:Int, dates:[CalendarIndexKey]) {
+    private func generateCalendarGrid(for date: Date, calendar: Calendar) -> (leadingPadding:Int, dates:[VGRCalendarIndexKey]) {
         guard let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) else {
             return (0, [])
         }
@@ -84,9 +84,9 @@ import SwiftUI
         guard let monthInterval = calendar.dateInterval(of: .month, for: firstDay) else { return (0, []) }
         guard let range = calendar.range(of: .day, in: .month, for: date) else { return (0, []) }
 
-        let grid = range.compactMap { day -> CalendarIndexKey? in
+        let grid = range.compactMap { day -> VGRCalendarIndexKey? in
             guard let newDate = calendar.date(bySetting: .day, value: day, of: monthInterval.start) else { return nil }
-            return CalendarIndexKey(from: newDate)
+            return VGRCalendarIndexKey(from: newDate)
         }
 
         let startWeekday = calendar.component(.weekday, from: firstDay)

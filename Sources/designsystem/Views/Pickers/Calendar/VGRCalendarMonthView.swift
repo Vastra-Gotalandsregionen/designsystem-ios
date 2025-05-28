@@ -1,27 +1,27 @@
 import Foundation
 import SwiftUI
 
-public struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: View {
+public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Content: View {
 
     /// month contains information about the current months layout (days, padding)
-    let month: CalendarPeriodModel
+    let month: VGRCalendarPeriodModel
 
     /// today is the date/index for the current date
-    let today: CalendarIndexKey
+    let today: VGRCalendarIndexKey
 
     /// selectedIndex binds to a index key, used to detect changes in the currently selected day
-    @Binding var selectedIndex: CalendarIndexKey
+    @Binding var selectedIndex: VGRCalendarIndexKey
 
     /// contains the data for each separate day
-    let data: [CalendarIndexKey: Data]
+    let data: [VGRCalendarIndexKey: Data]
 
-    public init(month: CalendarPeriodModel,
-                today: CalendarIndexKey,
-                selectedIndex: Binding<CalendarIndexKey>,
-                data: [CalendarIndexKey: Data] = [:],
+    public init(month: VGRCalendarPeriodModel,
+                today: VGRCalendarIndexKey,
+                selectedIndex: Binding<VGRCalendarIndexKey>,
+                data: [VGRCalendarIndexKey: Data] = [:],
                 using calendar: Calendar = .current,
-                onTapDay: @escaping (CalendarIndexKey) -> Void = { _ in },
-                @ViewBuilder day: @escaping (CalendarIndexKey, Data?, _: Bool, _: Bool) -> Content) {
+                onTapDay: @escaping (VGRCalendarIndexKey) -> Void = { _ in },
+                @ViewBuilder day: @escaping (VGRCalendarIndexKey, Data?, _: Bool, _: Bool) -> Content) {
         self.month = month
         self.today = today
         self._selectedIndex = selectedIndex
@@ -36,8 +36,8 @@ public struct CalendarMonthView<Data, Content>: View where Data: Hashable, Conte
     private let locale = Locale.current
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: 7)
 
-    private let onTapDay: (CalendarIndexKey) -> Void
-    private let dayBuilder: (CalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
+    private let onTapDay: (VGRCalendarIndexKey) -> Void
+    private let dayBuilder: (VGRCalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
 
 
     public var body: some View {
@@ -85,20 +85,20 @@ public struct CalendarMonthView<Data, Content>: View where Data: Hashable, Conte
 
 
 #Preview {
-    @Previewable @State var selectedIndex: CalendarIndexKey = CalendarIndexKey(from: Calendar.current.date(2025,5,30))
-    @Previewable @State var calendarData: [CalendarIndexKey: ExampleCalendarData] = [
-        CalendarIndexKey(year: 2025, month: 5, day: 20) : .init(hasEvent: true, isRecurring: false),
-        CalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
+    @Previewable @State var selectedIndex: VGRCalendarIndexKey = VGRCalendarIndexKey(from: Calendar.current.date(2025,5,30))
+    @Previewable @State var calendarData: [VGRCalendarIndexKey: ExampleCalendarData] = [
+        VGRCalendarIndexKey(year: 2025, month: 5, day: 20) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
     ]
 
     let vm: CalendarViewModel = .init(interval: DateInterval(start: Calendar.current.date(2025,5,1),
                                                              end: Calendar.current.date(2025,5,31)))
     let firstMonth = vm.months.first!
-    let today = CalendarIndexKey(from: Calendar.current.date(2025,5,15))
+    let today = VGRCalendarIndexKey(from: Calendar.current.date(2025,5,15))
 
     NavigationStack {
         ScrollView {
-            CalendarMonthView(month: firstMonth,
+            VGRCalendarMonthView(month: firstMonth,
                               today: today,
                               selectedIndex: $selectedIndex,
                               data: calendarData) { index in

@@ -1,18 +1,18 @@
 import SwiftUI
 
-public struct CalendarView<Data, Content>: View where Data: Hashable, Content: View {
+public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content: View {
 
     /// Public
-    @Binding var selectedIndex: CalendarIndexKey
+    @Binding var selectedIndex: VGRCalendarIndexKey
     let interval: DateInterval
-    let data: [CalendarIndexKey: Data]
+    let data: [VGRCalendarIndexKey: Data]
 
-    public init(selectedIndex: Binding<CalendarIndexKey>,
+    public init(selectedIndex: Binding<VGRCalendarIndexKey>,
                 interval: DateInterval,
-                data: [CalendarIndexKey : Data],
+                data: [VGRCalendarIndexKey : Data],
                 calendar: Calendar = .current,
-                onTapDay: @escaping (CalendarIndexKey) -> Void,
-                day: @escaping (CalendarIndexKey, Data?, _: Bool, _: Bool) -> Content) {
+                onTapDay: @escaping (VGRCalendarIndexKey) -> Void,
+                day: @escaping (VGRCalendarIndexKey, Data?, _: Bool, _: Bool) -> Content) {
 
         self.vm = .init(interval: interval, calendar: calendar)
         self._selectedIndex = selectedIndex
@@ -25,18 +25,18 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
     }
 
     /// Private
-    @State private var vm: CalendarViewModel
-    private let onTapDay: (CalendarIndexKey) -> Void
-    private let dayBuilder: (CalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
+    @State private var vm: VGRCalendarViewModel
+    private let onTapDay: (VGRCalendarIndexKey) -> Void
+    private let dayBuilder: (VGRCalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
 
-    @State private var today: CalendarIndexKey = CalendarIndexKey(from: .now)
+    @State private var today: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
     @State private var currentMonthTarget: String? = nil
 
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 32) {
                 ForEach(vm.months, id: \.id) { month in
-                    CalendarMonthView(month: month,
+                    VGRCalendarMonthView(month: month,
                                       today: today,
                                       selectedIndex: $selectedIndex,
                                       data: data,
@@ -50,7 +50,7 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
         }
         .scrollPosition(id: $currentMonthTarget, anchor: .top)
         .background(Color.Elevation.background)
-        .onDayChange { today = CalendarIndexKey(from: .now) }
+        .onDayChange { today = VGRCalendarIndexKey(from: .now) }
         .onAppear {
             DispatchQueue.main.async {
                 print("onAppear: Setting monthTarget to \(selectedIndex.monthID) (\(currentMonthTarget ?? "n/a"))")
@@ -75,22 +75,22 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
 
 #Preview {
     /// selectedIndex contains the currently selected date using the CalendarIndexKey
-    @Previewable @State var selectedIndex: CalendarIndexKey = CalendarIndexKey(from: .now)
+    @Previewable @State var selectedIndex: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
 
     /// selectedWeekIndex is only used to trigger / push the weekView onto the NavStack
-    @Previewable @State var selectedWeekIndex: CalendarIndexKey? = nil
+    @Previewable @State var selectedWeekIndex: VGRCalendarIndexKey? = nil
 
     /// This is an example of what the data that can be passed to the CalendarView can look like.
     /// ExampleCalendarData is your own data structure that you pass and that you use to populate
     /// the DayCells (in this example called _ExampleDayCell_).
-    @Previewable @State var calendarData: [CalendarIndexKey: ExampleCalendarData] = [
-        CalendarIndexKey(year: 2025, month: 5, day: 20) : .init(hasEvent: true, isRecurring: false),
-        CalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
+    @Previewable @State var calendarData: [VGRCalendarIndexKey: ExampleCalendarData] = [
+        VGRCalendarIndexKey(year: 2025, month: 5, day: 20) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
     ]
 
     @Previewable @State var currentWeekID: String? = nil
 
-    let today = CalendarIndexKey(from: .now)
+    let today = VGRCalendarIndexKey(from: .now)
 
     /// The total maximal range for the Calendar. Can be set arbitrarily.
     let maxInterval: DateInterval = Calendar.current.dateInterval(
@@ -100,7 +100,7 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
     )!
 
     NavigationStack {
-        CalendarView(selectedIndex: $selectedIndex,
+        VGRCalendarView(selectedIndex: $selectedIndex,
                      interval: maxInterval,
                      data: calendarData) { index in
 
@@ -122,7 +122,7 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
                 Button("Add", systemImage: "plus.circle") {
                     let timeRange = maxInterval.end.timeIntervalSince(maxInterval.start)
                     let randomOffset = TimeInterval.random(in: 0...timeRange)
-                    let date = CalendarIndexKey(from: maxInterval.start.addingTimeInterval(randomOffset))
+                    let date = VGRCalendarIndexKey(from: maxInterval.start.addingTimeInterval(randomOffset))
                     withAnimation {
                         calendarData[date] = .init(hasEvent: true, isRecurring: false)
                     }
@@ -131,7 +131,7 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
         }
         .navigationDestination(item: $selectedWeekIndex) { weekIndex in
             VStack {
-                CalendarWeekView(
+                VGRCalendarWeekView(
                     currentWeekID: $currentWeekID,
                     today: today,
                     interval: maxInterval,

@@ -1,32 +1,32 @@
 import SwiftUI
 
-public struct CalendarWeekView<Content, Data>: View where Data: Hashable, Content: View {
+public struct VGRCalendarWeekView<Content, Data>: View where Data: Hashable, Content: View {
 
-    @Binding var selectedDate: CalendarIndexKey
+    @Binding var selectedDate: VGRCalendarIndexKey
     @Binding var currentWeekID: String?
 
-    @State private var vm: CalendarViewModel
+    @State private var vm: VGRCalendarViewModel
     @State private var currentHeight: CGFloat = .zero
-    @FocusState private var focusedDay: CalendarIndexKey?
+    @FocusState private var focusedDay: VGRCalendarIndexKey?
 
-    private let today: CalendarIndexKey
-    private let data: [CalendarIndexKey: Data]
+    private let today: VGRCalendarIndexKey
+    private let data: [VGRCalendarIndexKey: Data]
     private let interval: DateInterval
     private let heightRetrieval: (Data?) -> CGFloat
-    private let dayBuilder: (CalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
+    private let dayBuilder: (VGRCalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
     private let insets: EdgeInsets
     private let calendar: Calendar
 
     public init(
         currentWeekID: Binding<String?>,
-        today: CalendarIndexKey,
+        today: VGRCalendarIndexKey,
         interval: DateInterval,
-        data: [CalendarIndexKey: Data],
+        data: [VGRCalendarIndexKey: Data],
         using calendar: Calendar = .current,
-        selectedDate: Binding<CalendarIndexKey>,
+        selectedDate: Binding<VGRCalendarIndexKey>,
         insets: EdgeInsets = EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16),
         heightRetrieval: @escaping (Data?) -> CGFloat,
-        dayBuilder: @escaping (CalendarIndexKey, Data?, _: Bool, _: Bool) -> Content
+        dayBuilder: @escaping (VGRCalendarIndexKey, Data?, _: Bool, _: Bool) -> Content
     ) {
         self._currentWeekID = currentWeekID
         self.vm = .init(interval: interval, calendar: calendar)
@@ -40,7 +40,6 @@ public struct CalendarWeekView<Content, Data>: View where Data: Hashable, Conten
         self.heightRetrieval = heightRetrieval
         self.height = self.heightRetrieval(nil)
     }
-
 
     public var body: some View {
         VStack {
@@ -116,7 +115,7 @@ public struct CalendarWeekView<Content, Data>: View where Data: Hashable, Conten
 
     @State private var height: CGFloat
 
-    private func maxHeight(for period: CalendarPeriodModel?) -> CGFloat {
+    private func maxHeight(for period: VGRCalendarPeriodModel?) -> CGFloat {
         guard let period else {
             return self.heightRetrieval(nil)
         }
@@ -127,15 +126,15 @@ public struct CalendarWeekView<Content, Data>: View where Data: Hashable, Conten
 
 #Preview {
     @Previewable @State var currentWeekID: String? = nil
-    @Previewable @State var selectedDate: CalendarIndexKey = CalendarIndexKey(from: .now)
-    @Previewable @State var calendarData: [CalendarIndexKey: ExampleCalendarData] = [
-        CalendarIndexKey(year: 2025, month: 5, day: 20) : .init(hasEvent: true, isRecurring: false),
-        CalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
-        CalendarIndexKey(year: 2025, month: 5, day: 27) : .init(hasEvent: true, isRecurring: false),
-        CalendarIndexKey(year: 2025, month: 5, day: 30) : .init(hasEvent: true, isRecurring: false),
+    @Previewable @State var selectedDate: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
+    @Previewable @State var calendarData: [VGRCalendarIndexKey: ExampleCalendarData] = [
+        VGRCalendarIndexKey(year: 2025, month: 5, day: 20) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 5, day: 27) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 5, day: 30) : .init(hasEvent: true, isRecurring: false),
     ]
 
-    let today: CalendarIndexKey = CalendarIndexKey(from: .now)
+    let today: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
 
     /// The total maximal range for the Calendar. Can be set arbitrarily.
     let maxInterval: DateInterval = Calendar.current.dateInterval(
@@ -147,7 +146,7 @@ public struct CalendarWeekView<Content, Data>: View where Data: Hashable, Conten
     NavigationStack {
 
         VStack {
-            CalendarWeekView(currentWeekID: $currentWeekID,
+            VGRCalendarWeekView(currentWeekID: $currentWeekID,
                              today: today,
                              interval: maxInterval,
                              data: calendarData,
