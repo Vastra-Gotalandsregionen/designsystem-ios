@@ -1,7 +1,7 @@
 import Foundation
 
-struct CalendarPeriodModel: Identifiable, Hashable {
-    var id: UUID = UUID()
+public struct CalendarPeriodModel: Identifiable, Hashable {
+    public var id: UUID = UUID()
     var idx: CalendarIndexKey
     var days: [CalendarIndexKey]
 
