@@ -1,9 +1,10 @@
 import Foundation
 
-struct CalendarPeriodModel: Identifiable {
+struct CalendarPeriodModel: Identifiable, Hashable {
     var id: UUID = UUID()
-    var date: Date
     var idx: CalendarIndexKey
     var days: [CalendarIndexKey]
+
+    /// Used to pad out the monthViews first days, in case the month starts on anything else than a monday
     var leadingPadding: Int
 }

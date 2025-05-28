@@ -74,8 +74,15 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
 }
 
 #Preview {
+    /// selectedIndex contains the currently selected date using the CalendarIndexKey
     @Previewable @State var selectedIndex: CalendarIndexKey = CalendarIndexKey(from: .now)
+
+    /// selectedWeekIndex is only used to trigger / push the weekView onto the NavStack
     @Previewable @State var selectedWeekIndex: CalendarIndexKey? = nil
+
+    /// This is an example of what the data that can be passed to the CalendarView can look like.
+    /// ExampleCalendarData is your own data structure that you pass and that you use to populate
+    /// the DayCells (in this example called _ExampleDayCell_).
     @Previewable @State var calendarData: [CalendarIndexKey: ExampleCalendarData] = [
         CalendarIndexKey(year: 2025, month: 5, day: 20) : .init(hasEvent: true, isRecurring: false),
         CalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
@@ -83,6 +90,7 @@ public struct CalendarView<Data, Content>: View where Data: Hashable, Content: V
 
     let today = CalendarIndexKey(from: .now)
 
+    /// The total maximal range for the Calendar. Can be set arbitrarily.
     let maxInterval: DateInterval = Calendar.current.dateInterval(
         from: .now,
         count: 2,

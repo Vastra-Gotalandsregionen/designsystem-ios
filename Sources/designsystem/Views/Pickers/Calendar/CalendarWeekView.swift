@@ -79,7 +79,6 @@ public struct CalendarWeekView<Data, Content>: View where Data: Hashable, Conten
 
     private func gotoToday() {
         guard let firstDate = dates.first else { return }
-//        let todaysDate = Date.now
         let compare = Calendar.current.compare(today.date, to: firstDate.date, toGranularity: .day)
         if compare == .orderedSame { return }
 
@@ -111,7 +110,7 @@ public struct CalendarWeekView<Data, Content>: View where Data: Hashable, Conten
 
             HStack {
                 ForEach(dates, id: \.self) { date in
-                    HStack {
+                    HStack(alignment: .top) {
                         ForEach(getDayCells(date), id: \.self) { day in
                             dayBuilder(day,
                                        data[day],
@@ -161,7 +160,7 @@ public struct CalendarWeekView<Data, Content>: View where Data: Hashable, Conten
         CalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
     ]
 
-    let today = CalendarIndexKey(from: Calendar.current.date(2025,5,15))
+    let today = CalendarIndexKey(from: .now)
 
     NavigationStack {
         VStack {

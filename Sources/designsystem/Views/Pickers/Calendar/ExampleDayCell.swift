@@ -10,6 +10,8 @@ struct ExampleCalendarData: Hashable {
         .init("Beta", description: "Something beta"),
         .init("Gamma", description: "Something gamma"),
     ]
+
+    let numItems: Int = Int.random(in: 1...3)
 }
 
 struct ExampleCalendarDetailData: Hashable {
@@ -40,47 +42,63 @@ struct ExampleDayCell: View {
     }
 
     var body: some View {
-        ZStack {
-            if selected {
-                RoundedRectangle(cornerRadius: current ? 2 : 5)
-                    .fill(Color.Custom.healthcare20)
-                    .padding(current ? 4 : 0)
-                    .allowsHitTesting(false)
-            }
+        VStack(spacing: 2) {
+            ZStack {
+                if selected {
+                    RoundedRectangle(cornerRadius: current ? 2 : 5)
+                        .fill(Color.Custom.healthcare20)
+                        .padding(current ? 4 : 0)
+                        .allowsHitTesting(false)
+                }
 
-            if current {
-                RoundedRectangle(cornerRadius: 5)
-                    .strokeBorder(Color.Custom.healthcare20, lineWidth: 2)
-                    .allowsHitTesting(false)
-            }
+                if current {
+                    RoundedRectangle(cornerRadius: 5)
+                        .strokeBorder(Color.Custom.healthcare20, lineWidth: 2)
+                        .allowsHitTesting(false)
+                }
 
-            if let data, data.hasEvent {
-                Circle()
-                    .fill(Color.Accent.purpleGraphic)
-                    .frame(maxWidth: circleSize, maxHeight: circleSize)
-                    .overlay(alignment: .topTrailing) {
-                        ZStack {
-                            Image(systemName: "heart.fill")
-                                .resizable()
-                                .foregroundColor(.white)
-                                .frame(width: iconSize+1, height: iconSize+1)
+                if let data, data.hasEvent {
+                    Circle()
+                        .fill(Color.Accent.purpleGraphic)
+                        .frame(maxWidth: circleSize, maxHeight: circleSize)
+                        .overlay(alignment: .topTrailing) {
+                            ZStack {
+                                Image(systemName: "heart.fill")
+                                    .resizable()
+                                    .foregroundColor(.white)
+                                    .frame(width: iconSize+1, height: iconSize+1)
 
-                            Image(systemName: "heart.fill")
-                                .resizable()
-                                .foregroundColor(.black)
-                                .frame(width: iconSize-2, height: iconSize-2)
+                                Image(systemName: "heart.fill")
+                                    .resizable()
+                                    .foregroundColor(.black)
+                                    .frame(width: iconSize-2, height: iconSize-2)
+                            }
                         }
-                    }
-            }
+                }
 
-            Text(String(describing: date.day))
-                .font(.body)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .foregroundStyle(textColor)
+                Text(String(describing: date.day))
+                    .font(.body)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .foregroundStyle(textColor)
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
+            .frame(height: height)
+            .contentShape(Rectangle())
+
+            if let data {
+                VStack(spacing: 2) {
+                    ForEach(0..<data.numItems) { i in
+                        Text("\(i)")
+                            .font(.caption)
+                            .frame(height: 20)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.Accent.purpleGraphic)
+                            .cornerRadius(4)
+
+                    }
+                }
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .center)
-        .frame(minHeight: height)
-        .contentShape(Rectangle())
     }
 }
 
@@ -90,7 +108,7 @@ struct ExampleDayCell: View {
     NavigationStack {
         ScrollView {
             VStack(spacing: 8) {
-                HStack(spacing: 2) {
+                HStack(alignment: .top, spacing: 2) {
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 1), data: dataEvent, current: false, selected: false)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 2), data: nil, current: false, selected: false)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 3), data: nil, current: false, selected: false)
@@ -99,7 +117,7 @@ struct ExampleDayCell: View {
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 6), data: nil, current: false, selected: false)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 7), data: nil, current: false, selected: false)
                 }
-                HStack(spacing: 2) {
+                HStack(alignment: .top, spacing: 2) {
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 1), data: dataEvent, current: true, selected: false)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 2), data: nil, current: true, selected: false)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 3), data: nil, current: true, selected: false)
@@ -108,7 +126,7 @@ struct ExampleDayCell: View {
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 6), data: nil, current: true, selected: false)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 7), data: nil, current: true, selected: false)
                 }
-                HStack(spacing: 2) {
+                HStack(alignment: .top, spacing: 2) {
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 1), data: dataEvent, current: false, selected: true)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 2), data: nil, current: false, selected: true)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 3), data: nil, current: false, selected: true)
@@ -117,7 +135,7 @@ struct ExampleDayCell: View {
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 6), data: nil, current: false, selected: true)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 7), data: nil, current: false, selected: true)
                 }
-                HStack(spacing: 2) {
+                HStack(alignment: .top, spacing: 2) {
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 1), data: dataEvent, current: true, selected: true)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 2), data: nil, current: true, selected: true)
                     ExampleDayCell(date: .init(year: 2021, month: 1, day: 3), data: nil, current: true, selected: true)

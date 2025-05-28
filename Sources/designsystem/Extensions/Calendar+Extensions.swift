@@ -451,3 +451,22 @@ extension Calendar {
         return DateInterval(start: start, end: endOfDay)
     }
 }
+
+import Foundation
+
+extension Calendar {
+    /// Returns the start date of the week that contains the specified date.
+    ///
+    /// - Parameter date: The date for which to find the start of the week.
+    /// - Returns: A `Date` representing the start of the week (e.g., Monday or Sunday, depending on the calendar).
+    ///
+    /// This method uses the `.yearForWeekOfYear` and `.weekOfYear` components to construct
+    /// the start of the week. It respects the calendar's locale and configuration, such as
+    /// what day the week starts on.
+    ///
+    /// - Note: This force-unwraps the result of `self.date(from:)`. In practice, it is safe
+    ///         because the provided components are guaranteed to be valid for the calendar.
+    func startOfWeek(for date: Date) -> Date {
+        self.date(from: self.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: date))!
+    }
+}

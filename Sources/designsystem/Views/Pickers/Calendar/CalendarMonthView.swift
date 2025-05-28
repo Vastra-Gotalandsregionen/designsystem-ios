@@ -34,7 +34,7 @@ struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: Vie
     /// Private
     private let calendar: Calendar
     private let locale = Locale.current
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: 7)
 
     private let onTapDay: (CalendarIndexKey) -> Void
     private let dayBuilder: (CalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
@@ -53,7 +53,13 @@ struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: Vie
             VStack(spacing: 0) {
                 CalendarWeekHeaderView()
 
-                LazyVGrid(columns: columns, spacing: 8, pinnedViews: [.sectionHeaders]) {
+                LazyVGrid(
+                    columns: columns,
+                    alignment: .leading,
+
+                    spacing: 8,
+                    pinnedViews: [.sectionHeaders]
+                ) {
 
                     ForEach(0..<month.leadingPadding, id: \.self) { _ in
                         Spacer()

@@ -16,6 +16,12 @@ import SwiftUI
         self.weeks = self.generateWeeks(for: interval, calendar: calendar)
     }
 
+    func periodForWeekID(_ weekID: String?) -> CalendarPeriodModel? {
+        guard let weekID else { return nil }
+        let filtered = weeks.filter { $0.idx.weekID == weekID }
+        return filtered.first
+    }
+
     private func generateWeeks(for interval: DateInterval, calendar: Calendar) -> [CalendarPeriodModel] {
         var weeks: [CalendarPeriodModel] = []
 
@@ -34,7 +40,6 @@ import SwiftUI
             }
 
             weeks.append(CalendarPeriodModel(
-                date: currentWeekStart,
                 idx: CalendarIndexKey(from: currentWeekStart),
                 days: days,
                 leadingPadding: 0
@@ -56,7 +61,6 @@ import SwiftUI
             let result = generateCalendarGrid(for: date, calendar: calendar)
 
             return CalendarPeriodModel(
-                date: date,
                 idx: CalendarIndexKey(from: date),
                 days: result.dates,
                 leadingPadding: result.leadingPadding

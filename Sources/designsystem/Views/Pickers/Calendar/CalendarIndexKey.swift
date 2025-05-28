@@ -16,6 +16,15 @@ public struct CalendarIndexKey: Hashable, Equatable, Identifiable {
         "\(year)-\(month)" 
     }
 
+    /// Returns a unique string identifying the ISO week of the year, e.g., "2025-W26"
+    public var weekID: String {
+        let calendar = Calendar.current
+        let date = self.date
+        let weekOfYear = calendar.component(.weekOfYear, from: date)
+        let yearForWeekOfYear = calendar.component(.yearForWeekOfYear, from: date)
+        return "\(yearForWeekOfYear)-W\(weekOfYear)"
+    }
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(year)
         hasher.combine(month)
