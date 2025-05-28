@@ -1,9 +1,9 @@
 import Foundation
 
-public struct CalendarPeriodModel: Identifiable, Hashable {
+public struct VGRCalendarPeriodModel: Identifiable, Hashable {
     public var id: UUID = UUID()
-    var idx: CalendarIndexKey
-    var days: [CalendarIndexKey]
+    var idx: VGRCalendarIndexKey
+    var days: [VGRCalendarIndexKey]
 
     /// Used to pad out the monthViews first days, in case the month starts on anything else than a monday
     var leadingPadding: Int
