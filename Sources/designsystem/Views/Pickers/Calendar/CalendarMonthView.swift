@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: View {
+public struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: View {
 
     /// month contains information about the current months layout (days, padding)
     let month: CalendarPeriodModel
@@ -40,7 +40,7 @@ struct CalendarMonthView<Data, Content>: View where Data: Hashable, Content: Vie
     private let dayBuilder: (CalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
 
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 8) {
             Text(month.idx.date.formatted(.dateTime.year().month()))
                 .font(.title2)

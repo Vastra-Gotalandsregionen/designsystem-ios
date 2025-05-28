@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarWeekView<Content, Data>: View where Data: Hashable, Content: View {
+public struct CalendarWeekView<Content, Data>: View where Data: Hashable, Content: View {
 
     @Binding var selectedDate: CalendarIndexKey
     @Binding var currentWeekID: String?
@@ -42,7 +42,7 @@ struct CalendarWeekView<Content, Data>: View where Data: Hashable, Content: View
     }
 
 
-    var body: some View {
+    public var body: some View {
         VStack {
             CalendarWeekHeaderView()
                 .padding(.leading, insets.leading)

@@ -3,10 +3,10 @@ import SwiftUI
 
 /// OnDayChange modifier
 /// This modifier adds the convenience of having a single modifier that is called whenever there are significant date-changes.
-struct OnDayChangeModifier: ViewModifier {
+public struct OnDayChangeModifier: ViewModifier {
     let action: () -> Void
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .onReceive(
                 NotificationCenter.default.publisher(for: Notification.Name.NSCalendarDayChanged)
