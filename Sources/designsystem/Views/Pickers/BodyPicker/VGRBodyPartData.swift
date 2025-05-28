@@ -22,6 +22,23 @@ public enum VGRBodyOrientation : String, Sendable, Hashable {
 }
 
 extension VGRBodyPartData {
+
+    public static func parts(matching ids: [String]) -> [VGRBodyPartData] {
+        var result: [VGRBodyPartData] = []
+
+        func collect(from parts: [VGRBodyPartData]) {
+            for part in parts {
+                if ids.contains(part.id) {
+                    result.append(part)
+                }
+                collect(from: part.subparts)
+            }
+        }
+
+        collect(from: VGRBodyPartData.body)
+        return result
+    }
+
     static let body: [VGRBodyPartData] = [
         .init(
             id: "left.leg",

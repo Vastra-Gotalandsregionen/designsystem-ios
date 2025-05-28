@@ -116,4 +116,9 @@ public extension Color {
         public static let warningSurface = Color("warningsurface", bundle: .module)
         public static let warningText = Color("warningtext", bundle: .module)
     }
+
+    //MARK: - CUSTOM
+    struct Custom {
+        public static let healthcare20 = Color("healthcare20", bundle: .module)
+    }
 }
