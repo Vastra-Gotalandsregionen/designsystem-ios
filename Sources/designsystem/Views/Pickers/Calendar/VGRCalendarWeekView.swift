@@ -43,7 +43,7 @@ public struct VGRCalendarWeekView<Content, Data>: View where Data: Hashable, Con
 
     public var body: some View {
         VStack {
-            CalendarWeekHeaderView()
+            VGRCalendarWeekHeaderView()
                 .padding(.leading, insets.leading)
                 .padding(.trailing, insets.trailing)
 

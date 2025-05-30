@@ -88,7 +88,7 @@ struct ExampleDayCell: View {
 
             if let data {
                 VStack(spacing: 2) {
-                    ForEach(0..<data.numItems) { i in
+                    ForEach(Array(0..<data.numItems), id: \.self) { i in
                         Text("\(i)")
                             .font(.caption)
                             .frame(height: 20)

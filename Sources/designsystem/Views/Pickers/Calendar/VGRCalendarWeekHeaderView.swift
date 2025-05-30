@@ -1,9 +1,9 @@
 import SwiftUI
 
-struct CalendarWeekHeaderView: View {
+public struct VGRCalendarWeekHeaderView: View {
     let spacing: CGFloat
 
-    init(spacing: CGFloat = 2) {
+    public init(spacing: CGFloat = 2) {
         self.spacing = spacing
     }
 
@@ -13,7 +13,7 @@ struct CalendarWeekHeaderView: View {
         Array(symbols[firstWeekdayIndex...] + symbols[..<firstWeekdayIndex])
     }
 
-    var body: some View {
+    public var body: some View {
         HStack(spacing: spacing) {
             ForEach(orderedWeekdays, id: \.self) { day in
                 Text(day.capitalized(with: .autoupdatingCurrent))
@@ -28,5 +28,5 @@ struct CalendarWeekHeaderView: View {
 }
 
 #Preview {
-    CalendarWeekHeaderView()
+    VGRCalendarWeekHeaderView()
 }
