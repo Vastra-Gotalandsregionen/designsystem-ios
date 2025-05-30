@@ -91,8 +91,8 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
         VGRCalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
     ]
 
-    let vm: CalendarViewModel = .init(interval: DateInterval(start: Calendar.current.date(2025,5,1),
-                                                             end: Calendar.current.date(2025,5,31)))
+    let vm: VGRCalendarViewModel = .init(interval: DateInterval(start: Calendar.current.date(2025,5,1),
+                                                                end: Calendar.current.date(2025,5,31)))
     let firstMonth = vm.months.first!
     let today = VGRCalendarIndexKey(from: Calendar.current.date(2025,5,15))
 

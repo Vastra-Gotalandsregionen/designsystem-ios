@@ -69,7 +69,7 @@ import SwiftUI
             let result = generateCalendarGrid(for: date, calendar: calendar)
 
             return VGRCalendarPeriodModel(
-                idx: CalendarIndexKey(from: date),
+                idx: VGRCalendarIndexKey(from: date),
                 days: result.dates,
                 leadingPadding: result.leadingPadding
             )
