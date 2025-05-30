@@ -8,6 +8,17 @@ public struct VGRBodyPartData : Sendable, Hashable, Identifiable {
     public var side: VGRBodySide = .notApplicable
     public var visualparts: [VGRBodyOrientation:VGRBodyPart] = [:]
     public var subparts: [VGRBodyPartData] = []
+
+    /// displayName returns the localized name of the current body part, prefixed with the side of the body (eg. "left hollow of knee", "right arm", etc)
+    public var displayName: String {
+        /// Get localized side if applicable
+        let side = self.side == .notApplicable ? "" : "bodypicker.side.\(self.side)".localizedBundle + " "
+
+        /// Get localized body part name
+        let name = "bodypicker.\(self.id)".localizedBundle
+
+        return "\(side)\(name)"
+    }
 }
 
 public enum VGRBodySide: String, Sendable, Hashable {
