@@ -5,12 +5,12 @@ import Foundation
 /// of body parts.
 public struct VGRBodyPartData : Sendable, Hashable, Identifiable {
 	public let id: String
-    var side: VGRBodySide = .notApplicable
-    var visualparts: [VGRBodyOrientation:VGRBodyPart] = [:]
-    var subparts: [VGRBodyPartData] = []
+    public var side: VGRBodySide = .notApplicable
+    public var visualparts: [VGRBodyOrientation:VGRBodyPart] = [:]
+    public var subparts: [VGRBodyPartData] = []
 }
 
-enum VGRBodySide: String {
+public enum VGRBodySide: String, Sendable, Hashable {
 	case left = "left"
 	case right = "right"
     case notApplicable = ""
@@ -39,7 +39,7 @@ extension VGRBodyPartData {
         return result
     }
 
-    static let body: [VGRBodyPartData] = [
+    public static let body: [VGRBodyPartData] = [
         .init(
             id: "left.leg",
             side: .left,
