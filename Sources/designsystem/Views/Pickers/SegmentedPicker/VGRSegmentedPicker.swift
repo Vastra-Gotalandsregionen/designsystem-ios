@@ -1,16 +1,22 @@
 import Foundation
 import SwiftUI
 
-public struct VGRSegmentedPicker: View {
-    let items: [String]
+public struct VGRSegmentedPicker<Item: Hashable>: View {
+    let items: [Item]
     let nonScrollableItemCount: Int
-    @Binding var selectedItem: String?
+    let displayText: (Item) -> String
+    let accessibilityId: (Item) -> String
+    @Binding var selectedItem: Item?
 
-    public init(items: [String],
+    public init(items: [Item],
                 nonScrollableItemCount: Int = 4,
-                selectedItem: Binding<String?>) {
+                selectedItem: Binding<Item?>,
+                displayText: @escaping (Item) -> String,
+                accessibilityId: @escaping (Item) -> String = { "\($0)" }) {
         self.items = items
         self.nonScrollableItemCount = nonScrollableItemCount
+        self.displayText = displayText
+        self.accessibilityId = accessibilityId
         self._selectedItem = selectedItem
     }
 
@@ -19,7 +25,7 @@ public struct VGRSegmentedPicker: View {
                                     nonScrollableItemCount: nonScrollableItemCount,
                                     insets: EdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6),
                                     selectedItem: $selectedItem) { item, selected in
-            Text(item)
+            Text(displayText(item))
                 .frame(idealWidth: 100, maxWidth: .infinity)
                 .font(.footnote)
                 .fontWeight(selected ? .bold : .regular)
@@ -30,9 +36,9 @@ public struct VGRSegmentedPicker: View {
                         .fill(selected ? Color.Primary.action : Color.clear)
                 )
                 .foregroundColor(selected ? Color.Elevation.elevation1 : Color.Primary.action)
-                .accessibilityIdentifier(item)
-        }
-        .background(
+                .accessibilityIdentifier(accessibilityId(item))
+
+        }.background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.Elevation.elevation1)
         )
@@ -40,6 +46,20 @@ public struct VGRSegmentedPicker: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.Primary.action, lineWidth: 2)
         )
+    }
+}
+
+// MARK: - Convenience initializer for String (backward compatibility)
+
+extension VGRSegmentedPicker where Item == String {
+    public init(items: [String],
+                nonScrollableItemCount: Int = 4,
+                selectedItem: Binding<String?>) {
+        self.init(items: items,
+                  nonScrollableItemCount: nonScrollableItemCount,
+                  selectedItem: selectedItem,
+                  displayText: { $0 },
+                  accessibilityId: { $0 })
     }
 }
 
