@@ -51,7 +51,7 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             VStack(spacing: 0) {
-                CalendarWeekHeaderView()
+                VGRCalendarWeekHeaderView()
 
                 LazyVGrid(
                     columns: columns,

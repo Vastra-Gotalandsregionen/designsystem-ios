@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct CalendarWeekHeaderView: View {
+public struct VGRCalendarWeekHeaderView: View {
     let spacing: CGFloat
 
     public init(spacing: CGFloat = 2) {
@@ -28,5 +28,5 @@ public struct CalendarWeekHeaderView: View {
 }
 
 #Preview {
-    CalendarWeekHeaderView()
+    VGRCalendarWeekHeaderView()
 }
