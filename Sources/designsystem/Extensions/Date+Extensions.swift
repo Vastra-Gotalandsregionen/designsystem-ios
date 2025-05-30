@@ -92,6 +92,14 @@ public extension Date {
         return self.formatted(.dateTime.day().month(.wide).year())
     }
 
+    /// vgrMonthFormat formats a date with full month name, but only includes year if it differs from current year
+    var vgrMonthFormat: String {
+        if Calendar.current.compare(Date(), to: self, toGranularity: .year) == .orderedSame {
+            return self.formatted(.dateTime.month(.wide))
+        }
+        return self.formatted(.dateTime.month(.wide).year())
+    }
+
     var vgrShortTimeFormat: String {
         return self.formatted(date: .omitted, time: .shortened)
     }
