@@ -79,8 +79,8 @@ extension VGRBodyPartData {
             subparts: [
                 .init(id: "head.face", visualparts: [.front: VGRBodyPart.front(.face)]),
                 .init(id: "head.throat", visualparts: [.front: VGRBodyPart.front(.throat)]),
-                .init(id: "head.scalp", visualparts: [.front: VGRBodyPart.front(.scalp), .back: VGRBodyPart.back(.scalp)]),
-                .init(id: "head.back", visualparts: [.back: VGRBodyPart.back(.head)]),
+                .init(id: "head.scalp", visualparts: [.front: VGRBodyPart.front(.scalp), .back: VGRBodyPart.back(.head)]),
+//                .init(id: "head.back", visualparts: []),
                 .init(id: "head.neck", visualparts: [.back: VGRBodyPart.back(.neck)])
             ]
         ),
