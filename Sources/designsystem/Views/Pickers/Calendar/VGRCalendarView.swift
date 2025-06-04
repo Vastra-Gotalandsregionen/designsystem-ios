@@ -133,7 +133,6 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
             VStack {
                 VGRCalendarWeekView(
                     currentWeekID: $currentWeekID,
-                    today: today,
                     interval: maxInterval,
                     data: calendarData,
                     selectedDate: $selectedIndex) { data in
