@@ -100,6 +100,15 @@ public extension Date {
         return self.formatted(.dateTime.month(.wide).year())
     }
 
+    /// vgrWeekFormat formats a date with week number, but only includes year if it differs from current year
+    var vgrWeekFormat: String {
+        if Calendar.current.compare(Date(), to: self, toGranularity: .year) == .orderedSame {
+            return "v " + self.formatted(.dateTime.week())
+        }
+
+        return "v " + self.formatted(.dateTime.week()) + ", " + self.formatted(.dateTime.year())
+    }
+
     var vgrShortTimeFormat: String {
         return self.formatted(date: .omitted, time: .shortened)
     }
