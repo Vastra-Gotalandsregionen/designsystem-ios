@@ -23,7 +23,8 @@
 
 "bodypicker.torso" = "Överkropp";
 "bodypicker.torso.chest" = "Bröst";
-"bodypicker.torso.back" = "Rygg";
+"bodypicker.torso.front" = "Torso fram";
+"bodypicker.torso.back" = "Torso bak";
 "bodypicker.torso.right.armpit" = "Armhåla";
 "bodypicker.torso.left.armpit" = "Armhåla";
 

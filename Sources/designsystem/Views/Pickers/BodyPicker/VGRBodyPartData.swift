@@ -136,7 +136,7 @@ extension VGRBodyPartData {
             visualparts: [.front: VGRBodyPart.front(.upperBody), .back: VGRBodyPart.back(.torso)],
             subparts: [
                 .init(id: "torso.left.armpit", side: .left, visualparts: [.front: VGRBodyPart.front(.leftArmPit), .back: VGRBodyPart.back(.leftArmPit)]),
-                .init(id: "torso.chest", visualparts: [.front: VGRBodyPart.front(.torso)]),
+                .init(id: "torso.front", visualparts: [.front: VGRBodyPart.front(.torso)]),
                 .init(id: "torso.back", visualparts: [.back: VGRBodyPart.back(.back)]),
                 .init(id: "torso.right.armpit", side: .right, visualparts: [.front: VGRBodyPart.front(.rightArmPit), .back: VGRBodyPart.back(.rightArmPit)]),
             ]
