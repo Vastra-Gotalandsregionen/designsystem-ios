@@ -140,6 +140,10 @@ public enum TrackerScreen {
             return "survey_dismissed"
         case .directions:
             return "directions"
+        case .addAssessmentPlus:
+            return "add_assessment_plus"
+        case .addAssessmentCallout:
+            return "add_assessment_callout"
         }
     }
 }
