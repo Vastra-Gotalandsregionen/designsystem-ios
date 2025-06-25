@@ -91,11 +91,13 @@ struct VGRCalloutV2<Content: View>: View {
 #Preview {
     @Previewable @State var expanded1 = false
     @Previewable @State var expanded2 = false
+    @Previewable @State var index: Int? = 0
+    @Previewable @State var isOn = false
     
     ScrollView {
         VStack(spacing: 32) {
             
-            VGRCalloutV2(description: "Enklare varianten, enbart text")
+            VGRCalloutV2(description: "Enklaste varianten, enbart text")
             
             VGRCalloutV2(
                 description: "Text med ikon",
@@ -103,7 +105,7 @@ struct VGRCalloutV2<Content: View>: View {
             
             VGRCalloutV2(
                 header: "Rubrik",
-                description: "Text med större illustration och med titel",
+                description: "Text med större illustration och med en rubrik",
                 image: Image("illustration_presenting", bundle: .module),
                 imageType: .illustration)
             
@@ -133,7 +135,7 @@ struct VGRCalloutV2<Content: View>: View {
             ) {
                 VStack(spacing: 0) {
                     DisclosureGroup("Visa mer", isExpanded: $expanded1) {
-                        Text("Detta är innehåll i en öppen disclosure.")
+                        Text("Blablablablablbalbalb")
                             .foregroundColor(Color.Neutral.text)
                     }
                     .disclosureGroupStyle(VGRDisclosureStyle())
@@ -141,8 +143,8 @@ struct VGRCalloutV2<Content: View>: View {
                     
                     DisclosureGroup("Avancerade inställningar", isExpanded: $expanded2) {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("• Detalj 1")
-                            Text("• Detalj 2")
+                            Text("• Blabla **1**")
+                            Text("• Blabla **2**")
                         }
                         .foregroundColor(Color.Neutral.text)
                     }
@@ -152,6 +154,30 @@ struct VGRCalloutV2<Content: View>: View {
                 .background(Color.Elevation.elevation1)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
             }
+            
+            VGRCalloutV2(
+                header: "Rubrik",
+                description: "Rubrik\nText\nIllustration\nAnnan bakgrundsfärg\nDismiss-knapp",
+                backgroundColor: Color.Status.informationSurface,
+                image: Image("illustration_presenting", bundle: .module),
+                imageType: .illustration,
+                dismiss: {
+                    print("Dismiss")
+                } ) {
+                    Text("Kan skicka in **vilken vy/komponent som helst** här 🫡")
+                        .font(.title)
+                    
+                    Text("Typ en sån här")
+                    
+                    LevelSlider(
+                        selectedIndex: $index, configuration: .dermatology) { newIndex in
+                            print("SelectedIndex: \(newIndex)")
+                        }
+                    
+                    Text("eller sån här")
+                    
+                    VGRToggle(isOn: $isOn, text: "Hello")
+                }
         }
         .padding()
     }
