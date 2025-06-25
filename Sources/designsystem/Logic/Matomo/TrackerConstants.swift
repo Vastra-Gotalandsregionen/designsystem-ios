@@ -41,6 +41,7 @@ public enum TrackerScreen {
     case medicationType(action: TrackerAction)
     case medicationSchema(action: TrackerAction)
     case medicationSchemaSlot(action: TrackerAction)
+    case assessment(action: TrackerAction)
     case survey
     case surveyCompleted
     case surveyCancelled
@@ -109,6 +110,8 @@ public enum TrackerScreen {
             return "\(action.rawValue)_medication_schema"
         case .medicationSchemaSlot(action: let action):
             return "\(action.rawValue)_medication_schema_slot"
+        case .assessment(action: let action):
+            return "\(action.rawValue)_assessment"
             
         case .learnMore:
             return "learn_more"
