@@ -46,6 +46,8 @@ public enum TrackerScreen {
     case surveyCancelled
     case surveyDismissed
     case directions
+    case addAssessmentPlus
+    case addAssessmentCallout
     
     public var toString: String {
         switch self {
