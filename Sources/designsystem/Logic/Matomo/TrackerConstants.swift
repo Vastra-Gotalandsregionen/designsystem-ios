@@ -49,6 +49,10 @@ public enum TrackerScreen {
     case directions
     case addAssessmentPlus
     case addAssessmentCallout
+    case analysis
+    case analysisDiscover
+    case analysisBodyArea
+    case analysisChartDetails
     
     public var toString: String {
         switch self {
@@ -147,6 +151,14 @@ public enum TrackerScreen {
             return "add_assessment_plus"
         case .addAssessmentCallout:
             return "add_assessment_callout"
+        case .analysis:
+            return "analysis"
+        case .analysisDiscover:
+            return "analysis_discover"
+        case .analysisBodyArea:
+            return "analysis_body_area"
+        case .analysisChartDetails:
+            return "analysis_chart_details"
         }
     }
 }
