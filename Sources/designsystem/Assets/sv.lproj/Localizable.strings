@@ -2,6 +2,7 @@
 "general.decrease" = "Minska";
 "general.increase" = "Öka";
 "general.selected" = "Vald";
+"general.notselected" = "Ej vald";
 
 /* Body Picker */
 "bodypicker.title" = "Välj kroppsdelar";
@@ -71,3 +72,33 @@
 "bodypicker.right.foot" = "Fot";
 "bodypicker.right.foot.base" = "Fot";
 "bodypicker.right.foot.sole" = "Fotsula";
+
+/* Recurrence picker */
+"recurrence.title" = "Upprepa";
+"recurrence.interval" = "Intervall";
+"recurrence.date.on" = "på";
+"recurrence.date.the" = "den";
+"recurrence.every" = "Var";
+"recurrence.every.1" = "Varje";
+"recurrence.every.2" = "Varannan";
+"recurrence.every.3" = "Var tredje";
+"recurrence.every.4" = "Var fjärde";
+"recurrence.period.day" = "Dag";
+"recurrence.period.week" = "Vecka";
+"recurrence.period.month" = "Månad";
+"recurrence.weekday.choose" = "Välj veckodagar";
+"recurrence.weekday.mon" = "Måndag";
+"recurrence.weekday.tue" = "Tisdag";
+"recurrence.weekday.wed" = "Onsdag";
+"recurrence.weekday.thu" = "Torsdag";
+"recurrence.weekday.fri" = "Fredag";
+"recurrence.weekday.sat" = "Lördag";
+"recurrence.weekday.sun" = "Söndag";
+"recurrence.weekday.mon.plural" = "Måndagar";
+"recurrence.weekday.tue.plural" = "Tisdagar";
+"recurrence.weekday.wed.plural" = "Onsdagar";
+"recurrence.weekday.thu.plural" = "Torsdagar";
+"recurrence.weekday.fri.plural" = "Fredagar";
+"recurrence.weekday.sat.plural" = "Lördagar";
+"recurrence.weekday.sun.plural" = "Söndagar";
+
