@@ -1,19 +1,43 @@
 import SwiftUI
 
+/// A reusable SwiftUI view that allows users to configure a recurrence pattern.
+///
+/// This picker supports selecting:
+/// - **Frequency** (e.g., every 1–99 intervals)
+/// - **Period** (day, week, month)
+/// - **Optional weekdays** when the period is weekly
+///
+/// It provides:
+/// - A combined display string summarizing the current selection
+/// - Multi-column picker for frequency and period
+/// - A selectable list of weekdays if weekly recurrence is chosen
+///
+/// Bindings:
+/// - `startDate`: Used to initialize the monthly recurrence index (e.g., day of month)
+/// - `selectedFrequency`: The currently selected frequency (e.g., every 2 weeks)
+/// - `selectedPeriod`: The recurrence period (day, week, month)
+/// - `selectedWeekdays`: The selected weekdays (only applicable for weekly recurrences)
+///
+/// Example:
+/// ```swift
+/// VGRRecurrencePickerView(
+///     startDate: $startDate,
+///     selectedFrequency: $frequency,
+///     selectedPeriod: $period,
+///     selectedWeekdays: $weekdays
+/// )
+/// ```
 public struct VGRRecurrencePickerView: View {
 
-    /// startDate is only used to initialize the _month_ period.
-    /// We extract the dayOfMonth from the date, and then use that as the default recurrence index if the user
-    /// opts to a recurrence pattern using the month period.
     @Binding var startDate: Date
     @Binding var selectedFrequency: Int
     @Binding var selectedPeriod: RecurrencePeriod
-    @Binding var selectedWeekdays: [RecurrenceWeekday]
+    @Binding var selectedWeekdays: [RecurrenceWeekday]?
 
     public init(startDate: Binding<Date>,
                 selectedFrequency: Binding<Int>,
                 selectedPeriod: Binding<RecurrencePeriod>,
-                selectedWeekdays: Binding<[RecurrenceWeekday]>) {
+                selectedWeekdays: Binding<[RecurrenceWeekday]?>) {
         self._startDate = startDate
         self._selectedFrequency = selectedFrequency
         self._selectedPeriod = selectedPeriod
@@ -37,10 +61,12 @@ public struct VGRRecurrencePickerView: View {
     }
 
     var currentSelection: String {
-        let recurrence = Recurrence(frequency: self.selectedFrequency,
-                                    period: self.selectedPeriod,
-                                    index: self.selectedIndex,
-                                    weekdays: self.selectedWeekdays)
+        let recurrence = Recurrence(
+            frequency: self.selectedFrequency,
+            period: self.selectedPeriod,
+            index: self.selectedIndex,
+            weekdays: self.selectedWeekdays ?? []
+        )
         return recurrence.formatString(startDate: startDate)
     }
 
@@ -53,14 +79,22 @@ public struct VGRRecurrencePickerView: View {
     }
 
     func toggleWeekday(_ weekDay: RecurrenceWeekday) {
-        if selectedWeekdays.contains(weekDay) {
-            /// Prevent letting the user from clearing out the weekday selection
-            if selectedWeekdays.count > 1 {
-                selectedWeekdays.removeAll { $0 == weekDay }
+        guard var weekdays = selectedWeekdays else {
+            /// If nil, initialize with the tapped weekday
+            selectedWeekdays = [weekDay]
+            return
+        }
+
+        if weekdays.contains(weekDay) {
+            /// Prevent clearing out all weekdays
+            if weekdays.count > 1 {
+                weekdays.removeAll { $0 == weekDay }
             }
         } else {
-            selectedWeekdays.append(weekDay)
+            weekdays.append(weekDay)
         }
+
+        selectedWeekdays = weekdays
     }
 
     func setSelections() {
@@ -73,9 +107,11 @@ public struct VGRRecurrencePickerView: View {
         self.selectedPeriod = RecurrencePeriod.allCases[selection[1]]
 
         /// If there is no weekday selected at start, set the current weekday as pre-selected
-        if isWeekPeriod && self.selectedWeekdays.isEmpty {
-            if let today = RecurrenceWeekday(rawValue: Date.now.weekday) {
-                self.selectedWeekdays.append(today)
+        if isWeekPeriod {
+            if selectedWeekdays?.isEmpty ?? true {
+                if let today = RecurrenceWeekday(rawValue: Date.now.weekday) {
+                    selectedWeekdays = [today]
+                }
             }
         }
     }
@@ -125,7 +161,7 @@ public struct VGRRecurrencePickerView: View {
                         VStack(spacing: 0) {
                             ForEach(RecurrenceWeekday.allCases, id:\.id) { weekday in
                                 Label {
-                                    if selectedWeekdays.contains(weekday){
+                                    if selectedWeekdays?.contains(weekday) == true {
                                         Text("recurrence.weekday.\(weekday.description)".localizedBundle)
                                             .foregroundStyle(Color.Neutral.text)
                                             .accessibilityLabel("\("general.selected".localizedBundle), \("recurrence.weekday.\(weekday.description)".localizedBundle)")
@@ -136,7 +172,7 @@ public struct VGRRecurrencePickerView: View {
                                     }
 
                                 } icon: {
-                                    if selectedWeekdays.contains(weekday){
+                                    if selectedWeekdays?.contains(weekday) == true {
                                         Image(systemName: "checkmark.circle.fill")
                                             .foregroundStyle(Color.Primary.action)
                                     } else {
@@ -155,7 +191,6 @@ public struct VGRRecurrencePickerView: View {
                                     Divider()
                                         .foregroundStyle(Color.Neutral.divider)
                                 }
-
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -165,7 +200,6 @@ public struct VGRRecurrencePickerView: View {
                     }
                     .padding(.top, 16)
                 }
-
             }
         }
         .frame(maxWidth: .infinity)
@@ -182,7 +216,7 @@ public struct VGRRecurrencePickerView: View {
     @Previewable @State var startDate: Date = .now
     @Previewable @State var frequency: Int = 1
     @Previewable @State var period: RecurrencePeriod = .week
-    @Previewable @State var weekdays: [RecurrenceWeekday] = [.friday]
+    @Previewable @State var weekdays: [RecurrenceWeekday]? = []
 
     NavigationStack {
         VGRRecurrencePickerView(startDate: $startDate,
