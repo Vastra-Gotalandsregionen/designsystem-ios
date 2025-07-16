@@ -50,13 +50,13 @@
 "bodypicker.right.hand.back.of.hand" = "Handrygg";
 
 "bodypicker.left.leg" = "Ben";
-"bodypicker.left.upper.leg" = "Lår";
+"bodypicker.left.upper.leg" = "Övre ben";
 "bodypicker.left.knee" = "Knä";
 "bodypicker.left.hollow.of.knee" = "Knäveck";
 "bodypicker.left.lower.leg" = "Underben";
 
 "bodypicker.right.leg" = "Ben";
-"bodypicker.right.upper.leg" = "Lår";
+"bodypicker.right.upper.leg" = "Övre ben";
 "bodypicker.right.knee" = "Knä";
 "bodypicker.right.hollow.of.knee" = "Knäveck";
 "bodypicker.right.lower.leg" = "Underben";
