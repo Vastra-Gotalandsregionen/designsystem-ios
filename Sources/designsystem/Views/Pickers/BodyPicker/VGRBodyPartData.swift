@@ -35,19 +35,16 @@ public enum VGRBodyOrientation : String, Sendable, Hashable {
 extension VGRBodyPartData {
 
     public static func parts(matching ids: [String]) -> [VGRBodyPartData] {
-        var result: [VGRBodyPartData] = []
+        let idSet = Set(ids)
 
-        func collect(from parts: [VGRBodyPartData]) {
-            for part in parts {
-                if ids.contains(part.id) {
-                    result.append(part)
-                }
-                collect(from: part.subparts)
+        func collect(from parts: [VGRBodyPartData]) -> [VGRBodyPartData] {
+            parts.flatMap { part -> [VGRBodyPartData] in
+                let matched = idSet.contains(part.id) ? [part] : []
+                return matched + collect(from: part.subparts)
             }
         }
 
-        collect(from: VGRBodyPartData.body)
-        return result
+        return collect(from: VGRBodyPartData.body)
     }
 
     public static let body: [VGRBodyPartData] = [
@@ -80,7 +77,6 @@ extension VGRBodyPartData {
                 .init(id: "head.face", visualparts: [.front: VGRBodyPart.front(.face)]),
                 .init(id: "head.throat", visualparts: [.front: VGRBodyPart.front(.throat)]),
                 .init(id: "head.scalp", visualparts: [.front: VGRBodyPart.front(.scalp), .back: VGRBodyPart.back(.head)]),
-//                .init(id: "head.back", visualparts: []),
                 .init(id: "head.neck", visualparts: [.back: VGRBodyPart.back(.neck)])
             ]
         ),
