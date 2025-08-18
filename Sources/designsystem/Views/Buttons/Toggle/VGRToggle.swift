@@ -12,7 +12,19 @@ import SwiftUI
 /// VGRToggle(isOn: $isOn, text: "Aktivera notiser", description: "Få en påminnelse varje dag.")
 /// ```
 public struct VGRToggle: View {
-    
+
+    /// För att hantera tillstånd där komponenten är satt som .disabled(true)
+    @Environment(\.isEnabled) private var isEnabled
+
+    /// Skalbara mått, för att hantera uppskalning
+    @ScaledMetric private var toggleContainerHeight: CGFloat = 31
+    @ScaledMetric private var toggleContainerWidth: CGFloat = 51
+    @ScaledMetric private var toggleContainerCornerRadius: CGFloat = 20
+    @ScaledMetric private var toggleLeverOffset: CGFloat = 10
+    @ScaledMetric private var toggleLeverPadding: CGFloat = 2
+
+    private let disabledOpacity: CGFloat = 0.5
+
     /// Bindning till togglens tillstånd.
     @Binding var isOn: Bool
     
@@ -46,20 +58,21 @@ public struct VGRToggle: View {
                         .font(.footnote)
                 }
             }
-            
-            Spacer()
-            
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .opacity(isEnabled ? 1 : disabledOpacity)
+
             Rectangle()
                 .foregroundColor(isOn ? Color.Primary.action : Color.Neutral.textVariant)
-                .frame(width: 51, height: 31)
+                .opacity(isEnabled ? 1 : disabledOpacity)
+                .frame(width: toggleContainerWidth, height: toggleContainerHeight)
                 .overlay(
                     Circle()
                         .foregroundColor(.white)
-                        .padding(2)
-                        .offset(x: isOn ? 10 : -10)
-                        .animation(.easeOut(duration: 0.1), value: isOn)
+                        .padding(toggleLeverPadding)
+                        .offset(x: isOn ? toggleLeverOffset : -toggleLeverOffset)
+                        .animation(.easeOut(duration: 0.2), value: isOn)
                 )
-                .cornerRadius(20)
+                .cornerRadius(toggleContainerCornerRadius)
                 .onTapGesture {
                     isOn.toggle()
                     Haptics.lightImpact() 
@@ -80,6 +93,9 @@ public struct VGRToggle: View {
                 VGRToggle(isOn: $isOn, text: "Hej hopp")
                 
                 VGRToggle(isOn: $isOn, text: "Hej hopp", description: "Någon slags information")
+
+                VGRToggle(isOn: $isOn, text: "Hej hopp", description: "Någon slags information igen")
+                    .disabled(true)
             }
             .padding(.vertical, 32)
         }
