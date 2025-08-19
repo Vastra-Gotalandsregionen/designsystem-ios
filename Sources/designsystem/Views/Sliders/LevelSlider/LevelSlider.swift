@@ -8,9 +8,9 @@ public struct LevelSlider: View {
     public let action: ((Int) -> Void)?
     
     @State private var elementWidth: CGFloat = 56
-
+    
     private let generator = UIImpactFeedbackGenerator(style: .soft)
-
+    
     private var levels: [Level] {
         configuration.range.map { index in
             Level(id: "\(index)",
@@ -20,18 +20,24 @@ public struct LevelSlider: View {
         }
     }
     
+    private func valueText(isSelected: Bool) -> String {
+        isSelected
+        ? "general.selected".localizedBundle
+        : "general.notselected".localizedBundle
+    }
+    
     var drag: some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { val in
                 if let index = getHoveredIndex(location: val.location) {
                     if self.selectedIndex != index {
                         self.selectedIndex = index
-                        playSelectionChangedHaptic()
+                        Haptics.lightImpact()
                     } else {
                         /// Make a single tap toggle the selectedIndex
                         if isDeselectable && val.translation.width == 0 {
                             self.selectedIndex = nil
-                            playSelectionChangedHaptic()
+                            Haptics.lightImpact()
                         }
                     }
                 }
@@ -60,11 +66,6 @@ public struct LevelSlider: View {
         return nil
     }
     
-    private func playSelectionChangedHaptic() {
-        generator.impactOccurred()
-    }
-    
-    
     public init(selectedIndex: Binding<Int?>,
                 isDeselectable: Bool = true,
                 configuration: LevelSliderConfiguration,
@@ -78,6 +79,7 @@ public struct LevelSlider: View {
     public var body: some View {
         HStack (alignment: .top, spacing: 4) {
             ForEach(Array(levels.enumerated()), id: \.offset) { index, level in
+                let isSelected = (selectedIndex == level.index)
                 if index == 0 {
                     Text(level.id)
                         .padding(.vertical, 11)
@@ -103,6 +105,9 @@ public struct LevelSlider: View {
                                 .stroke(level.selected, lineWidth: 2)
                             }
                         }
+                        .accessibilityLabel(level.id)
+                        .accessibilityValue(valueText(isSelected: isSelected))
+                        .accessibilityAddTraits(.isButton)
                 } else if index == levels.count-1 {
                     Text(level.id)
                         .padding(.vertical, 11)
@@ -126,6 +131,9 @@ public struct LevelSlider: View {
                                 .stroke(level.selected, lineWidth: 2)
                             }
                         }
+                        .accessibilityLabel(level.id)
+                        .accessibilityValue(valueText(isSelected: isSelected))
+                        .accessibilityAddTraits(.isButton)
                 } else {
                     Text(level.id)
                         .padding(.vertical, 11)
@@ -138,9 +146,10 @@ public struct LevelSlider: View {
                                     .stroke(level.selected, lineWidth: 2)
                             }
                         }
+                        .accessibilityLabel(level.id)
+                        .accessibilityValue(valueText(isSelected: isSelected))
+                        .accessibilityAddTraits(.isButton)
                 }
-                
-                
             }
             .font(.body)
             .fontWeight(.semibold)

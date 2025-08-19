@@ -84,7 +84,7 @@ public struct VGRStepper : View {
             .accessibilityLabel(LocalizedHelper.localized(forKey: "general.decrease"))
             .buttonStyle(.borderless)
             .onTapGesture {
-                performHapticFeedback()
+                Haptics.lightImpact()
             }
             .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 25, perform: {}, onPressingChanged: { isPressing in
                 guard isRepeatOnHoldEnabled else { return }
@@ -122,8 +122,11 @@ public struct VGRStepper : View {
             .accessibilityLabel(LocalizedHelper.localized(forKey: "general.increase"))
             .buttonStyle(.borderless)
             .onTapGesture {
-                performHapticFeedback()
+                Haptics.lightImpact()
             }
+            .onChange(of: value, {
+                AccessibilityHelpers.postPrioritizedAnnouncement(value.formatted(.number), withPriority: .default)
+            })
             .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 25, perform: {}, onPressingChanged: { isPressing in
                 guard isRepeatOnHoldEnabled else { return }
                 if isPressing {
@@ -151,12 +154,6 @@ public struct VGRStepper : View {
                 print("n/a")
             }
         })
-    }
-    
-    /// Utför haptisk feedback när användaren trycker på knapparna.
-    func performHapticFeedback() {
-        let generator = UIImpactFeedbackGenerator(style: .light)
-        generator.impactOccurred()
     }
     
     /// Försöker öka värdet om det är möjligt.
@@ -193,7 +190,7 @@ public struct VGRStepper : View {
             
             Task { @MainActor in
                 if self.accelerationStep == 0 {
-                    self.performHapticFeedback()
+                    Haptics.lightImpact()
                 }
                 action()
                 self.accelerationStep += 1

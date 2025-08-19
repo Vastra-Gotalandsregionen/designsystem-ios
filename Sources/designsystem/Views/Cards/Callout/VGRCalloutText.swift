@@ -5,15 +5,15 @@ import SwiftUI
 public struct VGRCalloutText: View {
     /// En valfri attributerad rubrik som visas överst i callouten.
     /// En obligatorisk attributerad beskrivning som visas under rubriken.
-    public let header: AttributedString?
-    public let description: AttributedString
+    public let header: String?
+    public let description: String
     
     /// Skapar en `VGRCalloutText`-vy.
     /// - Parameters:
     ///   - header: Valfri rubrik stylad som en rubriktext.
     ///   - description: Obligatorisk beskrivning stylad som fotnot.
-    public init(header: AttributedString? = nil,
-                description: AttributedString) {
+    public init(header: String? = nil,
+                description: String) {
         self.header = header
         self.description = description
     }
@@ -37,102 +37,103 @@ public struct VGRCalloutText: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
     }
 }
 
-#Preview {
-    
-    let markdown = """
-ℹ️ **Information**
-
-Läs vår [integritetspolicy](https://example.com) innan du fortsätter.  
-**Observera:** Denna åtgärd är permanent. ⚠️
-"""
-    
-    let markdownAlternative = """
-**Så här gör du:**  
-
-1. Öppna Inställningar  
-2. Klicka på Sekretess  
-3. Aktivera alternativet  
-
-_Tips:_ Du kan alltid återställa detta senare.
-"""
-    
-    let attributed = try? AttributedString(
-        markdown: markdown,
-        options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
-    
-    let attributedAlternative = try? AttributedString(
-        markdown: markdownAlternative,
-        options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
-    
-    let text: VGRCalloutText = VGRCalloutText(
-        header: try! AttributedString(markdown: "_Header_"),
-        description: attributedAlternative!)
-    
-    ScrollView {
-        VGRShape {
-            VStack(spacing: 32) {
-                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
-                    VGRCalloutText(header: "Hello", description: "World")
-                }
-                VGRCalloutShape(backgroundColor: Color.Status.informationSurface) {
-                    VGRCalloutText(header: "Hello", description: "World")
-                }
-                
-                VGRCallout(text: text, button: VGRButton(label: "Tap meee", action: {
-                    print("Tapped")
-                }), variant: .illustration(VGRCalloutIllustration(assetName: "illustration_presence"))) {
-                    print("Dismissed")
-                }
-                
-                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
-                    let header: AttributedString = {
-                        var string = AttributedString("Bold Header")
-                        string.font = .system(size: 18, weight: .bold)
-                        return string
-                    }()
-                    
-                    let description: AttributedString = {
-                        var string = AttributedString("This is a description with ")
-                        var strong = AttributedString("mixed styles")
-                        strong.foregroundColor = .blue
-                        strong.underlineStyle = .single
-                        return string + strong + AttributedString(".")
-                    }()
-                    
-                    VGRCalloutText(header: header, description: description)
-                }
-                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
-                    let header: AttributedString = {
-                        var string = AttributedString("⚠️ Attention")
-                        string.font = .system(size: 16, weight: .semibold)
-                        return string
-                    }()
-                    
-                    let description: AttributedString = {
-                        var string = AttributedString("Please read the ")
-                        var keyword = AttributedString("guidelines")
-                        keyword.foregroundColor = Color.Status.errorText
-                        keyword.font = .body.bold()
-                        return string + keyword + AttributedString(" carefully.")
-                    }()
-                    
-                    VGRCalloutText(header: header, description: description)
-                }
-                
-                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
-
-                    VGRCalloutText(description: attributed!)
-                    
-                }
-                
-                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
-                    VGRCalloutText(description: attributedAlternative!)
-                }
-            }
-            .padding()
-        }
-    }
-}
+//#Preview {
+//    
+//    let markdown = """
+//ℹ️ **Information**
+//
+//Läs vår [integritetspolicy](https://example.com) innan du fortsätter.  
+//**Observera:** Denna åtgärd är permanent. ⚠️
+//"""
+//    
+//    let markdownAlternative = """
+//**Så här gör du:**  
+//
+//1. Öppna Inställningar  
+//2. Klicka på Sekretess  
+//3. Aktivera alternativet  
+//
+//_Tips:_ Du kan alltid återställa detta senare.
+//"""
+//    
+//    let attributed = try? AttributedString(
+//        markdown: markdown,
+//        options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
+//    
+//    let attributedAlternative = try? AttributedString(
+//        markdown: markdownAlternative,
+//        options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
+//    
+//    let text: VGRCalloutText = VGRCalloutText(
+//        header: try! String(markdown: "_Header_"),
+//        description: attributedAlternative!)
+//    
+//    ScrollView {
+//        VGRShape {
+//            VStack(spacing: 32) {
+//                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
+//                    VGRCalloutText(header: "Hello", description: "World")
+//                }
+//                VGRCalloutShape(backgroundColor: Color.Status.informationSurface) {
+//                    VGRCalloutText(header: "Hello", description: "World")
+//                }
+//                
+//                VGRCallout(text: text, button: VGRButton(label: "Tap meee", action: {
+//                    print("Tapped")
+//                }), variant: .illustration(VGRCalloutIllustration(assetName: "illustration_presence"))) {
+//                    print("Dismissed")
+//                }
+//                
+//                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
+//                    let header: AttributedString = {
+//                        var string = AttributedString("Bold Header")
+//                        string.font = .system(size: 18, weight: .bold)
+//                        return string
+//                    }()
+//                    
+//                    let description: AttributedString = {
+//                        var string = AttributedString("This is a description with ")
+//                        var strong = AttributedString("mixed styles")
+//                        strong.foregroundColor = .blue
+//                        strong.underlineStyle = .single
+//                        return string + strong + AttributedString(".")
+//                    }()
+//                    
+//                    VGRCalloutText(header: header, description: description)
+//                }
+//                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
+//                    let header: AttributedString = {
+//                        var string = AttributedString("⚠️ Attention")
+//                        string.font = .system(size: 16, weight: .semibold)
+//                        return string
+//                    }()
+//                    
+//                    let description: AttributedString = {
+//                        var string = AttributedString("Please read the ")
+//                        var keyword = AttributedString("guidelines")
+//                        keyword.foregroundColor = Color.Status.errorText
+//                        keyword.font = .body.bold()
+//                        return string + keyword + AttributedString(" carefully.")
+//                    }()
+//                    
+//                    VGRCalloutText(header: header, description: description)
+//                }
+//                
+//                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
+//
+//                    VGRCalloutText(description: attributed!)
+//                    
+//                }
+//                
+//                VGRCalloutShape(backgroundColor: Color.Status.errorSurface) {
+//                    VGRCalloutText(description: attributedAlternative!)
+//                }
+//            }
+//            .padding()
+//        }
+//    }
+//}
