@@ -1,71 +1,70 @@
 import SwiftUI
 
-struct VGRSummeryRowView: View {
-    let text: String
-    let rangeLabel: String?
-    let entryCount: Int?
-    let indicatorColor: Color?
-    let linkButton: Bool
-    let imageIcon: String?
+///A reusable SwiftUI row view that displays up to three customizable content views and an optional trailing icon.
+/// - Parameters:
+///   - trailingIcon: An optional trailing image
+///   - indicatorColor: Background color for the leading content
+struct VGRSummaryRowView<Content: View>: View {
 
-    init(
-        text: String,
-        rangeLabel: String? = nil,
-        entryCount: Int? = nil,
-        indicatorColor: Color?  = nil,
-        linkButton: Bool = false,
-        imageIcon: String?  = nil
-    ) {
-        self.text = text
-        self.rangeLabel = rangeLabel
-        self.entryCount = entryCount
-        self.indicatorColor = indicatorColor
-        self.linkButton = linkButton
-        self.imageIcon = imageIcon
-    }
+    var content1: (() -> Content)? = nil
+    let content2: () -> Content
+    let content3: () -> Content
+    var trailingIcon: Image?
+    var indicatorColor: Color?
+
     var body: some View {
-        HStack {
-            if (rangeLabel != nil) {
-                Text("\(rangeLabel!)")
-                    .frame(minWidth: 32, minHeight: 32)
-                    .font(.caption2)
-                    .background(indicatorColor!)
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                    .accessibilityHidden(true)
-            }
-            Text(text)
-                .accessibilityHidden(true)
-            Spacer()
-            if linkButton {
-                Image(systemName: imageIcon!)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 16, height: 16)
-                    .foregroundStyle(Color.Primary.action)
-                    .padding(.trailing, 16)
-            } else {
-                Text("\(entryCount!)")
-                    .font(.title)
-                    .bold()
-                    .accessibilityHidden(true)
-            }
+        if let content1 {
+            content1()
+                .frame(minWidth: 32, minHeight: 32)
+                .font(.caption2)
+                .background(indicatorColor)
+        } else {
+            EmptyView()
+        }
+        content2()
+        Spacer()
+        content3()
+            .font(.title)
+            .bold()
+        if let image = trailingIcon {
+            image
+                .resizable()
+                .scaledToFit()
+                .frame(width: 16, height: 16)
+                .foregroundStyle(Color.Primary.action)
+                .padding(.trailing, 16)
         }
     }
 }
 
-#Preview("Navigation Link") {
-    VGRSummeryRowView(
-        text: "Assessment forever",
-        rangeLabel: "1-3",
-        indicatorColor: Color.Accent.greenSurface,
-        linkButton: true,
-        imageIcon: "chevron.right"
-    )
+#Preview("Everything applies") {
+    var indicationNumber: String = "7,4"
+    HStack(spacing: 4) {
+        VGRSummaryRowView(
+            content1: {
+                Text("\(indicationNumber)")
+            },
+            content2: {
+                Text("Vilken raiting får vald modell?")
+            },
+            content3: {
+                Text("3310")
+            },
+            trailingIcon: Image(systemName: "chevron.right"),
+            indicatorColor: Color.Status.successSurface
+        )
+    }
 }
 
-#Preview("Text only") {
-    VGRSummeryRowView(
-        text: "Assessment forever",
-        entryCount: 3
-    )
+#Preview("Minimal effort") {
+    HStack(spacing: 4) {
+        VGRSummaryRowView(
+            content2: {
+                Text("Hur går det på en skala?")
+            },
+            content3: {
+                Text("3")
+            },
+        )
+    }
 }
