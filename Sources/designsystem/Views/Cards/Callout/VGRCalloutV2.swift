@@ -1,8 +1,8 @@
 import SwiftUI
 
-struct VGRCalloutV2<Content: View>: View {
+public struct VGRCalloutV2<Content: View>: View {
     
-    enum ImageType {
+    public enum ImageType {
         case none
         case icon
         case illustration
@@ -16,10 +16,10 @@ struct VGRCalloutV2<Content: View>: View {
     let dismiss: (() -> Void)?
     let content: () -> Content
     
-    init(
+    public init(
         header: String? = nil,
         description: String,
-        backgroundColor: Color = Color.Primary.blueSurfaceMinimal,
+        backgroundColor: Color = Color.Status.informationSurface,
         image: Image? = nil,
         imageType: ImageType = .none,
         dismiss: (() -> Void)? = nil,
@@ -34,10 +34,10 @@ struct VGRCalloutV2<Content: View>: View {
         self.content = content
     }
     
-    init(
+    public init(
         header: String? = nil,
         description: String,
-        backgroundColor: Color = Color.Primary.blueSurfaceMinimal,
+        backgroundColor: Color = Color.Status.informationSurface,
         image: Image? = nil,
         imageType: ImageType = .none,
         dismiss: (() -> Void)? = nil
@@ -60,7 +60,7 @@ struct VGRCalloutV2<Content: View>: View {
         }
     }
     
-    var body: some View {
+    public var body: some View {
         VGRCalloutShape(backgroundColor: backgroundColor) {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(alignment: .top, spacing: 16) {
