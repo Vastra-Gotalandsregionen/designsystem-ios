@@ -34,6 +34,20 @@ public enum VGRBodyOrientation : String, Sendable, Hashable {
 
 extension VGRBodyPartData {
 
+    /// Returns all `VGRBodyPartData` instances whose `id` matches any of the given identifiers.
+    ///
+    /// - Parameter ids: An array of body part identifiers to look for.
+    /// - Returns: An array of `VGRBodyPartData` objects matching the provided ids.
+    ///
+    /// The search is recursive and traverses the entire body hierarchy defined in
+    /// `VGRBodyPartData.body`. Both top-level parts and nested subparts will be included
+    /// if their `id` is contained in the input.
+    ///
+    /// Example:
+    /// ```swift
+    /// let matches = VGRBodyPartData.parts(matching: ["left.knee", "head"])
+    /// // returns the "left.knee" subpart and the "head" top-level part
+    /// ```
     public static func parts(matching ids: [String]) -> [VGRBodyPartData] {
         let idSet = Set(ids)
 
@@ -45,6 +59,51 @@ extension VGRBodyPartData {
         }
 
         return collect(from: VGRBodyPartData.body)
+    }
+
+    /// Returns the parent `VGRBodyPartData` of the given body part identifier.
+    ///
+    /// - Parameter id: The identifier of the body part whose parent should be found.
+    /// - Returns:
+    ///   - The immediate parent `VGRBodyPartData` if the body part is nested under another part.
+    ///   - The body part itself if it is a top-level part.
+    ///   - `nil` if no part with the given identifier exists in the hierarchy.
+    ///
+    /// The search is recursive and will traverse the full body hierarchy until a match is found.
+    ///
+    /// Example:
+    /// ```swift
+    /// if let parent = VGRBodyPartData.parent(of: "left.knee") {
+    ///     print(parent.id) // "left.leg"
+    /// }
+    ///
+    /// if let parent = VGRBodyPartData.parent(of: "head") {
+    ///     print(parent.id) // "head" (since it’s top-level)
+    /// }
+    /// ```
+    public static func parent(of id: String) -> VGRBodyPartData? {
+
+        func findParent(in parts: [VGRBodyPartData], lookingFor id: String) -> VGRBodyPartData? {
+            for part in parts {
+                /// If one of this part's subparts matches, return this part
+                if part.subparts.contains(where: { $0.id == id }) {
+                    return part
+                }
+                /// Otherwise, keep searching deeper
+                if let found = findParent(in: part.subparts, lookingFor: id) {
+                    return found
+                }
+            }
+            return nil
+        }
+
+        /// First, check if the id is a top-level part → return itself
+        if let topLevel = body.first(where: { $0.id == id }) {
+            return topLevel
+        }
+
+        /// Otherwise, search recursively for its parent
+        return findParent(in: body, lookingFor: id)
     }
 
     public static let body: [VGRBodyPartData] = [
