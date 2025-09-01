@@ -151,7 +151,7 @@ struct VGRBodySelectionView: View {
         .frame(maxWidth: .infinity)
         /// Modal sheet for selecting children of a container part
         .sheet(item: $parentBodyPart) {
-            print("dismissing")
+            print("Dismissing selection sheet")
         } content: { part in
             VGRBodyPartSelectionView(orientation,
                                      parent: part,
