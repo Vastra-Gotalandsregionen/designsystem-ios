@@ -127,7 +127,7 @@ public struct VGRBodyView: View {
 }
 
 #Preview {
-    let selectedParts: Set<String> = ["left.upper.leg", "head.scalp", "head.face", "right.under.arm", "right.foot", "right.knee", "right.hollow.of.knee"]
+    let selectedParts: Set<String> = ["left.upper.leg", "head.scalp", "head.face", "right.under.arm", "right.foot", "right.knee", "right.hollow.of.knee", "right.hand"]
 
     NavigationStack {
         ScrollView {

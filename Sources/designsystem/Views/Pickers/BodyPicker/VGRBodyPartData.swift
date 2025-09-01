@@ -141,7 +141,7 @@ extension VGRBodyPartData {
         ),
         .init(
             id: "pelvis",
-            visualparts: [.front: VGRBodyPart.front(.pelvisFront)],
+            visualparts: [.front: VGRBodyPart.front(.pelvisFront), .back: VGRBodyPart.back(.pelvisBack)],
             subparts: [
                 .init(id: "pelvis.front.genitalia", visualparts: [.front: VGRBodyPart.front(.pelvisFront)]),
                 .init(id: "pelvis.back.between.cheeks", visualparts: [.back: VGRBodyPart.back(.pelvisBack)]),
@@ -150,6 +150,7 @@ extension VGRBodyPartData {
         .init(
             id: "left.hand",
             side: .left,
+            visualparts: [.front: VGRBodyPart.front(.leftPalm), .back: VGRBodyPart.back(.leftBackOfHand)],
             subparts: [
                 .init(id: "left.hand.palm", side: .left, visualparts: [.front: VGRBodyPart.front(.leftPalm)]),
                 .init(id: "left.hand.back.of.hand", side: .left, visualparts: [.back: VGRBodyPart.back(.leftBackOfHand)]),
@@ -158,6 +159,7 @@ extension VGRBodyPartData {
         .init(
             id: "right.hand",
             side: .right,
+            visualparts: [.front: VGRBodyPart.front(.rightPalm), .back: VGRBodyPart.back(.rightBackOfHand)],
             subparts: [
                 .init(id: "right.hand.palm", side: .right, visualparts: [.front: VGRBodyPart.front(.rightPalm)]),
                 .init(id: "right.hand.back.of.hand", side: .right, visualparts: [.back: VGRBodyPart.back(.rightBackOfHand)]),
@@ -199,7 +201,7 @@ extension VGRBodyPartData {
         .init(
             id: "right.foot",
             side: .right,
-            visualparts: [.front: VGRBodyPart.front(.rightFoot)],
+            visualparts: [.front: VGRBodyPart.front(.rightFoot), .back: VGRBodyPart.back(.rightFoot)],
             subparts: [
                 .init(id: "right.foot.base", side: .right, visualparts: [.front: VGRBodyPart.front(.rightFoot), .back: VGRBodyPart.back(.rightFoot)]),
                 .init(id: "right.foot.sole", side: .right, visualparts: [.front: VGRBodyPart.front(.rightFoot), .back: VGRBodyPart.back(.rightFoot)]),
@@ -208,7 +210,7 @@ extension VGRBodyPartData {
         .init(
             id: "left.foot",
             side: .left,
-            visualparts: [.front: VGRBodyPart.front(.leftFoot)],
+            visualparts: [.front: VGRBodyPart.front(.leftFoot), .back: VGRBodyPart.back(.leftFoot)],
             subparts: [
                 .init(id: "left.foot.base", side: .left, visualparts: [.front: VGRBodyPart.front(.leftFoot), .back: VGRBodyPart.back(.leftFoot)]),
                 .init(id: "left.foot.sole", side: .left, visualparts: [.front: VGRBodyPart.front(.leftFoot), .back: VGRBodyPart.back(.leftFoot)]),
