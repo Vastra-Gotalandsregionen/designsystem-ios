@@ -16,4 +16,8 @@ public extension Font {
     // MARK: - Headline
     static var headlineSemibold: Font { .headline.weight(.semibold) }
 
+    // MARK: - Title 3
+    static var title3Semibold: Font { .title3.weight(.semibold) }
+    static var title3Bold: Font { .title3.weight(.bold) }
+
 }
