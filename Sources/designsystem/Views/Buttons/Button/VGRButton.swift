@@ -83,7 +83,7 @@ public struct VGRButton: View {
 
 public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
     /// En primär stil knapp.
-    /// - Not: Använd denna stil för huvudsakliga åtgärder med framträdande utseende.
+    /// - Note: Använd denna stil för huvudsakliga åtgärder med framträdande utseende.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -119,7 +119,7 @@ public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
 
 public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
     /// En sekundär stil knapp.
-    /// - Not: Använd denna stil för sekundära åtgärder som är mindre framträdande.
+    /// - Note: Använd denna stil för sekundära åtgärder som är mindre framträdande.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -156,7 +156,7 @@ public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
 
 public struct VerticalButtonVariant: VGRButtonVariantProtocol {
     /// En vertikal stil knapp.
-    /// - Not: Använd denna stil för knappar som arrangerar innehåll vertikalt, lämplig för specifika layouter.
+    /// - Note: Använd denna stil för knappar som arrangerar innehåll vertikalt, lämplig för specifika layouter.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -191,7 +191,7 @@ public struct VerticalButtonVariant: VGRButtonVariantProtocol {
 
 public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
     /// En tertiär stil knapp.
-    /// - Not: Använd denna stil för mindre betonade åtgärder, ofta använda tillsammans med primära och sekundära knappar.
+    /// - Note: Använd denna stil för mindre betonade åtgärder, ofta använda tillsammans med primära och sekundära knappar.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -223,8 +223,9 @@ public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
     }
 }
 
+/// En list-rad stil knapp.
+/// - Note: Använd denna variant i listor, formulär eller tabeller där en rad ska agera som en tryckbar åtgärd.
 public struct ListRowButtonVariant: VGRButtonVariantProtocol {
-    
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         return Button(action: configuration.action) {
             ZStack {
