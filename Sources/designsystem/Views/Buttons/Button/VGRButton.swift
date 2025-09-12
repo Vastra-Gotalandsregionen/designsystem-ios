@@ -15,18 +15,16 @@ public enum VGRButtonVariant {
     case secondary
     case vertical
     case tertiary
+    case listRow
     
     /// Returnerar en konkret implementation av `VGRButtonVariantProtocol` baserat på enum-fallet.
     func resolve() -> any VGRButtonVariantProtocol {
         switch self {
-        case .primary:
-            return PrimaryButtonStyle()
-        case .secondary:
-            return SecondaryButtonVariant()
-        case .vertical:
-            return VerticalButtonVariant()
-        case .tertiary:
-            return TertiaryButtonVariant()
+        case .primary:   return PrimaryButtonStyle()
+        case .secondary: return SecondaryButtonVariant()
+        case .vertical:  return VerticalButtonVariant()
+        case .tertiary:  return TertiaryButtonVariant()
+        case .listRow:   return ListRowButtonVariant()
         }
     }
 }
@@ -97,12 +95,12 @@ public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
                             .foregroundStyle(Color.Neutral.textInverted)
                             .accessibilityHidden(true)
                     }
-
+                    
                     Text(configuration.label)
                         .font(.headline)
                 }
                 .opacity(configuration.isLoading ? 0 : 1)
-
+                
                 ProgressView()
                     .tint(Color.Neutral.textInverted)
                     .opacity(configuration.isLoading ? 1 : 0)
@@ -225,6 +223,38 @@ public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
     }
 }
 
+public struct ListRowButtonVariant: VGRButtonVariantProtocol {
+    
+    public func makeBody(configuration: VGRButton.Configuration) -> some View {
+        return Button(action: configuration.action) {
+            ZStack {
+                HStack(spacing: 8) {
+                    if let icon = configuration.icon {
+                        icon
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                            .accessibilityHidden(true)
+                    }
+                    Text(configuration.label).font(.headline)
+                }
+                .opacity(configuration.isLoading ? 0 : 1)
+                
+                ProgressView()
+                    .foregroundStyle(Color.Primary.action)
+                    .opacity(configuration.isLoading ? 1 : 0)
+                    .accessibilityHidden(true)
+            }
+            .foregroundStyle(Color.Primary.action)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.Elevation.elevation1)
+            .cornerRadius(16)
+            .opacity(configuration.isEnabled ? 1 : 0.5)
+        }
+        .disabled(!configuration.isEnabled || configuration.isLoading)
+    }
+}
+
 #Preview {
     
     @Previewable @State var isPrimaryEnabled: Bool = false
@@ -236,6 +266,14 @@ public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
     ScrollView {
         VGRShape(backgroundColor: Color.Elevation.background) {
             VStack(spacing: 16) {
+                
+                VGRButton(
+                    label: "Lägg till läkemedel",
+                    icon: Image(systemName: "pills.circle"),
+                    variant: .listRow) {
+                        print("Beepboop")
+                    }
+                
                 VGRButton(label: "Primär", action: {
                     isPrimaryEnabled.toggle()
                 })
