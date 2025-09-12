@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// Source: https://stackoverflow.com/a/20158940/254695
 public extension Date {
@@ -100,6 +101,14 @@ public extension Date {
         return self.formatted(.dateTime.month(.wide).year())
     }
 
+    /// vgrShortMonthFormat formats a date with abbreviated month name, but only includes year if it differs from current year
+    var vgrShortMonthFormat: String {
+        if Calendar.current.compare(Date(), to: self, toGranularity: .year) == .orderedSame {
+            return self.formatted(.dateTime.month(.abbreviated))
+        }
+        return self.formatted(.dateTime.month(.abbreviated).year())
+    }
+
     /// vgrWeekFormat formats a date with week number, but only includes year if it differs from current year
     var vgrWeekFormat: String {
         if Calendar.current.compare(Date(), to: self, toGranularity: .year) == .orderedSame {
@@ -160,4 +169,27 @@ public extension Date {
         return comparison == .orderedDescending
     }
 
+}
+
+
+#Preview {
+    let today = Date()
+    let lastYear = Calendar.current.date(byAdding: .year, value: -1, to: today)!
+    let nextYear = Calendar.current.date(byAdding: .year, value: 1, to: today)!
+    let dates = [lastYear, today, nextYear]
+
+    ScrollView {
+        VStack(alignment: .leading, spacing: 16) {
+            ForEach(dates, id: \.self) { date in
+                Text(".vgrDateFormat: **\(date.vgrDateFormat)**")
+                Text(".vgrDateTimeFormat: **\(date.vgrDateTimeFormat)**")
+                Text(".vgrMonthFormat: **\(date.vgrMonthFormat)**")
+                Text(".vgrShortMonthFormat: **\(date.vgrShortMonthFormat)**")
+                Text(".vgrWeekFormat: **\(date.vgrWeekFormat)**")
+                Text(".vgrShortTimeFormat: **\(date.vgrShortTimeFormat)**")
+                Divider()
+            }
+        }
+        .padding()
+    }
 }
