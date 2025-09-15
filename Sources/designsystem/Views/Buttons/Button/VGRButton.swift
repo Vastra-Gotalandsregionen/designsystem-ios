@@ -9,13 +9,50 @@ public protocol VGRButtonVariantProtocol {
     typealias Configuration = VGRButton.Configuration
 }
 
-/// Enum som representerar tillgängliga visuella stilar (varianter) för en `VGRButton`.
+/// Visuella varianter för `VGRButton`.
+///
+/// Välj variant utifrån handlingens tyngd och kontext:
+/// - `primary`: Framträdande, för huvudhandlingar.
+/// - `secondary`: Sekundära handlingar; konturstil.
+/// - `tertiary`: Mindre betonade handlingar; diskret bakgrund.
+/// - `vertical`: Vertikalt staplad layout (ikon över text).
+/// - `listRow`: Rad-liknande knapp för listor/formulär/tables (normal intent).
+/// - `listRowDestructive`: Som `listRow` men med destruktiv intent (t.ex. radera).
+///
+/// ### Usage
+/// ```swift
+/// VGRButton(label: "Spara", variant: .primary) { ... }
+/// VGRButton(label: "Visa mer", variant: .tertiary) { ... }
+///
+/// // List-rad (normal)
+/// VGRButton(label: "Lägg till läkemedel",
+///           icon: Image(systemName: "pills.circle"),
+///           variant: .listRow) { ... }
+///
+/// // List-rad (destruktiv)
+/// VGRButton(label: "Radera allt",
+///           icon: Image(systemName: "trash"),
+///           variant: .listRowDestructive) { ... }
+/// ```
 public enum VGRButtonVariant {
+    /// Primär, mest framträdande knapp för huvudhandlingar.
     case primary
+    
+    /// Sekundär knapp för alternativa/kompletterande handlingar.
     case secondary
+    
+    /// Vertikal layout (ikon ovanför text), för mer “kort”-liknande knappar.
     case vertical
+    
+    /// Tertiär knapp med låg visuell tyngd (diskret bakgrund).
     case tertiary
+    
+    /// List-rad-stil med **normal intent**.
+    /// Använd i listor, formulär och tabeller när en rad ska vara tryckbar.
     case listRow
+    
+    /// List-rad-stil med **destruktiv intent**.
+    /// Använd när raden utlöser en destruktiv handling (t.ex. ta bort).
     case listRowDestructive
     
     /// Returnerar en konkret implementation av `VGRButtonVariantProtocol` baserat på enum-fallet.
@@ -228,6 +265,10 @@ public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
 /// En list-rad stil knapp.
 /// - Note: Använd denna variant i listor, formulär eller tabeller där en rad ska agera som en tryckbar åtgärd.
 public struct ListRowButtonVariant: VGRButtonVariantProtocol {
+    
+    /// Semantisk avsikt för list-rad-knappen.
+    /// - `enable`: Normal/icke-destruktiv åtgärd (standard).
+    /// - `destructive`: Betonar destruktiv åtgärd (t.ex. radera).
     public enum Intent { case enable, destructive }
     let intent: Intent
     
