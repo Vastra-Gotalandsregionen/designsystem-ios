@@ -9,24 +9,61 @@ public protocol VGRButtonVariantProtocol {
     typealias Configuration = VGRButton.Configuration
 }
 
-/// Enum som representerar tillgängliga visuella stilar (varianter) för en `VGRButton`.
+/// Visuella varianter för `VGRButton`.
+///
+/// Välj variant utifrån handlingens tyngd och kontext:
+/// - `primary`: Framträdande, för huvudhandlingar.
+/// - `secondary`: Sekundära handlingar; konturstil.
+/// - `tertiary`: Mindre betonade handlingar; diskret bakgrund.
+/// - `vertical`: Vertikalt staplad layout (ikon över text).
+/// - `listRow`: Rad-liknande knapp för listor/formulär/tables (normal intent).
+/// - `listRowDestructive`: Som `listRow` men med destruktiv intent (t.ex. radera).
+///
+/// ### Usage
+/// ```swift
+/// VGRButton(label: "Spara", variant: .primary) { ... }
+/// VGRButton(label: "Visa mer", variant: .tertiary) { ... }
+///
+/// // List-rad (normal)
+/// VGRButton(label: "Lägg till läkemedel",
+///           icon: Image(systemName: "pills.circle"),
+///           variant: .listRow) { ... }
+///
+/// // List-rad (destruktiv)
+/// VGRButton(label: "Radera allt",
+///           icon: Image(systemName: "trash"),
+///           variant: .listRowDestructive) { ... }
+/// ```
 public enum VGRButtonVariant {
+    /// Primär, mest framträdande knapp för huvudhandlingar.
     case primary
+    
+    /// Sekundär knapp för alternativa/kompletterande handlingar.
     case secondary
+    
+    /// Vertikal layout (ikon ovanför text), för mer “kort”-liknande knappar.
     case vertical
+    
+    /// Tertiär knapp med låg visuell tyngd (diskret bakgrund).
     case tertiary
+    
+    /// List-rad-stil med **normal intent**.
+    /// Använd i listor, formulär och tabeller när en rad ska vara tryckbar.
+    case listRow
+    
+    /// List-rad-stil med **destruktiv intent**.
+    /// Använd när raden utlöser en destruktiv handling (t.ex. ta bort).
+    case listRowDestructive
     
     /// Returnerar en konkret implementation av `VGRButtonVariantProtocol` baserat på enum-fallet.
     func resolve() -> any VGRButtonVariantProtocol {
         switch self {
-        case .primary:
-            return PrimaryButtonStyle()
-        case .secondary:
-            return SecondaryButtonVariant()
-        case .vertical:
-            return VerticalButtonVariant()
-        case .tertiary:
-            return TertiaryButtonVariant()
+        case .primary:             return PrimaryButtonStyle()
+        case .secondary:           return SecondaryButtonVariant()
+        case .vertical:            return VerticalButtonVariant()
+        case .tertiary:            return TertiaryButtonVariant()
+        case .listRow:             return ListRowButtonVariant(intent: .enable)
+        case .listRowDestructive:  return ListRowButtonVariant(intent: .destructive)
         }
     }
 }
@@ -85,7 +122,7 @@ public struct VGRButton: View {
 
 public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
     /// En primär stil knapp.
-    /// - Not: Använd denna stil för huvudsakliga åtgärder med framträdande utseende.
+    /// - Note: Använd denna stil för huvudsakliga åtgärder med framträdande utseende.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -97,12 +134,12 @@ public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
                             .foregroundStyle(Color.Neutral.textInverted)
                             .accessibilityHidden(true)
                     }
-
+                    
                     Text(configuration.label)
                         .font(.headline)
                 }
                 .opacity(configuration.isLoading ? 0 : 1)
-
+                
                 ProgressView()
                     .tint(Color.Neutral.textInverted)
                     .opacity(configuration.isLoading ? 1 : 0)
@@ -121,7 +158,7 @@ public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
 
 public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
     /// En sekundär stil knapp.
-    /// - Not: Använd denna stil för sekundära åtgärder som är mindre framträdande.
+    /// - Note: Använd denna stil för sekundära åtgärder som är mindre framträdande.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -158,7 +195,7 @@ public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
 
 public struct VerticalButtonVariant: VGRButtonVariantProtocol {
     /// En vertikal stil knapp.
-    /// - Not: Använd denna stil för knappar som arrangerar innehåll vertikalt, lämplig för specifika layouter.
+    /// - Note: Använd denna stil för knappar som arrangerar innehåll vertikalt, lämplig för specifika layouter.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -193,7 +230,7 @@ public struct VerticalButtonVariant: VGRButtonVariantProtocol {
 
 public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
     /// En tertiär stil knapp.
-    /// - Not: Använd denna stil för mindre betonade åtgärder, ofta använda tillsammans med primära och sekundära knappar.
+    /// - Note: Använd denna stil för mindre betonade åtgärder, ofta använda tillsammans med primära och sekundära knappar.
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -225,6 +262,49 @@ public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
     }
 }
 
+/// En list-rad stil knapp.
+/// - Note: Använd denna variant i listor, formulär eller tabeller där en rad ska agera som en tryckbar åtgärd.
+public struct ListRowButtonVariant: VGRButtonVariantProtocol {
+    
+    /// Semantisk avsikt för list-rad-knappen.
+    /// - `enable`: Normal/icke-destruktiv åtgärd (standard).
+    /// - `destructive`: Betonar destruktiv åtgärd (t.ex. radera).
+    public enum Intent { case enable, destructive }
+    let intent: Intent
+    
+    init(intent: Intent = .enable) {
+        self.intent = intent
+    }
+    
+    public func makeBody(configuration: VGRButton.Configuration) -> some View {
+        let tint: Color = (intent == .destructive) ? Color.Status.errorText : Color.Primary.action
+        
+        return Button(action: configuration.action) {
+            ZStack {
+                HStack(spacing: 8) {
+                    if let icon = configuration.icon {
+                        icon.resizable().frame(width: 16, height: 16).accessibilityHidden(true)
+                    }
+                    Text(configuration.label).font(.headline)
+                }
+                .opacity(configuration.isLoading ? 0 : 1)
+                
+                ProgressView()
+                    .tint(tint)
+                    .opacity(configuration.isLoading ? 1 : 0)
+                    .accessibilityHidden(true)
+            }
+            .foregroundStyle(tint)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.Elevation.elevation1)
+            .cornerRadius(16)
+            .opacity(configuration.isEnabled ? 1 : 0.5)
+        }
+        .disabled(!configuration.isEnabled || configuration.isLoading)
+    }
+}
+
 #Preview {
     
     @Previewable @State var isPrimaryEnabled: Bool = false
@@ -236,6 +316,21 @@ public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
     ScrollView {
         VGRShape(backgroundColor: Color.Elevation.background) {
             VStack(spacing: 16) {
+                
+                VGRButton(
+                    label: "Lägg till läkemedel",
+                    icon: Image(systemName: "pills.circle"),
+                    variant: .listRow) {
+                        print("Beepboop")
+                    }
+                
+                VGRButton(
+                    label: "Ta bort något",
+                    icon: Image(systemName: "pills.circle"),
+                    variant: .listRowDestructive) {
+                        print("Beepboop")
+                    }
+                
                 VGRButton(label: "Primär", action: {
                     isPrimaryEnabled.toggle()
                 })
