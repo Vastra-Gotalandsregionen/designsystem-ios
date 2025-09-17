@@ -42,8 +42,27 @@ public extension Date {
         components.month = 1
         return Calendar.current.date(byAdding: components, to: self)!
     }
-}
 
+    var startOfYear: Date {
+        let year = Calendar.current.component(.year, from: self)
+
+        var comps = DateComponents()
+        comps.year = year
+        comps.month = 1
+        comps.day = 1
+
+        return Calendar.current.date(from: comps)!
+    }
+
+    var endOfYear: Date {
+        let calendar = Calendar.current
+        var comps = DateComponents()
+        comps.year = 1
+        comps.second = -1
+
+        return calendar.date(byAdding: comps, to: startOfYear)!
+    }
+}
 
 public extension Date {
     func datesForCurrentWeek(startingFrom startOfWeek: Locale.Weekday = .monday) -> [Date] {
@@ -132,7 +151,6 @@ public extension Date {
 }
 
 public extension Date {
-
     func isWithin(_ interval: DateInterval, calendar: Calendar = .current) -> Bool {
         let startDate = calendar.startOfDay(for: interval.start)
         let endDate = calendar.startOfDay(for: interval.end)
@@ -140,11 +158,9 @@ public extension Date {
 
         return targetDate >= startDate && targetDate <= endDate
     }
-
 }
 
 public extension Date {
-
     func isEqual(to date: Date, calendar: Calendar = .current, component: Calendar.Component = .day) -> Bool {
         return calendar.compare(self, to: date, toGranularity: component) == .orderedSame
     }
@@ -168,9 +184,7 @@ public extension Date {
         let comparison = calendar.compare(self, to: date, toGranularity: component)
         return comparison == .orderedDescending
     }
-
 }
-
 
 #Preview {
     let today = Date()

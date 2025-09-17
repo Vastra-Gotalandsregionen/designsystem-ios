@@ -1,7 +1,6 @@
 import SwiftUI
 
 public extension Color {
-    
     //MARK: - PRIMARY
     struct Primary {
         public static let action = Color("action", bundle: .module)
@@ -120,5 +119,13 @@ public extension Color {
     //MARK: - CUSTOM
     struct Custom {
         public static let healthcare20 = Color("healthcare20", bundle: .module)
+    }
+
+    //MARK: - COMPONENTS
+    struct Components {
+        //MARK: - CALENDAR
+        struct Calendar {
+            public static let dayBackground = Color("daybackground" )
+        }
     }
 }
