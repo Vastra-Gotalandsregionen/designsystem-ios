@@ -24,6 +24,8 @@ public enum TrackerScreen {
     case calendar
     case calendarFilter
     case calendarWeek
+    case chatAi(action: TrackerAction)
+    case chatInformation(action: TrackerAction)
     case databaseSeeder
     case developerMenu
     case directions
@@ -37,15 +39,20 @@ public enum TrackerScreen {
     case learnMoreArticle(articleID: String)
     case link(articleID: String, url: String)
     case medication(action: TrackerAction)
+    case medicationExtra(action: TrackerAction)
+    case medicationMissed(action: TrackerAction)
     case medicationSchema(action: TrackerAction)
     case medicationSchemaSlot(action: TrackerAction)
     case medicationType(action: TrackerAction)
     case migration(state: TrackerMigrationState)
+    case notification
     case onboarding
     case overview
     case privacyPolicy
+    case quickCheckup(action: TrackerAction)
     case report(action: TrackerAction)
     case selfassessment(action: TrackerAction)
+    case selfassessmentQuick(action: TrackerAction)
     case settings
     case survey
     case surveyCancelled
@@ -53,12 +60,13 @@ public enum TrackerScreen {
     case surveyDismissed
     case tips
     case tipsArticle(articleID: String)
+    case treatmentEffect(action: TrackerAction)
     case userAgreement
     case videoFinish(videoID: String)
     case videoStart(videoID: String)
     case whatsNew(version: String)
 
-    
+
     public var toString: String {
         switch self {
         case .accessibilityStatement:
@@ -103,6 +111,10 @@ public enum TrackerScreen {
             return "calendar_filter"
         case .calendarWeek:
             return "calendar_week"
+        case .chatAi(action: let action):
+            return "\(action.rawValue)_chat_ai"
+        case .chatInformation(action: let action):
+            return "\(action.rawValue)_chat_information"
         case .databaseSeeder:
             return "database_seeder"
         case .developerMenu:
@@ -129,6 +141,10 @@ public enum TrackerScreen {
             return "article_link_\(articleID)_\(url)"
         case .medication(action: let action):
             return "\(action.rawValue)_medication"
+        case .medicationExtra(action: let action):
+            return "\(action.rawValue)_medication_extra"
+        case .medicationMissed(action: let action):
+            return "\(action.rawValue)_medication_missed"
         case .medicationSchema(action: let action):
             return "\(action.rawValue)_medication_schema"
         case .medicationSchemaSlot(action: let action):
@@ -137,16 +153,22 @@ public enum TrackerScreen {
             return "\(action.rawValue)_medication_type"
         case .migration(state: let state):
             return "migration_\(state.rawValue)"
+        case .notification:
+            return "notification"
         case .onboarding:
             return "onboarding"
         case .overview:
             return "overview"
         case .privacyPolicy:
             return "privacy_policy"
+        case .quickCheckup(action: let action):
+            return "\(action.rawValue)_quick_checkup"
         case .report(action: let action):
             return "\(action.rawValue)_report"
         case .selfassessment(action: let action):
             return "\(action.rawValue)_selfassessment"
+        case .selfassessmentQuick(action: let action):
+            return "\(action.rawValue)_selfassessment_quick"
         case .settings:
             return "settings"
         case .survey:
@@ -161,6 +183,8 @@ public enum TrackerScreen {
             return "tips"
         case .tipsArticle(articleID: let articleID):
             return "tips_article_\(articleID)"
+        case .treatmentEffect(action: let action):
+            return "\(action.rawValue)_treatment_effect"
         case .userAgreement:
             return "user_agreement"
         case .videoFinish(videoID: let videoID):
@@ -171,7 +195,6 @@ public enum TrackerScreen {
             return "whats_new_\(version.replacingOccurrences(of: ".", with: "_"))"
         }
     }
-
 }
 
 /// TrackerMigrationState is used to keep track of migration state
