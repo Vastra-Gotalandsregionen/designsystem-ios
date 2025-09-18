@@ -81,6 +81,31 @@ public struct VGRToggle: View {
         .padding(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
         .background(Color.Elevation.elevation1)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .accessibilityElement(children: .ignore)
+        .accessibilityAddTraits(.isToggle)
+        .accessibilityAddTraits(isOn ? .isSelected : [])
+        .accessibilityRespondsToUserInteraction(true)
+        .accessibilityLabel(title + (description.isEmpty ? "" : ", \(description)"))
+        .accessibilityValue(
+            LocalizedHelper.localized(forKey: isOn ? "general.on" : "general.off")
+        )
+        .accessibilityHint(
+            LocalizedHelper.localized(
+                forKey: "toggle.a11y.hint"
+            ) + " " + LocalizedHelper.localized(
+                forKey: isOn ? "general.off" : "general.on"
+            )
+        )
+        .onTapGesture {
+            guard isEnabled else { return }
+            isOn.toggle()
+            Haptics.lightImpact()
+        }
+        .accessibilityAction {
+            guard isEnabled else { return }
+            isOn.toggle()
+            Haptics.lightImpact()
+        }
     }
 }
 
