@@ -4,6 +4,10 @@ public struct VGRCloseButton: View {
     @Environment(\.dismiss) private var dismiss
     let dismissAction: (() -> Void)?
 
+    public init(dismissAction: (() -> Void)? = nil) {
+        self.dismissAction = dismissAction
+    }
+
     public var body: some View {
         if #available(iOS 26.0, *) {
             Button(role: .close) {
