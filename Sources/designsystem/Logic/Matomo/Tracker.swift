@@ -1,7 +1,6 @@
 import Foundation
 import MatomoTracker
 import OSLog
-import UIKit
 
 /// Tracker is used to pass events to the underlying/wrapped analytics solution, which in our case is Matomo.
 public class Tracker {
@@ -33,12 +32,13 @@ public class Tracker {
             fatalError("failed initializing tracker")
         }
 #endif
-        
+
         initTracker()
     }
 
     // MARK: - tracking methods
 
+    @available(*, deprecated, message: "Use trackScreen(_ screen: TrackableScreen, note: String? = nil) instead.")
     public func trackScreen(_ screen: TrackerScreen, note: String? = nil) {
         // TODO: (ea) - Find a way to include voiceOver state in tracking
         // let isVoiceOverActive = UIAccessibility.isVoiceOverRunning
@@ -61,7 +61,34 @@ public class Tracker {
 #endif
     }
 
+    public func trackScreen(_ screen: TrackableScreen, note: String? = nil) {
+        // TODO: (ea) - Find a way to include voiceOver state in tracking
+        // let isVoiceOverActive = UIAccessibility.isVoiceOverRunning
+
+        let isOptedIn = getOptInSetting()
+        if !isOptedIn {
+            return
+        }
+
+#if targetEnvironment(simulator)
+        /// When we're in a simulator environment (iOS Simulator & xcode preview), we do not actually call the tracker - just log it.
+        print("👀 Tracker: \(screen.toString)")
+#else
+        guard let tracker = matomoTracker else { return }
+        if let note = note {
+            tracker.track(view: [screen.identifier, note])
+        } else {
+            tracker.track(view: [screen.identifier])
+        }
+#endif
+    }
+
+    @available(*, deprecated, message: "Use trackEvent(_ screen: TrackableScreen, note: String? = nil) instead.")
     public func trackEvent(_ screen: TrackerScreen, note: String? = nil) {
+        trackScreen(screen, note: note)
+    }
+
+    public func trackEvent(_ screen: TrackableScreen, note: String? = nil) {
         trackScreen(screen, note: note)
     }
 
