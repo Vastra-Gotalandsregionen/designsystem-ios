@@ -72,7 +72,7 @@ public class Tracker {
 
 #if targetEnvironment(simulator)
         /// When we're in a simulator environment (iOS Simulator & xcode preview), we do not actually call the tracker - just log it.
-        print("👀 Tracker: \(screen.toString)")
+        print("👀 Tracker: \(screen.identifier)")
 #else
         guard let tracker = matomoTracker else { return }
         if let note = note {
