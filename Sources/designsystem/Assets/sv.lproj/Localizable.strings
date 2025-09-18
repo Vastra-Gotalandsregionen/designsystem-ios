@@ -102,3 +102,27 @@
 "recurrence.weekday.sat.plural" = "Lördagar";
 "recurrence.weekday.sun.plural" = "Söndagar";
 
+/* Articles */
+"article.content.new" = "Ny";
+"article.content.new.a11y" = "Nytt";
+"article.content.text.duration" = "Lästid";
+"article.content.video.duration" = "Speltid";
+
+"article.type.text" = "Artikel";
+"article.type.video" = "Videoklipp";
+"article.type.warning" = "Meddelande";
+"article.type.tips" = "Tips";
+
+"article.type.article.title" = "Artikel";
+"article.type.learn.title" = "Lär mer";
+"article.type.tips.title" = "Tips";
+"article.type.useragreement.title" = "Användarpolicy";
+"article.type.privacypolicy.title" = "Personuppgiftspolicy";
+
+"article.button.showmore" = "Visa fler";
+
+"article.video.playback.finished.a11y" = "Video uppspelad";
+"article.video.watched.a11y" = "Uppspelad";
+"article.video.notwatched.a11y" = "Inte uppspelad";
+"article.video.error.title" = "Videoklippet går inte att spela upp";
+"article.video.error.message" = "Det går tyvärr inte att spela upp videoklippet just nu. Kontrollera att du har internetuppkoppling eller försök igen senare.";
