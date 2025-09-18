@@ -29,7 +29,7 @@ public struct VGRCalloutText: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            Text(description)
+            Text(.init(description))
                 .font(.footnote)
                 .foregroundStyle(Color.Neutral.text)
                 .multilineTextAlignment(.leading)
