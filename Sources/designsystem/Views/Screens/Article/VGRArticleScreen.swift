@@ -56,7 +56,7 @@ public struct VGRArticleScreen: View {
     /// - Parameters:
     ///   - article: The `VGRArticle` instance containing all content to display
     ///   - dismissAction: Optional closure to execute when the screen is dismissed
-    init(article: VGRArticle, dismissAction: (() -> Void)? = nil) {
+    public init(article: VGRArticle, dismissAction: (() -> Void)? = nil) {
         self.article = article
         self.dismissAction = dismissAction
     }
