@@ -3,6 +3,9 @@
 "general.increase" = "Öka";
 "general.selected" = "Vald";
 "general.notselected" = "Ej vald";
+"general.on" = "På";
+"general.off" = "Av";
+"toggle.a11y.hint" = "Dubbeltryck för att slå";
 
 /* Body Picker */
 "bodypicker.title" = "Välj kroppsdelar";
