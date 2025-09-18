@@ -1,11 +1,25 @@
 import SwiftUI
 
 public struct CustomRoundedRect: Shape {
-    public var topLeadingRadius: CGFloat = 0
-    public var bottomLeadingRadius: CGFloat = 0
-    public var bottomTrailingRadius: CGFloat = 0
-    public var topTrailingRadius: CGFloat = 0
-    public var strokeWidth: CGFloat = 0
+    public var topLeadingRadius: CGFloat
+        public var bottomLeadingRadius: CGFloat
+        public var bottomTrailingRadius: CGFloat
+        public var topTrailingRadius: CGFloat
+        public var strokeWidth: CGFloat
+
+        public init(
+            topLeadingRadius: CGFloat = 0,
+            bottomLeadingRadius: CGFloat = 0,
+            bottomTrailingRadius: CGFloat = 0,
+            topTrailingRadius: CGFloat = 0,
+            strokeWidth: CGFloat = 0
+        ) {
+            self.topLeadingRadius = topLeadingRadius
+            self.bottomLeadingRadius = bottomLeadingRadius
+            self.bottomTrailingRadius = bottomTrailingRadius
+            self.topTrailingRadius = topTrailingRadius
+            self.strokeWidth = strokeWidth
+        }
 
     public func path(in rect: CGRect) -> Path {
 
