@@ -19,7 +19,7 @@ Lägg enkelt till det som ett Swift Package i ditt Xcode-projekt:
 4. Importera det i kod:
 
 ```swift
-import designsystem
+import DesignSystem
 ```
 
 ---
