@@ -26,14 +26,7 @@ let package = Package(
             dependencies: [
                 .product(name: "MatomoTracker", package: "matomo-sdk-ios"), // Specify the target dependency
                 .product(name: "Lottie", package: "lottie-spm")
-            ],
-            plugins: [
-                "VersionPlugin"
             ]
-        ),
-        .plugin(
-            name: "VersionPlugin",
-            capability: .buildTool()
         ),
         .testTarget(
             name: "DesignSystem-Tests",
