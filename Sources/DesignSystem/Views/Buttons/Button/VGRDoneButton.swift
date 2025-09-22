@@ -17,6 +17,7 @@ public struct VGRDoneButton: View {
                     dismiss()
                 }
             }
+            .tint(Color.Primary.action)
         } else {
             /// Fallback for earlier versions
             Button {
@@ -48,7 +49,7 @@ public struct VGRDoneButton: View {
         NavigationStack {
             Text("Sheet is open, look how nice the donebutton looks in the navigationbar.")
                 .padding()
-                .navigationTitle("Sheet")
+                .navigationTitle("Sheet alltså")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         VGRDoneButton {
