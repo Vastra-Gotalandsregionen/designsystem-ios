@@ -55,8 +55,15 @@ echo "Updating version: $VERSION -> $NEW_VERSION"
 # Write the new version back to the version file
 echo "$NEW_VERSION" > "$VERSION_FILE"
 
-# Commit the new version file
+# Update LibraryInfo.swift with the new version
+if [[ -f "update-package-version.sh" ]]; then
+    echo "Updating LibraryInfo.swift..."
+    ./update-package-version.sh
+fi
+
+# Commit the new version file and LibraryInfo.swift
 git add "$VERSION_FILE"
+git add Sources/DesignSystem/LibraryInfo.swift
 
 # Add a tag with the new version
 git tag -a $NEW_VERSION -m "v$NEW_VERSION"
