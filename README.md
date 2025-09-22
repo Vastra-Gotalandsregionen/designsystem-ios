@@ -62,12 +62,73 @@ Komponenter bör ha tydliga `#Preview`-block för att enkelt kunna testas i Xcod
 
 ---
 
+## 🧩 Tillgängliga komponenter
+
+### Knappar & Kontroller
+- `VGRButton` - Konfigurerbar knapp med olika stilar (primary, secondary, tertiary, vertical, listRow, listRowDestructive)
+- `VGRCloseButton` - Standardiserad stäng-knapp
+- `VGRDoneButton` - Klar-knapp med iOS 26-stöd och fallback
+- `VGRStepper` - Steg-kontroll för att öka/minska värden
+- `VGRToggle` - Anpassad toggle-switch
+- `VGRTableRowNavigationLink` - Navigationslänk för tabellrader
+
+### Kort & Utrop
+- `VGRCallout` - Informations-/varningsruta med valfria ikoner och illustrationer
+- `VGRCalloutV2` - Uppdaterad version av callout-komponenten
+- `VGRDisclosureGroup` - Utfällbar innehållsgrupp
+- `VGRCalloutDismissButton` - Stäng-knapp för callouts
+- `VGRCalloutIllustration` - Illustration för callouts
+- `VGRCalloutShape` - Formkomponent för callout-styling
+- `VGRCalloutText` - Textkomponent för callouts
+
+### Designelement
+- `VGRIcon` - Återanvändbar ikonkomponent med stöd för assets och SF Symbols
+- `VGRShape` - Formcontainer med anpassningsbar stil
+- `VGRTableRowDivider` - Avdelare för tabellrader
+- `Blob` - Animerad blob med Lottie-animationer
+
+### Väljare (Pickers)
+- `VGRBodyPickerView` - Kroppsdelväljare för medicinska applikationer
+- `VGRCalendarView` - Anpassningsbar kalendervy med dagval
+- `VGRCalendarWeekView` - Veckovy för kalendrar
+- `VGRCalendarWeekHeaderView` - Header för kalenderveckor
+- `VGRCalendarMonthView` - Månadsvy för kalendrar
+- `VGRDatePickerPopover` - Datumväljare i popover
+- `VGRMultiPickerView` - Flerkolumnsväljare
+- `VGRRecurrencePickerView` - Väljare för upprepningsmönster
+- `VGRSegmentedPicker` - Segmenterad kontrollväljare
+
+### Layout
+- `VGRPortraitLandscapeView` - Vy som anpassar innehåll baserat på enhetens orientering
+
+### Artikelkomponenter
+- `VGRArticleScreen` - Komplett artikelvy
+- `VGRArticle` - Datamodell för artiklar
+- `VGRArticleElement` - Datamodell för artikelelement
+
+### Datamodeller
+- `VGRBodyPartData` - Datamodell för kroppsdelsinformation
+- `VGRBodyView` - Vykomponent för kroppsdiagram
+- `VGRCalendarPeriodModel` - Datamodell för kalenderperioder
+- `VGRCalendarIndexKey` - Indexnyckel för kalenderidentifiering
+
+### Stilar & Modifierare
+- `VGRDisclosureStyle` - Anpassad stil för disclosure groups
+- `vgrTimePickerPopover` - View modifier för tidsväljare i popover
+
 ## 🏷 Prefix
 
-Alla komponenter använder prefixet `VGR` för att undvika konflikter med standardbiblioteket eller tredjepartspaket:
+Alla komponenter använder prefixet `VGR` för att undvika konflikter med standardbiblioteket eller tredjepartspaket. Undvik att skapa komponenter utan prefix – även för interna strukturer om de kan användas externt.
 
-- ✅ `VGRButton`
-- ✅ `VGRCallout`
-- ✅ `VGRStepper`
+---
 
-Undvik att skapa komponenter utan prefix – även för interna strukturer om de kan användas externt.
+## 📌 Versionsinformation
+
+Paketet inkluderar automatisk version via `LibraryInfo.version`. Du kan enkelt kontrollera vilken version av designsystemet din app använder:
+
+```swift
+import DesignSystem
+
+print("Använder DesignSystem version: \(LibraryInfo.version)")
+// Output: Använder DesignSystem version: 0.20.0
+```
