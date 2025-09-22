@@ -64,7 +64,7 @@ fi
 # Commit the new version file and LibraryInfo.swift
 git add "$VERSION_FILE"
 git add Sources/DesignSystem/LibraryInfo.swift
-
-# Add a tag with the new version
-git tag -a $NEW_VERSION -m "v$NEW_VERSION"
 git commit -m "Bump version to $NEW_VERSION [CI]"
+
+# Add a tag with the new version (AFTER the commit)
+git tag -a $NEW_VERSION -m "v$NEW_VERSION"
