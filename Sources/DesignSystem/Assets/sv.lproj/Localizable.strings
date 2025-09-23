@@ -5,6 +5,7 @@
 "general.notselected" = "Ej vald";
 "general.on" = "På";
 "general.off" = "Av";
+"general.button.done" = "Klar";
 "toggle.a11y.hint" = "Dubbeltryck för att slå";
 
 /* Body Picker */
@@ -129,3 +130,7 @@
 "article.video.notwatched.a11y" = "Inte uppspelad";
 "article.video.error.title" = "Videoklippet går inte att spela upp";
 "article.video.error.message" = "Det går tyvärr inte att spela upp videoklippet just nu. Kontrollera att du har internetuppkoppling eller försök igen senare.";
+
+"survey.loading" = "Laddar…";
+"survey.reciept.title" = "Tack för din feedback!";
+"survey.reciept.text" = "Dina svar har skickats in.";
