@@ -1,7 +1,82 @@
-//
-//  README.md.swift
-//  DesignSystem
-//
-//  Created by Erik Hildingsson on 2025-09-23.
-//
+# VGRSurvey
+
+Ett litet tillägg för att visa **Microsoft Forms** i en SwiftUI-app.  
+Består av en `WKWebView` med JS-injektion som detekterar **Submit**, samt delvyer för **spinner** och **kvittens**.  
+Appen (hosten) styr sheet, toolbar, overlay och persistens.
+
+---
+
+## Komponenter
+
+- `VGRWebSurveyView` – WebView för MS Forms, postar notiser.  
+- `VGRSurveyReceiptView` – Kvittensvy (Lottie-animation).  
+- `VGRSurveyProgressSpinner` – Laddningsindikator.  
+- `VGRSurveyNotifications` – Notisnamn (`Notification.Name`).  
+- `VGRLottieView` – Wrapper för Lottie-animationer.
+
+---
+
+## Notiser
+
+| Notis                        | När                                     | Använd i appen |
+|------------------------------|-----------------------------------------|----------------|
+| `.webViewLoaded`             | Sida laddad                             | Slå av spinner |
+| `.surveySubmissionSuccess`   | Submit-knapp klickad **och** POST 200   | Visa kvittens, enable “Klar” |
+| `.webUrlError`               | Ogiltig URL                             | Stäng sheet, visa fel |
+| `.webConnectionFailure`      | Nätverksfel / laddning bruten           | Stäng sheet, visa fel |
+
+---
+
+## Quick Start
+
+```swift
+import SwiftUI
+import VGRSurvey
+
+struct ContentView: View {
+    @State private var showSurvey = false
+    @State private var isLoading = true
+    @State private var hasSubmitted = false
+
+    let formsURL = "https://forms.office.com/Pages/ResponsePage.aspx?id=..."
+
+    var body: some View {
+        Button("Öppna enkät") { showSurvey = true }
+            .sheet(isPresented: $showSurvey) {
+                NavigationStack {
+                    VGRWebSurveyView(urlString: formsURL)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button("Avbryt") { showSurvey = false; isLoading = true }
+                                    .disabled(hasSubmitted)
+                            }
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button("Klar") { showSurvey = false }
+                                    .disabled(!hasSubmitted)
+                            }
+                        }
+                        .overlay {
+                            if isLoading {
+                                VGRSurveyProgressSpinner()
+                            } else if hasSubmitted {
+                                VGRSurveyReceiptView { showSurvey = false }
+                            }
+                        }
+                        .onReceive(NotificationCenter.default.publisher(for: .webViewLoaded)) { _ in
+                            isLoading = false
+                        }
+                        .onReceive(NotificationCenter.default.publisher(for: .surveySubmissionSuccess)) { _ in
+                            hasSubmitted = true
+                        }
+                        .onReceive(NotificationCenter.default.publisher(for: .webUrlError)) { _ in
+                            showSurvey = false
+                        }
+                        .onReceive(NotificationCenter.default.publisher(for: .webConnectionFailure)) { _ in
+                            showSurvey = false
+                        }
+                }
+            }
+    }
+}
+
 
