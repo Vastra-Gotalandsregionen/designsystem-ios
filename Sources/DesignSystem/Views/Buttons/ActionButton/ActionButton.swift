@@ -1,7 +1,8 @@
 import SwiftUI
 
-//TODO: - This component is going to be deprecated - need to refactor CalloutView first though. 
+//TODO: - This component is going to be deprecated - need to refactor CalloutView first though.
 
+@available(*, deprecated, message: "Use VGRButton instead.")
 public struct ActionButton<LeadingIcon: View, TrailingIcon: View>: View {
     
     public enum ButtonStyle {
