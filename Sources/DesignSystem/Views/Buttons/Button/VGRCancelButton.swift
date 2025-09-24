@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct VGRCancelButton: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.isEnabled) private var isEnabled
     let dismissAction: (() -> Void)?
 
     public init(dismissAction: (() -> Void)? = nil) {
@@ -27,8 +28,10 @@ public struct VGRCancelButton: View {
                 }
             } label: {
                 Text("general.cancel".localizedBundle)
-                    .foregroundStyle(Color.Primary.action)
+                    .foregroundStyle(isEnabled ? Color.Primary.action : Color.Neutral.disabled)
             }
+            .disabled(!isEnabled)
+            .opacity(isEnabled ? 1 : 0.5)
         }
     }
 }
@@ -42,6 +45,13 @@ public struct VGRCancelButton: View {
             print("Dismissing")
             showSheet.toggle()
         }
+
+        Text("Disabled state")
+        VGRCancelButton {
+            print("Dismissing")
+            showSheet.toggle()
+        }
+        .disabled(true)
     }
     .padding()
     .sheet(isPresented: $showSheet) {
@@ -54,6 +64,12 @@ public struct VGRCancelButton: View {
                         VGRCancelButton {
                             showSheet.toggle()
                         }
+                    }
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        VGRCancelButton {
+                            showSheet.toggle()
+                        }
+                        .disabled(true)
                     }
                 }
         }

@@ -1,6 +1,7 @@
 import SwiftUI
 
 public struct VGRCloseButton: View {
+    @Environment(\.isEnabled) private var isEnabled
     @Environment(\.dismiss) private var dismiss
     let dismissAction: (() -> Void)?
 
@@ -27,7 +28,7 @@ public struct VGRCloseButton: View {
                 }
             } label: {
                 Text("general.close".localizedBundle)
-                    .foregroundStyle(Color.Primary.action)
+                    .foregroundStyle(isEnabled ? Color.Primary.action : Color.Neutral.disabled)
             }
         }
     }

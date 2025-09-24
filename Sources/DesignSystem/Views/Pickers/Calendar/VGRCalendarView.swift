@@ -74,6 +74,8 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
 }
 
 #Preview {
+    @Previewable @AccessibilityFocusState var focusedElement: String?
+
     /// selectedIndex contains the currently selected date using the CalendarIndexKey
     @Previewable @State var selectedIndex: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
 
@@ -135,7 +137,9 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
                     currentWeekID: $currentWeekID,
                     interval: maxInterval,
                     data: calendarData,
-                    selectedDate: $selectedIndex) { data in
+                    selectedDate: $selectedIndex,
+                    focusedElement: $focusedElement,
+                ) { data in
                         /// Default height of a day cell
                         guard let data else { return 42.0 }
 

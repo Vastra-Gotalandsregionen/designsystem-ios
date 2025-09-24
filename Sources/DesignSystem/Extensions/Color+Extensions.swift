@@ -93,6 +93,7 @@ public extension Color {
     struct Neutral {
         public static let border = Color("border", bundle: .module)
         public static let borderDisabled = Color("borderdisabled", bundle: .module)
+        public static let disabled = Color("disabled", bundle: .module)
         public static let divider = Color("divider", bundle: .module)
         public static let dividerVariant = Color("dividervariant", bundle: .module)
         public static let surfaceDisabled = Color("surfacedisabled", bundle: .module)

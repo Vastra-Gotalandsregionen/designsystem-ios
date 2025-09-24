@@ -9,20 +9,24 @@ public struct VGRCalendarWeekView<Content, Data>: View where Data: Hashable, Con
     @State private var currentHeight: CGFloat = .zero
     @State private var today: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
     @FocusState private var focusedDay: VGRCalendarIndexKey?
-    
+    var a11yFocusedDay: AccessibilityFocusState<String?>.Binding
+
     private let data: [VGRCalendarIndexKey: Data]
     private let interval: DateInterval
     private let heightRetrieval: (Data?) -> CGFloat
     private let dayBuilder: (VGRCalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
     private let insets: EdgeInsets
     private let calendar: Calendar
-    
+
+    @State private var weekVisibility: [String: Bool] = [:]
+
     public init(
         currentWeekID: Binding<String?>,
         interval: DateInterval,
         data: [VGRCalendarIndexKey: Data],
         using calendar: Calendar = .current,
         selectedDate: Binding<VGRCalendarIndexKey>,
+        focusedElement: AccessibilityFocusState<String?>.Binding,
         insets: EdgeInsets = EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16),
         heightRetrieval: @escaping (Data?) -> CGFloat,
         dayBuilder: @escaping (VGRCalendarIndexKey, Data?, _: Bool, _: Bool) -> Content
@@ -33,6 +37,7 @@ public struct VGRCalendarWeekView<Content, Data>: View where Data: Hashable, Con
         self.calendar = calendar
         self.data = data
         self._selectedDate = selectedDate
+        self.a11yFocusedDay = focusedElement
         self.dayBuilder = dayBuilder
         self.insets = insets
         self.heightRetrieval = heightRetrieval
@@ -57,23 +62,38 @@ public struct VGRCalendarWeekView<Content, Data>: View where Data: Hashable, Con
                                     idx == selectedDate
                                 )
                                 .id(idx.id)
+                                .accessibilityIdentifier(idx.date.formatted(date: .numeric, time: .omitted))
                                 .focused($focusedDay, equals: idx)
+                                .accessibilityFocused(a11yFocusedDay, equals: idx.date.formatted(date: .numeric, time: .omitted))
                                 .contentShape(Rectangle())
                                 .onTapGesture {
                                     selectedDate = idx
                                 }
                             }
                         }
+                        .onScrollVisibilityChange { visible in
+                            weekVisibility[week.idx.weekID] = visible
+                        }
+
                         .id(week.idx.weekID)
                         .frame(height: maxHeight(for: week), alignment: .top)
                         .padding(.leading, insets.leading)
                         .padding(.trailing, insets.trailing)
                         .containerRelativeFrame([.horizontal], alignment: .top)
                         .accessibilityElement(children: .contain)
+                        .accessibilityHidden(weekVisibility[week.idx.weekID] == false)
                     }
+                    .accessibilityLabel(currentWeekID ?? "-")
+                    .accessibilityAction(named: "Next week", {
+                        print("Im doing some action")
+                    })
+                    .accessibilityAction(named: "Previous week", {
+                        print("Im doing some action")
+                    })
                 }
                 .frame(height: height, alignment: .top)
                 .scrollTargetLayout()
+                .accessibilityLabel("This is the week label")
             }
             .scrollPosition(id: $currentWeekID)
             .scrollTargetBehavior(.paging)
@@ -124,6 +144,7 @@ public struct VGRCalendarWeekView<Content, Data>: View where Data: Hashable, Con
 
 
 #Preview {
+    @Previewable @AccessibilityFocusState var focusedElement: String?
     @Previewable @State var currentWeekID: String? = nil
     @Previewable @State var selectedDate: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
     @Previewable @State var calendarData: [VGRCalendarIndexKey: ExampleCalendarData] = [
@@ -149,6 +170,7 @@ public struct VGRCalendarWeekView<Content, Data>: View where Data: Hashable, Con
                                 interval: maxInterval,
                                 data: calendarData,
                                 selectedDate: $selectedDate,
+                                focusedElement: $focusedElement,
                                 heightRetrieval: { data in
                 /// Default height of a day cell
                 guard let data else { return 42.0 }
