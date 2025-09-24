@@ -1,3 +1,6 @@
+/* General strings */
+"general.cancel" = "Avbryt";
+"general.done" = "Klar";
 "general.close" = "Stäng";
 "general.decrease" = "Minska";
 "general.increase" = "Öka";
@@ -5,6 +8,8 @@
 "general.notselected" = "Ej vald";
 "general.on" = "På";
 "general.off" = "Av";
+
+/* Toggle */
 "toggle.a11y.hint" = "Dubbeltryck för att slå";
 
 /* Body Picker */
