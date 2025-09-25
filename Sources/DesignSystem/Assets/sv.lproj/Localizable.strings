@@ -134,3 +134,7 @@
 "article.video.notwatched.a11y" = "Inte uppspelad";
 "article.video.error.title" = "Videoklippet går inte att spela upp";
 "article.video.error.message" = "Det går tyvärr inte att spela upp videoklippet just nu. Kontrollera att du har internetuppkoppling eller försök igen senare.";
+
+/* Calendar */
+"calendar.week.next" = "Nästa vecka";
+"calendar.week.previous" = "Föregående vecka";
