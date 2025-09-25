@@ -70,6 +70,8 @@ public struct VGRCalendarWeekView<Content, Data>: View where Data: Hashable, Con
                             }
                         }
                         .onScrollVisibilityChange { visible in
+                            /// This is used to hide weeks that are contained in the LazyHStack
+                            /// but should not be visible for voiceOver
                             weekVisibility[week.idx.weekID] = visible
                         }
                         .id(week.idx.weekID)
@@ -80,7 +82,6 @@ public struct VGRCalendarWeekView<Content, Data>: View where Data: Hashable, Con
                         .accessibilityElement(children: .contain)
                         .accessibilityHidden(weekVisibility[week.idx.weekID] == false)
                     }
-                    .accessibilityLabel(currentWeekID ?? "-")
                     .accessibilityAction(named: "calendar.week.next".localizedBundle, {
                         if let nextPeriod = vm.getPeriodAfterWeekID(currentWeekID) {
                             let oldWeek = currentWeekID
