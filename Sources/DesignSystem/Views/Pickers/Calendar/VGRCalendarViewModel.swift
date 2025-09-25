@@ -30,6 +30,40 @@ import SwiftUI
         return nil
     }
 
+    func getPeriodBeforeWeekID(_ targetWeekID: String? = nil) -> VGRCalendarPeriodModel? {
+        guard let targetWeekID else { return nil }
+        
+        /// Find the index of the period with the matching weekID
+        guard let targetIndex = weeks.firstIndex(where: { $0.idx.weekID == targetWeekID }) else {
+            return nil // weekID not found
+        }
+
+        /// Check if there's a previous element
+        guard targetIndex > 0 else {
+            return nil // No period before the first one
+        }
+
+        /// Return the previous period
+        return weeks[targetIndex - 1]
+    }
+
+    func getPeriodAfterWeekID(_ targetWeekID: String? = nil) -> VGRCalendarPeriodModel? {
+        guard let targetWeekID else { return nil }
+
+        /// Find the index of the period with the matching weekID
+        guard let targetIndex = weeks.firstIndex(where: { $0.idx.weekID == targetWeekID }) else {
+            return nil // weekID not found
+        }
+
+        /// Check if there's a next element
+        guard targetIndex < weeks.count - 1 else {
+            return nil /// No period after the last one
+        }
+
+        /// Return the next period
+        return weeks[targetIndex + 1]
+    }
+
     private func generateWeeks(for interval: DateInterval, calendar: Calendar) -> [VGRCalendarPeriodModel] {
         var weeks: [VGRCalendarPeriodModel] = []
 

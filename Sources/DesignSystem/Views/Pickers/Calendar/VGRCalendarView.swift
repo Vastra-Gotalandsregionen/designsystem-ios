@@ -135,7 +135,8 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
                     currentWeekID: $currentWeekID,
                     interval: maxInterval,
                     data: calendarData,
-                    selectedDate: $selectedIndex) { data in
+                    selectedDate: $selectedIndex,
+                ) { data in
                         /// Default height of a day cell
                         guard let data else { return 42.0 }
 
