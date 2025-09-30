@@ -10,7 +10,7 @@ import SwiftUI
 public struct VGRBodyPickerView: View {
     @Binding var selectedParts: Set<String>
 
-    var fillColor: Color = Color.Accent.brownSurface
+    var fillColor: Color = Color.Accent.brownSurfaceFixed
     var fillColorSelection: Color = Color.Accent.pinkGraphicFixed
     var strokeColor: Color = Color.black
     var strokeWidth: CGFloat = 1
