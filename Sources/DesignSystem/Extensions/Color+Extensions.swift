@@ -37,6 +37,7 @@ public extension Color {
         public static let brown = Color("brown", bundle: .module)
         public static let brownGraphic = Color("browngraphic", bundle: .module)
         public static let brownSurface = Color("brownsurface", bundle: .module)
+        public static let brownSurfaceFixed = Color("brownsurfacefixed", bundle: .module)
         public static let brownSurfaceBold = Color("brownsurfacebold", bundle: .module)
         public static let brownSurfaceMinimal = Color("brownsurfaceminimal", bundle: .module)
         

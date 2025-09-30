@@ -48,7 +48,7 @@ struct VGRBodySelectionView: View {
         return orientation == .front ? [.front(.faceFeatures)] : []
     }
 
-    var fillColor: Color = Color.Accent.brownSurface
+    var fillColor: Color = Color.Accent.brownSurfaceFixed
     var fillColorSelection: Color = Color.Accent.pinkGraphicFixed
     var strokeColor: Color = Color.black
     var strokeWidth: CGFloat = 1
