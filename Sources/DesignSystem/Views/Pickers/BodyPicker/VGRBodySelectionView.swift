@@ -49,7 +49,7 @@ struct VGRBodySelectionView: View {
     }
 
     var fillColor: Color = Color.Accent.brownSurface
-    var fillColorSelection: Color = Color.Accent.pinkGraphic
+    var fillColorSelection: Color = Color.Accent.pinkGraphicFixed
     var strokeColor: Color = Color.black
     var strokeWidth: CGFloat = 1
     var strokeColorSelection: Color = Color.black

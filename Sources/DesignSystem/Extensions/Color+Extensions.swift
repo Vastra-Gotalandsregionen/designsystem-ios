@@ -66,6 +66,7 @@ public extension Color {
         
         public static let pink = Color("pink", bundle: .module)
         public static let pinkGraphic = Color("pinkgraphic", bundle: .module)
+        public static let pinkGraphicFixed = Color("pinkgraphicfixed", bundle: .module)
         public static let pinkSurface = Color("pinksurface", bundle: .module)
         public static let pinkSurfaceBold = Color("pinksurfacebold", bundle: .module)
         public static let pinkSurfaceMinimal = Color("pinksurfaceminimal", bundle: .module)

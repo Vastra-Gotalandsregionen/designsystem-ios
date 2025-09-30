@@ -79,7 +79,7 @@ public struct VGRBodyView: View {
     public init(orientation: VGRBodyOrientation = .front,
                 selectedParts: Set<String>,
                 fillColor: Color = Color.Accent.brownSurface,
-                fillColorSelection: Color = Color.Accent.pinkGraphic,
+                fillColorSelection: Color = Color.Accent.pinkGraphicFixed,
                 strokeColor: Color = Color.black,
                 strokeWidth: CGFloat = 1,
                 strokeColorSelection: Color = Color.black) {
