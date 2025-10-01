@@ -21,11 +21,13 @@ public struct VGRDisclosureGroup<Content: View>: View {
         title: String,
         icon: Image? = nil,
         backgroundColor: Color = Color.Elevation.elevation1,
+        isExpanded: Binding<Bool>? = nil,
         @ViewBuilder content: () -> Content
     ) {
         self.title = title
         self.icon = icon
         self.backgroundColor = backgroundColor
+        self.externalExpanded = isExpanded
         self.content = content()
     }
 
