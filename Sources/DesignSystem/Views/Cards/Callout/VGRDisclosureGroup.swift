@@ -2,27 +2,38 @@ import SwiftUI
 
 public struct VGRDisclosureGroup<Content: View>: View {
     let title: String
-    let icon: Image
+    let icon: Image?
     let backgroundColor: Color
     let content: Content
 
-    @State private var isExpanded: Bool = false
+    // Lokalt tillstånd som används om ingen extern binding anges
+    @State private var internalExpanded: Bool = false
+
+    // Valfri extern binding som kan styra om gruppen är expanderad
+    private var externalExpanded: Binding<Bool>?
+
+    // Om en extern binding finns används den, annars används det interna tillståndet
+    private var isExpanded: Binding<Bool> {
+        externalExpanded ?? $internalExpanded
+    }
 
     public init(
         title: String,
-        icon: Image = Image(systemName: "info.circle"),
+        icon: Image? = nil,
         backgroundColor: Color = Color.Elevation.elevation1,
+        isExpanded: Binding<Bool>? = nil,
         @ViewBuilder content: () -> Content
     ) {
         self.title = title
         self.icon = icon
         self.backgroundColor = backgroundColor
+        self.externalExpanded = isExpanded
         self.content = content()
     }
 
     public var body: some View {
         DisclosureGroup(
-            isExpanded: $isExpanded,
+            isExpanded: isExpanded,
             content: {
                 VStack(alignment: .leading, spacing: 8) {
                     content
@@ -33,11 +44,13 @@ public struct VGRDisclosureGroup<Content: View>: View {
             },
             label: {
                 HStack (alignment: .center, spacing: 12) {
-                    icon
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 25, height: 25)
-                        .foregroundStyle(Color.Neutral.text)
+                    if let icon = icon {
+                           icon
+                               .resizable()
+                               .scaledToFit()
+                               .frame(width: 25, height: 25)
+                               .foregroundStyle(Color.Neutral.text)
+                       }
                     Text(title)
                         .foregroundStyle(Color.Neutral.text)
                         .multilineTextAlignment(.leading)
