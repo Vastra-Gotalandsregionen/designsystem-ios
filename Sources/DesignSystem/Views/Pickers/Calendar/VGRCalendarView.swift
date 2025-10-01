@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftUIIntrospect
 
 public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content: View {
 
@@ -6,11 +7,13 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
     @Binding var selectedIndex: VGRCalendarIndexKey
     let interval: DateInterval
     let data: [VGRCalendarIndexKey: Data]
+    var scrollsToTop: Bool = false
 
     public init(selectedIndex: Binding<VGRCalendarIndexKey>,
                 interval: DateInterval,
                 data: [VGRCalendarIndexKey : Data],
                 calendar: Calendar = .current,
+                scrollsToTop: Bool = false,
                 onTapDay: @escaping (VGRCalendarIndexKey) -> Void,
                 day: @escaping (VGRCalendarIndexKey, Data?, _: Bool, _: Bool) -> Content) {
 
@@ -22,6 +25,7 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
         self.onTapDay = onTapDay
         self.dayBuilder = day
         self.currentMonthTarget = selectedIndex.wrappedValue.monthID
+        self.scrollsToTop = scrollsToTop
     }
 
     /// Private
@@ -47,6 +51,9 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
                 }
             }
             .scrollTargetLayout()
+        }
+        .introspect(.scrollView, on: .iOS(.v17, .v18, .v26)) { scrollView in
+            scrollView.scrollsToTop = scrollsToTop
         }
         .scrollPosition(id: $currentMonthTarget, anchor: .top)
         .background(Color.Elevation.background)
@@ -99,88 +106,105 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
         component: .year
     )!
 
-    NavigationStack {
-        VGRCalendarView(selectedIndex: $selectedIndex,
-                     interval: maxInterval,
-                     data: calendarData) { index in
+    TabView {
 
-            print("Tapped on \(index.id)")
-            currentWeekID = index.weekID
-            selectedWeekIndex = index
+        Tab {
+
+            NavigationStack {
+                VGRCalendarView(selectedIndex: $selectedIndex,
+                                interval: maxInterval,
+                                data: calendarData) { index in
+
+                    print("Tapped on \(index.id)")
+                    currentWeekID = index.weekID
+                    selectedWeekIndex = index
 
 
-        } day: { index, data, current, selected in
-            ExampleDayCell(date: index,
-                           data: data,
-                           current: current,
-                           selected: false)
-        }
-        .navigationTitle("Calendar")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button("Add", systemImage: "plus.circle") {
-                    let timeRange = maxInterval.end.timeIntervalSince(maxInterval.start)
-                    let randomOffset = TimeInterval.random(in: 0...timeRange)
-                    let date = VGRCalendarIndexKey(from: maxInterval.start.addingTimeInterval(randomOffset))
-                    withAnimation {
-                        calendarData[date] = .init(hasEvent: true, isRecurring: false)
+                } day: { index, data, current, selected in
+                    ExampleDayCell(date: index,
+                                   data: data,
+                                   current: current,
+                                   selected: false)
+                }
+                .navigationTitle("Calendar")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Add", systemImage: "plus.circle") {
+                            let timeRange = maxInterval.end.timeIntervalSince(maxInterval.start)
+                            let randomOffset = TimeInterval.random(in: 0...timeRange)
+                            let date = VGRCalendarIndexKey(from: maxInterval.start.addingTimeInterval(randomOffset))
+                            withAnimation {
+                                calendarData[date] = .init(hasEvent: true, isRecurring: false)
+                            }
+                        }
                     }
                 }
-            }
-        }
-        .navigationDestination(item: $selectedWeekIndex) { weekIndex in
-            VStack {
-                VGRCalendarWeekView(
-                    currentWeekID: $currentWeekID,
-                    interval: maxInterval,
-                    data: calendarData,
-                    selectedDate: $selectedIndex,
-                ) { data in
-                        /// Default height of a day cell
-                        guard let data else { return 42.0 }
-
-                        /// Calculate height of a day cell
-                        return 44.0 + (CGFloat(data.numItems) * 20.0) + (CGFloat(data.numItems-1) * 2.0)
-
-                    } dayBuilder: { index, data, current, selected in
-                        ExampleDayCell(date: index,
-                                       data: data,
-                                       current: current,
-                                       selected: selected)
-                    }
-                    .background(Color.Elevation.elevation1)
-
-                ScrollView {
+                .navigationDestination(item: $selectedWeekIndex) { weekIndex in
                     VStack {
-                        if let data = calendarData[selectedIndex] {
+                        VGRCalendarWeekView(
+                            currentWeekID: $currentWeekID,
+                            interval: maxInterval,
+                            data: calendarData,
+                            selectedDate: $selectedIndex,
+                        ) { data in
+                            /// Default height of a day cell
+                            guard let data else { return 52.0 }
+
+                            /// Calculate height of a day cell
+                            return 44.0 + (CGFloat(data.numItems) * 20.0) + (CGFloat(data.numItems-1) * 2.0)
+
+                        } dayBuilder: { index, data, current, selected in
+                            ExampleDayCell(date: index,
+                                           data: data,
+                                           current: current,
+                                           selected: selected)
+                        }
+                        .background(Color.Elevation.elevation1)
+
+                        ScrollView {
                             VStack {
-                                ForEach(data.items, id: \.self) { item in
-                                    Text(item.title)
+                                if let data = calendarData[selectedIndex] {
+                                    VStack {
+                                        ForEach(data.items, id: \.self) { item in
+                                            Text(item.title)
+                                        }
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                } else {
+                                    Text("No data for selected date")
                                 }
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        } else {
-                            Text("No data for selected date")
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.Elevation.background)
+                    }
+                    .navigationTitle("Week")
+                    .toolbar {
+                        ToolbarItem {
+                            Button {
+                                withAnimation {
+                                    selectedIndex = today
+                                    currentWeekID = today.weekID
+                                }
+                            } label: {
+                                Text("Idag")
+                            }
                         }
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.Elevation.background)
             }
-            .navigationTitle("Week")
-            .toolbar {
-                ToolbarItem {
-                    Button {
-                        withAnimation {
-                            selectedIndex = today
-                            currentWeekID = today.weekID
-                        }
-                    } label: {
-                        Text("Idag")
-                    }
-                }
-            }
+        } label: {
+            Image(systemName: "calendar")
+            Text("Calendar")
         }
+
+        Tab {
+            Text("Demo tab just to test tab-switching behavior of the VGRCalendarView")
+        } label: {
+            Image(systemName: "house")
+            Text("Other")
+        }
+
     }
 }
