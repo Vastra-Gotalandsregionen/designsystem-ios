@@ -157,14 +157,13 @@ observer.observe(document.body, { childList: true, subtree: true });
                             isPresented = false
                             isLoading = true
                         }
-                        .disabled(hasSubmitted) // host policy
+                        .disabled(hasSubmitted)
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Done") {
                             isPresented = false
-                            // reset if you want
                         }
-                        .disabled(!hasSubmitted) // host policy
+                        .disabled(!hasSubmitted)
                     }
                 }
                 .overlay {
@@ -177,7 +176,6 @@ observer.observe(document.body, { childList: true, subtree: true });
                         .transition(.opacity)
                     }
                 }
-            // Event wiring (host ansvar)
                 .onReceive(NotificationCenter.default.publisher(for: .webViewLoaded)) { _ in
                     isLoading = false
                 }

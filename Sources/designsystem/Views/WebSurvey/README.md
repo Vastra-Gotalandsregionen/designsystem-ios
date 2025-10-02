@@ -8,7 +8,7 @@ Appen (hosten) styr sheet, toolbar, overlay och persistens.
 
 ## Komponenter
 
-- `VGRWebSurveyView` – WebView för MS Forms, postar notiser.  
+- `VGRSurveyWebView` – WebView för MS Forms, postar notiser.  
 - `VGRSurveyReceiptView` – Kvittensvy (Lottie-animation).  
 - `VGRSurveyProgressSpinner` – Laddningsindikator.  
 - `VGRSurveyNotifications` – Notisnamn (`Notification.Name`).  
@@ -16,7 +16,7 @@ Appen (hosten) styr sheet, toolbar, overlay och persistens.
 
 ---
 
-## Notiser
+## Notiser (Notification.Name)
 
 | Notis                        | När                                     | Använd i appen |
 |------------------------------|-----------------------------------------|----------------|
@@ -44,7 +44,7 @@ struct ContentView: View {
         Button("Öppna enkät") { showSurvey = true }
             .sheet(isPresented: $showSurvey) {
                 NavigationStack {
-                    VGRWebSurveyView(urlString: formsURL)
+                    VGRSurveyWebView(urlString: formsURL)
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading) {
                                 Button("Avbryt") { showSurvey = false; isLoading = true }
@@ -82,7 +82,7 @@ struct ContentView: View {
 
 ## Att tänka på 
 
-- **Hosten** styr `isLoading`, `hasSubmitted` och persistens (`UserDefaults` etc.)  
-- **Avbryt**: enabled före submit, disabled efter.  
-- **Klar**: disabled före submit, enabled efter.  
+- **Hosten** styr `isLoading`, `hasSubmitted`, `showSurvey` och persistens (`UserDefaults` etc.)
+- **Avbryt** i navbar: enabled före submit, disabled efter.  
+- **Klar** i navbar: disabled före submit, enabled efter.  
 - Kvittens och spinner är valfria delvyer – kan bytas ut.  
