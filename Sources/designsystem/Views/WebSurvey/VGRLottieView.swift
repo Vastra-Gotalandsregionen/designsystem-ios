@@ -6,7 +6,10 @@ public struct VGRLottieView: UIViewRepresentable {
     private let animationName: String
     private let loopMode: LottieLoopMode
     
-    public init(animationName: String, loopMode: LottieLoopMode = .playOnce) {
+    public init(
+        animationName: String,
+        loopMode: LottieLoopMode = .playOnce
+    ) {
         self.animationName = animationName
         self.loopMode = loopMode
     }

@@ -78,5 +78,11 @@ struct ContentView: View {
             }
     }
 }
+```
 
+## Att tänka på 
 
+- **Hosten** styr `isLoading`, `hasSubmitted` och persistens (`UserDefaults` etc.)  
+- **Avbryt**: enabled före submit, disabled efter.  
+- **Klar**: disabled före submit, enabled efter.  
+- Kvittens och spinner är valfria delvyer – kan bytas ut.  
