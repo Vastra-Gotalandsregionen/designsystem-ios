@@ -37,6 +37,10 @@ struct ContentView: View {
     @State private var showSurvey = false
     @State private var isLoading = true
     @State private var hasSubmitted = false
+    
+    @State private var showGeneralErrorAlert = false
+    @State private var showConnectionFailureAlert = false
+    @State private var showDismissSurveyAlert = false
 
     let formsURL = "https://forms.office.com/Pages/ResponsePage.aspx?id=..."
 
@@ -44,10 +48,12 @@ struct ContentView: View {
         Button("Öppna enkät") { showSurvey = true }
             .sheet(isPresented: $showSurvey) {
                 NavigationStack {
-                    VGRSurveyWebView(urlString: formsURL)
+                    VGRWebSurveyView(urlString: formsURL)
+                        .navigationTitle("Enkät")
+                        .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading) {
-                                Button("Avbryt") { showSurvey = false; isLoading = true }
+                                Button("Avbryt") { showDismissSurveyAlert = true }
                                     .disabled(hasSubmitted)
                             }
                             ToolbarItem(placement: .topBarTrailing) {
@@ -62,6 +68,7 @@ struct ContentView: View {
                                 VGRSurveyReceiptView { showSurvey = false }
                             }
                         }
+                        // Events
                         .onReceive(NotificationCenter.default.publisher(for: .webViewLoaded)) { _ in
                             isLoading = false
                         }
@@ -70,19 +77,52 @@ struct ContentView: View {
                         }
                         .onReceive(NotificationCenter.default.publisher(for: .webUrlError)) { _ in
                             showSurvey = false
+                            showGeneralErrorAlert = true
                         }
                         .onReceive(NotificationCenter.default.publisher(for: .webConnectionFailure)) { _ in
                             showSurvey = false
+                            showConnectionFailureAlert = true
+                        }
+                        // Alerts
+                        .alert("Enkät", isPresented: $showDismissSurveyAlert) {
+                            Button("Avbryt", role: .cancel) {}
+                            Button("Hoppa över", role: .destructive) {
+                                hasSubmitted = true
+                                showSurvey = false
+                            }
+                        } message: {
+                            Text("Vill du hoppa över enkäten?")
+                        }
+                        .alert("Fel", isPresented: $showGeneralErrorAlert) {
+                            Button("OK", role: .cancel) {}
+                        } message: {
+                            Text("Något gick fel, försök igen.")
+                        }
+                        .alert("Anslutningsfel", isPresented: $showConnectionFailureAlert) {
+                            Button("OK", role: .cancel) {}
+                        } message: {
+                            Text("Kunde inte ladda enkäten på grund av nätverksproblem.")
                         }
                 }
             }
     }
 }
-```
 
 ## Att tänka på 
 
-- **Hosten** styr `isLoading`, `hasSubmitted`, `showSurvey` och persistens (`UserDefaults` etc.)
+- **Hosten** styr `isLoading`, `hasSubmitted`, `showSurvey` och persistens (`UserDefaults` etc.).  
 - **Avbryt** i navbar: enabled före submit, disabled efter.  
 - **Klar** i navbar: disabled före submit, enabled efter.  
 - Kvittens och spinner är valfria delvyer – kan bytas ut.  
+
+### Alerts
+
+För att ge bra UX behöver appen visa alerts för olika fel- och avbrottsscenarion.  
+Vanliga mönster:
+
+- **Avbryt enkät**: visa en bekräftelsedialog om användaren vill hoppa över enkäten.  
+- **Allmänt fel** (`.webUrlError`): stäng sheet och visa en generisk felalert.  
+- **Anslutningsfel** (`.webConnectionFailure`): stäng sheet och visa en alert om nätverksproblem.  
+- **Dismissal**: vissa appar kan låta användaren markera enkäten som “inte relevant” via en destruktiv knapp.
+
+> **Tips:** lägg alerts i hosten, kopplat till state som triggas av notiserna. Då blir det lätt att anpassa språk och design utan att ändra biblioteket.
