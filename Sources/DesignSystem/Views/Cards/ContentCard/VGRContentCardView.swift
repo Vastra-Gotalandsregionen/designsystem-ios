@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Consistent spacing values for article components
-enum VGRArticleSpacing {
+enum VGRContentSpacing {
     static let horizontal: CGFloat = 16
     static let horizontalList: CGFloat = 24
     static let horizontalLink: CGFloat = 32
@@ -13,16 +13,16 @@ enum VGRArticleSpacing {
 }
 
 
-enum VGRArticleCardSizeClass: CGFloat, CaseIterable {
+enum VGRContentCardSizeClass: CGFloat, CaseIterable {
     case small = 118
     case medium = 120
     case large = 234
 }
 
 
-struct VGRArticleCardView: View {
-    let sizeClass: VGRArticleCardSizeClass
-    let article: VGRArticle
+struct VGRContentCardView: View {
+    let sizeClass: VGRContentCardSizeClass
+    let content: VGRContent
 
     @ScaledMetric private var readTimeIconSize: CGFloat = 16
 
@@ -35,14 +35,15 @@ struct VGRArticleCardView: View {
     }
 
     private var image: Image {
-        Image(
-            article.imageUrl,
-            bundle: article.imageUrl.hasPrefix("placeholder") ? .module : .main
+        var imageUrl = content.imageUrl.isEmpty ? "placeholder" : content.imageUrl
+        return Image(
+            imageUrl,
+            bundle: imageUrl.hasPrefix("placeholder") ? .module : .main
         )
     }
 
     private var newContentIcon: some View {
-        Text("article.content.new".localizedBundle)
+        Text("content.new".localizedBundle)
             .foregroundStyle(Color.Neutral.text)
             .fontWeight(.semibold)
             .dynamicTypeSize(.small ... .large)
@@ -60,7 +61,7 @@ struct VGRArticleCardView: View {
                 .frame(width: readTimeIconSize, height: readTimeIconSize)
                 .accessibilityHidden(true)
 
-            Text(article.subtitle)
+            Text(content.subtitle)
                 .font(.footnote)
                 .multilineTextAlignment(.leading)
         }
@@ -77,8 +78,8 @@ struct VGRArticleCardView: View {
                        alignment: .center)
                 .clipped()
 
-            VStack(alignment: .leading, spacing: VGRArticleSpacing.verticalMedium) {
-                Text(article.title)
+            VStack(alignment: .leading, spacing: VGRContentSpacing.verticalMedium) {
+                Text(content.title)
                     .foregroundColor(Color.Neutral.text)
                     .font(.title3)
                     .fontWeight(.bold)
@@ -87,15 +88,15 @@ struct VGRArticleCardView: View {
                 readTimeLabel
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, VGRArticleSpacing.verticalMedium)
-            .padding(.leading, VGRArticleSpacing.horizontal)
-            .padding(.bottom, VGRArticleSpacing.verticalMedium)
-            .padding(.trailing, VGRArticleSpacing.horizontal)
+            .padding(.top, VGRContentSpacing.verticalMedium)
+            .padding(.leading, VGRContentSpacing.horizontal)
+            .padding(.bottom, VGRContentSpacing.verticalMedium)
+            .padding(.trailing, VGRContentSpacing.horizontal)
 
-            if article.isNew {
+            if content.isNew {
                 newContentIcon
-                    .padding(.trailing, VGRArticleSpacing.horizontal)
-                    .padding(.top, VGRArticleSpacing.horizontal)
+                    .padding(.trailing, VGRContentSpacing.horizontal)
+                    .padding(.top, VGRContentSpacing.horizontal)
             }
         }
         .background(Color.Elevation.elevation1)
@@ -113,15 +114,15 @@ struct VGRArticleCardView: View {
                     .contentShape(Rectangle())
                     .clipped()
 
-                if article.isNew {
+                if content.isNew {
                     newContentIcon
-                        .padding(.trailing, VGRArticleSpacing.horizontal)
-                        .padding(.top, VGRArticleSpacing.horizontal)
+                        .padding(.trailing, VGRContentSpacing.horizontal)
+                        .padding(.top, VGRContentSpacing.horizontal)
                 }
             }
 
-            VStack(alignment: .leading, spacing: VGRArticleSpacing.verticalMedium) {
-                Text(article.title)
+            VStack(alignment: .leading, spacing: VGRContentSpacing.verticalMedium) {
+                Text(content.title)
                     .foregroundColor(Color.Neutral.text)
                     .fontWeight(.bold)
                     .font(.title3)
@@ -130,10 +131,10 @@ struct VGRArticleCardView: View {
                 readTimeLabel
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, VGRArticleSpacing.verticalMedium)
-            .padding(.leading, VGRArticleSpacing.horizontal)
-            .padding(.bottom, VGRArticleSpacing.horizontal)
-            .padding(.trailing, VGRArticleSpacing.horizontal)
+            .padding(.top, VGRContentSpacing.verticalMedium)
+            .padding(.leading, VGRContentSpacing.horizontal)
+            .padding(.bottom, VGRContentSpacing.horizontal)
+            .padding(.trailing, VGRContentSpacing.horizontal)
         }
         .background(Color.Elevation.elevation1)
         .cornerRadius(16)
@@ -149,15 +150,15 @@ struct VGRArticleCardView: View {
                     .contentShape(Rectangle())
                     .clipped()
 
-                if article.isNew {
+                if content.isNew {
                     newContentIcon
-                        .padding(.trailing, VGRArticleSpacing.horizontal)
-                        .padding(.top, VGRArticleSpacing.horizontal)
+                        .padding(.trailing, VGRContentSpacing.horizontal)
+                        .padding(.top, VGRContentSpacing.horizontal)
                 }
             }
 
-            VStack(alignment: .leading, spacing: VGRArticleSpacing.verticalMedium) {
-                Text(article.title)
+            VStack(alignment: .leading, spacing: VGRContentSpacing.verticalMedium) {
+                Text(content.title)
                     .foregroundColor(Color.Neutral.text)
                     .fontWeight(.bold)
                     .font(.title3)
@@ -165,10 +166,10 @@ struct VGRArticleCardView: View {
 
                 readTimeLabel
             }
-            .padding(.top, VGRArticleSpacing.verticalMedium)
-            .padding(.leading, VGRArticleSpacing.horizontal)
-            .padding(.bottom, VGRArticleSpacing.horizontal)
-            .padding(.trailing, VGRArticleSpacing.horizontal)
+            .padding(.top, VGRContentSpacing.verticalMedium)
+            .padding(.leading, VGRContentSpacing.horizontal)
+            .padding(.bottom, VGRContentSpacing.horizontal)
+            .padding(.trailing, VGRContentSpacing.horizontal)
         }
         .background(Color.Elevation.elevation1)
         .cornerRadius(16)
@@ -177,20 +178,20 @@ struct VGRArticleCardView: View {
 }
 
 #Preview {
-    let articles = VGRArticle.randomMultiple(count: 4)
-    let sizes: [VGRArticleCardSizeClass] = [.large, .medium, .small, .small]
+    let articles = VGRContent.randomMultiple(count: 4)
+    let sizes: [VGRContentCardSizeClass] = [.large, .medium, .small, .small]
 
     NavigationStack {
         ScrollView {
             VStack(spacing: 16) {
                 ForEach(articles.indices, id: \.self) { index in
-                    VGRArticleCardView(sizeClass: sizes[index], article: articles[index])
+                    VGRContentCardView(sizeClass: sizes[index], content: articles[index])
                 }
             }
             .padding(.horizontal, 16)
         }
         .background(Color.Elevation.background)
-        .navigationTitle("VGRArticleCardView")
+        .navigationTitle("VGRContentCardView")
         .navigationBarTitleDisplayMode(.inline)
 
     }

@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct VGRArticleListView: View {
-    let element: VGRArticleElement
+struct VGRContentListView: View {
+    let element: VGRContentElement
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -15,16 +15,16 @@ struct VGRArticleListView: View {
                         .foregroundColor(Color.Neutral.text)
                         .accessibilityTextContentType(.narrative)
                 }
-                .padding(.horizontal, VGRArticleSpacing.horizontalList)
+                .padding(.horizontal, VGRContentSpacing.horizontalList)
             }
         }
-        .padding(.bottom, VGRArticleSpacing.verticalXLarge)
+        .padding(.bottom, VGRContentSpacing.verticalXLarge)
     }
 }
 
 #Preview {
-    VGRArticleListView(
-        element: VGRArticleElement(
+    VGRContentListView(
+        element: VGRContentElement(
             type: .list,
             list: [
                 "First list item with some text",

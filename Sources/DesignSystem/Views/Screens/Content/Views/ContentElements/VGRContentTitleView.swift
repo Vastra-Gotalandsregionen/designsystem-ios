@@ -1,13 +1,13 @@
 import SwiftUI
 
-struct VGRArticleTitleView: View {
-    let element: VGRArticleElement
+struct VGRContentTitleView: View {
+    let element: VGRContentElement
 
     var body: some View {
         Text(element.text)
             .font(titleFont)
             .fontWeight(titleWeight)
-            .padding(.horizontal, VGRArticleSpacing.horizontal)
+            .padding(.horizontal, VGRContentSpacing.horizontal)
             .padding(.bottom, bottomPadding)
             .accessibilityAddTraits(.isHeader)
             .foregroundColor(Color.Neutral.text)
@@ -32,15 +32,15 @@ struct VGRArticleTitleView: View {
 
     private var bottomPadding: CGFloat {
         switch element.type {
-            case .h1: return VGRArticleSpacing.verticalMedium
-            default: return VGRArticleSpacing.verticalSmall
+            case .h1: return VGRContentSpacing.verticalMedium
+            default: return VGRContentSpacing.verticalSmall
         }
     }
 }
 
 #Preview("H1 Title") {
-    VGRArticleTitleView(
-        element: VGRArticleElement(
+    VGRContentTitleView(
+        element: VGRContentElement(
             type: .h1,
             text: "This is a Main Title (H1)",
         )
@@ -48,8 +48,8 @@ struct VGRArticleTitleView: View {
 }
 
 #Preview("H2 Title") {
-    VGRArticleTitleView(
-        element: VGRArticleElement(
+    VGRContentTitleView(
+        element: VGRContentElement(
             type: .h2,
             text: "This is a Secondary Title (H2)",
         )
@@ -57,8 +57,8 @@ struct VGRArticleTitleView: View {
 }
 
 #Preview("H3 Title") {
-    VGRArticleTitleView(
-        element: VGRArticleElement(
+    VGRContentTitleView(
+        element: VGRContentElement(
             type: .h3,
             text: "This is a Tertiary Title (H3)",
         )

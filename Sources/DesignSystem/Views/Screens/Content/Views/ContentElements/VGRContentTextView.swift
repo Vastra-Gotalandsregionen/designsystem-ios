@@ -1,14 +1,14 @@
 import SwiftUI
 
-struct VGRArticleTextView: View {
-    let element: VGRArticleElement
+struct VGRContentTextView: View {
+    let element: VGRContentElement
 
     var body: some View {
         Text(element.text)
             .font(textFont)
             .fontWeight(textWeight)
-            .padding(.horizontal, VGRArticleSpacing.horizontal)
-            .padding(.bottom, VGRArticleSpacing.verticalXLarge)
+            .padding(.horizontal, VGRContentSpacing.horizontal)
+            .padding(.bottom, VGRContentSpacing.verticalXLarge)
             .accessibilityAddTraits(.isStaticText)
             .foregroundColor(Color.Neutral.text)
             .accessibilityTextContentType(.narrative)
@@ -31,8 +31,8 @@ struct VGRArticleTextView: View {
 }
 
 #Preview("Subhead Text") {
-    VGRArticleTextView(
-        element: VGRArticleElement(
+    VGRContentTextView(
+        element: VGRContentElement(
             type: .subhead,
             text: "This is a subheading with semibold weight",
         )
@@ -40,8 +40,8 @@ struct VGRArticleTextView: View {
 }
 
 #Preview("Body Text") {
-    VGRArticleTextView(
-        element: VGRArticleElement(
+    VGRContentTextView(
+        element: VGRContentElement(
             type: .body,
             text: "This is body text content that would appear in an article. It uses regular font weight and loose line spacing for optimal readability.",
         )

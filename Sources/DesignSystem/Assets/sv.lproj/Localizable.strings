@@ -111,29 +111,29 @@
 "recurrence.weekday.sun.plural" = "Söndagar";
 
 /* Articles */
-"article.content.new" = "Ny";
-"article.content.new.a11y" = "Nytt";
-"article.content.text.duration" = "Lästid";
-"article.content.video.duration" = "Speltid";
+"content.new" = "Ny";
+"content.new.a11y" = "Nytt";
+"content.text.duration" = "Lästid";
+"content.video.duration" = "Speltid";
 
-"article.type.text" = "Artikel";
-"article.type.video" = "Videoklipp";
-"article.type.warning" = "Meddelande";
-"article.type.tips" = "Tips";
+"content.type.text" = "Artikel";
+"content.type.video" = "Videoklipp";
+"content.type.warning" = "Meddelande";
+"content.type.tips" = "Tips";
 
-"article.type.article.title" = "Artikel";
-"article.type.learn.title" = "Lär mer";
-"article.type.tips.title" = "Tips";
-"article.type.useragreement.title" = "Användarpolicy";
-"article.type.privacypolicy.title" = "Personuppgiftspolicy";
+"content.type.article.title" = "Artikel";
+"content.type.learn.title" = "Lär mer";
+"content.type.tips.title" = "Tips";
+"content.type.useragreement.title" = "Användarpolicy";
+"content.type.privacypolicy.title" = "Personuppgiftspolicy";
 
-"article.button.showmore" = "Visa fler";
+"content.button.showmore" = "Visa fler";
 
-"article.video.playback.finished.a11y" = "Video uppspelad";
-"article.video.watched.a11y" = "Uppspelad";
-"article.video.notwatched.a11y" = "Inte uppspelad";
-"article.video.error.title" = "Videoklippet går inte att spela upp";
-"article.video.error.message" = "Det går tyvärr inte att spela upp videoklippet just nu. Kontrollera att du har internetuppkoppling eller försök igen senare.";
+"content.video.playback.finished.a11y" = "Video uppspelad";
+"content.video.watched.a11y" = "Uppspelad";
+"content.video.notwatched.a11y" = "Inte uppspelad";
+"content.video.error.title" = "Videoklippet går inte att spela upp";
+"content.video.error.message" = "Det går tyvärr inte att spela upp videoklippet just nu. Kontrollera att du har internetuppkoppling eller försök igen senare.";
 
 /* Calendar */
 "calendar.week.next" = "Nästa vecka";

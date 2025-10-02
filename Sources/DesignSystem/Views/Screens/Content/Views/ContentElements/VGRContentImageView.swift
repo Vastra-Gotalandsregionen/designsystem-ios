@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct VGRArticleImageView: View {
-    let element: VGRArticleElement
+struct VGRContentImageView: View {
+    let element: VGRContentElement
     @ScaledMetric private var imageHeight: CGFloat = 200
 
     private var imageURL: String {
@@ -18,14 +18,14 @@ struct VGRArticleImageView: View {
             .aspectRatio(contentMode: .fill)
             .frame(maxHeight: imageHeight, alignment: .bottom)
             .clipped()
-            .padding(.bottom, VGRArticleSpacing.verticalLarge)
+            .padding(.bottom, VGRContentSpacing.verticalLarge)
             .accessibilityHidden(true)
     }
 }
 
 #Preview {
-    VGRArticleImageView(
-        element: VGRArticleElement(
+    VGRContentImageView(
+        element: VGRContentElement(
             type: .image,
             url: "placeholder",
         )
