@@ -4,7 +4,7 @@ import Foundation
 ///
 /// Conforming types must provide an identifier, title, subtitle, and duration string
 /// that will be displayed in the video carousel card.
-protocol VGRVideoCarouselItem: Identifiable {
+public protocol VGRVideoCarouselItem: Identifiable {
     /// A unique identifier for the carousel item.
     var id: String { get }
 

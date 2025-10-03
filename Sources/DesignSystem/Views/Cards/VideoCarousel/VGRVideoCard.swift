@@ -5,7 +5,7 @@ import SwiftUI
 /// The card shows a colored circle with a play icon, title, subtitle, duration,
 /// and an optional checkmark indicator for viewed videos. Designed for use in
 /// video carousels and lists.
-struct VGRVideoCard: View {
+public struct VGRVideoCard: View {
     @AccessibilityFocusState private var isInFocus: Bool
 
     /// The main title displayed on the card.
@@ -29,7 +29,7 @@ struct VGRVideoCard: View {
         return components.joined(separator: " ") + ", \(duration)"
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 12) {
                 ZStack(alignment: .center) {
@@ -95,8 +95,8 @@ struct VGRVideoCard: View {
 ///
 /// Applies a scale-down effect to 96% when the button is pressed,
 /// with a smooth ease-in-out animation.
-struct VGRVideoCardButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
+public struct VGRVideoCardButtonStyle: ButtonStyle {
+    public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(1)
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
