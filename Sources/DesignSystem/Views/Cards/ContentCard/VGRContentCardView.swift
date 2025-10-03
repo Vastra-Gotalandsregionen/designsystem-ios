@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Consistent spacing values for article components
-enum VGRContentSpacing {
+public enum VGRContentSpacing {
     static let horizontal: CGFloat = 16
     static let horizontalList: CGFloat = 24
     static let horizontalLink: CGFloat = 32
@@ -13,20 +13,20 @@ enum VGRContentSpacing {
 }
 
 
-enum VGRContentCardSizeClass: CGFloat, CaseIterable {
+public enum VGRContentCardSizeClass: CGFloat, CaseIterable {
     case small = 118
     case medium = 120
     case large = 234
 }
 
 
-struct VGRContentCardView: View {
+public struct VGRContentCardView: View {
     let sizeClass: VGRContentCardSizeClass
     let content: VGRContent
 
     @ScaledMetric private var readTimeIconSize: CGFloat = 16
 
-    var body: some View {
+    public var body: some View {
         switch sizeClass {
             case .large: largeCard
             case .medium: mediumCard
@@ -35,11 +35,11 @@ struct VGRContentCardView: View {
     }
 
     private var image: Image {
-        var imageUrl = content.imageUrl.isEmpty ? "placeholder" : content.imageUrl
-        return Image(
-            imageUrl,
-            bundle: imageUrl.hasPrefix("placeholder") ? .module : .main
-        )
+        if content.imageUrl.isEmpty {
+            return Image("placeholder", bundle: .module)
+        }
+
+        return Image(content.imageUrl, bundle: .main)
     }
 
     private var newContentIcon: some View {

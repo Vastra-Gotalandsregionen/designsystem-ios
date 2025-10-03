@@ -5,7 +5,7 @@ import SwiftUI
 /// The carousel displays video items with automatic color rotation, scroll position tracking,
 /// and previous/next navigation buttons. It supports orientation changes and provides haptic
 /// feedback on interaction.
-struct VGRVideoCarousel: View {
+public struct VGRVideoCarousel: View {
     /// The main title displayed in the carousel header.
     let title: String
 
@@ -215,7 +215,7 @@ struct VGRVideoCarousel: View {
         .buttonStyle(VGRVideoCardButtonStyle())
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 16) {
             headerView
             carouselScrollView

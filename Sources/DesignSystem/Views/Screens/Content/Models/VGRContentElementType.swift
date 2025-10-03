@@ -37,7 +37,7 @@ public enum VGRContentElementType: String, Codable {
     /// Link element has the `text` and `url`elements set and this should be used to link to external websites
     case link
 
-    /// Video element has the `videoId`, `title`, `readTime`, `publishDate` and `videoUrl` properties set
+    /// Video element has the `videoId`, `title`,  `subtitle` (optional), `readTime`, `publishDate` and `videoUrl` properties set
     /// and this should suffice to trigger a videoplayer aswell as display a video element as a card
     case video
 

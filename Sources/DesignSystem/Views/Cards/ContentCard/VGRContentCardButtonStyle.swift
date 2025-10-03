@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct VGRContentCardButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
+public struct VGRContentCardButtonStyle: ButtonStyle {
+    public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
             .rotation3DEffect(

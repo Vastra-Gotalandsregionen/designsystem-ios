@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct VGRContentCardButton: View {
+public struct VGRContentCardButton: View {
     let sizeClass: VGRContentCardSizeClass
     let content: VGRContent
     let onPressed: () -> Void
@@ -12,7 +12,7 @@ struct VGRContentCardButton: View {
         return "\(isNewString) \(contentTypeString), \(content.title), \(content.subtitle) \(contentReadTimeString)"
     }
 
-    var body: some View {
+    public var body: some View {
         Button {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             onPressed()
