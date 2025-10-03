@@ -1,11 +1,11 @@
 import SwiftUI
 
-struct VGRArticleHeadingView: View {
-    let element: VGRArticleElement
+struct VGRContentHeadingView: View {
+    let element: VGRContentElement
     @ScaledMetric var iconWidth: CGFloat = 16
 
     var body: some View {
-        VStack(alignment: .leading, spacing: VGRArticleSpacing.verticalMedium) {
+        VStack(alignment: .leading, spacing: VGRContentSpacing.verticalMedium) {
             HStack(spacing: 4) {
                 Image("icon_calendar", bundle: .module)
                     .resizable()
@@ -31,16 +31,16 @@ struct VGRArticleHeadingView: View {
                     .multilineTextAlignment(.leading)
             }
             .foregroundColor(Color.Neutral.text)
-            .accessibilityLabel("\(element.readTime) \("article.content.text.duration".localizedBundle)")
+            .accessibilityLabel("\(element.readTime) \("content.text.duration".localizedBundle)")
         }
-        .padding(.horizontal, VGRArticleSpacing.horizontal)
-        .padding(.bottom, VGRArticleSpacing.verticalMedium)
+        .padding(.horizontal, VGRContentSpacing.horizontal)
+        .padding(.bottom, VGRContentSpacing.verticalMedium)
     }
 }
 
 #Preview {
-    VGRArticleHeadingView(
-        element: VGRArticleElement(
+    VGRContentHeadingView(
+        element: VGRContentElement(
             type: .heading,
             readTime: "5 min",
             date: "2024-01-15",

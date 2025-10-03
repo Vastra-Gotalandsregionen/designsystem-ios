@@ -102,9 +102,9 @@ Komponenter bör ha tydliga `#Preview`-block för att enkelt kunna testas i Xcod
 - `VGRPortraitLandscapeView` - Vy som anpassar innehåll baserat på enhetens orientering
 
 ### Artikelkomponenter
-- `VGRArticleScreen` - Komplett artikelvy
-- `VGRArticle` - Datamodell för artiklar
-- `VGRArticleElement` - Datamodell för artikelelement
+- `VGRContentScreen` - Komplett artikelvy
+- `VGRContent` - Datamodell för artiklar
+- `VGRContentElement` - Datamodell för artikelelement
 
 ### Datamodeller
 - `VGRBodyPartData` - Datamodell för kroppsdelsinformation

@@ -2,7 +2,7 @@ import SwiftUI
 
 /// A comprehensive article display screen that renders various article elements in a scrollable view.
 ///
-/// `VGRArticleScreen` provides a full-screen article reading experience with navigation controls,
+/// `VGRContentScreen` provides a full-screen article reading experience with navigation controls,
 /// accessibility features, and support for various article element types including text, images,
 /// headings, links, and lists.
 ///
@@ -15,14 +15,14 @@ import SwiftUI
 ///
 /// ## Usage
 /// ```swift
-/// let article = VGRArticle(...)
-/// VGRArticleScreen(article: article) {
+/// let content = VGRContent(...)
+/// VGRContentScreen(content: content) {
 ///     // Handle dismissal
 /// }
 /// ```
 ///
-/// ## Article Element Support
-/// The screen automatically renders different element types through `VGRArticleElementView`:
+/// ## Content Element Support
+/// The screen automatically renders different element types through `VGRContentElementView`:
 /// - `.image` - Article images with proper aspect ratio
 /// - `.heading` - Date and read time metadata
 /// - `.h1`, `.h2`, `.h3` - Title headers with varying typography
@@ -42,11 +42,11 @@ import SwiftUI
 /// - Inline navigation bar with dynamic title
 /// - Close button in trailing toolbar position
 /// - Automatic focus management to prevent keyboard issues
-public struct VGRArticleScreen: View {
+public struct VGRContentScreen: View {
     @Environment(\.dismiss) private var dismiss
 
     /// The article data to display, containing all elements and metadata
-    let article: VGRArticle
+    let content: VGRContent
 
     /// Optional custom dismissal action. If provided, this action will be called when the close button is tapped.
     /// If not provided, the default environment dismiss action will be used.
@@ -54,10 +54,10 @@ public struct VGRArticleScreen: View {
 
     /// Initialize the article screen with the given article and optional dismiss action.
     /// - Parameters:
-    ///   - article: The `VGRArticle` instance containing all content to display
+    ///   - article: The `VGRContent` instance containing all content to display
     ///   - dismissAction: Optional closure to execute when the screen is dismissed
-    public init(article: VGRArticle, dismissAction: (() -> Void)? = nil) {
-        self.article = article
+    public init(content: VGRContent, dismissAction: (() -> Void)? = nil) {
+        self.content = content
         self.dismissAction = dismissAction
     }
 
@@ -72,14 +72,14 @@ public struct VGRArticleScreen: View {
     /// Computed navigation title based on the article type and content.
     /// Returns the article title for standard articles, or a localized type-specific title for other content types.
     var navigationTitle: String {
-        article.type == .article ? article.title : "article.type.\(article.type).title".localizedBundle
+        content.type == .article ? content.title : "content.type.\(content.type).title".localizedBundle
     }
 
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                ForEach(Array(article.elements.enumerated()), id: \.offset) { index, element in
-                    VGRArticleElementView(element: element, dismissAction: dismissAction)
+                ForEach(Array(content.elements.enumerated()), id: \.offset) { index, element in
+                    VGRContentElementView(element: element, dismissAction: dismissAction)
                 }
             }
             .accessibilityElement(children: .contain)
@@ -103,21 +103,21 @@ public struct VGRArticleScreen: View {
 }
 
 #Preview {
-    @Previewable @State var selectedArticle: VGRArticle? = nil
-    @Previewable @State var selectedNavigationArticle: VGRArticle? = nil
+    @Previewable @State var selectedContent: VGRContent? = nil
+    @Previewable @State var selectedNavigationArticle: VGRContent? = nil
 
-    let articles = VGRArticle.randomMultiple(count: 10)
-    let sizes = (0..<10).map { _ in VGRArticleCardSizeClass.allCases.randomElement()! }
+    let articles = VGRContent.randomMultiple(count: 10)
+    let sizes = (0..<10).map { _ in VGRContentCardSizeClass.allCases.randomElement()! }
 
     NavigationStack {
         ScrollView {
             VStack(spacing: 16) {
                 ForEach(Array(articles.enumerated()), id: \.offset) { index, article in
-                    VGRArticleCardButton(sizeClass: sizes[index], article: article) {
+                    VGRContentCardButton(sizeClass: sizes[index], content: article) {
                         if index % 2 == 0 {
                             selectedNavigationArticle = article
                         } else {
-                            selectedArticle = article
+                            selectedContent = article
                         }
                     }
                 }
@@ -125,17 +125,17 @@ public struct VGRArticleScreen: View {
             .padding(.horizontal, 16)
         }
         .background(Color.Elevation.background)
-        .navigationTitle("VGRArticleScreen")
+        .navigationTitle("VGRContentScreen")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $selectedNavigationArticle, destination: { article in
-            VGRArticleScreen(article: article) {
+            VGRContentScreen(content: article) {
                 selectedNavigationArticle = nil
             }
         })
-        .sheet(item: $selectedArticle) { article in
+        .sheet(item: $selectedContent) { article in
             NavigationStack {
-                VGRArticleScreen(article: article) {
-                    selectedArticle = nil
+                VGRContentScreen(content: article) {
+                    selectedContent = nil
                 }
             }
         }

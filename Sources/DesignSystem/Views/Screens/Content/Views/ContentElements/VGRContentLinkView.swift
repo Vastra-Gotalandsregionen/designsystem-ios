@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct VGRArticleLinkView: View {
-    let element: VGRArticleElement
+struct VGRContentLinkView: View {
+    let element: VGRContentElement
 
     private var url: URL? {
         return URL(string: element.url)
@@ -17,27 +17,27 @@ struct VGRArticleLinkView: View {
 
                 Image(systemName: "rectangle.portrait.and.arrow.right")
                     .scaledToFit()
-                    .padding(.leading, VGRArticleSpacing.horizontal)
+                    .padding(.leading, VGRContentSpacing.horizontal)
             }
             .buttonStyle(PlainButtonStyle())
             .fontWeight(.semibold)
             .foregroundStyle(Color.Primary.action)
-            .padding(.horizontal, VGRArticleSpacing.horizontalLink)
-            .padding(.bottom, VGRArticleSpacing.verticalXLarge)
+            .padding(.horizontal, VGRContentSpacing.horizontalLink)
+            .padding(.bottom, VGRContentSpacing.verticalXLarge)
         } else {
             Text("Invalid link \"\(element.text)\"")
                 .multilineTextAlignment(.leading)
                 .fontWeight(.semibold)
                 .foregroundStyle(Color.Primary.action)
-                .padding(.horizontal, VGRArticleSpacing.horizontalLink)
-                .padding(.bottom, VGRArticleSpacing.verticalXLarge)
+                .padding(.horizontal, VGRContentSpacing.horizontalLink)
+                .padding(.bottom, VGRContentSpacing.verticalXLarge)
         }
     }
 }
 
 #Preview("Valid Link") {
-    VGRArticleLinkView(
-        element: VGRArticleElement(
+    VGRContentLinkView(
+        element: VGRContentElement(
             type: .link,
             text: "Visit Example Website",
             url: "https://example.com",
@@ -46,8 +46,8 @@ struct VGRArticleLinkView: View {
 }
 
 #Preview("Invalid Link") {
-    VGRArticleLinkView(
-        element: VGRArticleElement(
+    VGRContentLinkView(
+        element: VGRContentElement(
             type: .link,
             text: "Invalid Link Example",
             url: "not-a-valid-url",

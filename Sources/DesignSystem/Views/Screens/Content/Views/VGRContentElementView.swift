@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct VGRArticleElementView: View {
-    let element: VGRArticleElement
+struct VGRContentElementView: View {
+    let element: VGRContentElement
 
     /// dismissAction can be passed to subsequent views if they need to control dismissal
     var dismissAction: (() -> Void)? = nil
@@ -9,55 +9,58 @@ struct VGRArticleElementView: View {
     var body: some View {
         switch element.type {
             case .image:
-                VGRArticleImageView(element: element)
+                VGRContentImageView(element: element)
 
             case .heading:
-                VGRArticleHeadingView(element: element)
+                VGRContentHeadingView(element: element)
 
             case .h1, .h2, .h3:
-                VGRArticleTitleView(element: element)
+                VGRContentTitleView(element: element)
 
             case .subhead, .body:
-                VGRArticleTextView(element: element)
+                VGRContentTextView(element: element)
 
             case .link:
-                VGRArticleLinkView(element: element)
+                VGRContentLinkView(element: element)
 
             case .internalLink:
-                VGRArticleInternalLinkView(element: element)
+                VGRContentInternalLinkView(element: element)
 
             case .list:
-                VGRArticleListView(element: element)
+                VGRContentListView(element: element)
 
             case .video, .internalVideoSelectorLink:
                 /// TODO(EA): Implement support for video elements
                 EmptyView()
 
+            case .faq:
+                EmptyView()
+
             @unknown default:
                 Text("Unrecognizable content")
-                    .padding(.horizontal, VGRArticleSpacing.horizontal)
-                    .padding(.bottom, VGRArticleSpacing.verticalMedium)
+                    .padding(.horizontal, VGRContentSpacing.horizontal)
+                    .padding(.bottom, VGRContentSpacing.verticalMedium)
         }
     }
 }
 
 #Preview("All Element Types") {
-    let linkedArticle = VGRArticle.random()
+    let linkedArticle = VGRContent.random()
 
     NavigationStack {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // Image element
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .image,
                         url: "placeholder",
                     )
                 )
                 
                 // Heading element with date and read time
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .heading,
                         readTime: "5 min",
                         date: "2024-01-15",
@@ -65,48 +68,48 @@ struct VGRArticleElementView: View {
                 )
                 
                 // H1 Title
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .h1,
                         text: "Main Article Title",
                     )
                 )
                 
                 // Subheading
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .subhead,
                         text: "This is a subheading with important information",
                     )
                 )
                 
                 // Body text
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .body,
                         text: "This is body text content that would appear in an article. It demonstrates the standard paragraph formatting with proper line spacing and padding.",
                     )
                 )
                 
                 // H2 Title
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .h2,
                         text: "Secondary Section Title",
                     )
                 )
                 
                 // More body text
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .body,
                         text: "Another paragraph of body text to show how content flows between different sections.",
                     )
                 )
                 
                 // List element
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .list,
                         list: [
                             "First list item with some explanatory text",
@@ -118,16 +121,16 @@ struct VGRArticleElementView: View {
                 )
                 
                 // H3 Title
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .h3,
                         text: "Subsection Title",
                     )
                 )
                 
                 // External link
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .link,
                         text: "Learn more on our website",
                         url: "https://example.com",
@@ -135,8 +138,8 @@ struct VGRArticleElementView: View {
                 )
                 
                 // Internal link (if article data is available)
-                VGRArticleElementView(
-                    element: VGRArticleElement(
+                VGRContentElementView(
+                    element: VGRContentElement(
                         type: .internalLink,
                         text: "Related Article",
                         internalArticle: linkedArticle
