@@ -138,3 +138,7 @@
 /* Calendar */
 "calendar.week.next" = "Nästa vecka";
 "calendar.week.previous" = "Föregående vecka";
+
+
+/* Video card */
+"videocard.hint" = "Tryck för att visa video";

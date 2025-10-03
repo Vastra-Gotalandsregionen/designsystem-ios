@@ -20,22 +20,18 @@ public struct VGRPortraitLandscapeView<PortraitContent: View, LandscapeContent: 
     }
 }
 
-struct LandscapePortraitStack_Previews: PreviewProvider {
-    static var previews: some View {
-        VGRPortraitLandscapeView {
-            Text("Portrait")
-        } landscape: {
-            Text("Landscape")
-        }
-        .previewInterfaceOrientation(.landscapeRight)
-        .previewDisplayName("Landscape")
+#Preview("Landscape", traits: .landscapeRight) {
+    VGRPortraitLandscapeView {
+        Text("Portrait")
+    } landscape: {
+        Text("Landscape")
+    }
+}
 
-        VGRPortraitLandscapeView {
-            Text("Portrait")
-        } landscape: {
-            Text("Landscape")
-        }
-        .previewInterfaceOrientation(.portrait)
-        .previewDisplayName("Portrait")
+#Preview("Portrait", traits: .portrait) {
+    VGRPortraitLandscapeView {
+        Text("Portrait")
+    } landscape: {
+        Text("Landscape")
     }
 }
