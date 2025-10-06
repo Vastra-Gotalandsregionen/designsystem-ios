@@ -94,18 +94,19 @@ public struct VGRDisclosureGroup<Content: View>: View {
                     }
 
                     Text(title)
+                        .font(.bodyMedium)
                         .foregroundStyle(Color.Neutral.text)
                         .multilineTextAlignment(.leading)
-
-                    Spacer()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.leading)
                 }
             }
         )
         .foregroundStyle(Color.Neutral.text)
-        .accentColor(Color.Neutral.text)
         .padding(12)
         .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .disclosureGroupStyle(VGRDisclosureStyle())
     }
 }
 
@@ -135,6 +136,10 @@ public struct VGRDisclosureGroup<Content: View>: View {
                 Text("• Områden du angivit är något av följande: genitalier, ansikte, handflator, ytan mellan skinkorna, hårbotten, fotsulor.")
                 Text("• Utbredning är 5 handflator eller fler.")
             }
+        }
+
+        VGRDisclosureGroup(title: "Hello, world domination") {
+            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
         }
     }
     .padding()
