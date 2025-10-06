@@ -38,8 +38,8 @@ struct VGRContentElementView: View {
 
             @unknown default:
                 Text("Unrecognizable content")
-                    .padding(.horizontal, VGRContentSpacing.horizontal)
-                    .padding(.bottom, VGRContentSpacing.verticalMedium)
+                    .padding(.horizontal, VGRSpacing.horizontal)
+                    .padding(.bottom, VGRSpacing.verticalMedium)
         }
     }
 }

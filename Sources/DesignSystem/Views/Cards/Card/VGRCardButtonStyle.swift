@@ -1,6 +1,9 @@
 import SwiftUI
 
-public struct VGRContentCardButtonStyle: ButtonStyle {
+public struct VGRCardButtonStyle: ButtonStyle {
+    /// Creates a new content card button style.
+    public init() {}
+
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.96 : 1)

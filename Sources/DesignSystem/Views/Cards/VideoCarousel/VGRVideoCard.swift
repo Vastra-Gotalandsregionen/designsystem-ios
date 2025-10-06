@@ -23,6 +23,27 @@ public struct VGRVideoCard: View {
     /// Indicates whether the video has been viewed, showing a checkmark when `true`.
     var hasBeenViewed: Bool = false
 
+    /// Creates a new video card with the specified properties.
+    /// - Parameters:
+    ///   - title: The main title displayed on the card.
+    ///   - subtitle: An optional subtitle displayed below the title. Defaults to an empty string.
+    ///   - duration: The duration of the video, typically formatted as a string (e.g., "3 minuter").
+    ///   - circleColor: The color of the circular play button background. Defaults to yellow.
+    ///   - hasBeenViewed: Indicates whether the video has been viewed. Defaults to `false`.
+    public init(
+        title: String,
+        subtitle: String = "",
+        duration: String,
+        circleColor: Color = Color.Accent.yellowSurface,
+        hasBeenViewed: Bool = false
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.duration = duration
+        self.circleColor = circleColor
+        self.hasBeenViewed = hasBeenViewed
+    }
+
     /// Accessibility label combining title, subtitle, and duration.
     private var a11yLabel: String {
         let components = [title, subtitle].filter { !$0.isEmpty }
@@ -96,6 +117,9 @@ public struct VGRVideoCard: View {
 /// Applies a scale-down effect to 96% when the button is pressed,
 /// with a smooth ease-in-out animation.
 public struct VGRVideoCardButtonStyle: ButtonStyle {
+    /// Creates a new video card button style.
+    public init() {}
+
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(1)

@@ -7,7 +7,7 @@ struct VGRContentTitleView: View {
         Text(element.text)
             .font(titleFont)
             .fontWeight(titleWeight)
-            .padding(.horizontal, VGRContentSpacing.horizontal)
+            .padding(.horizontal, VGRSpacing.horizontal)
             .padding(.bottom, bottomPadding)
             .accessibilityAddTraits(.isHeader)
             .foregroundColor(Color.Neutral.text)
@@ -32,8 +32,8 @@ struct VGRContentTitleView: View {
 
     private var bottomPadding: CGFloat {
         switch element.type {
-            case .h1: return VGRContentSpacing.verticalMedium
-            default: return VGRContentSpacing.verticalSmall
+            case .h1: return VGRSpacing.verticalMedium
+            default: return VGRSpacing.verticalSmall
         }
     }
 }

@@ -18,6 +18,24 @@ public struct VGRVideoCarousel: View {
     /// Closure called when a carousel item is tapped, passing the tapped item.
     let onItemTapped: (any VGRVideoCarouselItem) -> Void
 
+    /// Creates a new video carousel with the specified properties.
+    /// - Parameters:
+    ///   - title: The main title displayed in the carousel header.
+    ///   - subtitle: The subtitle displayed below the title in the carousel header.
+    ///   - items: The array of items conforming to `VGRVideoCarouselItem` to display in the carousel.
+    ///   - onItemTapped: Closure called when a carousel item is tapped, passing the tapped item.
+    public init(
+        title: String,
+        subtitle: String,
+        items: [any VGRVideoCarouselItem],
+        onItemTapped: @escaping (any VGRVideoCarouselItem) -> Void
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.items = items
+        self.onItemTapped = onItemTapped
+    }
+
     /// The currently visible item ID tracked for scroll position.
     @State private var position: String?
 

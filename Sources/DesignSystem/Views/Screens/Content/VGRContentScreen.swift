@@ -107,13 +107,19 @@ public struct VGRContentScreen: View {
     @Previewable @State var selectedNavigationArticle: VGRContent? = nil
 
     let articles = VGRContent.randomMultiple(count: 10)
-    let sizes = (0..<10).map { _ in VGRContentCardSizeClass.allCases.randomElement()! }
+    let sizes = (0..<10).map { _ in VGRCardSizeClass.allCases.randomElement()! }
 
     NavigationStack {
         ScrollView {
             VStack(spacing: 16) {
                 ForEach(Array(articles.enumerated()), id: \.offset) { index, article in
-                    VGRContentCardButton(sizeClass: sizes[index], content: article) {
+                    VGRCardButton(
+                        sizeClass: sizes[index],
+                        title: article.title,
+                        subtitle: article.subtitle,
+                        imageUrl: article.imageUrl,
+                        isNew: article.isNew
+                    ) {
                         if index % 2 == 0 {
                             selectedNavigationArticle = article
                         } else {
