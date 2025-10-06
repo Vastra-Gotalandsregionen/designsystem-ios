@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Consistent spacing values for article components
-public enum VGRContentSpacing {
+public enum VGRSpacing {
     static let horizontal: CGFloat = 16
     static let horizontalList: CGFloat = 24
     static let horizontalLink: CGFloat = 32
@@ -12,17 +12,39 @@ public enum VGRContentSpacing {
     static let verticalXLarge: CGFloat = 32
 }
 
-
-public enum VGRContentCardSizeClass: CGFloat, CaseIterable {
+public enum VGRCardSizeClass: CGFloat, CaseIterable {
     case small = 118
     case medium = 120
     case large = 234
 }
 
+public struct VGRCardView: View {
+    let sizeClass: VGRCardSizeClass
+    let title: String
+    let subtitle: String
+    let imageUrl: String
+    let isNew: Bool
 
-public struct VGRContentCardView: View {
-    let sizeClass: VGRContentCardSizeClass
-    let content: VGRContent
+    /// Creates a new content card view.
+    /// - Parameters:
+    ///   - sizeClass: The size class for the card (small, medium, or large).
+    ///   - title: The main title displayed on the card.
+    ///   - subtitle: The subtitle or read time displayed below the title.
+    ///   - imageUrl: The URL or name of the image to display.
+    ///   - isNew: Indicates whether to show the "new" badge. Defaults to `false`.
+    public init(
+        sizeClass: VGRCardSizeClass,
+        title: String,
+        subtitle: String,
+        imageUrl: String,
+        isNew: Bool = false
+    ) {
+        self.sizeClass = sizeClass
+        self.title = title
+        self.subtitle = subtitle
+        self.imageUrl = imageUrl
+        self.isNew = isNew
+    }
 
     @ScaledMetric private var readTimeIconSize: CGFloat = 16
 
@@ -35,11 +57,11 @@ public struct VGRContentCardView: View {
     }
 
     private var image: Image {
-        if content.imageUrl.isEmpty {
+        if imageUrl.isEmpty || imageUrl == "placeholder" {
             return Image("placeholder", bundle: .module)
         }
 
-        return Image(content.imageUrl, bundle: .main)
+        return Image(imageUrl, bundle: .main)
     }
 
     private var newContentIcon: some View {
@@ -61,7 +83,7 @@ public struct VGRContentCardView: View {
                 .frame(width: readTimeIconSize, height: readTimeIconSize)
                 .accessibilityHidden(true)
 
-            Text(content.subtitle)
+            Text(subtitle)
                 .font(.footnote)
                 .multilineTextAlignment(.leading)
         }
@@ -78,8 +100,8 @@ public struct VGRContentCardView: View {
                        alignment: .center)
                 .clipped()
 
-            VStack(alignment: .leading, spacing: VGRContentSpacing.verticalMedium) {
-                Text(content.title)
+            VStack(alignment: .leading, spacing: VGRSpacing.verticalMedium) {
+                Text(title)
                     .foregroundColor(Color.Neutral.text)
                     .font(.title3)
                     .fontWeight(.bold)
@@ -88,15 +110,15 @@ public struct VGRContentCardView: View {
                 readTimeLabel
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, VGRContentSpacing.verticalMedium)
-            .padding(.leading, VGRContentSpacing.horizontal)
-            .padding(.bottom, VGRContentSpacing.verticalMedium)
-            .padding(.trailing, VGRContentSpacing.horizontal)
+            .padding(.top, VGRSpacing.verticalMedium)
+            .padding(.leading, VGRSpacing.horizontal)
+            .padding(.bottom, VGRSpacing.verticalMedium)
+            .padding(.trailing, VGRSpacing.horizontal)
 
-            if content.isNew {
+            if isNew {
                 newContentIcon
-                    .padding(.trailing, VGRContentSpacing.horizontal)
-                    .padding(.top, VGRContentSpacing.horizontal)
+                    .padding(.trailing, VGRSpacing.horizontal)
+                    .padding(.top, VGRSpacing.horizontal)
             }
         }
         .background(Color.Elevation.elevation1)
@@ -114,15 +136,15 @@ public struct VGRContentCardView: View {
                     .contentShape(Rectangle())
                     .clipped()
 
-                if content.isNew {
+                if isNew {
                     newContentIcon
-                        .padding(.trailing, VGRContentSpacing.horizontal)
-                        .padding(.top, VGRContentSpacing.horizontal)
+                        .padding(.trailing, VGRSpacing.horizontal)
+                        .padding(.top, VGRSpacing.horizontal)
                 }
             }
 
-            VStack(alignment: .leading, spacing: VGRContentSpacing.verticalMedium) {
-                Text(content.title)
+            VStack(alignment: .leading, spacing: VGRSpacing.verticalMedium) {
+                Text(title)
                     .foregroundColor(Color.Neutral.text)
                     .fontWeight(.bold)
                     .font(.title3)
@@ -131,10 +153,10 @@ public struct VGRContentCardView: View {
                 readTimeLabel
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, VGRContentSpacing.verticalMedium)
-            .padding(.leading, VGRContentSpacing.horizontal)
-            .padding(.bottom, VGRContentSpacing.horizontal)
-            .padding(.trailing, VGRContentSpacing.horizontal)
+            .padding(.top, VGRSpacing.verticalMedium)
+            .padding(.leading, VGRSpacing.horizontal)
+            .padding(.bottom, VGRSpacing.horizontal)
+            .padding(.trailing, VGRSpacing.horizontal)
         }
         .background(Color.Elevation.elevation1)
         .cornerRadius(16)
@@ -150,15 +172,15 @@ public struct VGRContentCardView: View {
                     .contentShape(Rectangle())
                     .clipped()
 
-                if content.isNew {
+                if isNew {
                     newContentIcon
-                        .padding(.trailing, VGRContentSpacing.horizontal)
-                        .padding(.top, VGRContentSpacing.horizontal)
+                        .padding(.trailing, VGRSpacing.horizontal)
+                        .padding(.top, VGRSpacing.horizontal)
                 }
             }
 
-            VStack(alignment: .leading, spacing: VGRContentSpacing.verticalMedium) {
-                Text(content.title)
+            VStack(alignment: .leading, spacing: VGRSpacing.verticalMedium) {
+                Text(title)
                     .foregroundColor(Color.Neutral.text)
                     .fontWeight(.bold)
                     .font(.title3)
@@ -166,10 +188,10 @@ public struct VGRContentCardView: View {
 
                 readTimeLabel
             }
-            .padding(.top, VGRContentSpacing.verticalMedium)
-            .padding(.leading, VGRContentSpacing.horizontal)
-            .padding(.bottom, VGRContentSpacing.horizontal)
-            .padding(.trailing, VGRContentSpacing.horizontal)
+            .padding(.top, VGRSpacing.verticalMedium)
+            .padding(.leading, VGRSpacing.horizontal)
+            .padding(.bottom, VGRSpacing.horizontal)
+            .padding(.trailing, VGRSpacing.horizontal)
         }
         .background(Color.Elevation.elevation1)
         .cornerRadius(16)
@@ -178,20 +200,47 @@ public struct VGRContentCardView: View {
 }
 
 #Preview {
-    let articles = VGRContent.randomMultiple(count: 4)
-    let sizes: [VGRContentCardSizeClass] = [.large, .medium, .small, .small]
+    let sizes: [VGRCardSizeClass] = [.large, .medium, .small, .small]
 
     NavigationStack {
         ScrollView {
             VStack(spacing: 16) {
-                ForEach(articles.indices, id: \.self) { index in
-                    VGRContentCardView(sizeClass: sizes[index], content: articles[index])
-                }
+                VGRCardView(
+                    sizeClass: .large,
+                    title: "Understanding Psoriasis",
+                    subtitle: "5 min läsning",
+                    imageUrl: "placeholder",
+                    isNew: true
+                )
+
+                VGRCardView(
+                    sizeClass: .medium,
+                    title: "Treatment Options",
+                    subtitle: "3 min läsning",
+                    imageUrl: "placeholder",
+                    isNew: false
+                )
+
+                VGRCardView(
+                    sizeClass: .small,
+                    title: "Living with Psoriasis",
+                    subtitle: "7 min läsning",
+                    imageUrl: "placeholder",
+                    isNew: false
+                )
+
+                VGRCardView(
+                    sizeClass: .small,
+                    title: "When to See a Doctor",
+                    subtitle: "4 min läsning",
+                    imageUrl: "placeholder",
+                    isNew: true
+                )
             }
             .padding(.horizontal, 16)
         }
         .background(Color.Elevation.background)
-        .navigationTitle("VGRContentCardView")
+        .navigationTitle("VGRCardView")
         .navigationBarTitleDisplayMode(.inline)
 
     }

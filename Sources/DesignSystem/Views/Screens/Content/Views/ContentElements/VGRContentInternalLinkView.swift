@@ -11,10 +11,16 @@ struct VGRContentInternalLinkView: View {
                     dismiss()
                 }
             } label: {
-                VGRContentCardView(sizeClass: .small, content: internalArticle)
-                    .padding(.horizontal, VGRContentSpacing.horizontal)
+                VGRCardView(
+                    sizeClass: .small,
+                    title: internalArticle.title,
+                    subtitle: internalArticle.subtitle,
+                    imageUrl: internalArticle.imageUrl,
+                    isNew: internalArticle.isNew
+                )
+                .padding(.horizontal, VGRSpacing.horizontal)
             }
-            .buttonStyle(VGRContentCardButtonStyle())
+            .buttonStyle(VGRCardButtonStyle())
         }
     }
 }

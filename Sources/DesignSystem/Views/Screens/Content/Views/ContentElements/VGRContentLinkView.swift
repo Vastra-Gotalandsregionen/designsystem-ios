@@ -17,20 +17,20 @@ struct VGRContentLinkView: View {
 
                 Image(systemName: "rectangle.portrait.and.arrow.right")
                     .scaledToFit()
-                    .padding(.leading, VGRContentSpacing.horizontal)
+                    .padding(.leading, VGRSpacing.horizontal)
             }
             .buttonStyle(PlainButtonStyle())
             .fontWeight(.semibold)
             .foregroundStyle(Color.Primary.action)
-            .padding(.horizontal, VGRContentSpacing.horizontalLink)
-            .padding(.bottom, VGRContentSpacing.verticalXLarge)
+            .padding(.horizontal, VGRSpacing.horizontalLink)
+            .padding(.bottom, VGRSpacing.verticalXLarge)
         } else {
             Text("Invalid link \"\(element.text)\"")
                 .multilineTextAlignment(.leading)
                 .fontWeight(.semibold)
                 .foregroundStyle(Color.Primary.action)
-                .padding(.horizontal, VGRContentSpacing.horizontalLink)
-                .padding(.bottom, VGRContentSpacing.verticalXLarge)
+                .padding(.horizontal, VGRSpacing.horizontalLink)
+                .padding(.bottom, VGRSpacing.verticalXLarge)
         }
     }
 }

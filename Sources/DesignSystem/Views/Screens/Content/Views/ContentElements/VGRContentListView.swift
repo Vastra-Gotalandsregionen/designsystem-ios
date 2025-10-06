@@ -15,10 +15,10 @@ struct VGRContentListView: View {
                         .foregroundColor(Color.Neutral.text)
                         .accessibilityTextContentType(.narrative)
                 }
-                .padding(.horizontal, VGRContentSpacing.horizontalList)
+                .padding(.horizontal, VGRSpacing.horizontalList)
             }
         }
-        .padding(.bottom, VGRContentSpacing.verticalXLarge)
+        .padding(.bottom, VGRSpacing.verticalXLarge)
     }
 }
 

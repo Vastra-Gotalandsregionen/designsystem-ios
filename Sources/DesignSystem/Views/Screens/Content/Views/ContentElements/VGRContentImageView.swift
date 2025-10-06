@@ -18,7 +18,7 @@ struct VGRContentImageView: View {
             .aspectRatio(contentMode: .fill)
             .frame(maxHeight: imageHeight, alignment: .bottom)
             .clipped()
-            .padding(.bottom, VGRContentSpacing.verticalLarge)
+            .padding(.bottom, VGRSpacing.verticalLarge)
             .accessibilityHidden(true)
     }
 }

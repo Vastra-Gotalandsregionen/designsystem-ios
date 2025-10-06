@@ -5,7 +5,7 @@ struct VGRContentHeadingView: View {
     @ScaledMetric var iconWidth: CGFloat = 16
 
     var body: some View {
-        VStack(alignment: .leading, spacing: VGRContentSpacing.verticalMedium) {
+        VStack(alignment: .leading, spacing: VGRSpacing.verticalMedium) {
             HStack(spacing: 4) {
                 Image("icon_calendar", bundle: .module)
                     .resizable()
@@ -33,8 +33,8 @@ struct VGRContentHeadingView: View {
             .foregroundColor(Color.Neutral.text)
             .accessibilityLabel("\(element.readTime) \("content.text.duration".localizedBundle)")
         }
-        .padding(.horizontal, VGRContentSpacing.horizontal)
-        .padding(.bottom, VGRContentSpacing.verticalMedium)
+        .padding(.horizontal, VGRSpacing.horizontal)
+        .padding(.bottom, VGRSpacing.verticalMedium)
     }
 }
 
