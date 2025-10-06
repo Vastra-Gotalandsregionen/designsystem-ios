@@ -98,6 +98,10 @@ public extension Date {
         Calendar.current.dateComponents([.minute], from: self).minute!
     }
 
+    var week: Int {
+        Calendar.current.dateComponents([.weekOfYear], from: self).weekOfYear!
+    }
+
     var weekday: Int {
         Calendar.current.component(.weekday, from: self)
     }
