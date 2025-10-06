@@ -29,14 +29,14 @@ public struct VGRCardView: View {
     /// - Parameters:
     ///   - sizeClass: The size class for the card (small, medium, or large).
     ///   - title: The main title displayed on the card.
-    ///   - subtitle: The subtitle or read time displayed below the title.
+    ///   - subtitle: The subtitle or read time displayed below the title, defaults to empty.
     ///   - imageUrl: The URL or name of the image to display.
     ///   - isNew: Indicates whether to show the "new" badge. Defaults to `false`.
     public init(
         sizeClass: VGRCardSizeClass,
         title: String,
-        subtitle: String,
-        imageUrl: String,
+        subtitle: String = "",
+        imageUrl: String = "",
         isNew: Bool = false
     ) {
         self.sizeClass = sizeClass
@@ -108,6 +108,7 @@ public struct VGRCardView: View {
                     .multilineTextAlignment(.leading)
 
                 readTimeLabel
+                    .isVisible(!subtitle.isEmpty)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, VGRSpacing.verticalMedium)
@@ -235,6 +236,19 @@ public struct VGRCardView: View {
                     subtitle: "4 min läsning",
                     imageUrl: "placeholder",
                     isNew: true
+                )
+
+                VGRCardView(
+                    sizeClass: .small,
+                    title: "When to See a Doctor",
+                    imageUrl: "placeholder",
+                    isNew: true
+                )
+
+                VGRCardView(
+                    sizeClass: .small,
+                    title: "When to See a Doctor",
+                    imageUrl: "placeholder",
                 )
             }
             .padding(.horizontal, 16)
