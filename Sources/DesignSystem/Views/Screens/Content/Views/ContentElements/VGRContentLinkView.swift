@@ -7,6 +7,14 @@ struct VGRContentLinkView: View {
         return URL(string: element.url)
     }
 
+    private var icon: String {
+        if element.type == .link {
+            return "rectangle.portrait.and.arrow.right"
+        }
+
+        return "chevron.right"
+    }
+
     var body: some View {
         if let linkURL = url {
             Link(destination: linkURL) {
@@ -15,9 +23,10 @@ struct VGRContentLinkView: View {
                     .underline()
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                Image(systemName: "rectangle.portrait.and.arrow.right")
+                Image(systemName: icon)
                     .scaledToFit()
                     .padding(.leading, VGRSpacing.horizontal)
+                    .accessibilityHidden(true)
             }
             .buttonStyle(PlainButtonStyle())
             .fontWeight(.semibold)
@@ -36,13 +45,26 @@ struct VGRContentLinkView: View {
 }
 
 #Preview("Valid Link") {
-    VGRContentLinkView(
-        element: VGRContentElement(
-            type: .link,
-            text: "Visit Example Website",
-            url: "https://example.com",
-        )
-    )
+    NavigationStack {
+        ScrollView {
+            VGRContentLinkView(
+                element: VGRContentElement(
+                    type: .link,
+                    text: "Visit Example Website",
+                    url: "https://example.com",
+                )
+            )
+
+            VGRContentLinkView(
+                element: VGRContentElement(
+                    type: .webviewLink,
+                    text: "Visit Example Website",
+                    url: "https://example.com",
+                )
+            )
+        }
+        .navigationTitle("VGRContentLinkView")
+    }
 }
 
 #Preview("Invalid Link") {

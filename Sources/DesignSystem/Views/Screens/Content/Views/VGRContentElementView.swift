@@ -7,40 +7,50 @@ struct VGRContentElementView: View {
     var dismissAction: (() -> Void)? = nil
 
     var body: some View {
-        switch element.type {
-            case .image:
-                VGRContentImageView(element: element)
+        Group {
+            switch element.type {
+                case .image:
+                    VGRContentImageView(element: element)
 
-            case .heading:
-                VGRContentHeadingView(element: element)
+                case .heading:
+                    VGRContentHeadingView(element: element)
 
-            case .h1, .h2, .h3:
-                VGRContentTitleView(element: element)
+                case .h1, .h2, .h3:
+                    VGRContentTitleView(element: element)
 
-            case .subhead, .body:
-                VGRContentTextView(element: element)
+                case .subhead, .body:
+                    VGRContentTextView(element: element)
 
-            case .link:
-                VGRContentLinkView(element: element)
+                case .link:
+                    VGRContentLinkView(element: element)
 
-            case .internalLink:
-                VGRContentInternalLinkView(element: element)
+                case .internalLink:
+                    VGRContentInternalLinkView(element: element)
 
-            case .list:
-                VGRContentListView(element: element)
+                case .list:
+                    VGRContentListView(element: element)
 
-            case .video, .internalVideoSelectorLink:
-                /// TODO(EA): Implement support for video elements
-                EmptyView()
 
-            case .faq:
-                EmptyView()
+                case .video, .internalVideoSelectorLink:
+                    /// TODO(EA): Implement support for video elements
+                    EmptyView()
 
-            @unknown default:
-                Text("Unrecognizable content")
-                    .padding(.horizontal, VGRSpacing.horizontal)
-                    .padding(.bottom, VGRSpacing.verticalMedium)
+                case .faq:
+                    EmptyView()
+
+                case .webviewLink:
+                    VGRContentLinkView(element: element)
+
+                case .linkGroup:
+                    VGRContentLinkGroup(element: element)
+
+                @unknown default:
+                    Text("Unrecognizable content")
+                        .padding(.horizontal, VGRSpacing.horizontal)
+                        .padding(.bottom, VGRSpacing.verticalMedium)
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -119,7 +129,30 @@ struct VGRContentElementView: View {
                         ],
                     )
                 )
-                
+                .border(.red, width: 1)
+
+                // Link group
+                VGRContentElementView(
+                    element: VGRContentElement(
+                        type: .linkGroup,
+                        links: [
+                            VGRContentElement(
+                                type: .webviewLink,
+                                text: "Öppna webben",
+                                url: "https://www.medicininstruktioner.se",
+                                subtitle: "www.medicininstruktioner.se",
+                            ),
+                            VGRContentElement(
+                                type: .link,
+                                text: "Ladda ner Appen",
+                                url: "https://another-example.com",
+                                subtitle: "Medicininstruktioner på AppStore",
+                            )
+                        ]
+                    )
+                )
+                .border(.red, width: 1)
+
                 // H3 Title
                 VGRContentElementView(
                     element: VGRContentElement(
@@ -136,7 +169,16 @@ struct VGRContentElementView: View {
                         url: "https://example.com",
                     )
                 )
-                
+
+                // Webview link
+                VGRContentElementView(
+                    element: VGRContentElement(
+                        type: .webviewLink,
+                        text: "Learn more on our website",
+                        url: "https://example.com",
+                    )
+                )
+
                 // Internal link (if article data is available)
                 VGRContentElementView(
                     element: VGRContentElement(
@@ -145,6 +187,8 @@ struct VGRContentElementView: View {
                         internalArticle: linkedArticle
                     )
                 )
+
+
             }
         }
         .background(Color.Elevation.background)

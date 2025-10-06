@@ -12,14 +12,14 @@ public struct VGRCardButton: View {
     /// - Parameters:
     ///   - sizeClass: The size class for the card (small, medium, or large).
     ///   - title: The main title displayed on the card.
-    ///   - subtitle: The subtitle or read time displayed below the title.
+    ///   - subtitle: The subtitle or read time displayed below the title, defaults to empty.
     ///   - imageUrl: The URL or name of the image to display.
     ///   - isNew: Indicates whether to show the "new" badge. Defaults to `false`.
     ///   - onPressed: Closure called when the button is pressed.
     public init(
         sizeClass: VGRCardSizeClass,
         title: String,
-        subtitle: String,
+        subtitle: String = "",
         imageUrl: String,
         isNew: Bool = false,
         onPressed: @escaping () -> Void
@@ -41,7 +41,7 @@ public struct VGRCardButton: View {
 
     public var body: some View {
         Button {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            Haptics.lightImpact()
             onPressed()
         } label: {
             VGRCardView(
@@ -56,8 +56,6 @@ public struct VGRCardButton: View {
         .accessibilityLabel(a11yLabel)
     }
 }
-
-
 
 #Preview {
     NavigationStack {
@@ -97,6 +95,15 @@ public struct VGRCardButton: View {
                     sizeClass: .small,
                     title: "When to See a Doctor",
                     subtitle: "4 min läsning",
+                    imageUrl: "placeholder",
+                    isNew: true
+                ) {
+                    print("I pressed article When to See a Doctor")
+                }
+
+                VGRCardButton(
+                    sizeClass: .small,
+                    title: "When to See a Doctor",
                     imageUrl: "placeholder",
                     isNew: true
                 ) {

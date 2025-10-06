@@ -16,6 +16,28 @@ public enum VGRCardSizeClass: CGFloat, CaseIterable {
     case small = 118
     case medium = 120
     case large = 234
+
+    var maxImageHeight: CGFloat {
+        switch self {
+            case .small:
+                return 104
+            case .medium:
+                return 120
+            case .large:
+                return 234
+        }
+    }
+
+    var idealCardHeight: CGFloat {
+        switch self {
+            case .small:
+                return 104
+            case .medium:
+                return 225
+            case .large:
+                return 344
+        }
+    }
 }
 
 public struct VGRCardView: View {
@@ -95,19 +117,22 @@ public struct VGRCardView: View {
             image
                 .resizable()
                 .scaledToFill()
-                .frame(maxWidth: sizeClass.rawValue,
-                       idealHeight: 20,
+                .frame(width: 118)
+                .frame(idealHeight: sizeClass.idealCardHeight,
                        alignment: .center)
                 .clipped()
 
-            VStack(alignment: .leading, spacing: VGRSpacing.verticalMedium) {
+            VStack(alignment: .center, spacing: VGRSpacing.verticalMedium) {
                 Text(title)
                     .foregroundColor(Color.Neutral.text)
                     .font(.title3)
                     .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.leading)
+                    .frame(maxHeight: .infinity, alignment: !subtitle.isEmpty ? .top : .center)
 
                 readTimeLabel
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .isVisible(!subtitle.isEmpty)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -133,7 +158,7 @@ public struct VGRCardView: View {
                 image
                     .resizable()
                     .scaledToFill()
-                    .frame(maxHeight: sizeClass.rawValue, alignment: .center)
+                    .frame(maxHeight: sizeClass.maxImageHeight, alignment: .center)
                     .contentShape(Rectangle())
                     .clipped()
 
@@ -152,6 +177,7 @@ public struct VGRCardView: View {
                     .multilineTextAlignment(.leading)
 
                 readTimeLabel
+                    .isVisible(!subtitle.isEmpty)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, VGRSpacing.verticalMedium)
@@ -169,7 +195,7 @@ public struct VGRCardView: View {
                 image
                     .resizable()
                     .scaledToFill()
-                    .frame(maxHeight: sizeClass.rawValue, alignment: .center)
+                    .frame(maxHeight: sizeClass.maxImageHeight, alignment: .center)
                     .contentShape(Rectangle())
                     .clipped()
 
@@ -188,6 +214,7 @@ public struct VGRCardView: View {
                     .multilineTextAlignment(.leading)
 
                 readTimeLabel
+                    .isVisible(!subtitle.isEmpty)
             }
             .padding(.top, VGRSpacing.verticalMedium)
             .padding(.leading, VGRSpacing.horizontal)
@@ -218,6 +245,13 @@ public struct VGRCardView: View {
                     sizeClass: .medium,
                     title: "Treatment Options",
                     subtitle: "3 min läsning",
+                    imageUrl: "placeholder",
+                    isNew: false
+                )
+
+                VGRCardView(
+                    sizeClass: .medium,
+                    title: "Treatment Options",
                     imageUrl: "placeholder",
                     isNew: false
                 )

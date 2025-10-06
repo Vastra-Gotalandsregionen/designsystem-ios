@@ -18,8 +18,14 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
     public let url: String
     public let readTime: String
 
-    /// List property, usedd in conjuction with elementType `.list`
+    /// List property, used in conjuction with elementType `.list`
     public let list: [String]
+
+    /// Tag property, used to filter out elements based on tags
+    public let tags: [String]
+
+    /// Links property, used in conjunction with elementType `.linkGroup`
+    public let links: [VGRContentElement]
 
     public let videoUrl: String
     public let videoId: String
@@ -38,6 +44,7 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
     /// Added in order to exclude id from Codable protocol and conform to Identifiable
     enum CodingKeys: String, CodingKey {
         case type, text, url, title, subtitle, imageUrl, internalId, readTime, date, videoUrl, videoId, publishDate, list
+        case tags, links
         case question, answer
     }
 
@@ -63,6 +70,8 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
         self.answer = try values.decodeIfPresent(String.self, forKey: .answer) ?? ""
 
         self.list = try values.decodeIfPresent([String].self, forKey: .list) ?? []
+        self.tags = try values.decodeIfPresent([String].self, forKey: .tags) ?? []
+        self.links = try values.decodeIfPresent([VGRContentElement].self, forKey: .links) ?? []
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -85,6 +94,8 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
                 readTime: String = "",
                 date: String = "",
                 list: [String] = [],
+                tags: [String] = [],
+                links: [VGRContentElement] = [],
                 internalArticle: VGRContent? = nil,
                 question: String = "",
                 answer: String = "") {
@@ -102,6 +113,8 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
         self.videoId = ""
         self.publishDate = Date()
         self.list = list
+        self.tags = tags
+        self.links = links
         self.internalArticle = internalArticle
 
         self.question = question

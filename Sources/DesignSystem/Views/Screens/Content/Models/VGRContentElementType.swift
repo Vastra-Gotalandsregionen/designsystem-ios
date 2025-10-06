@@ -34,8 +34,14 @@ public enum VGRContentElementType: String, Codable {
     /// This should render a video carousel inside the `VGRContentScreen` displaying the videos in the target `VGRContent` using a video carousel component.
     case internalVideoSelectorLink
 
-    /// Link element has the `text` and `url`elements set and this should be used to link to external websites
+    /// Link element has the `text` and `url`elements set and this should be used to link to external websites using an external browser
     case link
+
+    /// WebviewLink has the `text` and `url`elements set and this should be used to link to external websites using the internal webview
+    case webviewLink
+
+    /// LinkGroup has the `links` element set and it should contain other `VGRContentElement` with two possible element types: `.link` and `.webviewLink`
+    case linkGroup
 
     /// Video element has the `videoId`, `title`,  `subtitle` (optional), `readTime`, `publishDate` and `videoUrl` properties set
     /// and this should suffice to trigger a videoplayer aswell as display a video element as a card
