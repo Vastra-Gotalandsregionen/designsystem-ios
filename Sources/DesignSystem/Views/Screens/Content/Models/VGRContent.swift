@@ -15,12 +15,13 @@ public struct VGRContent: Identifiable, Hashable, Equatable, Decodable {
     public let elements: [VGRContentElement]
     public let publishDate: Date
     public let isNew: Bool
+    public let tags: [String]
 
     /// Equatable protocol
     public static func == (lhs: VGRContent, rhs: VGRContent) -> Bool { lhs.id == rhs.id }
 
     enum CodingKeys: String, CodingKey {
-        case id, type, order, title, cardTitle, subtitle, buttonText, imageUrl, elements, contentType, publishDate
+        case id, type, order, title, cardTitle, subtitle, buttonText, imageUrl, elements, contentType, publishDate, tags
     }
 
     public init(_ title: String, subtitle: String, type: VGRContentType, imageUrl: String) {
@@ -33,6 +34,7 @@ public struct VGRContent: Identifiable, Hashable, Equatable, Decodable {
         self.buttonText = ""
         self.imageUrl = imageUrl
         self.elements = []
+        self.tags = []
         self.index = 0
         self.order = 0
         self.publishDate = Date()
@@ -42,7 +44,7 @@ public struct VGRContent: Identifiable, Hashable, Equatable, Decodable {
     public init(_ title: String, type: VGRContentType, elements: [VGRContentElement]) {
         self.title = title
         self.elements = elements
-
+        self.tags = []
         self.id = UUID().uuidString
         self.type = type
         self.contentType = ""
@@ -73,6 +75,7 @@ public struct VGRContent: Identifiable, Hashable, Equatable, Decodable {
         self.buttonText = ""
         self.imageUrl = imageUrl
         self.elements = elements
+        self.tags = []
         self.index = 0
         self.order = 0
         self.publishDate = Date()
@@ -92,6 +95,7 @@ public struct VGRContent: Identifiable, Hashable, Equatable, Decodable {
         buttonText = try values.decodeIfPresent(String.self, forKey: .buttonText) ?? ""
         imageUrl = try values.decodeIfPresent(String.self, forKey: .imageUrl) ?? ""
         elements = try values.decodeIfPresent([VGRContentElement].self, forKey: .elements) ?? []
+        tags = try values.decodeIfPresent([String].self, forKey: .tags) ?? []
         index = 0
         isNew = false
 
