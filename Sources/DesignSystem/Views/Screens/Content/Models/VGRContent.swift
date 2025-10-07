@@ -153,7 +153,9 @@ extension VGRContent {
         /// Add main image
         elements.append(VGRContentElement(
             type: .image,
-            url: images.randomElement() ?? "placeholder"
+            url: images.randomElement() ?? "placeholder",
+            crop: [.bottomLeading],
+            cropRadius: 40,
         ))
 
         /// Add main title
@@ -170,7 +172,7 @@ extension VGRContent {
 
 
         /// Generate random content elements
-        let availableTypes: [VGRContentElementType] = [.h2, .h3, .body, .subhead, .list]
+        let availableTypes: [VGRContentElementType] = [.h2, .h3, .body, .subhead, .list, .linkGroup]
 
         for i in 0..<elementCount {
             let randomType = availableTypes.randomElement() ?? .body
@@ -202,6 +204,23 @@ extension VGRContent {
                     elements.append(VGRContentElement(
                         type: .list,
                         list: randomList
+                    ))
+                case .linkGroup:
+                    let linkCount = Int.random(in: 2...6)
+                    let randomTitleList = Array(loremListItems.shuffled().prefix(linkCount))
+                    let randomSubtitleList = Array(loremListItems.shuffled().prefix(linkCount))
+                    let randomLinkTypes: [VGRContentElementType] = [.webviewLink, .link]
+
+                    let links: [VGRContentElement] = (0...linkCount-1).map { i in
+                            .init(type: randomLinkTypes.randomElement() ?? .webviewLink,
+                                  text: randomTitleList[i],
+                                  url: "https://www.vgregion.se",
+                                  subtitle: randomSubtitleList[i])
+                    }
+
+                    elements.append(VGRContentElement(
+                        type: .linkGroup,
+                        links: links,
                     ))
                 default:
                     break
