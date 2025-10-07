@@ -130,28 +130,30 @@ public struct VGRTableRowNavigationLink<Destination: View>: View {
 
 #Preview("SettingsListRow") {
     
-    return NavigationStack {
+    NavigationStack {
         ScrollView {
             VStack (alignment: .leading) {
-                
+
                 VGRTableRowNavigationLink(destination: EmptyView(), title: "Anfallshantering", iconName: "settings_attack")
+
+                VGRDivider()
                 
                 VGRTableRowNavigationLink(destination: EmptyView(), title: "Användarvillkor")
-                
-                VGRTableRowDivider()
-                
+
+                VGRDivider()
+
                 VGRTableRowNavigationLink(destination: EmptyView(), title: "Ge oss Feedback")
-                
-                VGRTableRowDivider()
+
+                VGRDivider()
 
                 VGRTableRowNavigationLink(destination: EmptyView(), title: "Personuppgiftspolicy")
-                
-                VGRTableRowDivider()
+
+                VGRDivider()
 
                 VGRTableRowNavigationLink(destination: EmptyView(), title: "Tillgänglighetsredogörelse")
-                
-                VGRTableRowDivider()
-                
+
+                VGRDivider()
+
                 VGRTableRowNavigationLink(destination: EmptyView(), title: "Tillgänglighetsredogörelse", subtitle: "Hej", details: "Test")
             }
         }
