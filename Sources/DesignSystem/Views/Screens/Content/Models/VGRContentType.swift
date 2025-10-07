@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 public enum VGRContentType: String, Decodable {
     /// Regular article, structured with headers, subheaders, lists and body texts
@@ -28,4 +29,11 @@ public enum VGRContentType: String, Decodable {
             self = .article
         }
     }
+}
+
+public enum VGREdge: String, Decodable {
+    case topLeading
+    case topTrailing
+    case bottomLeading
+    case bottomTrailing
 }

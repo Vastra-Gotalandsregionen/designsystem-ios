@@ -18,6 +18,9 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
     public let url: String
     public let readTime: String
 
+    public let crop: [VGREdge]
+    public let cropRadius: Int
+
     /// List property, used in conjuction with elementType `.list`
     public let list: [String]
 
@@ -45,6 +48,7 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
     enum CodingKeys: String, CodingKey {
         case type, text, url, title, subtitle, imageUrl, internalId, readTime, date, videoUrl, videoId, publishDate, list
         case tags, links
+        case crop, cropRadius
         case question, answer
     }
 
@@ -71,6 +75,10 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
 
         self.list = try values.decodeIfPresent([String].self, forKey: .list) ?? []
         self.tags = try values.decodeIfPresent([String].self, forKey: .tags) ?? []
+
+        self.crop = try values.decodeIfPresent([VGREdge].self, forKey: .crop) ?? []
+        self.cropRadius = try values.decodeIfPresent(Int.self, forKey: .cropRadius) ?? 0
+
         self.links = try values.decodeIfPresent([VGRContentElement].self, forKey: .links) ?? []
 
         let dateFormatter = DateFormatter()
@@ -95,6 +103,8 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
                 date: String = "",
                 list: [String] = [],
                 tags: [String] = [],
+                crop: [VGREdge] = [],
+                cropRadius: Int = 0,
                 links: [VGRContentElement] = [],
                 internalArticle: VGRContent? = nil,
                 question: String = "",
@@ -114,6 +124,8 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
         self.publishDate = Date()
         self.list = list
         self.tags = tags
+        self.crop = crop
+        self.cropRadius = cropRadius
         self.links = links
         self.internalArticle = internalArticle
 

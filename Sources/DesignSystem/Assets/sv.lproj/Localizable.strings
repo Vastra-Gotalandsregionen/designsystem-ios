@@ -135,6 +135,9 @@
 "content.video.error.title" = "Videoklippet går inte att spela upp";
 "content.video.error.message" = "Det går tyvärr inte att spela upp videoklippet just nu. Kontrollera att du har internetuppkoppling eller försök igen senare.";
 
+"content.link.external" = "Extern länk";
+"content.link.web" = "Intern webblänk";
+
 /* Calendar */
 "calendar.week.next" = "Nästa vecka";
 "calendar.week.previous" = "Föregående vecka";

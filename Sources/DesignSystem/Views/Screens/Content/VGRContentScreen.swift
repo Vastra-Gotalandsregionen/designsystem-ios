@@ -84,6 +84,12 @@ public struct VGRContentScreen: View {
             }
             .accessibilityElement(children: .contain)
         }
+        .navigationDestination(for: WebViewTarget.self, destination: { target in
+            /// This destination is used to open links in the in-app web browser
+            WebView(urlString: target.url)
+                .navigationTitle(target.title)
+                .navigationBarTitleDisplayMode(.inline)
+        })
         .onAppear {
             /// To get around issue of keyboard focus being stuck in navbar
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -104,7 +110,6 @@ public struct VGRContentScreen: View {
 
 #Preview {
     @Previewable @State var selectedContent: VGRContent? = nil
-    @Previewable @State var selectedNavigationArticle: VGRContent? = nil
 
     let articles = VGRContent.randomMultiple(count: 10)
     let sizes = (0..<10).map { _ in VGRCardSizeClass.allCases.randomElement()! }
@@ -120,11 +125,7 @@ public struct VGRContentScreen: View {
                         imageUrl: article.imageUrl,
                         isNew: article.isNew
                     ) {
-                        if index % 2 == 0 {
-                            selectedNavigationArticle = article
-                        } else {
-                            selectedContent = article
-                        }
+                        selectedContent = article
                     }
                 }
             }
@@ -133,11 +134,6 @@ public struct VGRContentScreen: View {
         .background(Color.Elevation.background)
         .navigationTitle("VGRContentScreen")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(item: $selectedNavigationArticle, destination: { article in
-            VGRContentScreen(content: article) {
-                selectedNavigationArticle = nil
-            }
-        })
         .sheet(item: $selectedContent) { article in
             NavigationStack {
                 VGRContentScreen(content: article) {

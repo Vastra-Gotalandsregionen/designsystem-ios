@@ -228,8 +228,6 @@ public struct VGRCardView: View {
 }
 
 #Preview {
-    let sizes: [VGRCardSizeClass] = [.large, .medium, .small, .small]
-
     NavigationStack {
         ScrollView {
             VStack(spacing: 16) {
