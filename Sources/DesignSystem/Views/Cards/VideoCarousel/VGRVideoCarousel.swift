@@ -38,6 +38,7 @@ public struct VGRVideoCarousel: View {
 
     /// The currently visible item ID tracked for scroll position.
     @State private var position: String?
+    @AccessibilityFocusState private var a11yPosition: String?
 
     /// Array of accent colors cycled through for video card backgrounds.
     private let colors: [Color] = [
@@ -54,6 +55,14 @@ public struct VGRVideoCarousel: View {
 
     /// Default margin value used in calculations.
     private let defaultMargin: CGFloat = 16
+
+    private var a11yLabel: String {
+        var result: [String] = ["videocarousel.hint".localizedBundle]
+        result.append(title)
+        result.append(subtitle)
+        result.append("videocarousel.count".localizedBundleFormat(arguments: self.items.count))
+        return result.joined(separator: ", ")
+    }
 
     /// Updates the trailing content margin based on current screen width.
     ///
@@ -128,6 +137,8 @@ public struct VGRVideoCarousel: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.leading, 16)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(a11yLabel)
 
             navigationButtons
         }
@@ -157,6 +168,8 @@ public struct VGRVideoCarousel: View {
                     .bold()
             }
         }
+        .accessibilityLabel("videocarousel.previous".localizedBundle)
+        .accessibilityHidden(!canGoBack)
         .frame(width: 44, height: 44)
         .disabled(!canGoBack)
     }
@@ -176,6 +189,8 @@ public struct VGRVideoCarousel: View {
                     .bold()
             }
         }
+        .accessibilityLabel("videocarousel.next".localizedBundle)
+        .accessibilityHidden(!canGoForward)
         .frame(width: 44, height: 44)
         .disabled(!canGoForward)
     }
@@ -186,11 +201,15 @@ public struct VGRVideoCarousel: View {
             HStack(spacing: 12) {
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                     carouselItemButton(index: index, item: item)
+                        .accessibilityFocused($a11yPosition, equals: item.id)
                 }
             }
             .scrollTargetLayout()
         }
         .scrollPosition(id: $position)
+        .onChange(of: position) { _, newValue in
+            a11yPosition = newValue
+        }
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: position)
         .defaultScrollAnchor(.leading)
         .contentMargins(.leading, 16)
@@ -199,6 +218,7 @@ public struct VGRVideoCarousel: View {
         .scrollBounceBehavior(.always)
         .scrollTargetBehavior(.viewAligned)
         .fixedSize(horizontal: false, vertical: true)
+        .accessibilityElement(children: .contain)
     }
 
     /// Creates a tappable video card button for a carousel item.
@@ -224,11 +244,9 @@ public struct VGRVideoCarousel: View {
                                     alignment: .leading)
             .scrollTransition { view, transition in
                 view
-                    .opacity(transition.isIdentity ? 1 : 0.6)
                     .scaleEffect(transition.isIdentity ? 1 : 0.96)
-                    .blur(radius: transition.isIdentity ? 0 : 0.3)
             }
-            .accessibilityHint("videocard.hint")
+            .accessibilityHint("videocard.hint".localizedBundle)
         }
         .buttonStyle(VGRVideoCardButtonStyle())
     }
@@ -238,6 +256,17 @@ public struct VGRVideoCarousel: View {
             headerView
             carouselScrollView
         }
+        .accessibilityScrollAction({ edge in
+            switch edge {
+                case .leading:
+                    next()
+                case .trailing:
+                    previous()
+                default:
+                    break;
+            }
+        })
+        .accessibilityElement(children: .contain)
         .onOrientationChange { _ in
             updateTrailingContentMargin()
         }

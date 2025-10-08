@@ -145,3 +145,7 @@
 
 /* Video card */
 "videocard.hint" = "Tryck för att visa video";
+"videocarousel.hint" = "Videovisare";
+"videocarousel.count" = "%d videoklipp tillgängliga";
+"videocarousel.next" = "Nästa videoklipp";
+"videocarousel.previous" = "Föregående videoklipp";
