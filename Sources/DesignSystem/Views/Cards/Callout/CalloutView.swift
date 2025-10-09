@@ -99,68 +99,71 @@ public extension CalloutView where Icon == EmptyView {
         )
     }
 }
-#Preview ("CalloutView"){
-    ScrollView {
-        VStack(spacing: 16) {
-            
-            CalloutView(title: "Hello")
-            
-            CalloutView(title: "World",
-                        text: "Domination")
-            
-            CalloutView(
-                title: "Scheman",
-                text: "Om du använder förebyggande läkemedel kan du nu skapa ett schema för dina intag.",
-                icon: {
-                    Image("illustration_helping", bundle: .module)
-                        .resizable()
-                        .frame(width: 100, height: 100)
-                },
-                dismiss: {
-                    print("Dismiss schema")
-                },
-                actionButton: ActionButton(
-                    style: .primary,
-                    title: "Skapa nytt schema",
-                    leadingIcon: { AnyView(Image(systemName: "heart")) },
-                    trailingIcon: { AnyView(Image(systemName: "arrow.right")) },
-                    action: {
-                        print("tap")
-                    }
-                )
-            )
-            
-            CalloutView(
-                title: "Feedback",
-                text: "Lämna feedback på din upplevelse - när som helst och hur många gånger som helst! Vi behöver din åsikt.",
-                icon: {
-                    Image("illustration_presenting_4", bundle: .module)
-                        .resizable()
-                        .frame(width: 100, height: 100)
-                },
-                actionButton: ActionButton(
-                    style: .secondary,
-                    title: "Lämna feedback",
-                    action: {
-                        print("tap")
-                    }
-                )
-            )
-            
-            CalloutView(
-                title: "Hejsan",
-                text: "Detta är ett meddelande.",
-                actionButton: ActionButton(
-                    style: .primary,
-                    title: "Hej",
-                    leadingIcon: { AnyView(Image(systemName: "heart")) },
-                    trailingIcon: { AnyView(Image(systemName: "heart")) },
-                    action: {
-                        print("tap")
-                    }
-                )
-            )
-        }
-        .padding()
-    }
-}
+
+//MARK: This component is deprecated - Preview is commented out to reduce number of unescessary Xcode-warnings in the project.
+
+//#Preview ("CalloutView"){
+//    ScrollView {
+//        VStack(spacing: 16) {
+//            
+//            CalloutView(title: "Hello")
+//            
+//            CalloutView(title: "World",
+//                        text: "Domination")
+//            
+//            CalloutView(
+//                title: "Scheman",
+//                text: "Om du använder förebyggande läkemedel kan du nu skapa ett schema för dina intag.",
+//                icon: {
+//                    Image("illustration_helping", bundle: .module)
+//                        .resizable()
+//                        .frame(width: 100, height: 100)
+//                },
+//                dismiss: {
+//                    print("Dismiss schema")
+//                },
+//                actionButton: ActionButton(
+//                    style: .primary,
+//                    title: "Skapa nytt schema",
+//                    leadingIcon: { AnyView(Image(systemName: "heart")) },
+//                    trailingIcon: { AnyView(Image(systemName: "arrow.right")) },
+//                    action: {
+//                        print("tap")
+//                    }
+//                )
+//            )
+//            
+//            CalloutView(
+//                title: "Feedback",
+//                text: "Lämna feedback på din upplevelse - när som helst och hur många gånger som helst! Vi behöver din åsikt.",
+//                icon: {
+//                    Image("illustration_presenting_4", bundle: .module)
+//                        .resizable()
+//                        .frame(width: 100, height: 100)
+//                },
+//                actionButton: ActionButton(
+//                    style: .secondary,
+//                    title: "Lämna feedback",
+//                    action: {
+//                        print("tap")
+//                    }
+//                )
+//            )
+//            
+//            CalloutView(
+//                title: "Hejsan",
+//                text: "Detta är ett meddelande.",
+//                actionButton: ActionButton(
+//                    style: .primary,
+//                    title: "Hej",
+//                    leadingIcon: { AnyView(Image(systemName: "heart")) },
+//                    trailingIcon: { AnyView(Image(systemName: "heart")) },
+//                    action: {
+//                        print("tap")
+//                    }
+//                )
+//            )
+//        }
+//        .padding()
+//    }
+//}

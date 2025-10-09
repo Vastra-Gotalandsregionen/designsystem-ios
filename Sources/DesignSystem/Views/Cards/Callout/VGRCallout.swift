@@ -106,120 +106,122 @@ public struct VGRCallout: View {
     }
 }
 
-#Preview ("Information Callouts") {
-    
-    let description: VGRCalloutText = VGRCalloutText(description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere felis a tortor elementum, non bibendum elit malesuada. Ut eleifend, ex eget convallis suscipit.")
-    
-    let descriptionWithHeader: VGRCalloutText = VGRCalloutText(header: "Lorem ipsum", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere felis a tortor elementum, non bibendum elit malesuada. Ut eleifend, ex eget convallis suscipit.")
-    
-    let chatBubble: VGRIcon = VGRIcon(asset: "chatbubble")
-    
-    let button: VGRButton = VGRButton(label: "Action") {
-        print("Hello")
-    }
-    
-    let illustration: VGRCalloutIllustration = VGRCalloutIllustration(assetName: "illustration_presence")
-    
-    
-    ScrollView {
-        
-        VGRShape (backgroundColor: Color.Primary.blueSurfaceMinimal) {
-            
-            VStack (spacing: 32) {
-                
-                VGRCallout(
-                    text: description,
-                    variant: .icon(chatBubble)
-                )
-                
-                VGRCallout(
-                    text: descriptionWithHeader,
-                    variant: .icon(chatBubble)
-                )
-                
-                VGRCallout(
-                    text: description,
-                    disclosureGroup: AnyView(
-                        VGRDisclosureGroup(title: "Mer info") {
-                            Text("Blablablablalbalbal")
-                        }
-                    ),
-                    variant: .icon(chatBubble)
-                )
-                
-                VGRCallout(
-                    text: descriptionWithHeader,
-                    button: button, variant: .illustration(illustration)) {
-                        print("Dismiss")
-                    }
-                
-                //MARK: Used without pre-initialized components
-                VGRCallout(
-                    text: VGRCalloutText(
-                        header: "Akuta läkemedel",
-                        description: "Du har lagt in att du har tagit akuta läkemedel fler dagar än rekommenderat."),
-                    button: VGRButton(
-                        label: "Läs mer",
-                        action: {
-                            print("Läs mer")
-                        }),
-                    variant: .icon(VGRIcon(asset: "medicine")))
-            }
-        }
-        
-        VGRShape (backgroundColor: Color.Primary.blueSurfaceMinimal) {
-            
-            VStack (spacing: 32) {
-                
-                VGRCallout(
-                    text: description,
-                    variant: .regular
-                )
-                
-                VGRCallout(
-                    text: description,
-                    variant: .icon(chatBubble)
-                )
-                
-                VGRCallout(
-                    text: descriptionWithHeader,
-                    variant: .icon(chatBubble)
-                )
-                
-                VGRCallout(
-                    text: descriptionWithHeader,
-                    button: button, variant: .illustration(illustration)) {
-                        print("Dismiss")
-                    }
-            }
-        }
-    }
-}
+//MARK: This component is deprecated - Preview is commented out to reduce number of unescessary Xcode-warnings in the project.
 
-#Preview ("Warning Callouts") {
-    
-    ScrollView {
-        
-        VGRShape (backgroundColor: Color.Primary.blueSurfaceMinimal) {
-            
-            VStack (spacing: 32) {
-                
-                VGRCallout(text: VGRCalloutText(
-                    description: "Simplest version of the Callout-Component"),
-                           variant: .regular
-                )
-                
-                VGRCallout(text: VGRCalloutText(
-                    description: "Simple noteview with a long descriptive text very interesting and a lot of text keep going yes very interesting and informative"),
-                           variant: .icon(VGRIcon(source: .asset(name: "chatbubble", bundle: .module)))
-                )
-                
-                VGRCallout(text: VGRCalloutText(
-                    header: "This is a header!",
-                    description: "Same but with a header! Simple noteview with a long descriptive text very interesting and a lot of text keep going yes very interesting and informative"),
-                           variant: .icon(VGRIcon(source: .asset(name: "chatbubble", bundle: .module)))
-                )
-            }
-        }
-    }
-}
+//#Preview ("Information Callouts") {
+//    
+//    let description: VGRCalloutText = VGRCalloutText(description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere felis a tortor elementum, non bibendum elit malesuada. Ut eleifend, ex eget convallis suscipit.")
+//    
+//    let descriptionWithHeader: VGRCalloutText = VGRCalloutText(header: "Lorem ipsum", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere felis a tortor elementum, non bibendum elit malesuada. Ut eleifend, ex eget convallis suscipit.")
+//    
+//    let chatBubble: VGRIcon = VGRIcon(asset: "chatbubble")
+//    
+//    let button: VGRButton = VGRButton(label: "Action") {
+//        print("Hello")
+//    }
+//    
+//    let illustration: VGRCalloutIllustration = VGRCalloutIllustration(assetName: "illustration_presence")
+//    
+//    
+//    ScrollView {
+//        
+//        VGRShape (backgroundColor: Color.Primary.blueSurfaceMinimal) {
+//            
+//            VStack (spacing: 32) {
+//                
+//                VGRCallout(
+//                    text: description,
+//                    variant: .icon(chatBubble)
+//                )
+//                
+//                VGRCallout(
+//                    text: descriptionWithHeader,
+//                    variant: .icon(chatBubble)
+//                )
+//                
+//                VGRCallout(
+//                    text: description,
+//                    disclosureGroup: AnyView(
+//                        VGRDisclosureGroup(title: "Mer info") {
+//                            Text("Blablablablalbalbal")
+//                        }
+//                    ),
+//                    variant: .icon(chatBubble)
+//                )
+//                
+//                VGRCallout(
+//                    text: descriptionWithHeader,
+//                    button: button, variant: .illustration(illustration)) {
+//                        print("Dismiss")
+//                    }
+//                
+//                //MARK: Used without pre-initialized components
+//                VGRCallout(
+//                    text: VGRCalloutText(
+//                        header: "Akuta läkemedel",
+//                        description: "Du har lagt in att du har tagit akuta läkemedel fler dagar än rekommenderat."),
+//                    button: VGRButton(
+//                        label: "Läs mer",
+//                        action: {
+//                            print("Läs mer")
+//                        }),
+//                    variant: .icon(VGRIcon(asset: "medicine")))
+//            }
+//        }
+//        
+//        VGRShape (backgroundColor: Color.Primary.blueSurfaceMinimal) {
+//            
+//            VStack (spacing: 32) {
+//                
+//                VGRCallout(
+//                    text: description,
+//                    variant: .regular
+//                )
+//                
+//                VGRCallout(
+//                    text: description,
+//                    variant: .icon(chatBubble)
+//                )
+//                
+//                VGRCallout(
+//                    text: descriptionWithHeader,
+//                    variant: .icon(chatBubble)
+//                )
+//                
+//                VGRCallout(
+//                    text: descriptionWithHeader,
+//                    button: button, variant: .illustration(illustration)) {
+//                        print("Dismiss")
+//                    }
+//            }
+//        }
+//    }
+//}
+//
+//#Preview ("Warning Callouts") {
+//    
+//    ScrollView {
+//        
+//        VGRShape (backgroundColor: Color.Primary.blueSurfaceMinimal) {
+//            
+//            VStack (spacing: 32) {
+//                
+//                VGRCallout(text: VGRCalloutText(
+//                    description: "Simplest version of the Callout-Component"),
+//                           variant: .regular
+//                )
+//                
+//                VGRCallout(text: VGRCalloutText(
+//                    description: "Simple noteview with a long descriptive text very interesting and a lot of text keep going yes very interesting and informative"),
+//                           variant: .icon(VGRIcon(source: .asset(name: "chatbubble", bundle: .module)))
+//                )
+//                
+//                VGRCallout(text: VGRCalloutText(
+//                    header: "This is a header!",
+//                    description: "Same but with a header! Simple noteview with a long descriptive text very interesting and a lot of text keep going yes very interesting and informative"),
+//                           variant: .icon(VGRIcon(source: .asset(name: "chatbubble", bundle: .module)))
+//                )
+//            }
+//        }
+//    }
+//}

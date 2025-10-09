@@ -138,95 +138,97 @@ public extension ActionButton where TrailingIcon == AnyView {
     }
 }
 
-#Preview {
-    ScrollView {
-        VGRShape {
-            VStack {
-                Text("Original")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                ActionButton(
-                    style: .original,
-                    title: "No icons",
-                    action: { print("tap") }
-                )
-                
-                ActionButton(
-                    style: .original,
-                    title: "Leading",
-                    leadingIcon: { Image(systemName: "heart") },
-                    action: { print("tap") }
-                )
-                
-                ActionButton(
-                    style: .original,
-                    title: "Trailing",
-                    trailingIcon: { Image(systemName: "arrow.right") },
-                    action: { print("tap") }
-                )
-                
-                ActionButton(
-                    style: .original,
-                    title: "Both Icons",
-                    leadingIcon: { Image(systemName: "star.fill") },
-                    trailingIcon: { Image(systemName: "heart.fill") },
-                    action: { print("tap") }
-                )
-            }
-            .padding(16)
-            
-            VStack(spacing: 16) {
-                Text("Primary")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                ActionButton(
-                    style: .primary,
-                    title: "No Icons",
-                    action: { print("tap") }
-                )
-                
-                ActionButton(
-                    style: .primary,
-                    title: "Leading Icon",
-                    leadingIcon: { Image(systemName: "heart.fill") },
-                    action: { print("tap") }
-                )
-                
-                ActionButton(
-                    style: .primary,
-                    title: "Trailing Icon",
-                    trailingIcon: { Image(systemName: "arrow.right") },
-                    action: { print("tap") }
-                )
-                
-                ActionButton(
-                    style: .primary,
-                    title: "Both Icons",
-                    leadingIcon: { Image(systemName: "star.fill") },
-                    trailingIcon: { Image(systemName: "heart.fill") },
-                    action: { print("tap") }
-                )
-                
-                
-            }
-            .padding(16)
-            
-            VStack {
-                Text("Secondary")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                ActionButton(
-                    style: .secondary,
-                    title: "Secondary",
-                    leadingIcon: { Image(systemName: "heart") },
-                    trailingIcon: { Image(systemName: "heart") },
-                    action: { print("tap") }
-                )
-            }
-            .padding(16)
-        }
-    }
-}
+//MARK: This component is deprecated - Preview is commented out to reduce number of unescessary Xcode-warnings in the project.
+
+//#Preview {
+//    ScrollView {
+//        VGRShape {
+//            VStack {
+//                Text("Original")
+//                    .font(.headline)
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+//                
+//                ActionButton(
+//                    style: .original,
+//                    title: "No icons",
+//                    action: { print("tap") }
+//                )
+//                
+//                ActionButton(
+//                    style: .original,
+//                    title: "Leading",
+//                    leadingIcon: { Image(systemName: "heart") },
+//                    action: { print("tap") }
+//                )
+//                
+//                ActionButton(
+//                    style: .original,
+//                    title: "Trailing",
+//                    trailingIcon: { Image(systemName: "arrow.right") },
+//                    action: { print("tap") }
+//                )
+//                
+//                ActionButton(
+//                    style: .original,
+//                    title: "Both Icons",
+//                    leadingIcon: { Image(systemName: "star.fill") },
+//                    trailingIcon: { Image(systemName: "heart.fill") },
+//                    action: { print("tap") }
+//                )
+//            }
+//            .padding(16)
+//            
+//            VStack(spacing: 16) {
+//                Text("Primary")
+//                    .font(.headline)
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+//                
+//                ActionButton(
+//                    style: .primary,
+//                    title: "No Icons",
+//                    action: { print("tap") }
+//                )
+//                
+//                ActionButton(
+//                    style: .primary,
+//                    title: "Leading Icon",
+//                    leadingIcon: { Image(systemName: "heart.fill") },
+//                    action: { print("tap") }
+//                )
+//                
+//                ActionButton(
+//                    style: .primary,
+//                    title: "Trailing Icon",
+//                    trailingIcon: { Image(systemName: "arrow.right") },
+//                    action: { print("tap") }
+//                )
+//                
+//                ActionButton(
+//                    style: .primary,
+//                    title: "Both Icons",
+//                    leadingIcon: { Image(systemName: "star.fill") },
+//                    trailingIcon: { Image(systemName: "heart.fill") },
+//                    action: { print("tap") }
+//                )
+//                
+//                
+//            }
+//            .padding(16)
+//            
+//            VStack {
+//                Text("Secondary")
+//                    .font(.headline)
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+//                
+//                ActionButton(
+//                    style: .secondary,
+//                    title: "Secondary",
+//                    leadingIcon: { Image(systemName: "heart") },
+//                    trailingIcon: { Image(systemName: "heart") },
+//                    action: { print("tap") }
+//                )
+//            }
+//            .padding(16)
+//        }
+//    }
+//}
