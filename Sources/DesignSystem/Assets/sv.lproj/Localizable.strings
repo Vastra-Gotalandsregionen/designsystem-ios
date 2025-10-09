@@ -8,6 +8,7 @@
 "general.notselected" = "Ej vald";
 "general.on" = "På";
 "general.off" = "Av";
+"general.button.done" = "Klar";
 
 /* Toggle */
 "toggle.a11y.hint" = "Dubbeltryck för att slå";
@@ -142,10 +143,14 @@
 "calendar.week.next" = "Nästa vecka";
 "calendar.week.previous" = "Föregående vecka";
 
-
 /* Video card */
 "videocard.hint" = "Tryck för att visa video";
 "videocarousel.hint" = "Videovisare";
 "videocarousel.count" = "%d videoklipp tillgängliga";
 "videocarousel.next" = "Nästa videoklipp";
 "videocarousel.previous" = "Föregående videoklipp";
+
+/* Survey */
+"survey.loading" = "Laddar…";
+"survey.reciept.title" = "Tack för din feedback!";
+"survey.reciept.text" = "Dina svar har skickats in.";
