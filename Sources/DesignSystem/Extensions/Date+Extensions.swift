@@ -141,6 +141,15 @@ public extension Date {
         return "v " + self.formatted(.dateTime.week()) + ", " + self.formatted(.dateTime.year())
     }
 
+    /// vgrLongWeekFormat formats a date with "Vecka" and week number, but only includes year if it differs from current year
+    var vgrLongWeekFormat: String {
+        if Calendar.current.compare(Date(), to: self, toGranularity: .year) == .orderedSame {
+            return "Vecka " + self.formatted(.dateTime.week())
+        }
+
+        return "Vecka " + self.formatted(.dateTime.week()) + ", " + self.formatted(.dateTime.year())
+    }
+
     var vgrShortTimeFormat: String {
         return self.formatted(date: .omitted, time: .shortened)
     }
