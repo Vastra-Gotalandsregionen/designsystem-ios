@@ -1,20 +1,102 @@
 import SwiftUI
 import SwiftUIIntrospect
 
+/// A scrollable calendar view that displays multiple months in a vertical layout.
+///
+/// `VGRCalendarView` provides a month-by-month calendar interface with customizable day cells,
+/// data binding, and accessibility support. The view automatically handles scrolling to the
+/// selected date and provides a "Today" button for quick navigation.
+///
+/// - Parameters:
+///   - Data: A `Hashable` type representing custom data associated with each calendar day
+///   - Content: The `View` type used to render individual day cells
+///
+/// ## Example Usage
+/// ```swift
+/// VGRCalendarView(
+///     selectedIndex: $selectedDate,
+///     interval: dateInterval,
+///     data: calendarData,
+///     onTapDay: { index in
+///         print("Tapped: \(index.date)")
+///     },
+///     dataAccessibilityLabel: { month in
+///         "\(month.idx.date.formatted(.dateTime.month().year()))"
+///     }
+/// ) { index, data, isCurrent, isSelected in
+///     CustomDayCell(index: index, data: data)
+/// }
+/// ```
 public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content: View {
 
-    /// Public
+    // MARK: - Public Properties
+
+    /// Binding to the currently selected calendar date index.
+    /// Updates when the user taps a day or when programmatically changed.
     @Binding var selectedIndex: VGRCalendarIndexKey
+
+    /// The date interval that defines the range of dates to display in the calendar.
+    /// All months within this interval will be rendered.
     let interval: DateInterval
+
+    /// A dictionary mapping calendar index keys to custom data.
+    /// Use this to associate events, appointments, or other information with specific dates.
     let data: [VGRCalendarIndexKey: Data]
+
+    /// Controls whether the scroll view scrolls to top when the status bar is tapped.
+    /// Defaults to `false`.
     var scrollsToTop: Bool = false
 
+    // MARK: - Private Properties
+
+    /// View model managing the calendar's month data and layout calculations.
+    @State private var vm: VGRCalendarViewModel
+
+    /// Optional closure that generates accessibility labels for month headers.
+    /// - Parameter month: The `VGRCalendarPeriodModel` representing the month
+    /// - Returns: A custom accessibility label string for the month header
+    private let dataAccessibilityLabel: ((VGRCalendarPeriodModel) -> String)?
+
+    /// Closure invoked when a user taps a day in the calendar.
+    /// - Parameter index: The `VGRCalendarIndexKey` representing the tapped day
+    private let onTapDay: (VGRCalendarIndexKey) -> Void
+
+    /// View builder closure that creates the visual representation of each day cell.
+    /// - Parameters:
+    ///   - index: The calendar index key for the day
+    ///   - data: Optional custom data associated with the day
+    ///   - isCurrent: Whether this day represents today's date
+    ///   - isSelected: Whether this day is currently selected
+    /// - Returns: A `View` representing the day cell
+    private let dayBuilder: (VGRCalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
+
+    /// Tracks today's date and updates at midnight via `onDayChange` modifier.
+    @State private var today: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
+
+    /// Scroll position target for programmatic scrolling to specific months.
+    /// Uses the month ID to identify which month to scroll to.
+    @State private var currentMonthTarget: String? = nil
+
+    // MARK: - Initialization
+
+    /// Creates a new calendar view with the specified configuration.
+    ///
+    /// - Parameters:
+    ///   - selectedIndex: Binding to the currently selected date
+    ///   - interval: Date range to display in the calendar
+    ///   - data: Dictionary of custom data keyed by calendar index
+    ///   - calendar: The calendar system to use (defaults to `.current`)
+    ///   - scrollsToTop: Whether to enable scroll-to-top on status bar tap (defaults to `false`)
+    ///   - onTapDay: Closure called when a day is tapped
+    ///   - dataAccessibilityLabel: Optional closure to generate custom accessibility labels for month headers
+    ///   - day: View builder that creates the UI for each day cell
     public init(selectedIndex: Binding<VGRCalendarIndexKey>,
                 interval: DateInterval,
                 data: [VGRCalendarIndexKey : Data],
                 calendar: Calendar = .current,
                 scrollsToTop: Bool = false,
                 onTapDay: @escaping (VGRCalendarIndexKey) -> Void,
+                dataAccessibilityLabel: ((VGRCalendarPeriodModel) -> String)? = nil,
                 day: @escaping (VGRCalendarIndexKey, Data?, _: Bool, _: Bool) -> Content) {
 
         self.vm = .init(interval: interval, calendar: calendar)
@@ -22,30 +104,24 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
         self.interval = interval
         self.data = data
 
+        self.dataAccessibilityLabel = dataAccessibilityLabel
         self.onTapDay = onTapDay
         self.dayBuilder = day
         self.currentMonthTarget = selectedIndex.wrappedValue.monthID
         self.scrollsToTop = scrollsToTop
     }
 
-    /// Private
-    @State private var vm: VGRCalendarViewModel
-    private let onTapDay: (VGRCalendarIndexKey) -> Void
-    private let dayBuilder: (VGRCalendarIndexKey, Data?, _ isCurrent: Bool, _ isSelected: Bool) -> Content
-
-    @State private var today: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
-    @State private var currentMonthTarget: String? = nil
-
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 32) {
                 ForEach(vm.months, id: \.id) { month in
                     VGRCalendarMonthView(month: month,
-                                      today: today,
-                                      selectedIndex: $selectedIndex,
-                                      data: data,
-                                      onTapDay: onTapDay,
-                                      day: dayBuilder)
+                                         today: today,
+                                         selectedIndex: $selectedIndex,
+                                         dataAccessibilityLabel: dataAccessibilityLabel,
+                                         data: data,
+                                         onTapDay: onTapDay,
+                                         day: dayBuilder)
                     .id(month.idx.monthID)
                     .padding(.horizontal, 12)
                 }
@@ -114,12 +190,9 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
                 VGRCalendarView(selectedIndex: $selectedIndex,
                                 interval: maxInterval,
                                 data: calendarData) { index in
-
                     print("Tapped on \(index.id)")
                     currentWeekID = index.weekID
                     selectedWeekIndex = index
-
-
                 } day: { index, data, current, selected in
                     ExampleDayCell(date: index,
                                    data: data,
