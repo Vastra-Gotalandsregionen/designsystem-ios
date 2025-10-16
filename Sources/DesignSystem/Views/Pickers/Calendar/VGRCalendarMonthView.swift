@@ -127,7 +127,7 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
                 .padding(.horizontal, 4)
                 .padding(.vertical, 16)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .accessibilityLabel(a11yLabel)
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 VGRCalendarWeekHeaderView()
@@ -135,7 +135,6 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
                 LazyVGrid(
                     columns: columns,
                     alignment: .leading,
-
                     spacing: 8,
                     pinnedViews: [.sectionHeaders]
                 ) {
@@ -156,9 +155,14 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
                             onTapDay(day)
                         }
                     }
+                    .accessibilityElement(children: .contain)
                 }
+                .accessibilityElement(children: .contain)
             }
+            .accessibilityElement(children: .contain)
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(a11yLabel)
     }
 }
 

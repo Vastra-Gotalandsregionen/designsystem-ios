@@ -140,6 +140,7 @@
 "content.link.web" = "Intern webblänk";
 
 /* Calendar */
+"calendar.today" = "Idag";
 "calendar.week.next" = "Nästa vecka";
 "calendar.week.previous" = "Föregående vecka";
 
