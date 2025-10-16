@@ -77,6 +77,9 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
     /// Uses the month ID to identify which month to scroll to.
     @State private var currentMonthTarget: String? = nil
 
+    /// Tracks which month currently has VoiceOver focus.
+    @AccessibilityFocusState private var focusedMonthID: String?
+
     // MARK: - Initialization
 
     /// Creates a new calendar view with the specified configuration.
@@ -124,6 +127,7 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
                                          day: dayBuilder)
                     .id(month.idx.monthID)
                     .padding(.horizontal, 12)
+                    .accessibilityFocused($focusedMonthID, equals: month.idx.monthID)
                 }
             }
             .scrollTargetLayout()
@@ -139,15 +143,17 @@ public struct VGRCalendarView<Data, Content>: View where Data: Hashable, Content
                 print("onAppear: Setting monthTarget to \(selectedIndex.monthID) (\(currentMonthTarget ?? "n/a"))")
                 currentMonthTarget = nil
                 currentMonthTarget = selectedIndex.monthID
+                focusedMonthID = selectedIndex.monthID
             }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Idag") {
+                Button("calendar.today".localizedBundle) {
                     DispatchQueue.main.async {
                         currentMonthTarget = nil
                         selectedIndex = today
                         currentMonthTarget = selectedIndex.monthID
+                        focusedMonthID = selectedIndex.monthID
                         print("today: Setting monthTarget to \(selectedIndex.monthID) (\(currentMonthTarget ?? "n/a"))")
                     }
                 }
