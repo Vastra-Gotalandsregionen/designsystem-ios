@@ -18,6 +18,8 @@ public struct VGRVideoCarousel: View {
     /// Closure called when a carousel item is tapped, passing the tapped item.
     let onItemTapped: (any VGRVideoCarouselItem) -> Void
 
+    @ObservedObject private var videoStatusService = VGRVideoStatusService.shared
+
     /// Creates a new video carousel with the specified properties.
     /// - Parameters:
     ///   - title: The main title displayed in the carousel header.
@@ -221,6 +223,13 @@ public struct VGRVideoCarousel: View {
         .accessibilityElement(children: .contain)
     }
 
+    /// Checks if a video has been watched.
+    /// - Parameter videoId: The unique identifier of the video.
+    /// - Returns: `true` if the video has been watched, `false` otherwise.
+    private func isWatched(videoId: String) -> Bool {
+        return videoStatusService.isWatched(videoId: videoId)
+    }
+
     /// Creates a tappable video card button for a carousel item.
     /// - Parameters:
     ///   - index: The index of the item in the carousel, used for color rotation.
@@ -232,10 +241,13 @@ public struct VGRVideoCarousel: View {
             Haptics.lightImpact()
             onItemTapped(item)
         } label: {
-            VGRVideoCard(title: item.title,
-                         subtitle: item.subtitle,
-                         duration: item.duration,
-                         circleColor: colors[index % colors.count])
+            VGRVideoCard(
+                title: item.title,
+                subtitle: item.subtitle,
+                duration: item.duration,
+                circleColor: colors[index % colors.count],
+                hasBeenViewed: isWatched(videoId: item.id)
+            )
             .id(item.id)
             .containerRelativeFrame(.horizontal,
                                     count: items.count,

@@ -101,6 +101,8 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
                 imageUrl: String = "",
                 readTime: String = "",
                 date: String = "",
+                videoUrl: String = "",
+                videoId: String = "",
                 list: [String] = [],
                 tags: [String] = [],
                 crop: [VGREdge] = [],
@@ -119,8 +121,8 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
         self.internalId = ""
         self.readTime = readTime
         self.date = date
-        self.videoUrl = ""
-        self.videoId = ""
+        self.videoUrl = videoUrl
+        self.videoId = videoId
         self.publishDate = Date()
         self.list = list
         self.tags = tags
