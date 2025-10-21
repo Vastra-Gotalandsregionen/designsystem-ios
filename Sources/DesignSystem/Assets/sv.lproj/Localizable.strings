@@ -145,7 +145,13 @@
 "calendar.week.previous" = "Föregående vecka";
 
 /* Video card */
-"videocard.hint" = "Tryck för att visa video";
+"videocard.status.notwatched" = "Inte uppspelad";
+"videocard.status.partiallywatched" = "Delvist uppspelad";
+"videocard.status.completed" = "Uppspelad";
+"videocard.hint" = "Öppnar nytt fönster och spelar upp video";
+"videocard.duration.a11y" = "Speltid";
+
+/* Video carousel */
 "videocarousel.hint" = "Videovisare";
 "videocarousel.count" = "%d videoklipp tillgängliga";
 "videocarousel.next" = "Nästa videoklipp";

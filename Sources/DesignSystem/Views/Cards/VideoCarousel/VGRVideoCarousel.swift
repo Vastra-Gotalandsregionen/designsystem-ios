@@ -246,7 +246,8 @@ public struct VGRVideoCarousel: View {
                 subtitle: item.subtitle,
                 duration: item.duration,
                 circleColor: colors[index % colors.count],
-                watchStatus: watchStatus(for: item.id)
+                watchStatus: watchStatus(for: item.id),
+                publishDate: item.publishDate
             )
             .id(item.id)
             .containerRelativeFrame(.horizontal,
@@ -295,16 +296,17 @@ public struct VGRVideoCarousel: View {
         let title: String
         let subtitle: String
         let duration: String
+        let publishDate: Date?
     }
 
     let previewItems: [any VGRVideoCarouselItem] = [
-        PreviewVideoItem(id: "1", title: "Del 1:", subtitle: "alfa", duration: "3 minuter"),
-        PreviewVideoItem(id: "2", title: "Del 2:", subtitle: "beta", duration: "2 minuter"),
-        PreviewVideoItem(id: "3", title: "Del 3:", subtitle: "gamma", duration: "4 minuter"),
-        PreviewVideoItem(id: "4", title: "Del 4:", subtitle: "delta", duration: "5 minuter"),
-        PreviewVideoItem(id: "5", title: "Del 5:", subtitle: "epsilon kokosnötter", duration: "3 minuter"),
-        PreviewVideoItem(id: "6", title: "Del 6:", subtitle: "zeta", duration: "2 minuter"),
-        PreviewVideoItem(id: "7", title: "Del 7:", subtitle: "eta", duration: "3 minuter"),
+        PreviewVideoItem(id: "1", title: "Del 1:", subtitle: "alfa", duration: "3 minuter", publishDate: Calendar.current.date(byAdding: .day, value: -5, to: Date())),
+        PreviewVideoItem(id: "2", title: "Del 2:", subtitle: "beta", duration: "2 minuter", publishDate: Calendar.current.date(byAdding: .day, value: -20, to: Date())),
+        PreviewVideoItem(id: "3", title: "Del 3:", subtitle: "gamma", duration: "4 minuter", publishDate: Date()),
+        PreviewVideoItem(id: "4", title: "Del 4:", subtitle: "delta", duration: "5 minuter", publishDate: nil),
+        PreviewVideoItem(id: "5", title: "Del 5:", subtitle: "epsilon kokosnötter", duration: "3 minuter", publishDate: Calendar.current.date(byAdding: .day, value: -10, to: Date())),
+        PreviewVideoItem(id: "6", title: "Del 6:", subtitle: "zeta", duration: "2 minuter", publishDate: Calendar.current.date(byAdding: .day, value: -30, to: Date())),
+        PreviewVideoItem(id: "7", title: "Del 7:", subtitle: "eta", duration: "3 minuter", publishDate: Calendar.current.date(byAdding: .day, value: -1, to: Date())),
     ]
 
     return NavigationStack {

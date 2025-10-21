@@ -11,6 +11,18 @@ public enum VGRVideoWatchStatus: Equatable {
 
     /// The video was watched to completion (85% or more).
     case completed
+
+    /// Accessibility label describing the watch status.
+    public var accessibilityLabel: String {
+        switch self {
+        case .notWatched:
+            return "videocard.status.notwatched".localizedBundle
+        case .partiallyWatched:
+            return "videocard.status.partiallywatched".localizedBundle
+        case .completed:
+            return "videocard.status.completed".localizedBundle
+        }
+    }
 }
 
 /// A service for tracking and persisting watched video status.
