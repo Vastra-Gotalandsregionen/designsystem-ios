@@ -223,11 +223,11 @@ public struct VGRVideoCarousel: View {
         .accessibilityElement(children: .contain)
     }
 
-    /// Checks if a video has been watched.
+    /// Gets the watch status for a video.
     /// - Parameter videoId: The unique identifier of the video.
-    /// - Returns: `true` if the video has been watched, `false` otherwise.
-    private func isWatched(videoId: String) -> Bool {
-        return videoStatusService.isWatched(videoId: videoId)
+    /// - Returns: The watch status (notWatched, partiallyWatched, or completed).
+    private func watchStatus(for videoId: String) -> VGRVideoWatchStatus {
+        return videoStatusService.watchStatus(for: videoId)
     }
 
     /// Creates a tappable video card button for a carousel item.
@@ -246,7 +246,7 @@ public struct VGRVideoCarousel: View {
                 subtitle: item.subtitle,
                 duration: item.duration,
                 circleColor: colors[index % colors.count],
-                hasBeenViewed: isWatched(videoId: item.id)
+                watchStatus: watchStatus(for: item.id)
             )
             .id(item.id)
             .containerRelativeFrame(.horizontal,

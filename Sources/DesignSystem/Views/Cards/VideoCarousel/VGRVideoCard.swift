@@ -7,49 +7,49 @@ import SwiftUI
 /// video carousels and lists.
 public struct VGRVideoCard: View {
     @AccessibilityFocusState private var isInFocus: Bool
-
+    
     /// The main title displayed on the card.
     let title: String
-
+    
     /// An optional subtitle displayed below the title.
     var subtitle: String = ""
-
+    
     /// The duration of the video, typically formatted as a string (e.g., "3 minuter").
     let duration: String
-
+    
     /// The color of the circular play button background.
     var circleColor: Color = Color.Accent.yellowSurface
-
-    /// Indicates whether the video has been viewed, showing a checkmark when `true`.
-    var hasBeenViewed: Bool = false
-
+    
+    /// The watch status of the video.
+    var watchStatus: VGRVideoWatchStatus = .notWatched
+    
     /// Creates a new video card with the specified properties.
     /// - Parameters:
     ///   - title: The main title displayed on the card.
     ///   - subtitle: An optional subtitle displayed below the title. Defaults to an empty string.
     ///   - duration: The duration of the video, typically formatted as a string (e.g., "3 minuter").
     ///   - circleColor: The color of the circular play button background. Defaults to yellow.
-    ///   - hasBeenViewed: Indicates whether the video has been viewed. Defaults to `false`.
+    ///   - watchStatus: The watch status of the video. Defaults to `.notWatched`.
     public init(
         title: String,
         subtitle: String = "",
         duration: String,
         circleColor: Color = Color.Accent.yellowSurface,
-        hasBeenViewed: Bool = false
+        watchStatus: VGRVideoWatchStatus = .notWatched
     ) {
         self.title = title
         self.subtitle = subtitle
         self.duration = duration
         self.circleColor = circleColor
-        self.hasBeenViewed = hasBeenViewed
+        self.watchStatus = watchStatus
     }
-
+    
     /// Accessibility label combining title, subtitle, and duration.
     private var a11yLabel: String {
         let components = [title, subtitle].filter { !$0.isEmpty }
         return components.joined(separator: " ") + ", \(duration)"
     }
-
+    
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 12) {
@@ -57,7 +57,7 @@ public struct VGRVideoCard: View {
                     Circle()
                         .fill(circleColor)
                         .frame(width: 50, height: 50)
-
+                    
                     Image(systemName: "play")
                         .resizable()
                         .frame(width: 21, height: 21)
@@ -65,12 +65,12 @@ public struct VGRVideoCard: View {
                         .offset(x: 2, y: 0)
                 }
                 .accessibilityHidden(true)
-
+                
                 VStack(alignment: .leading, spacing: 0) {
                     Text(title)
                         .font(.title3Bold)
                         .isVisible(!title.isEmpty)
-
+                    
                     Text(subtitle)
                         .font(.title3Bold)
                         .lineLimit(2)
@@ -78,22 +78,34 @@ public struct VGRVideoCard: View {
                 }
             }
             .frame(maxHeight: .infinity, alignment: .top)
-
+            
             HStack {
                 HStack(spacing: 4) {
                     Image("readtime_video", bundle: .module)
                         .frame(width: 16, height: 16)
-
+                    
                     Text(duration)
                         .font(.footnoteRegular)
                 }
                 .foregroundStyle(Color.Neutral.textVariant)
                 .frame(maxWidth: .infinity, alignment: .leading)
-
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(Color.Accent.greenGraphic)
-                    .frame(width: 16, height: 16)
-                    .isVisible(hasBeenViewed)
+                
+                Group {
+                    switch watchStatus {
+                    case .notWatched:
+                        Image(systemName: "stop.circle.fill")
+                            .foregroundStyle(Color.Accent.brownGraphic)
+                            .frame(width: 16, height: 16)
+                    case .partiallyWatched:
+                        Image(systemName: "pause.circle.fill")
+                            .foregroundStyle(Color.Accent.orangeGraphic)
+                            .frame(width: 16, height: 16)
+                    case .completed:
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(Color.Accent.greenGraphic)
+                            .frame(width: 16, height: 16)
+                    }
+                }
             }
         }
         .padding(16)
@@ -108,7 +120,7 @@ public struct VGRVideoCard: View {
                     .strokeBorder(circleColor, style: StrokeStyle(lineWidth: 2))
             }
         }
-
+        
     }
 }
 
@@ -119,7 +131,7 @@ public struct VGRVideoCard: View {
 public struct VGRVideoCardButtonStyle: ButtonStyle {
     /// Creates a new video card button style.
     public init() {}
-
+    
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(1)
@@ -133,31 +145,36 @@ public struct VGRVideoCardButtonStyle: ButtonStyle {
         ScrollView {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
+                    // Not watched
                     VGRVideoCard(title: "Del 1:",
                                  subtitle: "Vad är psoriasis?",
-                                 duration: "3 minuter")
+                                 duration: "3 minuter",
+                                 watchStatus: .notWatched)
                     .frame(width: 192)
-
+                    
+                    // Partially watched
                     Button {
-
+                        
                     } label: {
-                        VGRVideoCard(title: "Del 6:",
-                                     subtitle: "När egenvård inte räcker",
+                        VGRVideoCard(title: "Del 2:",
+                                     subtitle: "Samsjuklighet",
                                      duration: "3 minuter",
                                      circleColor: Color.Accent.purpleSurface,
-                                     hasBeenViewed: true)
+                                     watchStatus: .partiallyWatched)
                         .frame(width: 192)
                     }
                     .buttonStyle(VGRVideoCardButtonStyle())
-
-                    VGRVideoCard(title: "Del 2:",
-                                 subtitle: "Samsjuklighet",
+                    
+                    // Completed 
+                    VGRVideoCard(title: "Del 3:",
+                                 subtitle: "När egenvård inte räcker",
                                  duration: "3 minuter",
-                                 circleColor: Color.Accent.purpleSurface)
+                                 circleColor: Color.Accent.cyanSurface,
+                                 watchStatus: .completed)
                     .frame(width: 192)
                 }
                 .fixedSize(horizontal: false, vertical: true)
-
+                
             }
             .contentMargins(.leading, 16)
             .contentMargins(.trailing, 16*12)

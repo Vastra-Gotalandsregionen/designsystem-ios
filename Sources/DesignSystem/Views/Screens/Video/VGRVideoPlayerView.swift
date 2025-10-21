@@ -7,6 +7,7 @@ import OSLog
 ///
 /// This view handles video playback with features including:
 /// - Automatic Swedish subtitle selection
+/// - Tracks if the user has started playback
 /// - Progress tracking at 85% completion
 /// - Error handling with user-friendly alerts
 /// - Accessibility announcements for playback completion
@@ -125,6 +126,8 @@ public struct VGRVideoPlayerView: View {
         let playerItem = AVPlayerItem(asset: asset)
 
         monitorPlayerItemStatus(playerItem)
+
+        VGRVideoStatusService.shared.markAsPartiallyWatched(videoId: videoId)
 
         Task {
             await selectSwedishSubtitles(for: asset, playerItem: playerItem)

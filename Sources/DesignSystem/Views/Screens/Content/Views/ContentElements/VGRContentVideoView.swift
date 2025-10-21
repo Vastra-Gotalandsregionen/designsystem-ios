@@ -14,8 +14,8 @@ public struct VGRContentVideoView: View {
 
     @State private var showVideoPlayer = false
 
-    private var isWatched: Bool {
-        return videoStatusService.isWatched(videoId: element.videoId)
+    private var watchStatus: VGRVideoWatchStatus {
+        return videoStatusService.watchStatus(for: element.videoId)
     }
 
     public var body: some View {
@@ -26,7 +26,7 @@ public struct VGRContentVideoView: View {
                 title: element.title,
                 subtitle: element.subtitle,
                 duration: element.readTime,
-                hasBeenViewed: isWatched
+                watchStatus: watchStatus
             )
             .padding(.horizontal, VGRSpacing.horizontal)
             .padding(.vertical, VGRSpacing.verticalSmall)
