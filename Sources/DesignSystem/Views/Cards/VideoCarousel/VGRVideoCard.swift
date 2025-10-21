@@ -55,10 +55,34 @@ public struct VGRVideoCard: View {
         self.publishDate = publishDate
     }
     
-    /// Accessibility label combining title, subtitle, and duration.
+    /// Accessibility label combining new status, type, title, subtitle, duration, and watch status.
+    /// Format: (Nytt) Videoklipp, Title, Subtitle, Duration, WatchStatus
     private var a11yLabel: String {
-        let components = [title, subtitle].filter { !$0.isEmpty }
-        return components.joined(separator: " ") + ", \(duration)"
+        var components: [String] = []
+
+        if isNew {
+            components.append("content.new.a11y".localizedBundle)
+        }
+
+        components.append("content.type.video".localizedBundle)
+
+        if !title.isEmpty {
+            components.append(title)
+        }
+        if !subtitle.isEmpty {
+            components.append(subtitle)
+        }
+
+        components.append("\("videocard.duration.a11y".localizedBundle) \(duration)")
+
+        components.append(watchStatus.accessibilityLabel)
+
+        return components.joined(separator: ", ")
+    }
+
+    /// Accessibility hint explaining what happens when tapped.
+    private var a11yHint: String {
+        return "videocard.hint".localizedBundle
     }
     
     public var body: some View {
@@ -87,7 +111,7 @@ public struct VGRVideoCard: View {
                                 .frame(width: 40, height: 32)
                                 .cornerRadius(5)
                             
-                            Text("Ny")
+                            Text("content.new".localizedBundle)
                                 .foregroundStyle(Color.Neutral.text)
                                 .fontWeight(.semibold)
                                 .dynamicTypeSize(.small ... .large)
@@ -144,6 +168,7 @@ public struct VGRVideoCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(a11yLabel)
+        .accessibilityHint(a11yHint)
         .overlay {
             if isInFocus {
                 RoundedRectangle(cornerRadius: 16)
