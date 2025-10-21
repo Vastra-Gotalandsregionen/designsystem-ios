@@ -30,9 +30,11 @@ struct VGRContentElementView: View {
                 case .list:
                     VGRContentListView(element: element)
 
+                case .video:
+                    VGRContentVideoView(element: element)
 
-                case .video, .internalVideoSelectorLink:
-                    /// TODO(EA): Implement support for video elements
+                case .internalVideoSelectorLink:
+                    /// TODO Implement support for video selector link elements
                     EmptyView()
 
                 case .faq:
@@ -188,7 +190,28 @@ struct VGRContentElementView: View {
                     )
                 )
 
+                // Video elements
+                VGRContentElementView(
+                    element: VGRContentElement(
+                        type: .video,
+                        title: "Del 1:",
+                        subtitle: "Vad är psoriasis?",
+                        readTime: "3 minuter",
+                        videoUrl: "https://player.vgregion.se/mobilapp1/smil:mc1/Y93sDHAABx5AnnK6V8uyEJ_iWRmspME7rM5UHSTvWcxFr/master.smil/playlist.m3u8",
+                        videoId: "preview-video-1"
+                    )
+                )
 
+                VGRContentElementView(
+                    element: VGRContentElement(
+                        type: .video,
+                        title: "Del 2:",
+                        subtitle: "Behandling och egenvård",
+                        readTime: "5 minuter",
+                        videoUrl: "https://player.vgregion.se/mobilapp1/smil:mc1/Hx5WiFEdNRwBinJhiUcqBn_bihwAfXDtaczHmBzJFgD46/master.smil/playlist.m3u8",
+                        videoId: "preview-video-2"
+                    )
+                )
             }
         }
         .background(Color.Elevation.background)
