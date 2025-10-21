@@ -22,7 +22,15 @@ public struct VGRVideoCard: View {
     
     /// The watch status of the video.
     var watchStatus: VGRVideoWatchStatus = .notWatched
-    
+
+    /// The publish date of the video. Used to determine if a "NEW" badge should be shown.
+    var publishDate: Date? = nil
+
+    /// Returns true if the video is new (published within the last 14 days).
+    private var isNew: Bool {
+        publishDate?.isWithinLast14Days ?? false
+    }
+
     /// Creates a new video card with the specified properties.
     /// - Parameters:
     ///   - title: The main title displayed on the card.
@@ -30,18 +38,21 @@ public struct VGRVideoCard: View {
     ///   - duration: The duration of the video, typically formatted as a string (e.g., "3 minuter").
     ///   - circleColor: The color of the circular play button background. Defaults to yellow.
     ///   - watchStatus: The watch status of the video. Defaults to `.notWatched`.
+    ///   - publishDate: The publish date of the video. Used to show a "NEW" badge if within 14 days.
     public init(
         title: String,
         subtitle: String = "",
         duration: String,
         circleColor: Color = Color.Accent.yellowSurface,
-        watchStatus: VGRVideoWatchStatus = .notWatched
+        watchStatus: VGRVideoWatchStatus = .notWatched,
+        publishDate: Date? = nil
     ) {
         self.title = title
         self.subtitle = subtitle
         self.duration = duration
         self.circleColor = circleColor
         self.watchStatus = watchStatus
+        self.publishDate = publishDate
     }
     
     /// Accessibility label combining title, subtitle, and duration.
@@ -53,18 +64,37 @@ public struct VGRVideoCard: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 12) {
-                ZStack(alignment: .center) {
-                    Circle()
-                        .fill(circleColor)
-                        .frame(width: 50, height: 50)
-                    
-                    Image(systemName: "play")
-                        .resizable()
-                        .frame(width: 21, height: 21)
-                        .foregroundStyle(Color.Neutral.text)
-                        .offset(x: 2, y: 0)
+                HStack {
+                    ZStack(alignment: .center) {
+                        Circle()
+                            .fill(circleColor)
+                            .frame(width: 50, height: 50)
+
+                        Image(systemName: "play")
+                            .resizable()
+                            .frame(width: 21, height: 21)
+                            .foregroundStyle(Color.Neutral.text)
+                            .offset(x: 2, y: 0)
+                    }
+                    .accessibilityHidden(true)
+
+                    Spacer()
+
+                    if isNew {
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.Primary.blueSurface)
+                                .frame(width: 40, height: 32)
+                                .cornerRadius(5)
+                            
+                            Text("Ny")
+                                .foregroundStyle(Color.Neutral.text)
+                                .fontWeight(.semibold)
+                                .dynamicTypeSize(.small ... .large)
+                        }
+                        .accessibilityHidden(true)
+                    }
                 }
-                .accessibilityHidden(true)
                 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(title)
@@ -160,7 +190,9 @@ public struct VGRVideoCardButtonStyle: ButtonStyle {
                                      subtitle: "Samsjuklighet",
                                      duration: "3 minuter",
                                      circleColor: Color.Accent.purpleSurface,
-                                     watchStatus: .partiallyWatched)
+                                     watchStatus: .partiallyWatched,
+                                     publishDate: Date()
+                        )
                         .frame(width: 192)
                     }
                     .buttonStyle(VGRVideoCardButtonStyle())

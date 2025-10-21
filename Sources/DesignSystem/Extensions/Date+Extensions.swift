@@ -171,6 +171,20 @@ public extension Date {
 
         return targetDate >= startDate && targetDate <= endDate
     }
+
+    /// Returns true if the date is within the last 14 days (inclusive of today) or in the future.
+    var isWithinLast14Days: Bool {
+        let calendar = Calendar.current
+        let now = Date()
+
+        guard let daysSince = calendar.dateComponents([.day], from: self, to: now).day else {
+            return false
+        }
+
+        // daysSince is positive if self is in the past, negative if in the future
+        // Show as "new" if: in the future OR within last 14 days
+        return daysSince <= 14
+    }
 }
 
 public extension Date {
