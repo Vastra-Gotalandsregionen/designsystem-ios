@@ -33,10 +33,12 @@ public struct VGRCardButton: View {
     }
 
     private var a11yLabel: String {
-        let isNewString = isNew ? "content.new".localizedBundle : ""
-        let contentTypeString = "content.type.text".localizedBundle
-        let contentReadTimeString = "content.text.duration".localizedBundle
-        return "\(isNewString) \(contentTypeString), \(title), \(subtitle) \(contentReadTimeString)"
+        var output: [String] = []
+        if isNew { output.append("content.new".localizedBundle) }
+        output.append("content.type.text".localizedBundle)
+        output.append(self.title)
+        if !self.subtitle.isEmpty { output.append(self.subtitle) }
+        return output.joined(separator: ", ")
     }
 
     public var body: some View {
