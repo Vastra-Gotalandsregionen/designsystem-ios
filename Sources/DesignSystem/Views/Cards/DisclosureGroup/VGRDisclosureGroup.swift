@@ -76,12 +76,7 @@ public struct VGRDisclosureGroup<Content: View>: View {
         DisclosureGroup(
             isExpanded: isExpanded,
             content: {
-                VStack(alignment: .leading, spacing: 8) {
-                    content
-                }
-                .padding(.top, 8)
-                .font(.subheadline)
-                .foregroundStyle(Color.Neutral.text)
+                content
             },
             label: {
                 HStack(alignment: .center, spacing: 12) {
@@ -94,19 +89,14 @@ public struct VGRDisclosureGroup<Content: View>: View {
                     }
 
                     Text(title)
-                        .font(.bodyMedium)
-                        .foregroundStyle(Color.Neutral.text)
-                        .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .multilineTextAlignment(.leading)
                 }
             }
         )
-        .foregroundStyle(Color.Neutral.text)
-        .padding(12)
         .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: 8))
-        .disclosureGroupStyle(VGRDisclosureStyle())
+        .disclosureGroupStyle(VGRDisclosureGroupStyle())
     }
 }
 
@@ -114,34 +104,36 @@ public struct VGRDisclosureGroup<Content: View>: View {
 
     @Previewable @State var isExpanded: Bool = false
 
-    VStack(spacing: 20) {
-        VGRDisclosureGroup(title: "Varför rekommenderas kontakt med vården?", icon: Image(systemName: "info.circle")) {
-            Text("När du anger värden i skattningen finns det svar som gör att du kommer att få detta meddelande.")
-            VStack(alignment: .leading, spacing: 4) {
-                Text("• Områden du angivit är något av följande: genitalier, ansikte, handflator, ytan mellan skinkorna, hårbotten, fotsulor.")
-                Text("• Utbredning är 5 handflator eller fler.")
+    ScrollView {
+        VStack(spacing: 20) {
+            VGRDisclosureGroup(title: "Varför rekommenderas kontakt med vården?", icon: Image(systemName: "info.circle")) {
+                Text("När du anger värden i skattningen finns det svar som gör att du kommer att få detta meddelande.")
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("• Områden du angivit är något av följande: genitalier, ansikte, handflator, ytan mellan skinkorna, hårbotten, fotsulor.")
+                    Text("• Utbredning är 5 handflator eller fler.")
+                }
+            }
+
+            VGRButton(label: "External trigger ") {
+                isExpanded.toggle()
+            }
+
+            VGRDisclosureGroup(
+                title: "External expansion",
+                isExpanded: $isExpanded
+            ) {
+                Text("När du anger värden i skattningen finns det svar som gör att du kommer att få detta meddelande.")
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("• Områden du angivit är något av följande: genitalier, ansikte, handflator, ytan mellan skinkorna, hårbotten, fotsulor.")
+                    Text("• Utbredning är 5 handflator eller fler.")
+                }
+            }
+
+            VGRDisclosureGroup(title: "Hello, world domination") {
+                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
             }
         }
-
-        VGRButton(label: "External trigger ") {
-            isExpanded.toggle()
-        }
-
-        VGRDisclosureGroup(
-            title: "External expansion",
-            isExpanded: $isExpanded
-        ) {
-            Text("När du anger värden i skattningen finns det svar som gör att du kommer att få detta meddelande.")
-            VStack(alignment: .leading, spacing: 4) {
-                Text("• Områden du angivit är något av följande: genitalier, ansikte, handflator, ytan mellan skinkorna, hårbotten, fotsulor.")
-                Text("• Utbredning är 5 handflator eller fler.")
-            }
-        }
-
-        VGRDisclosureGroup(title: "Hello, world domination") {
-            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
-        }
+        .padding()
     }
-    .padding()
     .background(Color.Primary.blueSurfaceMinimal)
 }
