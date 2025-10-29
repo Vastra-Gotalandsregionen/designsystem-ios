@@ -1,5 +1,4 @@
 import Foundation
-import Combine
 
 /// Represents the watch status of a video.
 public enum VGRVideoWatchStatus: Equatable {
@@ -48,16 +47,17 @@ public enum VGRVideoWatchStatus: Equatable {
 /// let status = VGRVideoStatusService.shared.watchStatus(for: "video-123")
 /// ```
 @MainActor
-public class VGRVideoStatusService: ObservableObject {
+@Observable
+public class VGRVideoStatusService {
 
     /// The shared singleton instance.
     public static let shared = VGRVideoStatusService()
 
     /// Published array of completed video IDs that views can observe.
-    @Published public private(set) var completedVideoIds: [String] = []
+    public private(set) var completedVideoIds: [String] = []
 
     /// Published array of partially watched video IDs that views can observe.
-    @Published public private(set) var partiallyWatchedVideoIds: [String] = []
+    public private(set) var partiallyWatchedVideoIds: [String] = []
 
     /// The UserDefaults key used to persist completed videos.
     private var completedVideosStorageKey: String
@@ -99,18 +99,6 @@ public class VGRVideoStatusService: ObservableObject {
         // Load initial data synchronously
         self.completedVideoIds = userDefaults.stringArray(forKey: self.completedVideosStorageKey) ?? []
         self.partiallyWatchedVideoIds = userDefaults.stringArray(forKey: self.partiallyWatchedVideosStorageKey) ?? []
-
-        // Observe UserDefaults changes
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(userDefaultsDidChange),
-            name: UserDefaults.didChangeNotification,
-            object: nil
-        )
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
 
     /// Configures the shared instance with custom UserDefaults keys.
@@ -211,11 +199,6 @@ public class VGRVideoStatusService: ObservableObject {
     }
 
     // MARK: - Private Methods
-
-    @objc private func userDefaultsDidChange() {
-        completedVideoIds = userDefaults.stringArray(forKey: completedVideosStorageKey) ?? []
-        partiallyWatchedVideoIds = userDefaults.stringArray(forKey: partiallyWatchedVideosStorageKey) ?? []
-    }
 
     private func saveCompletedVideos() {
         userDefaults.set(completedVideoIds, forKey: completedVideosStorageKey)

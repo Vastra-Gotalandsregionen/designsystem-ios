@@ -1,6 +1,5 @@
 import SwiftUI
 import AVKit
-import Combine
 import OSLog
 
 /// A full-screen video player view for playing videos.
@@ -21,7 +20,7 @@ public struct VGRVideoPlayerView: View {
     @State private var player: AVPlayer?
     @State private var timeObserver: Any?
     @State private var hasReachedEightyFivePercent = false
-    @State private var cancellables: Set<AnyCancellable> = []
+    @State private var statusObserverTask: Task<Void, Never>?
     @State private var showError = false
     @State private var errorMessage = ""
 
@@ -148,16 +147,26 @@ public struct VGRVideoPlayerView: View {
     }
 
     private func monitorPlayerItemStatus(_ playerItem: AVPlayerItem) {
-        playerItem.publisher(for: \.status)
-            .receive(on: DispatchQueue.main)
-            .sink { status in
+        statusObserverTask = Task { @MainActor in
+            let statusStream = AsyncStream<AVPlayerItem.Status> { continuation in
+                let observer = playerItem.observe(\.status, options: [.new]) { _, _ in
+                    continuation.yield(playerItem.status)
+                }
+
+                continuation.onTermination = { _ in
+                    observer.invalidate()
+                }
+            }
+
+            for await status in statusStream {
                 if status == .failed {
                     self.errorMessage = "videoplayer.error.loadfailed".localizedBundle
                     self.showError = true
                     logger.error("Video player item failed to load")
+                    break
                 }
             }
-            .store(in: &cancellables)
+        }
     }
 
     private func selectSwedishSubtitles(for asset: AVAsset, playerItem: AVPlayerItem) async {
@@ -188,8 +197,9 @@ public struct VGRVideoPlayerView: View {
             timeObserver = nil
             hasReachedEightyFivePercent = false
         }
+        statusObserverTask?.cancel()
+        statusObserverTask = nil
         player = nil
-        cancellables.removeAll()
     }
 
     private func addPlaybackObserver() async throws {

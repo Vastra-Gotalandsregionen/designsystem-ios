@@ -6,7 +6,7 @@ import SwiftUI
 public struct VGRContentVideoView: View {
     public let element: VGRContentElement
 
-    @ObservedObject private var videoStatusService = VGRVideoStatusService.shared
+    private var videoStatusService = VGRVideoStatusService.shared
 
     public init(element: VGRContentElement) {
         self.element = element
