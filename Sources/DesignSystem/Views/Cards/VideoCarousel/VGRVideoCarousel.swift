@@ -18,7 +18,7 @@ public struct VGRVideoCarousel: View {
     /// Closure called when a carousel item is tapped, passing the tapped item.
     let onItemTapped: (any VGRVideoCarouselItem) -> Void
 
-    @ObservedObject private var videoStatusService = VGRVideoStatusService.shared
+    private var videoStatusService = VGRVideoStatusService.shared
 
     /// Creates a new video carousel with the specified properties.
     /// - Parameters:
