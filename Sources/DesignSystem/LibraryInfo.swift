@@ -5,5 +5,5 @@ import Foundation
 /// Run: ./update-version.sh to update
 public enum LibraryInfo {
     /// The current version of the DesignSystem library
-    public static let version = "0.34.1"
+    public static let version = "0.34.2"
 }
