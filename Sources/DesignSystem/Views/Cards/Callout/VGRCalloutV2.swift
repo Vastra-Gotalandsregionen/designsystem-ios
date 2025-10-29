@@ -138,9 +138,10 @@ public struct VGRCalloutV2<Content: View>: View {
                         Text("Blablablablablbalbalb")
                             .foregroundColor(Color.Neutral.text)
                     }
-                    .disclosureGroupStyle(VGRDisclosureStyle())
-                    .padding(16)
-                    
+                    .disclosureGroupStyle(VGRDisclosureGroupStyle())
+
+                    VGRDivider()
+
                     DisclosureGroup("Avancerade inställningar", isExpanded: $expanded2) {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("• Blabla **1**")
@@ -148,8 +149,7 @@ public struct VGRCalloutV2<Content: View>: View {
                         }
                         .foregroundColor(Color.Neutral.text)
                     }
-                    .disclosureGroupStyle(VGRDisclosureStyle())
-                    .padding(16)
+                    .disclosureGroupStyle(VGRDisclosureGroupStyle())
                 }
                 .background(Color.Elevation.elevation1)
                 .clipShape(RoundedRectangle(cornerRadius: 8))

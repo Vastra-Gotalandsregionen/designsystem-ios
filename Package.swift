@@ -36,5 +36,3 @@ let package = Package(
         ),
     ]
 )
-
-// https://github.com/airbnb/lottie-spm.git
