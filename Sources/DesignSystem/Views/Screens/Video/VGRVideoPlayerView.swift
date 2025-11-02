@@ -1,5 +1,6 @@
 import SwiftUI
 import AVKit
+import AVFoundation
 import OSLog
 
 /// A full-screen video player view for playing videos.
@@ -16,6 +17,7 @@ public struct VGRVideoPlayerView: View {
     public let title: String
     public let videoUrl: String
     public let videoId: String
+    public var onCompletionThresholdReached: ((String) -> Void)? = nil
 
     @State private var player: AVPlayer?
     @State private var timeObserver: Any?
@@ -34,11 +36,14 @@ public struct VGRVideoPlayerView: View {
     }
 
     /// Creates a new video player view with the specified content element.
-    /// - Parameter element: The VGRContentElement containing video information.
-    public init(element: VGRContentElement) {
+    /// - Parameters:
+    ///   - element: The VGRContentElement containing video information.
+    ///   - onCompletionThresholdReached: Optional callback triggered when video reaches 85% completion.
+    public init(element: VGRContentElement, onCompletionThresholdReached: ((String) -> Void)? = nil) {
         self.title = element.title
         self.videoUrl = element.videoUrl
         self.videoId = element.videoId
+        self.onCompletionThresholdReached = onCompletionThresholdReached
     }
 
     /// Creates a new video player view with direct parameters.
@@ -46,10 +51,12 @@ public struct VGRVideoPlayerView: View {
     ///   - title: The title of the video
     ///   - videoUrl: The URL string of the video
     ///   - videoId: The unique identifier for the video
-    public init(title: String, videoUrl: String, videoId: String) {
+    ///   - onCompletionThresholdReached: Optional callback triggered when video reaches 85% completion.
+    public init(title: String, videoUrl: String, videoId: String, onCompletionThresholdReached: ((String) -> Void)? = nil) {
         self.title = title
         self.videoUrl = videoUrl
         self.videoId = videoId
+        self.onCompletionThresholdReached = onCompletionThresholdReached
     }
 
     public var body: some View {
@@ -57,7 +64,6 @@ public struct VGRVideoPlayerView: View {
             if let url = videoURL {
                 VideoPlayer(player: player)
                     .onAppear {
-                        logger.info("Video player appeared - Title: \(self.title), URL: \(self.videoUrl), ID: \(self.videoId)")
                         setupVideoPlayer(with: url)
                     }
                     .onDisappear {
@@ -120,7 +126,21 @@ public struct VGRVideoPlayerView: View {
         }
     }
 
+    private func configureAudioSession() {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playback, mode: .moviePlayback)
+            try audioSession.setActive(true)
+            logger.info("Audio session configured for playback (ignores silent mode)")
+        } catch {
+            logger.error("Failed to configure audio session: \(error.localizedDescription)")
+        }
+    }
+
     private func setupVideoPlayer(with url: URL) {
+        // Configure audio session to play even when device is in silent mode
+        configureAudioSession()
+
         let asset = AVAsset(url: url)
         let playerItem = AVPlayerItem(asset: asset)
 
@@ -200,6 +220,19 @@ public struct VGRVideoPlayerView: View {
         statusObserverTask?.cancel()
         statusObserverTask = nil
         player = nil
+
+        // Deactivate audio session when done
+        deactivateAudioSession()
+    }
+
+    private func deactivateAudioSession() {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+            logger.info("Audio session deactivated")
+        } catch {
+            logger.error("Failed to deactivate audio session: \(error.localizedDescription)")
+        }
     }
 
     private func addPlaybackObserver() async throws {
@@ -221,6 +254,9 @@ public struct VGRVideoPlayerView: View {
 
                     // Mark video as watched using the service
                     VGRVideoStatusService.shared.markAsWatched(videoId: self.videoId)
+
+                    // Trigger completion callback for analytics/tracking
+                    self.onCompletionThresholdReached?(self.videoId)
 
                     if let observer = self.timeObserver {
                         self.player?.removeTimeObserver(observer)
