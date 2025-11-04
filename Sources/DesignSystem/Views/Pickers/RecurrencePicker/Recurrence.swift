@@ -107,25 +107,35 @@ public struct Recurrence: Codable, Equatable, Hashable {
             }
         }
 
-        var failSafe: Int = 10
+        var failSafe: Int = 10000
 
-        while calendar.compare(currentDate, to: interval.end, toGranularity: .day) == .orderedAscending ||
-                calendar.compare(currentDate, to: interval.end, toGranularity: .day) == .orderedSame {
+        while true {
             if failSafe <= 0 { break }
+            failSafe -= 1
 
             switch self.period {
                 case .day:
                     // Every X:th day
+                    // Check if currentDate is beyond the interval before processing
+                    if calendar.compare(currentDate, to: interval.end, toGranularity: .day) == .orderedDescending {
+                        break
+                    }
+
                     addDate(currentDate)
 
-                    guard let nextDate = calendar.date(byAdding: .day, value: self.frequency, to: currentDate) else { failSafe-=1; break }
+                    guard let nextDate = calendar.date(byAdding: .day, value: self.frequency, to: currentDate) else { break }
                     currentDate = nextDate
 
                 case .week:
                     // Every X:th week on [Y] days
-                    guard let weekdays = self.weekdays else { failSafe-=1; break }
+                    guard let weekdays = self.weekdays else { break }
 
                     let currentWeek = DateInterval(start: currentDate.startOfWeek.startOfDay, end: currentDate.endOfWeek.endOfDay)
+
+                    // Check if the start of the current week is beyond the interval
+                    if calendar.compare(currentWeek.start, to: interval.end, toGranularity: .day) == .orderedDescending {
+                        break
+                    }
 
                     let weekdayInts = weekdays.map { Int($0.rawValue) }
                     let days = calendar.weekdays(in: currentWeek, matching: weekdayInts)
@@ -133,7 +143,7 @@ public struct Recurrence: Codable, Equatable, Hashable {
 
                     guard let nextDate = calendar.date(byAdding: .weekOfYear,
                                                        value: self.frequency,
-                                                       to: currentDate) else { failSafe-=1; break }
+                                                       to: currentDate) else { break }
                     currentDate = nextDate
 
                 case .month:
@@ -143,11 +153,16 @@ public struct Recurrence: Codable, Equatable, Hashable {
                         dayIndex = dateInterval.start.dayInMonth
                     }
 
-                    guard let date = calendar.dateWithSpecificDay(from: currentDate, dayIndex: dayIndex) else { failSafe-=1; break }
+                    guard let date = calendar.dateWithSpecificDay(from: currentDate, dayIndex: dayIndex) else { break }
+
+                    // Check if the calculated date is beyond the interval before adding
+                    if calendar.compare(date, to: interval.end, toGranularity: .day) == .orderedDescending {
+                        break
+                    }
 
                     addDate(date)
 
-                    guard let nextDate = calendar.date(byAdding: .month, value: self.frequency, to: currentDate) else { failSafe-=1; break }
+                    guard let nextDate = calendar.date(byAdding: .month, value: self.frequency, to: currentDate) else { break }
                     currentDate = nextDate
             }
         }
