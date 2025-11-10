@@ -9,6 +9,7 @@
 "general.on" = "På";
 "general.off" = "Av";
 "general.button.done" = "Klar";
+"general.button.ok" = "OK";
 
 /* Toggle */
 "toggle.a11y.hint" = "Dubbeltryck för att slå";
@@ -161,3 +162,9 @@
 "survey.loading" = "Laddar…";
 "survey.reciept.title" = "Tack för din feedback!";
 "survey.reciept.text" = "Dina svar har skickats in.";
+
+/* VideoPlayer */
+"videoplayer.error.title" = "Videoklippet går inte att spela upp";
+"videoplayer.error.loadfailed" = "Det går tyvärr inte att spela upp videoklippet just nu. Kontrollera att du har internetuppkoppling eller försök igen senare.";
+
+
