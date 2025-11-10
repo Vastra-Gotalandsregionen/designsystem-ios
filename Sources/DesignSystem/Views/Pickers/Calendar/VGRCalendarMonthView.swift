@@ -118,9 +118,13 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
         return dataAccessibilityLabel(month)
     }
 
+    var monthLabel: String {
+        return month.idx.date.formatted(.dateTime.year().month(.wide)).capitalized
+    }
+
     public var body: some View {
         VStack(spacing: 8) {
-            Text(month.idx.date.formatted(.dateTime.year().month(.wide)))
+            Text(monthLabel)
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundStyle(Color.Neutral.text)
@@ -182,9 +186,9 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
     NavigationStack {
         ScrollView {
             VGRCalendarMonthView(month: firstMonth,
-                              today: today,
-                              selectedIndex: $selectedIndex,
-                              data: calendarData) { index in
+                                 today: today,
+                                 selectedIndex: $selectedIndex,
+                                 data: calendarData) { index in
 
                 print("User tapped day: \(index.id)")
 
@@ -194,6 +198,7 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
                                current: current,
                                selected: selected)
             }
+            .padding(16)
         }
         .background(Color.Elevation.background)
         .navigationTitle("Calendar")
