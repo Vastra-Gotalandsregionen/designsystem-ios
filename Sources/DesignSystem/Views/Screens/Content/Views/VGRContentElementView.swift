@@ -30,6 +30,9 @@ struct VGRContentElementView: View {
                 case .list:
                     VGRContentListView(element: element)
 
+                case .ordered:
+                    VGRContentListView(element: element, isOrdered: true)
+
                 case .video:
                     VGRContentVideoView(element: element)
 

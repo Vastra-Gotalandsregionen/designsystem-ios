@@ -19,6 +19,7 @@ struct VGRContentLinkGroup: View {
             ForEach(Array(element.links.enumerated()), id: \.offset) { index, link in
                 VGRDivider()
                     .isVisible(index != 0)
+                    .accessibilityHidden(true)
 
                 if link.type == .webviewLink {
                     NavigationLink(value: WebViewTarget(link.subtitle, link.url)) {
@@ -26,6 +27,7 @@ struct VGRContentLinkGroup: View {
                     }
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("\("content.link.web".localized): \(link.text) \(link.subtitle)")
+                    .accessibilityAddTraits(.isLink)
 
                 } else {
 
@@ -34,6 +36,7 @@ struct VGRContentLinkGroup: View {
                     }
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("\("content.link.external".localized): \(link.text) \(link.subtitle)")
+                    .accessibilityAddTraits(.isLink)
                 }
             }
         }
@@ -41,6 +44,7 @@ struct VGRContentLinkGroup: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .padding(.horizontal, VGRSpacing.horizontal)
         .padding(.bottom, VGRSpacing.verticalMedium)
+        .accessibilityElement(children: .contain)
     }
 
     private struct LinkBody: View {

@@ -33,6 +33,8 @@ struct VGRContentLinkView: View {
             .foregroundStyle(Color.Primary.action)
             .padding(.horizontal, VGRSpacing.horizontalLink)
             .padding(.bottom, VGRSpacing.verticalXLarge)
+            .accessibilityAddTraits(.isLink)
+
         } else {
             Text("Invalid link \"\(element.text)\"")
                 .multilineTextAlignment(.leading)
@@ -40,6 +42,7 @@ struct VGRContentLinkView: View {
                 .foregroundStyle(Color.Primary.action)
                 .padding(.horizontal, VGRSpacing.horizontalLink)
                 .padding(.bottom, VGRSpacing.verticalXLarge)
+                .accessibilityAddTraits(.isStaticText)
         }
     }
 }

@@ -21,6 +21,7 @@ struct VGRContentInternalLinkView: View {
                 .padding(.horizontal, VGRSpacing.horizontal)
             }
             .buttonStyle(VGRCardButtonStyle())
+            .accessibilityAddTraits(.isLink)
         }
     }
 }

@@ -14,6 +14,9 @@ struct VGRContentImageView: View {
         Image(imageURL, bundle: imageURL.hasPrefix("placeholder") ? .module : .main)
     }
 
+    private var crop: [VGREdge] { element.crop }
+    private var cropRadius: CGFloat { CGFloat(element.cropRadius) }
+
     var body: some View {
         image
             .resizable()
@@ -21,14 +24,15 @@ struct VGRContentImageView: View {
             .frame(maxHeight: imageHeight, alignment: .center)
             .clipShape(
                 .rect(
-                    topLeadingRadius: CGFloat(element.crop.contains(.topLeading) ? element.cropRadius : 0),
-                    bottomLeadingRadius: CGFloat(element.crop.contains(.bottomLeading) ? element.cropRadius : 0),
-                    bottomTrailingRadius: CGFloat(element.crop.contains(.bottomTrailing) ? element.cropRadius : 0),
-                    topTrailingRadius: CGFloat(element.crop.contains(.topTrailing) ? element.cropRadius : 0),
+                    topLeadingRadius: crop.contains(.topLeading) ? cropRadius : 0,
+                    bottomLeadingRadius: crop.contains(.bottomLeading) ? cropRadius : 0,
+                    bottomTrailingRadius: crop.contains(.bottomTrailing) ? cropRadius : 0,
+                    topTrailingRadius: crop.contains(.topTrailing) ? cropRadius : 0,
                 )
             )
             .padding(.bottom, VGRSpacing.verticalLarge)
             .accessibilityHidden(true)
+            .accessibilityAddTraits(.isImage)
     }
 }
 
@@ -42,5 +46,5 @@ struct VGRContentImageView: View {
             )
         )
     }
-    .background(Color.gray)
+    .background(Color.Elevation.background)
 }

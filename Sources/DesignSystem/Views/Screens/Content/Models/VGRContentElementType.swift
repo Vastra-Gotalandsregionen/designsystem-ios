@@ -50,6 +50,9 @@ public enum VGRContentElementType: String, Codable {
     /// List element is used for bulleted lists, it should have the `list` property set
     case list
 
+    /// Ordered element is a list where the items are presented in a numbered/ordered fashion
+    case ordered
+
     /// FAQ element is used for question and answer sections. It expects the `question` and  `answer` properties to be set.
     /// It should render using a disclosure group either as a standalone element or integrated into `VGRContentScreen`
     case faq
