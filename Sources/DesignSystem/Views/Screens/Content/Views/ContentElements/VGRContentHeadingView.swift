@@ -13,6 +13,7 @@ struct VGRContentHeadingView: View {
                     .frame(maxWidth: iconWidth)
                     .foregroundColor(Color.Neutral.text)
                     .accessibilityHidden(true)
+
                 Text(element.date)
                     .font(.footnote)
                     .multilineTextAlignment(.leading)
@@ -35,6 +36,7 @@ struct VGRContentHeadingView: View {
         }
         .padding(.horizontal, VGRSpacing.horizontal)
         .padding(.bottom, VGRSpacing.verticalMedium)
+        .accessibilityAddTraits(.isStaticText)
     }
 }
 

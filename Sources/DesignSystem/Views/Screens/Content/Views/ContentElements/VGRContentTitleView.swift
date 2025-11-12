@@ -9,8 +9,8 @@ struct VGRContentTitleView: View {
             .fontWeight(titleWeight)
             .padding(.horizontal, VGRSpacing.horizontal)
             .padding(.bottom, bottomPadding)
-            .accessibilityAddTraits(.isHeader)
             .foregroundColor(Color.Neutral.text)
+            .accessibilityAddTraits(.isHeader)
     }
     
     private var titleFont: Font {

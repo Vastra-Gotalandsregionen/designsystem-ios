@@ -81,9 +81,11 @@ public struct VGRVideoPlayerView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(title.isEmpty ? "videoplayer.title.default".localizedBundle : title)
-        .edgesIgnoringSafeArea(.bottom)
+        .ignoresSafeArea(edges:[.leading, .trailing, .bottom])
         .background(Color.Elevation.background)
-        .alert("videoplayer.error.title".localizedBundle, isPresented: $showError, actions: {
+        .alert("videoplayer.error.title".localizedBundle,
+               isPresented: $showError,
+               actions: {
             Button("general.button.ok".localizedBundle, role: .cancel) {
                 dismiss()
             }
@@ -105,14 +107,17 @@ public struct VGRVideoPlayerView: View {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 48))
                 .foregroundStyle(Color.Status.errorText)
+                .accessibilityHidden(true)
 
             Text(message)
                 .font(.bodyRegular)
                 .foregroundStyle(Color.Status.errorText)
                 .multilineTextAlignment(.center)
+                .accessibilityAddTraits(.isStaticText)
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityElement(children: .combine)
     }
 
     private func handleVideoEnded() {
@@ -138,10 +143,10 @@ public struct VGRVideoPlayerView: View {
     }
 
     private func setupVideoPlayer(with url: URL) {
-        // Configure audio session to play even when device is in silent mode
+        /// Configure audio session to play even when device is in silent mode
         configureAudioSession()
 
-        let asset = AVAsset(url: url)
+        let asset = AVURLAsset(url: url)
         let playerItem = AVPlayerItem(asset: asset)
 
         monitorPlayerItemStatus(playerItem)

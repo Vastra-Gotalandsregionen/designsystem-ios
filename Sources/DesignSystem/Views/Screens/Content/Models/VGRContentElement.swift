@@ -21,7 +21,7 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
     public let crop: [VGREdge]
     public let cropRadius: Int
 
-    /// List property, used in conjuction with elementType `.list`
+    /// List property, used in conjuction with elementType `.list` or `.ordered`
     public let list: [String]
 
     /// Tag property, used to filter out elements based on tags

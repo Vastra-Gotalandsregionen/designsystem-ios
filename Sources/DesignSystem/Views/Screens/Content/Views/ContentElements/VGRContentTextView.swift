@@ -9,9 +9,9 @@ struct VGRContentTextView: View {
             .fontWeight(textWeight)
             .padding(.horizontal, VGRSpacing.horizontal)
             .padding(.bottom, VGRSpacing.verticalXLarge)
-            .accessibilityAddTraits(.isStaticText)
             .foregroundColor(Color.Neutral.text)
             .accessibilityTextContentType(.narrative)
+            .accessibilityAddTraits(.isStaticText)
     }
 
     private var textFont: Font {

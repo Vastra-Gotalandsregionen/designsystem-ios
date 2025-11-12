@@ -31,6 +31,7 @@ public struct VGRContentVideoView: View {
             )
             .padding(.horizontal, VGRSpacing.horizontal)
             .padding(.vertical, VGRSpacing.verticalSmall)
+            .accessibilityAddTraits(.isLink)
         }
         .buttonStyle(VGRVideoCardButtonStyle())
         .sheet(isPresented: $showVideoPlayer) {
