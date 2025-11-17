@@ -64,8 +64,7 @@ struct VGRBodyPartSelectionView: View {
                     }
 
                 ForEach(Array(children), id: \.id) { child in
-                    Divider()
-                        .background(Color.Neutral.divider)
+                    VGRDivider()
 
                     Item(part: child, isSelected: localSelection.contains(child.id))
                         .padding(.leading, 32)
