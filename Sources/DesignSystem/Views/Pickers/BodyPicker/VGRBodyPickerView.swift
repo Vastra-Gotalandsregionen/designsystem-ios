@@ -16,10 +16,14 @@ public struct VGRBodyPickerView: View {
     var strokeWidth: CGFloat = 1
     var strokeColorSelection: Color = Color.black
 
-    @State private var orientationString: String?
+    @State private var selectedOrientation: VGRBodyOrientation? = .front
 
-    var orientation: VGRBodyOrientation {
-        return orientationString == "bodypicker.front".localizedBundle ? .front : .back
+    /// A non-optional binding for VGRBodySelectionView, defaulting to .front if nil
+    private var orientationBinding: Binding<VGRBodyOrientation> {
+        Binding(
+            get: { selectedOrientation ?? .front },
+            set: { selectedOrientation = $0 }
+        )
     }
 
     public init(selectedParts: Binding<Set<String>>) {
@@ -29,19 +33,45 @@ public struct VGRBodyPickerView: View {
     public var body: some View {
         VStack {
             VGRSegmentedPicker(
-                items: ["bodypicker.front".localizedBundle,
-                        "bodypicker.back".localizedBundle],
-                selectedItem: $orientationString
+                items: [VGRBodyOrientation.front, VGRBodyOrientation.back],
+                selectedItem: $selectedOrientation,
+                displayText: { orientation in
+                    "bodypicker.\(orientation.rawValue)".localizedBundle
+                },
+                accessibilityId: { orientation in
+                    "bodypicker.\(orientation.rawValue)".localizedBundle
+                }
             )
 
             HStack(alignment: .center) {
-                VGRBodySelectionView(orientation: orientation,
+                VGRBodySelectionView(orientation: orientationBinding,
                                      selectedParts: $selectedParts,
                                      fillColor: fillColor,
                                      fillColorSelection: fillColorSelection,
                                      strokeColor: strokeColor,
                                      strokeWidth: strokeWidth,
                                      strokeColorSelection: strokeColorSelection)
+                .onChange(of: selectedParts) { oldValue, newValue in
+                    let changes = newValue.subtracting(oldValue)
+
+                    /// If the change is a single body part
+                    if changes.count == 1,
+                       let first = changes.first,
+                       let currentOrientation = selectedOrientation {
+
+                        /// Check if the newly selected part is only visible on the opposite orientation
+                        if let partData = VGRBodyPartData.parts(matching: [first]).first {
+                            let availableOrientations = Set(partData.visualparts.keys)
+
+                            /// If part is only visible on one orientation and it's not the current one, switch
+                            if availableOrientations.count == 1,
+                               let onlyOrientation = availableOrientations.first,
+                               onlyOrientation != currentOrientation {
+                                selectedOrientation = onlyOrientation
+                            }
+                        }
+                    }
+                }
             }
             .padding(.top, 32)
         }

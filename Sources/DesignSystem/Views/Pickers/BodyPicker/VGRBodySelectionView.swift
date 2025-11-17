@@ -9,8 +9,7 @@ import SwiftUI
 /// Use `orientation` and `selectedParts` to configure the visible body layout.
 struct VGRBodySelectionView: View {
 
-    var orientation: VGRBodyOrientation = .front
-
+    @Binding var orientation: VGRBodyOrientation
     @Binding var selectedParts: Set<String>
 
     /// drawableSelectedParts returns the VGRBodyParts that can be drawn using the
@@ -163,6 +162,8 @@ struct VGRBodySelectionView: View {
 
                 /// Add the updated selection
                 selectedParts.formUnion(selection)
+
+                
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
@@ -171,11 +172,13 @@ struct VGRBodySelectionView: View {
 }
 
 #Preview {
+    @Previewable @State var selectedOrientation: VGRBodyOrientation = .front
     @Previewable @State var selectedBodyParts: Set<String> = ["left.upper.leg"]
 
     NavigationStack {
         ScrollView {
-            VGRBodySelectionView(orientation: .front, selectedParts: $selectedBodyParts)
+            VGRBodySelectionView(orientation: $selectedOrientation,
+                                 selectedParts: $selectedBodyParts)
         }
         .frame(maxWidth: .infinity)
         .background(.cyan)
