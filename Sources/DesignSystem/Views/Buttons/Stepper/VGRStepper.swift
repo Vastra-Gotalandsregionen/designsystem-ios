@@ -3,53 +3,57 @@ import SwiftUI
 /// En återanvändbar stepper-komponent som låter användaren öka eller minska ett numeriskt värde.
 /// Stödjer valfri feedback och långtryck med accelererande upprepning.
 public struct VGRStepper : View {
-    
+
     @State private var repeatTimer: Timer?
     @State private var accelerationStep: Int = 0
-    
+
     /// En bindning till det numeriska värdet som ska justeras.
     @Binding var value: Double
-    
+
     /// Stegvärdet som ökar eller minskar värdet.
     let step: Double
+
     /// Tillåtet spann för värdet.
     let range: ClosedRange<Double>
+
     /// Enhetstext som visas efter värdet.
     var unit: String = ""
+
     /// Om långtryck med accelererande upprepning är aktiverat.
     let isRepeatOnHoldEnabled: Bool
+
     /// Tillgänglighetsenhet som läses upp av VoiceOver.
     var accessibilityUnit: String = ""
-    
+
     var activeColor: Color = Color.Primary.action
     var inactiveColor: Color = Color.Primary.action.opacity(0.1)
-    
+
     /// Ökar det aktuella värdet med stegvärdet.
     private func increase() {
         if self.value < range.upperBound {
             self.value = self.value + self.step
         }
     }
-    
+
     /// Minskar det aktuella värdet med stegvärdet.
     private func decrease() {
         if self.value > range.lowerBound {
             self.value -= self.step
         }
     }
-    
+
     private var canIncrease: Bool {
         self.value < range.upperBound
     }
-    
+
     private var canDecrease: Bool {
         self.value > range.lowerBound
     }
-    
+
     private var a11ylabel: String {
         return "\(self.value.formatted()) \(self.accessibilityUnit)"
     }
-    
+
     /// Skapar en ny instans av `VGRStepper`.
     /// - Parameters:
     ///   - value: En bindning till det numeriska värdet som ska justeras.
@@ -66,7 +70,7 @@ public struct VGRStepper : View {
         self.isRepeatOnHoldEnabled = isRepeatOnHoldEnabled
         self.accessibilityUnit = accessibilityUnit
     }
-    
+
     /// Innehåller visuell representation av stepper-komponenten.
     public var body: some View {
         HStack {
@@ -98,7 +102,7 @@ public struct VGRStepper : View {
                     stopRepeating()
                 }
             })
-            
+
             Text("\(value.formatted()) \(unit)")
                 .font(.body)
                 .fontWeight(.bold)
@@ -107,7 +111,7 @@ public struct VGRStepper : View {
                 .foregroundStyle(Color.Neutral.text)
                 .contentTransition(.numericText(value: value))
                 .animation(.default, value: value)
-            
+
             Button {
                 increase()
             } label: {
@@ -146,16 +150,16 @@ public struct VGRStepper : View {
         .accessibilityLabel(a11ylabel)
         .accessibilityAdjustableAction({ direction in
             switch direction {
-            case .decrement:
-                decrease()
-            case .increment:
-                increase()
-            @unknown default:
-                print("n/a")
+                case .decrement:
+                    decrease()
+                case .increment:
+                    increase()
+                @unknown default:
+                    print("n/a")
             }
         })
     }
-    
+
     /// Försöker öka värdet om det är möjligt.
     @MainActor
     private func tryIncrease() {
@@ -163,7 +167,7 @@ public struct VGRStepper : View {
             increase()
         }
     }
-    
+
     /// Försöker minska värdet om det är möjligt.
     @MainActor
     private func tryDecrease() {
@@ -171,7 +175,7 @@ public struct VGRStepper : View {
             decrease()
         }
     }
-    
+
     /// Startar upprepning av en åtgärd med accelererande intervall.
     /// - Parameters:
     ///   - action: Åtgärden som ska upprepas.
@@ -181,13 +185,13 @@ public struct VGRStepper : View {
         if isFirst {
             accelerationStep = 0
         }
-        
+
         stopRepeating()
-        
+
         let interval = max(0.05, 0.3 * pow(0.85, Double(accelerationStep)))
-        
+
         repeatTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [self] _ in
-            
+
             Task { @MainActor in
                 if self.accelerationStep == 0 {
                     Haptics.lightImpact()
@@ -198,7 +202,7 @@ public struct VGRStepper : View {
             }
         }
     }
-    
+
     /// Stoppar upprepning av åtgärden.
     private func stopRepeating() {
         repeatTimer?.invalidate()
@@ -207,7 +211,7 @@ public struct VGRStepper : View {
 }
 
 #Preview("StepperView") {
-    
+
     @Previewable @State var value1: Double = 1.5
     @Previewable @State var value2: Double = 1.0
     @Previewable @State var value3: Double = 5
@@ -215,12 +219,24 @@ public struct VGRStepper : View {
     ScrollView {
         VGRShape (backgroundColor: Color.Elevation.background) {
             VStack (spacing: 40) {
-                VGRStepper(value: $value1, step: 0.5, range: 0 ... 5, unit: "x 1 g", accessibilityUnit: "gånger 1 gram")
-                
-                VGRStepper(value: $value2, step: 1.0, range: 0 ... 100, unit: "handflator", isRepeatOnHoldEnabled: true, accessibilityUnit: "handflator")
-                
-                VGRStepper(value: $value3, step: 5, range: 0 ... 25, unit: "x 1 g", accessibilityUnit: "gånger 1 gram")
-                
+                VGRStepper(value: $value1,
+                           step: 0.5,
+                           range: 0 ... 5,
+                           unit: "x 1 g",
+                           accessibilityUnit: "gånger 1 gram")
+
+                VGRStepper(value: $value2,
+                           step: 1.0,
+                           range: 0 ... 100,
+                           unit: "handflator",
+                           isRepeatOnHoldEnabled: true,
+                           accessibilityUnit: "handflator")
+
+                VGRStepper(value: $value3,
+                           step: 5,
+                           range: 0 ... 25,
+                           unit: "x 1 g",
+                           accessibilityUnit: "gånger 1 gram")
             }
             .padding(16)
         }
