@@ -79,7 +79,6 @@ struct ExampleDayCell: View {
 
                 Text(String(describing: date.day))
                     .font(.body)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .foregroundStyle(textColor)
             }
             .frame(maxWidth: .infinity, alignment: .center)
