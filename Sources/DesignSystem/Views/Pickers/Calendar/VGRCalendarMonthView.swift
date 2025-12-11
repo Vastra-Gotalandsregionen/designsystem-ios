@@ -114,12 +114,14 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
     /// Generates the accessibility label for the month header.
     /// - Returns: A custom label if `dataAccessibilityLabel` is provided, otherwise defaults to the formatted month and year
     var a11yLabel: String {
-        guard let dataAccessibilityLabel else { return month.idx.date.formatted(.dateTime.year().month(.wide)) }
+        guard let dataAccessibilityLabel else { return formattedMonthYear }
         return dataAccessibilityLabel(month)
     }
 
-    var monthLabel: String {
-        return month.idx.date.formatted(.dateTime.year().month(.wide)).capitalized
+    var monthLabel: String { formattedMonthYear }
+
+    private var formattedMonthYear: String {
+        month.idx.date.formatted(.dateTime.year().month(.wide))
     }
 
     public var body: some View {
@@ -144,15 +146,15 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
                 ) {
 
                     ForEach(0..<month.leadingPadding, id: \.self) { _ in
-                        Spacer()
+                        Color.clear
                     }
                     .accessibilityHidden(true)
 
                     ForEach(self.month.days, id: \.self) { day in
                         dayBuilder(day,
                                    data[day],
-                                   day.hashValue == today.hashValue,
-                                   day.hashValue == selectedIndex.hashValue)
+                                   day == today,
+                                   day == selectedIndex)
                         .id(day.id)
                         .onTapGesture {
                             selectedIndex = day
@@ -174,14 +176,14 @@ public struct VGRCalendarMonthView<Data, Content>: View where Data: Hashable, Co
 #Preview {
     @Previewable @State var selectedIndex: VGRCalendarIndexKey = VGRCalendarIndexKey(from: Calendar.current.date(2025,5,30))
     @Previewable @State var calendarData: [VGRCalendarIndexKey: ExampleCalendarData] = [
-        VGRCalendarIndexKey(year: 2025, month: 12, day: 20) : .init(hasEvent: true, isRecurring: false),
-        VGRCalendarIndexKey(year: 2025, month: 12, day: 22) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 11, day: 20) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 11, day: 22) : .init(hasEvent: true, isRecurring: false),
     ]
 
-    let vm: VGRCalendarViewModel = .init(interval: DateInterval(start: Calendar.current.date(2025,12,1),
-                                                                end: Calendar.current.date(2025,12,31)))
+    let vm: VGRCalendarViewModel = .init(interval: DateInterval(start: Calendar.current.date(2025,11,1),
+                                                                end: Calendar.current.date(2025,11,30)))
     let firstMonth = vm.months.first!
-    let today = VGRCalendarIndexKey(from: Calendar.current.date(2025,12,15))
+    let today = VGRCalendarIndexKey(from: Calendar.current.date(2025,11,15))
 
     NavigationStack {
         ScrollView {

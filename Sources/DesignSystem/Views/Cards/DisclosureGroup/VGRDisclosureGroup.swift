@@ -80,15 +80,10 @@ public struct VGRDisclosureGroup<Content: View>: View {
             },
             label: {
                 HStack(alignment: .center, spacing: 12) {
-                    if let icon = icon {
-                        icon
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 25, height: 25)
-                            .foregroundStyle(Color.Neutral.text)
-                    }
+                    iconImage
 
                     Text(title)
+                        .font(.bodyMedium)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .multilineTextAlignment(.leading)
                 }
@@ -97,6 +92,19 @@ public struct VGRDisclosureGroup<Content: View>: View {
         .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .disclosureGroupStyle(VGRDisclosureGroupStyle())
+    }
+
+    @ScaledMetric private var iconSize: CGFloat = 25
+
+    @ViewBuilder
+    private var iconImage: some View {
+        if let icon = icon {
+            icon
+                .resizable()
+                .scaledToFit()
+                .frame(width: iconSize, height: iconSize)
+                .foregroundStyle(Color.Neutral.text)
+        }
     }
 }
 

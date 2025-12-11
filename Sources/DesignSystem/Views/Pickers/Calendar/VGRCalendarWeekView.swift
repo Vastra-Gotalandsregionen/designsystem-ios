@@ -164,10 +164,10 @@ public struct VGRCalendarWeekView<Content, Data>: View where Data: Hashable, Con
     @Previewable @State var currentWeekID: String? = nil
     @Previewable @State var selectedDate: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
     @Previewable @State var calendarData: [VGRCalendarIndexKey: ExampleCalendarData] = [
-        VGRCalendarIndexKey(year: 2025, month: 5, day: 20) : .init(hasEvent: true, isRecurring: false),
-        VGRCalendarIndexKey(year: 2025, month: 5, day: 22) : .init(hasEvent: true, isRecurring: false),
-        VGRCalendarIndexKey(year: 2025, month: 5, day: 27) : .init(hasEvent: true, isRecurring: false),
-        VGRCalendarIndexKey(year: 2025, month: 5, day: 30) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 12, day: 20) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 12, day: 22) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 12, day: 27) : .init(hasEvent: true, isRecurring: false),
+        VGRCalendarIndexKey(year: 2025, month: 12, day: 30) : .init(hasEvent: true, isRecurring: false),
     ]
     
     let today: VGRCalendarIndexKey = VGRCalendarIndexKey(from: .now)
