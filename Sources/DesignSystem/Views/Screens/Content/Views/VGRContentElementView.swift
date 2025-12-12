@@ -56,6 +56,7 @@ struct VGRContentElementView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityRespondsToUserInteraction()
     }
 }
 

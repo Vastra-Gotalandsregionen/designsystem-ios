@@ -90,13 +90,6 @@ public struct VGRContentScreen: View {
                 .navigationTitle(target.title)
                 .navigationBarTitleDisplayMode(.inline)
         })
-        .onAppear {
-            /// To get around issue of keyboard focus being stuck in navbar
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                focusedField = .scrollView  
-            }
-        }
-        .focused($focusedField, equals: .scrollView)
         .background(Color.Elevation.background)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(navigationTitle)
