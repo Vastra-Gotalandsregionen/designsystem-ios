@@ -54,33 +54,35 @@ struct VGRBodyPartSelectionView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack(spacing: 0) {
-                Item(part: parent, isSelected: localSelection.contains(parent.id))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 16)
-                    .onTapGesture {
-                        selectBodyPart(parent.id, isParent: true)
-                    }
-
-                ForEach(Array(children), id: \.id) { child in
-                    VGRDivider()
-
-                    Item(part: child, isSelected: localSelection.contains(child.id))
-                        .padding(.leading, 32)
-                        .padding(.trailing, 16)
+        ScrollView {
+            VStack(alignment: .leading) {
+                VStack(spacing: 0) {
+                    Item(part: parent, isSelected: localSelection.contains(parent.id))
+                        .padding(.horizontal, 16)
                         .padding(.vertical, 16)
                         .onTapGesture {
-                            selectBodyPart(child.id)
+                            selectBodyPart(parent.id, isParent: true)
                         }
+                    
+                    ForEach(Array(children), id: \.id) { child in
+                        VGRDivider()
+                        
+                        Item(part: child, isSelected: localSelection.contains(child.id))
+                            .padding(.leading, 32)
+                            .padding(.trailing, 16)
+                            .padding(.vertical, 16)
+                            .onTapGesture {
+                                selectBodyPart(child.id)
+                            }
+                    }
                 }
+                .background(Color.Elevation.elevation1)
+                .cornerRadius(8)
             }
-            .background(Color.Elevation.elevation1)
-            .cornerRadius(8)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 32)
+            .frame(maxHeight: .infinity, alignment: .top)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 32)
-        .frame(maxHeight: .infinity, alignment: .top)
         .background(Color.Elevation.background)
     }
 
@@ -114,7 +116,9 @@ struct VGRBodyPartSelectionView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
+            .accessibilityElement(children: .combine)
             .accessibilityLabel(a11yLabel)
+            .accessibilityRespondsToUserInteraction()
         }
     }
 }
