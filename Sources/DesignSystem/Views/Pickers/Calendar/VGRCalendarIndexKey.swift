@@ -3,7 +3,7 @@ import Foundation
 /// CalendarIndexKey is used as an index for the data structure that holds all events in the calendar
 /// The reason for using it is to have a simple way of accessing the different elements in a date
 /// without having to resort to using the Calendar.
-public struct VGRCalendarIndexKey: Hashable, Equatable, Identifiable {
+public struct VGRCalendarIndexKey: Hashable, Equatable, Identifiable, Sendable {
     public var year: Int
     public var month: Int
     public var day: Int
