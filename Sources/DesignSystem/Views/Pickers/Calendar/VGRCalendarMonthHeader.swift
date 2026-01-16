@@ -101,6 +101,7 @@ final class VGRCalendarMonthHeader: UICollectionReusableView {
         titleLabel.text = Self.monthFormatter.string(from: section.firstDayDate).capitalized
 
         /// Accessibility
+        isAccessibilityElement = true
         self.accessibilityLabel = accessibilityLabel ?? titleLabel.text
         accessibilityTraits = .header
     }
