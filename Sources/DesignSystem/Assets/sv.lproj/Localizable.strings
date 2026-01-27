@@ -8,6 +8,7 @@
 "general.notselected" = "Ej vald";
 "general.on" = "På";
 "general.off" = "Av";
+"general.today" = "Idag";
 "general.button.done" = "Klar";
 "general.button.ok" = "OK";
 
