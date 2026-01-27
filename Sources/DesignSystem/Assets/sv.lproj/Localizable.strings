@@ -129,6 +129,7 @@
 "content.type.tips.title" = "Tips";
 "content.type.useragreement.title" = "Användarpolicy";
 "content.type.privacypolicy.title" = "Personuppgiftspolicy";
+"content.type.threshold.title" = "Meddelande";
 
 "content.button.showmore" = "Visa fler";
 
@@ -168,4 +169,24 @@
 "videoplayer.error.title" = "Videoklippet går inte att spela upp";
 "videoplayer.error.loadfailed" = "Det går tyvärr inte att spela upp videoklippet just nu. Kontrollera att du har internetuppkoppling eller försök igen senare.";
 
+/* Feedback */
+"feedback.question" = "Hjälpte detta meddelande dig?";
+"feedback.button.yes" = "Ja";
+"feedback.button.no" = "Nej";
+"feedback.thanks.prefix" = "Tack! Vi har registrerat att meddelandet ";
+"feedback.thanks.positive.emphasis" = "var hjälpsamt.";
+"feedback.thanks.negative.emphasis" = "inte var hjälpsamt.";
+"feedback.undo" = "Ångra ditt svar.";
+"feedback.undo.a11y" = "Ångra ditt svar";
+
+"feedback.sheet.title" = "Tack för feedbacken";
+"feedback.sheet.description" = "Vi vill gärna förstå varför meddelandet inte var hjälpsamt för dig. Det är helt frivilligt att svara. Välj det som passar bäst.";
+"feedback.sheet.save" = "Spara";
+
+"feedback.option.not_relevant" = "Inte relevant";
+"feedback.option.unsure_next_step" = "Osäker på nästa steg";
+"feedback.option.already_knew" = "Jag har redan koll";
+"feedback.option.feels_repetitive" = "Det känns upprepande";
+"feedback.option.other" = "Annat";
+"feedback.option.a11y.hint" = "Dubbeltryck för att markera eller avmarkera";
 

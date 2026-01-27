@@ -52,13 +52,23 @@ public struct VGRContentScreen: View {
     /// If not provided, the default environment dismiss action will be used.
     var dismissAction: (() -> Void)? = nil
 
+    /// Optional callback when feedback is submitted (for threshold articles).
+    /// Only called when content type is `.threshold`.
+    var onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil
+
     /// Initialize the article screen with the given article and optional dismiss action.
     /// - Parameters:
     ///   - article: The `VGRContent` instance containing all content to display
     ///   - dismissAction: Optional closure to execute when the screen is dismissed
-    public init(content: VGRContent, dismissAction: (() -> Void)? = nil) {
+    ///   - onFeedbackSubmitted: Optional closure called when feedback is submitted (threshold articles only)
+    public init(
+        content: VGRContent,
+        dismissAction: (() -> Void)? = nil,
+        onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil
+    ) {
         self.content = content
         self.dismissAction = dismissAction
+        self.onFeedbackSubmitted = onFeedbackSubmitted
     }
 
     /// Focus state for managing keyboard navigation within the scroll view
@@ -80,6 +90,12 @@ public struct VGRContentScreen: View {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(content.elements.enumerated()), id: \.offset) { index, element in
                     VGRContentElementView(element: element, dismissAction: dismissAction)
+                }
+
+                // Show feedback component for threshold articles
+                if content.type == .threshold {
+                    VGRFeedbackView(onFeedbackSubmitted: onFeedbackSubmitted)
+                        .padding(.top, VGRSpacing.verticalLarge)
                 }
             }
             .accessibilityElement(children: .contain)
