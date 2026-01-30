@@ -3,8 +3,14 @@ import SwiftUI
 struct VGRContentElementView: View {
     let element: VGRContentElement
 
+    /// The article ID this element belongs to (used for feedback tracking)
+    var articleId: String = ""
+
     /// dismissAction can be passed to subsequent views if they need to control dismissal
     var dismissAction: (() -> Void)? = nil
+
+    /// Callback when feedback is submitted (only used for feedback elements)
+    var onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil
 
     var body: some View {
         Group {
@@ -42,6 +48,13 @@ struct VGRContentElementView: View {
 
                 case .faq:
                     EmptyView()
+
+                case .feedback:
+                    VGRContentFeedbackView(
+                        element: element,
+                        articleId: articleId,
+                        onFeedbackSubmitted: onFeedbackSubmitted
+                    )
 
                 case .webviewLink:
                     VGRContentLinkView(element: element)

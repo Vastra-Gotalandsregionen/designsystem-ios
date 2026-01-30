@@ -7,9 +7,9 @@ public enum VGRFeedbackOption: String, CaseIterable, Identifiable {
     case alreadyKnew = "already_knew"
     case feelsRepetitive = "feels_repetitive"
     case other = "other"
-
+    
     public var id: String { rawValue }
-
+    
     /// Localized display text for the option
     public var displayText: String {
         switch self {

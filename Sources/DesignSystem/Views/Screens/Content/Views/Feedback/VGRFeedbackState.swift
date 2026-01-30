@@ -21,13 +21,21 @@ public enum VGRFeedbackState: Equatable {
 
 /// Result of feedback submission, used for callbacks.
 public struct VGRFeedbackResult {
+    /// The article ID this feedback is for (used for tracking)
+    public let articleId: String
     /// Whether the user found the content helpful
     public let wasHelpful: Bool
     /// If not helpful, the reasons selected (empty if helpful or no reasons given)
     public let reasons: Set<VGRFeedbackOption>
 
-    public init(wasHelpful: Bool, reasons: Set<VGRFeedbackOption> = []) {
+    public init(articleId: String = "", wasHelpful: Bool, reasons: Set<VGRFeedbackOption> = []) {
+        self.articleId = articleId
         self.wasHelpful = wasHelpful
         self.reasons = reasons
+    }
+
+    /// Returns reasons as a comma-separated string (for tracking, matches Android format)
+    public var reasonsString: String {
+        reasons.map { $0.rawValue }.sorted().joined(separator: ",")
     }
 }

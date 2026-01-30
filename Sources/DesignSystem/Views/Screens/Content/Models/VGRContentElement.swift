@@ -41,6 +41,10 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
     /// Answer property used in conjunction with elementType `.faq`
     public let answer: String
 
+    /// Feedback options property, used in conjunction with elementType `.feedback`
+    /// Contains an array of option keys that match `VGRFeedbackOption` cases
+    public let feedbackOptions: [String]
+
     /// internalArticle is a reference to another article. It is used to link articles to eachother.
     public var internalArticle: VGRContent?
 
@@ -50,6 +54,7 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
         case tags, links
         case crop, cropRadius
         case question, answer
+        case feedbackOptions
     }
 
     /// Decode manually to avoid optionals
@@ -72,6 +77,7 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
 
         self.question = try values.decodeIfPresent(String.self, forKey: .question) ?? ""
         self.answer = try values.decodeIfPresent(String.self, forKey: .answer) ?? ""
+        self.feedbackOptions = try values.decodeIfPresent([String].self, forKey: .feedbackOptions) ?? []
 
         self.list = try values.decodeIfPresent([String].self, forKey: .list) ?? []
         self.tags = try values.decodeIfPresent([String].self, forKey: .tags) ?? []
@@ -111,7 +117,8 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
                 links: [VGRContentElement] = [],
                 internalArticle: VGRContent? = nil,
                 question: String = "",
-                answer: String = "") {
+                answer: String = "",
+                feedbackOptions: [String] = []) {
 
         self.type = type
         self.text = text
@@ -134,5 +141,6 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
 
         self.question = question
         self.answer = answer
+        self.feedbackOptions = feedbackOptions
     }
 }

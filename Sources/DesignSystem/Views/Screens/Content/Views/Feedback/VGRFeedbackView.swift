@@ -8,9 +8,22 @@ public struct VGRFeedbackView: View {
     @State private var feedbackState: VGRFeedbackState = .unanswered
     @State private var showOptionsSheet = false
 
+    private let articleId: String
+    private let options: [VGRFeedbackOption]
     private let onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)?
 
-    public init(onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil) {
+    /// Creates a feedback view with specified options.
+    /// - Parameters:
+    ///   - articleId: The article ID this feedback is for (used for tracking)
+    ///   - options: Array of feedback options to display when user selects "No". Defaults to all options.
+    ///   - onFeedbackSubmitted: Closure called when the user submits feedback
+    public init(
+        articleId: String = "",
+        options: [VGRFeedbackOption] = VGRFeedbackOption.allCases.map { $0 },
+        onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil
+    ) {
+        self.articleId = articleId
+        self.options = options
         self.onFeedbackSubmitted = onFeedbackSubmitted
     }
 
@@ -27,9 +40,9 @@ public struct VGRFeedbackView: View {
         .clipShape(RoundedRectangle(cornerRadius: 26))
         .padding(.horizontal, VGRSpacing.horizontal)
         .sheet(isPresented: $showOptionsSheet) {
-            VGRFeedbackOptionsSheet { selectedOptions in
+            VGRFeedbackOptionsSheet(options: options) { selectedOptions in
                 feedbackState = .negative(reasons: selectedOptions)
-                onFeedbackSubmitted?(VGRFeedbackResult(wasHelpful: false, reasons: selectedOptions))
+                onFeedbackSubmitted?(VGRFeedbackResult(articleId: articleId, wasHelpful: false, reasons: selectedOptions))
             }
             .interactiveDismissDisabled()
             .presentationDetents([.fraction(0.70), .large])
@@ -61,7 +74,7 @@ public struct VGRFeedbackView: View {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         feedbackState = .positive
                     }
-                    onFeedbackSubmitted?(VGRFeedbackResult(wasHelpful: true))
+                    onFeedbackSubmitted?(VGRFeedbackResult(articleId: articleId, wasHelpful: true))
                 }
             }
         }
@@ -114,23 +127,10 @@ public struct VGRFeedbackView: View {
     .background(Color.Elevation.background)
 }
 
-#Preview("In Article Context") {
-    NavigationStack {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Article content here...")
-                    .padding(.horizontal, 16)
-
-                VGRFeedbackView { result in
-                    print("Feedback submitted: \(result)")
-                }
-
-                Text("More content below...")
-                    .padding(.horizontal, 16)
-            }
-        }
-        .background(Color.Elevation.background)
-        .navigationTitle("Meddelande")
-        .navigationBarTitleDisplayMode(.inline)
+#Preview("With Custom Options") {
+    VGRFeedbackView(options: [.notRelevant, .alreadyKnew, .other]) { result in
+        print("Feedback: helpful=\(result.wasHelpful), reasons=\(result.reasons.map { $0.rawValue })")
     }
+    .padding()
+    .background(Color.Elevation.background)
 }
