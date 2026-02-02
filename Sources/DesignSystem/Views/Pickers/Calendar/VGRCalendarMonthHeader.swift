@@ -98,12 +98,12 @@ final class VGRCalendarMonthHeader: UICollectionReusableView {
     ///   - accessibilityLabel: Optional custom accessibility label (defaults to month name)
     func configure(with section: VGRCalendarSection, accessibilityLabel: String? = nil) {
         self.section = section
-        titleLabel.text = Self.monthFormatter.string(from: section.firstDayDate).capitalized
+        self.titleLabel.text = Self.monthFormatter.string(from: section.firstDayDate).capitalized
 
         /// Accessibility
-        isAccessibilityElement = true
-        self.accessibilityLabel = accessibilityLabel ?? titleLabel.text
-        accessibilityTraits = .header
+        self.titleLabel.isAccessibilityElement = true
+        self.titleLabel.accessibilityLabel = accessibilityLabel ?? titleLabel.text
+        self.titleLabel.accessibilityTraits = .header
     }
 
     override func prepareForReuse() {
