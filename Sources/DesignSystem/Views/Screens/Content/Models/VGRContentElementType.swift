@@ -61,4 +61,9 @@ public enum VGRContentElementType: String, Codable {
     /// If user selects No, a sheet appears with selectable reasons.
     /// Expects the `feedbackOptions` property to contain an array of option keys that match `VGRFeedbackOption` cases.
     case feedback
+
+    /// Generic action callout element displays a callout with configurable content.
+    /// When the button is tapped, it triggers a callback with the actionId, allowing the consuming app to handle navigation.
+    /// Expects `actionId`, `actionHeader`, `actionDescription`, `actionButtonLabel`, `actionButtonA11yLabel`, and `actionImage` properties.
+    case actionCallout
 }

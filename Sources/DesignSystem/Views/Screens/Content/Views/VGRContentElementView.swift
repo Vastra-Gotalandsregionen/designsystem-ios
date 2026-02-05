@@ -12,6 +12,9 @@ struct VGRContentElementView: View {
     /// Callback when feedback is submitted (only used for feedback elements)
     var onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil
 
+    /// Callback when an action callout button is tapped, passes the actionId
+    var onActionCallout: ((String) -> Void)? = nil
+
     var body: some View {
         Group {
             switch element.type {
@@ -54,6 +57,15 @@ struct VGRContentElementView: View {
                         element: element,
                         articleId: articleId,
                         onFeedbackSubmitted: onFeedbackSubmitted
+                    )
+
+                case .actionCallout:
+                    VGRContentActionCalloutView(
+                        element: element,
+                        onAction: {
+                            onActionCallout?(element.actionId)
+                        },
+                        dismissAction: dismissAction
                     )
 
                 case .webviewLink:

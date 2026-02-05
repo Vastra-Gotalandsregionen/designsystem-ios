@@ -22,7 +22,7 @@ struct VGRContentFeedbackView: View {
             options: options.isEmpty ? VGRFeedbackOption.allCases.map { $0 } : options,
             onFeedbackSubmitted: onFeedbackSubmitted
         )
-        .padding(.top, VGRSpacing.verticalMedium)
+        .padding(.vertical, VGRSpacing.verticalMedium)
     }
 }
 
