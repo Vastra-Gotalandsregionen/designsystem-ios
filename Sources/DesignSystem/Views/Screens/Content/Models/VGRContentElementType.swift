@@ -56,4 +56,14 @@ public enum VGRContentElementType: String, Codable {
     /// FAQ element is used for question and answer sections. It expects the `question` and  `answer` properties to be set.
     /// It should render using a disclosure group either as a standalone element or integrated into `VGRContentScreen`
     case faq
+
+    /// Feedback element displays a "Was this helpful?" prompt with Yes/No buttons.
+    /// If user selects No, a sheet appears with selectable reasons.
+    /// Expects the `feedbackOptions` property to contain an array of option keys that match `VGRFeedbackOption` cases.
+    case feedback
+
+    /// Generic action callout element displays a callout with configurable content.
+    /// When the button is tapped, it triggers a callback with the actionId, allowing the consuming app to handle navigation.
+    /// Expects `actionId`, `actionHeader`, `actionDescription`, `actionButtonLabel`, `actionButtonA11yLabel`, and `actionImage` properties.
+    case actionCallout
 }

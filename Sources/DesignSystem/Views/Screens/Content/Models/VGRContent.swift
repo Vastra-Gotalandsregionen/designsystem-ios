@@ -12,7 +12,7 @@ public struct VGRContent: Identifiable, Hashable, Equatable, Decodable {
     public let subtitle: String
     public let buttonText: String
     public let imageUrl: String
-    public let elements: [VGRContentElement]
+    public var elements: [VGRContentElement]
     public let publishDate: Date
     public let isNew: Bool
     public let tags: [String]

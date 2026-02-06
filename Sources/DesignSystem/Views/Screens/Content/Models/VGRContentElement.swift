@@ -41,6 +41,35 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
     /// Answer property used in conjunction with elementType `.faq`
     public let answer: String
 
+    /// Feedback options property, used in conjunction with elementType `.feedback`
+    /// Contains an array of option keys that match `VGRFeedbackOption` cases
+    public let feedbackOptions: [String]
+
+    // MARK: - Action Callout Properties (used with `.actionCallout` element type)
+
+    /// Identifier for the action, used by the consuming app to determine what action to perform
+    public let actionId: String
+
+    /// Header text for the action callout
+    public let actionHeader: String
+
+    /// Description text for the action callout
+    public let actionDescription: String
+
+    /// Button label for the action callout
+    public let actionButtonLabel: String
+
+    /// Accessibility label for the action button
+    public let actionButtonA11yLabel: String
+
+    /// Image name for the action callout (loaded from app bundle)
+    public let actionImage: String
+
+    /// Background color property, used to optionally wrap elements in a colored background.
+    /// Supports values like "redSurfaceMinimal", "orangeSurfaceMinimal", "blueSurfaceMinimal".
+    /// Empty string or not set means no background.
+    public let backgroundColor: String
+
     /// internalArticle is a reference to another article. It is used to link articles to eachother.
     public var internalArticle: VGRContent?
 
@@ -50,6 +79,9 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
         case tags, links
         case crop, cropRadius
         case question, answer
+        case feedbackOptions
+        case backgroundColor
+        case actionId, actionHeader, actionDescription, actionButtonLabel, actionButtonA11yLabel, actionImage
     }
 
     /// Decode manually to avoid optionals
@@ -72,6 +104,16 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
 
         self.question = try values.decodeIfPresent(String.self, forKey: .question) ?? ""
         self.answer = try values.decodeIfPresent(String.self, forKey: .answer) ?? ""
+        self.feedbackOptions = try values.decodeIfPresent([String].self, forKey: .feedbackOptions) ?? []
+        self.backgroundColor = try values.decodeIfPresent(String.self, forKey: .backgroundColor) ?? ""
+
+        // Action callout properties
+        self.actionId = try values.decodeIfPresent(String.self, forKey: .actionId) ?? ""
+        self.actionHeader = try values.decodeIfPresent(String.self, forKey: .actionHeader) ?? ""
+        self.actionDescription = try values.decodeIfPresent(String.self, forKey: .actionDescription) ?? ""
+        self.actionButtonLabel = try values.decodeIfPresent(String.self, forKey: .actionButtonLabel) ?? ""
+        self.actionButtonA11yLabel = try values.decodeIfPresent(String.self, forKey: .actionButtonA11yLabel) ?? ""
+        self.actionImage = try values.decodeIfPresent(String.self, forKey: .actionImage) ?? ""
 
         self.list = try values.decodeIfPresent([String].self, forKey: .list) ?? []
         self.tags = try values.decodeIfPresent([String].self, forKey: .tags) ?? []
@@ -111,7 +153,15 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
                 links: [VGRContentElement] = [],
                 internalArticle: VGRContent? = nil,
                 question: String = "",
-                answer: String = "") {
+                answer: String = "",
+                feedbackOptions: [String] = [],
+                backgroundColor: String = "",
+                actionId: String = "",
+                actionHeader: String = "",
+                actionDescription: String = "",
+                actionButtonLabel: String = "",
+                actionButtonA11yLabel: String = "",
+                actionImage: String = "") {
 
         self.type = type
         self.text = text
@@ -134,5 +184,13 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
 
         self.question = question
         self.answer = answer
+        self.feedbackOptions = feedbackOptions
+        self.backgroundColor = backgroundColor
+        self.actionId = actionId
+        self.actionHeader = actionHeader
+        self.actionDescription = actionDescription
+        self.actionButtonLabel = actionButtonLabel
+        self.actionButtonA11yLabel = actionButtonA11yLabel
+        self.actionImage = actionImage
     }
 }
