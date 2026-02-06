@@ -18,3 +18,28 @@ public extension View {
         }
     }
 }
+
+
+public extension View {
+    /// Expands the view to take up the maximum available horizontal space
+    /// and aligns its content to the leading edge.
+    ///
+    /// This is equivalent to applying:
+    /// `frame(maxWidth: .infinity, alignment: .leading)`
+    ///
+    /// - Returns: A view that fills the available width and is leading-aligned.
+    func maxLeading() -> some View {
+        self.frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Expands the view to take up the maximum available horizontal space
+    /// and aligns its content to the trailing edge.
+    ///
+    /// This is equivalent to applying:
+    /// `frame(maxWidth: .infinity, alignment: .trailing)`
+    ///
+    /// - Returns: A view that fills the available width and is trailing-aligned.
+    func maxTrailing() -> some View {
+        self.frame(maxWidth: .infinity, alignment: .trailing)
+    }
+}
