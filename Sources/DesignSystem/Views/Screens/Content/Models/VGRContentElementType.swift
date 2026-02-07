@@ -9,6 +9,9 @@ public enum VGRContentElementType: String, Codable {
     /// Subhead is preamble type paragraph formatting. Used with the `text` property.
     case subhead
 
+    /// Footnote. Used with the `text` property.
+    case footnote
+
     /// H1 header element. Used with the `text` property.
     case h1
 
