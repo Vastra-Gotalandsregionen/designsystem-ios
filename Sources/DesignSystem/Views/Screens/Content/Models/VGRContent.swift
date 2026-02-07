@@ -14,7 +14,7 @@ public struct VGRContent: Identifiable, Hashable, Equatable, Decodable {
     public let imageUrl: String
     public var elements: [VGRContentElement]
     public let publishDate: Date
-    public let isNew: Bool
+    public var isNew: Bool
     public let tags: [String]
 
     /// Equatable protocol
