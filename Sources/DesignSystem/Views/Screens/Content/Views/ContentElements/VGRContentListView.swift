@@ -28,6 +28,7 @@ struct VGRContentListView: View {
                 .accessibilityTextContentType(.narrative)
             }
         }
+        .padding(.horizontal, VGRSpacing.horizontal)
         .padding(.bottom, VGRSpacing.verticalXLarge)
     }
 }
@@ -60,7 +61,6 @@ struct VGRContentListView: View {
                     )
                 )
             }
-            .padding()
 
             VStack(spacing: 32) {
                 Text("In **.ordered** state")
@@ -74,7 +74,6 @@ struct VGRContentListView: View {
                     isOrdered: true
                 )
             }
-            .padding()
         }
         .navigationTitle("List")
         .navigationBarTitleDisplayMode(.inline)
