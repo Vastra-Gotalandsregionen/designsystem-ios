@@ -6,27 +6,26 @@ struct VGRContentListView: View {
     /// Optional property that toggles the list from a bulleted list, to an numerically ordered list
     var isOrdered: Bool = false
 
-    @ScaledMetric private var bulletColumn: CGFloat = 15
+    @ScaledMetric private var hSpacing: CGFloat = 4
+    @ScaledMetric private var vSpacing: CGFloat = 10
 
     var body: some View {
-
-        VStack(alignment: .leading, spacing: 8) {
+        Grid(horizontalSpacing: hSpacing, verticalSpacing: vSpacing) {
             ForEach(Array(element.list.enumerated()), id: \.offset) { index, listItem in
-                HStack(alignment: .top, spacing: 4) {
+                GridRow(alignment: isOrdered ? .top : .center) {
                     Text(isOrdered ? String("\(index + 1).") : "•")
+                        .font(.body)
                         .accessibilityHidden(isOrdered ? false : true)
-                        .frame(width: bulletColumn,
-                               alignment: isOrdered ? .trailing : .center)
 
                     Text(listItem)
                         .font(Font.body.leading(.standard))
                         .accessibilityAddTraits(.isStaticText)
-                        .foregroundColor(Color.Neutral.text)
-                        .accessibilityTextContentType(.narrative)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.horizontal, VGRSpacing.horizontalList)
+                .foregroundColor(Color.Neutral.text)
+                .accessibilityElement(children: .combine)
                 .accessibilityAddTraits(.isStaticText)
+                .accessibilityTextContentType(.narrative)
             }
         }
         .padding(.bottom, VGRSpacing.verticalXLarge)
@@ -34,6 +33,19 @@ struct VGRContentListView: View {
 }
 
 #Preview {
+    let previewList: [String] = [
+        "First list item with some text",
+        "Second list item that might be longer and even possibly stretch to the line below",
+        "Third list item",
+        "Fourth item to show multiple entries",
+        "Fifth item for extended preview",
+        "Sixth item to increase list length",
+        "Seventh item with some additional wording",
+        "Eighth item in the preview list",
+        "Ninth item to verify scrolling",
+        "Tenth item nearing the end",
+        "Eleventh and final preview item"
+    ]
 
     NavigationStack {
         ScrollView {
@@ -44,15 +56,11 @@ struct VGRContentListView: View {
                 VGRContentListView(
                     element: VGRContentElement(
                         type: .list,
-                        list: [
-                            "First list item with some text",
-                            "Second list item that might be longer and even possibly stretch to the line below",
-                            "Third list item",
-                            "Fourth item to show multiple entries"
-                        ],
+                        list: previewList,
                     )
                 )
             }
+            .padding()
 
             VStack(spacing: 32) {
                 Text("In **.ordered** state")
@@ -61,16 +69,12 @@ struct VGRContentListView: View {
                 VGRContentListView(
                     element: VGRContentElement(
                         type: .ordered,
-                        list: [
-                            "First list item with some text",
-                            "Second list item that might be longer and even possibly stretch to the line below",
-                            "Third list item",
-                            "Fourth item to show multiple entries"
-                        ],
+                        list: previewList,
                     ),
                     isOrdered: true
                 )
             }
+            .padding()
         }
         .navigationTitle("List")
         .navigationBarTitleDisplayMode(.inline)
