@@ -20,6 +20,9 @@ public enum VGRContentType: String, Decodable {
     /// Video feed article. Contains one or more elements with video clips.
     case videofeed
 
+    /// Warning article.
+    case warning
+
     /// Threshold callout article. Shown when user assessments indicate they may need additional support.
     /// Includes feedback component at the end asking if the message was helpful.
     case threshold
