@@ -27,7 +27,7 @@ struct VGRContentElementView: View {
                 case .h1, .h2, .h3:
                     VGRContentTitleView(element: element)
 
-                case .subhead, .body:
+                case .subhead, .body, .footnote:
                     VGRContentTextView(element: element)
 
                 case .link:
