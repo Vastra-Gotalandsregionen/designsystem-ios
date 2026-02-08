@@ -7,7 +7,7 @@ struct VGRContentListView: View {
     var isOrdered: Bool = false
 
     @ScaledMetric private var hSpacing: CGFloat = 4
-    @ScaledMetric private var vSpacing: CGFloat = 10
+    @ScaledMetric private var vSpacing: CGFloat = 16
 
     var body: some View {
         Grid(horizontalSpacing: hSpacing, verticalSpacing: vSpacing) {
@@ -15,21 +15,24 @@ struct VGRContentListView: View {
                 GridRow(alignment: isOrdered ? .top : .center) {
                     Text(isOrdered ? String("\(index + 1).") : "•")
                         .font(.body)
-                        .accessibilityHidden(isOrdered ? false : true)
 
                     Text(listItem)
                         .font(Font.body.leading(.standard))
-                        .accessibilityAddTraits(.isStaticText)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .foregroundColor(Color.Neutral.text)
-                .accessibilityElement(children: .combine)
-                .accessibilityAddTraits(.isStaticText)
+                .accessibilityElement()
                 .accessibilityTextContentType(.narrative)
+                .accessibilityLabel(a11yLabel(index, listItem, isOrdered: isOrdered))
             }
         }
+        .accessibilityTextContentType(.narrative)
         .padding(.horizontal, VGRSpacing.horizontal)
         .padding(.bottom, VGRSpacing.verticalXLarge)
+    }
+
+    private func a11yLabel(_ index: Int, _ text: String, isOrdered: Bool) -> String {
+        return isOrdered ? "\(index + 1). \(text)" : text
     }
 }
 
