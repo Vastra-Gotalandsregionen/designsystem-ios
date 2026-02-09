@@ -91,7 +91,7 @@ public struct VGRContentScreen: View {
     }
 
     public var body: some View {
-        ScrollView {
+        ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(content.elements.enumerated()), id: \.offset) { index, element in
                     VGRContentElementView(

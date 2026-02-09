@@ -2,25 +2,29 @@ import SwiftUI
 
 struct VGRContentHeadingView: View {
     let element: VGRContentElement
-    @ScaledMetric var iconWidth: CGFloat = 16
+    @ScaledMetric private var iconWidth: CGFloat = 16
+    @ScaledMetric private var horizontalSpacing: CGFloat = 8
+
 
     var body: some View {
-        VStack(alignment: .leading, spacing: VGRSpacing.verticalMedium) {
-            HStack(spacing: 4) {
+        Grid(horizontalSpacing: horizontalSpacing,
+             verticalSpacing: VGRSpacing.verticalMedium) {
+            GridRow {
                 Image("icon_calendar", bundle: .module)
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: iconWidth)
-                    .foregroundColor(Color.Neutral.text)
                     .accessibilityHidden(true)
 
                 Text(element.date)
                     .font(.footnote)
                     .multilineTextAlignment(.leading)
-                    .foregroundStyle(Color.Neutral.text)
+                    .maxLeading()
             }
+            .accessibilityLabel(element.date)
+            .isVisible(!element.date.isEmpty)
 
-            HStack (spacing: 6) {
+            GridRow {
                 Image("readtime_text", bundle: .module)
                     .resizable()
                     .scaledToFit()
@@ -30,22 +34,49 @@ struct VGRContentHeadingView: View {
                 Text(element.readTime)
                     .font(.footnote)
                     .multilineTextAlignment(.leading)
+                    .maxLeading()
             }
-            .foregroundColor(Color.Neutral.text)
             .accessibilityLabel("\(element.readTime) \("content.text.duration".localizedBundle)")
+            .isVisible(!element.readTime.isEmpty)
         }
+        .foregroundStyle(Color.Neutral.text)
         .padding(.horizontal, VGRSpacing.horizontal)
         .padding(.bottom, VGRSpacing.verticalMedium)
-        .accessibilityAddTraits(.isStaticText)
     }
 }
 
 #Preview {
-    VGRContentHeadingView(
-        element: VGRContentElement(
-            type: .heading,
-            readTime: "5 min",
-            date: "2024-01-15",
-        )
-    )
+    NavigationStack {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 8) {
+                VGRContentHeadingView(
+                    element: VGRContentElement(
+                        type: .heading,
+                        readTime: "5 min",
+                        date: "2024-01-15",
+                    )
+                )
+
+                VGRDivider()
+
+                VGRContentHeadingView(
+                    element: VGRContentElement(
+                        type: .heading,
+                        date: "2024-01-15",
+                    )
+                )
+
+                VGRDivider()
+
+                VGRContentHeadingView(
+                    element: VGRContentElement(
+                        type: .heading,
+                        readTime: "5 min",
+                    )
+                )
+            }
+        }
+        .navigationTitle("VGRContentHeadingView")
+        .navigationBarTitleDisplayMode(.inline)
+    }
 }
