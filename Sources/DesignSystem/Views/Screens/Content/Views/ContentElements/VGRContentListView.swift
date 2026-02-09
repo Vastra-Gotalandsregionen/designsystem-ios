@@ -6,27 +6,35 @@ struct VGRContentListView: View {
     /// Optional property that toggles the list from a bulleted list, to an numerically ordered list
     var isOrdered: Bool = false
 
-    @ScaledMetric private var hSpacing: CGFloat = 4
+    @ScaledMetric private var bulletSize: CGFloat = 8
+    @ScaledMetric private var hSpacingNumber: CGFloat = 8
+    @ScaledMetric private var hSpacingBullet: CGFloat = 16
     @ScaledMetric private var vSpacing: CGFloat = 16
 
     var body: some View {
-        Grid(horizontalSpacing: hSpacing, verticalSpacing: vSpacing) {
+        Grid(horizontalSpacing: isOrdered ? hSpacingNumber : hSpacingBullet, verticalSpacing: vSpacing) {
             ForEach(Array(element.list.enumerated()), id: \.offset) { index, listItem in
-                GridRow(alignment: isOrdered ? .top : .center) {
-                    Text(isOrdered ? String("\(index + 1).") : "•")
-                        .font(.body)
+                GridRow(alignment: .firstTextBaseline) {
+                    if isOrdered {
+                        Text("\(index + 1).")
+                            .font(.body)
+                    } else {
+                        Image(systemName: "circle.fill")
+                            .resizable()
+                            .frame(width: bulletSize, height: bulletSize)
+                            .padding(.leading, 12)
+                            .padding(.bottom, 2)
+                            .accessibilityHidden(true)
+                    }
 
                     Text(listItem)
                         .font(Font.body.leading(.standard))
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityTextContentType(.narrative)
                 }
                 .foregroundColor(Color.Neutral.text)
-                .accessibilityElement()
-                .accessibilityTextContentType(.narrative)
-                .accessibilityLabel(a11yLabel(index, listItem, isOrdered: isOrdered))
             }
         }
-        .accessibilityTextContentType(.narrative)
         .padding(.horizontal, VGRSpacing.horizontal)
         .padding(.bottom, VGRSpacing.verticalXLarge)
     }
