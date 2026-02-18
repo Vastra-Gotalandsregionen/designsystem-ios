@@ -70,6 +70,8 @@ extension VGRCalendarIndexKey {
             return "general.today".localizedBundle
         } else if calendar.isDateInTomorrow(date) {
             return "general.tomorrow".localizedBundle
+        } else if calendar.isDateInYesterday(date) {
+            return "general.yesterday".localizedBundle
         }
 
         /// Format as "Måndag, 2:a februari 2026"

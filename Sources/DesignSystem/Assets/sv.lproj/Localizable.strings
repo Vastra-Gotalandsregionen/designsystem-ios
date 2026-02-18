@@ -9,6 +9,7 @@
 "general.on" = "På";
 "general.off" = "Av";
 "general.today" = "Idag";
+"general.yesterday" = "Igår";
 "general.tomorrow" = "Imorgon";
 "general.button.done" = "Klar";
 "general.button.ok" = "OK";
