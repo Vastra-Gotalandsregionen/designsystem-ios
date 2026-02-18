@@ -1,6 +1,8 @@
 import UIKit
 import SwiftUI
 
+// MARK: - VGRCalendarViewController
+
 /// A high-performance calendar view controller using UICollectionView with compositional layout
 /// Supports infinite scrolling and custom SwiftUI day cell rendering
 public final class VGRCalendarViewController<DayData: Hashable>: UIViewController, UICollectionViewDelegate, UICollectionViewDataSourcePrefetching {
@@ -81,6 +83,8 @@ public final class VGRCalendarViewController<DayData: Hashable>: UIViewControlle
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
+
+
         setupCollectionView()
         setupDataSource()
         setupInfiniteScroll()
@@ -101,10 +105,11 @@ public final class VGRCalendarViewController<DayData: Hashable>: UIViewControlle
     private func setupCollectionView() {
         let layout = VGRCalendarLayout.createLayout()
 
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
+        collectionView = VGRCalendarCollectionView(frame: view.bounds, collectionViewLayout: layout)
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
+        collectionView.scrollsToTop = false
 
         /// Disable scroll-to-top on status bar tap
         collectionView.scrollsToTop = false
@@ -360,6 +365,22 @@ public final class VGRCalendarViewController<DayData: Hashable>: UIViewControlle
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         infiniteScrollManager.handleScroll(scrollView)
+    }
+
+    public func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        return false
+    }
+
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if UIAccessibility.isVoiceOverRunning {
+            UIAccessibility.post(notification: .layoutChanged, argument: nil)
+        }
+    }
+
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate && UIAccessibility.isVoiceOverRunning {
+            UIAccessibility.post(notification: .layoutChanged, argument: nil)
+        }
     }
 
     // MARK: - UICollectionViewDataSourcePrefetching
