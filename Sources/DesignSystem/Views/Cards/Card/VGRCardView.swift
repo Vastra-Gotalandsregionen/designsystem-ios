@@ -12,6 +12,11 @@ public enum VGRSpacing {
     static let verticalXLarge: CGFloat = 32
 }
 
+public enum VGRRadius {
+    static let mainRadius: CGFloat = 26
+    static let vgrCorner: CGFloat = 40
+}
+
 public enum VGRCardSizeClass: CGFloat, CaseIterable {
     case small = 118
     case medium = 120
@@ -88,8 +93,8 @@ public struct VGRCardView: View {
 
     private var newContentIcon: some View {
         Text("content.new".localizedBundle)
+            .font(.footnoteSemibold)
             .foregroundStyle(Color.Neutral.text)
-            .fontWeight(.semibold)
             .dynamicTypeSize(.small ... .large)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -161,6 +166,11 @@ public struct VGRCardView: View {
                     .frame(maxHeight: sizeClass.maxImageHeight, alignment: .center)
                     .contentShape(Rectangle())
                     .clipped()
+                    .clipShape(
+                        .rect(
+                            bottomLeadingRadius: VGRRadius.vgrCorner,
+                        )
+                    )
 
                 if isNew {
                     newContentIcon
@@ -198,6 +208,11 @@ public struct VGRCardView: View {
                     .frame(maxHeight: sizeClass.maxImageHeight, alignment: .center)
                     .contentShape(Rectangle())
                     .clipped()
+                    .clipShape(
+                        .rect(
+                            bottomLeadingRadius: VGRRadius.vgrCorner,
+                        )
+                    )
 
                 if isNew {
                     newContentIcon
@@ -235,6 +250,13 @@ public struct VGRCardView: View {
                     sizeClass: .large,
                     title: "Understanding Psoriasis",
                     subtitle: "5 min läsning",
+                    imageUrl: "placeholder",
+                    isNew: true
+                )
+
+                VGRCardView(
+                    sizeClass: .large,
+                    title: "Understanding Psoriasis",
                     imageUrl: "placeholder",
                     isNew: true
                 )
