@@ -67,7 +67,7 @@ struct VGRContentLinkGroup: View {
                     .accessibilityHidden(true)
             }
             .padding(.vertical, 12)
-            .padding(.horizontal, 16)
+            .padding(.horizontal, VGRSpacing.horizontal)
             .contentShape(Rectangle())
         }
     }
@@ -93,6 +93,20 @@ struct VGRContentLinkGroup: View {
                             url: "https://another-example.com",
                             subtitle: "Medicininstruktioner på AppStore",
                         )
+                    ]
+                )
+            )
+
+            VGRContentLinkGroup(
+                element: VGRContentElement(
+                    type: .linkGroup,
+                    links: [
+                        VGRContentElement(
+                            type: .webviewLink,
+                            text: "Öppna webben",
+                            url: "https://www.medicininstruktioner.se",
+                            subtitle: "www.medicininstruktioner.se",
+                        ),
                     ]
                 )
             )
