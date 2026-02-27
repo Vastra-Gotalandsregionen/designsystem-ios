@@ -43,6 +43,7 @@ struct VGRContentLinkView: View {
             .background(Color.Elevation.elevation1)
             .clipShape(RoundedRectangle(cornerRadius: VGRRadius.mainRadius))
             .padding(.bottom, VGRSpacing.verticalXLarge)
+            .padding(.horizontal, VGRSpacing.horizontal)
 
         } else {
             Text("Invalid link \"\(element.text)\"")
@@ -85,7 +86,6 @@ struct VGRContentLinkView: View {
                     )
                 )
             }
-            .padding(.horizontal, VGRSpacing.horizontal)
         }
         .background(Color.Elevation.background)
         .navigationTitle("VGRContentLinkView")
