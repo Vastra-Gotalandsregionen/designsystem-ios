@@ -74,6 +74,15 @@ public struct VGRCardButton: View {
                 }
 
                 VGRCardButton(
+                    sizeClass: .large,
+                    title: "Understanding Psoriasis",
+                    imageUrl: "placeholder",
+                    isNew: true
+                ) {
+                    print("I pressed article Understanding Psoriasis")
+                }
+
+                VGRCardButton(
                     sizeClass: .medium,
                     title: "Treatment Options",
                     subtitle: "3 min läsning",
