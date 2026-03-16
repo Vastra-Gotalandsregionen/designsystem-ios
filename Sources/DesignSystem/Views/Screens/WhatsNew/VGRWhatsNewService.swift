@@ -48,8 +48,9 @@ public class VGRWhatsNewService {
         return seenVersions
     }
 
-    /// Overwrites the seen versions list in UserDefaults
+    /// Overwrites the seen versions list in both memory and UserDefaults
     public func setSeenVersions(_ seenVersions: [String]) {
+        self.seenVersions = seenVersions
         UserDefaults.standard.setValue(seenVersions, forKey: userDefaultsKey)
     }
 
