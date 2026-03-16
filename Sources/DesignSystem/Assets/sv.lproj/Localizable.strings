@@ -191,3 +191,11 @@
 "feedback.option.feels_repetitive" = "Det känns upprepande";
 "feedback.option.other" = "Annat";
 "feedback.option.a11y.hint" = "Dubbeltryck för att markera eller avmarkera";
+
+/* WhatsNew */
+"whatsnew.title" = "Nyheter";
+"whatsnew.steps" = "%d av %d";
+"whatsnew.next" = "Nästa";
+"whatsnew.confirm" = "Bekräfta";
+"whatsnew.back" = "Tillbaka";
+"whatsnew.skip" = "Hoppa över";
