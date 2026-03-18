@@ -199,3 +199,6 @@
 "whatsnew.confirm" = "Bekräfta";
 "whatsnew.back" = "Tillbaka";
 "whatsnew.skip" = "Hoppa över";
+
+/* Tips */
+"tips.close.a11y" = "Stäng tips";
