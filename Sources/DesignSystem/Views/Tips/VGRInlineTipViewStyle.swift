@@ -1,6 +1,19 @@
 import SwiftUI
 import TipKit
 
+// MARK: - VGRTipCorner
+
+/// Corner to apply smaller radius for visual connection with adjacent UI
+public enum VGRTipCorner {
+    case none
+    case topLeading
+    case topTrailing
+    case bottomLeading
+    case bottomTrailing
+}
+
+// MARK: - VGRInlineTipViewStyle
+
 /// Custom TipViewStyle for inline tips with configurable colors and optional asymmetric corners.
 /// Use this for tips embedded in the content flow, not for popover-style tips.
 public struct VGRInlineTipViewStyle: TipViewStyle {

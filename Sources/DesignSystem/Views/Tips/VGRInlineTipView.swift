@@ -1,14 +1,6 @@
 import SwiftUI
 import TipKit
 
-// MARK: - Preview Tip
-
-private struct PreviewTip: Tip {
-    var title: Text { Text("Tips") }
-    var message: Text? { Text("This is an example tip message with some helpful guidance.") }
-    var image: Image? { Image(systemName: "lightbulb.fill") }
-}
-
 // MARK: - VGRInlineTipView
 
 /// Inline tip view embedded in the content flow.
@@ -57,6 +49,13 @@ public struct VGRInlineTipView<T: Tip>: View {
 }
 
 // MARK: - Previews
+
+
+private struct PreviewTip: Tip {
+    var title: Text { Text("Tips") }
+    var message: Text? { Text("This is an example tip message with some helpful guidance.") }
+    var image: Image? { Image(systemName: "lightbulb.fill") }
+}
 
 #Preview("Default (purple)") {
     VGRInlineTipView(tip: PreviewTip())
