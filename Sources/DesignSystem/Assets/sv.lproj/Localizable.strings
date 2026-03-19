@@ -40,8 +40,8 @@
 
 "bodypicker.torso" = "Överkropp";
 "bodypicker.torso.chest" = "Bröst";
-"bodypicker.torso.front" = "Torso fram";
-"bodypicker.torso.back" = "Torso bak";
+"bodypicker.torso.front" = "Mage / Bröst";
+"bodypicker.torso.back" = "Rygg";
 "bodypicker.torso.right.armpit" = "Armhåla";
 "bodypicker.torso.left.armpit" = "Armhåla";
 
@@ -70,16 +70,16 @@
 "bodypicker.right.hand.nails" = "Naglar";
 
 "bodypicker.left.leg" = "Ben";
-"bodypicker.left.upper.leg" = "Övre ben";
+"bodypicker.left.upper.leg" = "Lår";
 "bodypicker.left.knee" = "Knä";
 "bodypicker.left.hollow.of.knee" = "Knäveck";
-"bodypicker.left.lower.leg" = "Underben";
+"bodypicker.left.lower.leg" = "Smalben/vad";
 
 "bodypicker.right.leg" = "Ben";
-"bodypicker.right.upper.leg" = "Övre ben";
+"bodypicker.right.upper.leg" = "Lår";
 "bodypicker.right.knee" = "Knä";
 "bodypicker.right.hollow.of.knee" = "Knäveck";
-"bodypicker.right.lower.leg" = "Underben";
+"bodypicker.right.lower.leg" = "Smalben/vad";
 
 "bodypicker.pelvis" = "Bäcken";
 "bodypicker.pelvis.front.genitalia" = "Genitalier";
@@ -91,12 +91,12 @@
 "bodypicker.pelvis.buttocks" = "Skinkor";
 
 "bodypicker.left.foot" = "Fot";
-"bodypicker.left.foot.base" = "Fot";
+"bodypicker.left.foot.base" = "Fotrygg";
 "bodypicker.left.foot.sole" = "Fotsula";
 "bodypicker.left.foot.toenails" = "Tånaglar";
 
 "bodypicker.right.foot" = "Fot";
-"bodypicker.right.foot.base" = "Fot";
+"bodypicker.right.foot.base" = "Fotrygg";
 "bodypicker.right.foot.sole" = "Fotsula";
 "bodypicker.right.foot.toenails" = "Tånaglar";
 
