@@ -18,7 +18,7 @@ struct VGRBodyPartShape: Shape {
     /// Normalize resizes the original body image to fit the shapes rectangle
     private func normalize(_ path: UIBezierPath, to rect: CGRect) -> UIBezierPath {
         /// Absolute size (hardcoded) of the Body vector (from Figma)
-        let boundingBox = CGRect(x: 0, y: 0, width: 240, height: 662)
+        let boundingBox = CGRect(x: 0, y: 0, width: 721, height: 1979)
         let scaleX = rect.width / boundingBox.width
         let scaleY = rect.height / boundingBox.height
         let scale = min(scaleX, scaleY)  // Keep aspect ratio
