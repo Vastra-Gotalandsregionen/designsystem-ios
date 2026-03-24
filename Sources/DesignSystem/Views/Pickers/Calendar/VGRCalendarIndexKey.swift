@@ -4,23 +4,22 @@ import Foundation
 /// The reason for using it is to have a simple way of accessing the different elements in a date
 /// without having to resort to using the Calendar.
 public struct VGRCalendarIndexKey: Hashable, Equatable, Identifiable, Sendable {
-    public var year: Int
-    public var month: Int
-    public var day: Int
+    public let year: Int
+    public let month: Int
+    public let day: Int
+    public let weekday: VGRCalendarWeekday
 
     public var id: String {
         "\(year)-\(month)-\(day)" // Unique string, e.g., "2025-6-26"
     }
 
     public var monthID: String {
-        "\(year)-\(month)" 
+        "\(year)-\(month)"
     }
-
-    private static let sharedCalendar = Calendar.current
 
     /// Returns a unique string identifying the ISO week of the year, e.g., "2025-W26"
     public var weekID: String {
-        let calendar = Self.sharedCalendar
+        let calendar = Calendar.current
         let date = self.date
         let weekOfYear = calendar.component(.weekOfYear, from: date)
         let yearForWeekOfYear = calendar.component(.yearForWeekOfYear, from: date)
@@ -37,17 +36,28 @@ public struct VGRCalendarIndexKey: Hashable, Equatable, Identifiable, Sendable {
         self.year = year
         self.month = month
         self.day = day
+        let calendar = Calendar.current
+        let date = calendar.date(from: DateComponents(year: year, month: month, day: day))!
+        self.weekday = VGRCalendarWeekday(calendar.component(.weekday, from: date))
     }
 
-    public init(from date: Date) {
-        let calendar = Self.sharedCalendar
+    public init(from date: Date, using calendar: Calendar = .current) {
         self.year = calendar.component(.year, from: date)
         self.month = calendar.component(.month, from: date)
         self.day = calendar.component(.day, from: date)
+        self.weekday = VGRCalendarWeekday(calendar.component(.weekday, from: date))
+    }
+
+    public init(_ calendar: Calendar, _ date: Date) {
+        let components = calendar.dateComponents([.year, .month, .day, .weekday], from: date)
+        self.year = components.year!
+        self.month = components.month!
+        self.day = components.day!
+        self.weekday = VGRCalendarWeekday(components.weekday!)
     }
 
     public var date: Date {
-        let calendar = Self.sharedCalendar
+        let calendar = Calendar.current
         return calendar.date(self.year, self.month, self.day)
     }
 
@@ -104,5 +114,86 @@ extension VGRCalendarIndexKey {
         } else {
             return "e"
         }
+    }
+}
+
+// MARK: - V2 Calendar Support
+
+extension VGRCalendarIndexKey {
+
+    public var dayID: String {
+        "\(year)-\(String(format: "%02d", month))-\(String(format: "%02d", day))"
+    }
+
+    public func date(_ calendar: Calendar = .current) -> Date? {
+        calendar.date(from: DateComponents(year: year, month: month, day: day))
+    }
+
+    public func weekID(_ calendar: Calendar) -> String {
+        guard let date = date(calendar) else { return weekID }
+        let weekOfYear = calendar.component(.weekOfYear, from: date)
+        let yearForWeekOfYear = calendar.component(.yearForWeekOfYear, from: date)
+        return "\(yearForWeekOfYear)-W\(String(format: "%02d", weekOfYear))"
+    }
+
+    public func monthName(_ calendar: Calendar = .current) -> String {
+        guard let date = calendar.date(from: DateComponents(year: year, month: month, day: 1)) else { return "-" }
+        return date.formatted(.dateTime.month(.wide).year().locale(calendar.locale ?? .current))
+    }
+
+    public func generateWeeks(_ calendar: Calendar = .current) -> [[VGRCalendarIndexKey?]] {
+        let components = DateComponents(year: year, month: month, day: 1)
+        guard let firstOfMonth = calendar.date(from: components),
+              let range = calendar.range(of: .day, in: .month, for: firstOfMonth) else {
+            return []
+        }
+
+        let firstWeekday = calendar.component(.weekday, from: firstOfMonth)
+        let offset = (firstWeekday - calendar.firstWeekday + 7) % 7
+
+        var weeks: [[VGRCalendarIndexKey?]] = []
+        var week: [VGRCalendarIndexKey?] = Array(repeating: nil, count: offset)
+
+        for day in range {
+            let date = calendar.date(from: DateComponents(year: year, month: month, day: day))!
+            week.append(VGRCalendarIndexKey(calendar, date))
+
+            if week.count == 7 {
+                weeks.append(week)
+                week = []
+            }
+        }
+
+        if !week.isEmpty {
+            while week.count < 7 {
+                week.append(nil)
+            }
+            weeks.append(week)
+        }
+        
+        return weeks
+    }
+
+    public func daysInWeek(_ calendar: Calendar = .current) -> [VGRCalendarIndexKey] {
+        guard let date = date(calendar),
+              let weekInterval = calendar.dateInterval(of: .weekOfYear, for: date) else {
+            return []
+        }
+        return (0..<7).compactMap { offset in
+            guard let day = calendar.date(byAdding: .day, value: offset, to: weekInterval.start) else { return nil }
+            return VGRCalendarIndexKey(calendar, day)
+        }
+    }
+
+    public func previousWeek(_ calendar: Calendar = .current) -> VGRCalendarIndexKey {
+        let date = calendar.date(from: DateComponents(year: year, month: month, day: day))!
+        let previous = calendar.date(byAdding: .weekOfYear, value: -1, to: date)!
+        return VGRCalendarIndexKey(calendar, previous)
+    }
+
+    public func nextWeek(_ calendar: Calendar = .current) -> VGRCalendarIndexKey {
+        let date = calendar.date(from: DateComponents(year: year, month: month, day: day))!
+        let next = calendar.date(byAdding: .weekOfYear, value: 1, to: date)!
+        return VGRCalendarIndexKey(calendar, next)
     }
 }
