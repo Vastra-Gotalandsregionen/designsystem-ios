@@ -1,3 +1,5 @@
+import Foundation
+
 extension CGFloat {
 
     enum Radius {
@@ -10,7 +12,7 @@ extension CGFloat {
         static let xtraSmall: CGFloat = 8
     }
 
-    enum Letterspacing: CGFloat {
+    enum Letterspacing {
         static let small: CGFloat = 0.2
         static let medium: CGFloat = 0.0
     }
