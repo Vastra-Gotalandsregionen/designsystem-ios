@@ -145,7 +145,7 @@ public struct VGRStepper : View {
             })
         }
         .background(Color.Primary.blueSurfaceMinimal)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(a11ylabel)
         .accessibilityAdjustableAction({ direction in
