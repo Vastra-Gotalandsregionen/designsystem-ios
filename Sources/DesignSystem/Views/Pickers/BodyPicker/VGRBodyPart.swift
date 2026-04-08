@@ -2090,7 +2090,7 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
                     pelvisFrontPath.close()
                     return pelvisFrontPath
 
-                case .rightArmPit:
+                case .leftArmPit:
                     let rightArmPitPath = UIBezierPath()
                     rightArmPitPath.move(to: CGPoint(x: 484.62, y: 473.07))
                     rightArmPitPath.addCurve(to: CGPoint(x: 530.42, y: 454.26), controlPoint1: CGPoint(x: 504.71, y: 458.82), controlPoint2: CGPoint(x: 530.42, y: 454.32))
@@ -2101,7 +2101,7 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
                     rightArmPitPath.close()
                     return rightArmPitPath
 
-                case .leftArmPit:
+                case .rightArmPit:
                     let leftArmPitPath = UIBezierPath()
                     leftArmPitPath.move(to: CGPoint(x: 235.5, y: 473.07))
                     leftArmPitPath.addCurve(to: CGPoint(x: 189.69, y: 454.26), controlPoint1: CGPoint(x: 215.4, y: 458.82), controlPoint2: CGPoint(x: 189.69, y: 454.32))
