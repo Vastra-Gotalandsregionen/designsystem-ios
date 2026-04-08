@@ -777,27 +777,27 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
                     torsoPath.close()
                     return torsoPath
 
-                case .rightArmPit:
-                    let rightArmPitPath = UIBezierPath()
-                    rightArmPitPath.move(to: CGPoint(x: 235.47, y: 472.78))
-                    rightArmPitPath.addCurve(to: CGPoint(x: 189.66, y: 453.97), controlPoint1: CGPoint(x: 215.37, y: 458.53), controlPoint2: CGPoint(x: 189.66, y: 454.03))
-                    rightArmPitPath.addCurve(to: CGPoint(x: 209.7, y: 557.86), controlPoint1: CGPoint(x: 197.7, y: 494.41), controlPoint2: CGPoint(x: 205.44, y: 539.77))
-                    rightArmPitPath.addCurve(to: CGPoint(x: 217.8, y: 622.18), controlPoint1: CGPoint(x: 210.36, y: 564.28), controlPoint2: CGPoint(x: 214.68, y: 596.53))
-                    rightArmPitPath.addCurve(to: CGPoint(x: 251.31, y: 561.04), controlPoint1: CGPoint(x: 217.8, y: 622.18), controlPoint2: CGPoint(x: 243.12, y: 594.43))
-                    rightArmPitPath.addCurve(to: CGPoint(x: 235.47, y: 472.78), controlPoint1: CGPoint(x: 259.5, y: 527.65), controlPoint2: CGPoint(x: 255.57, y: 487.03))
-                    rightArmPitPath.close()
-                    return rightArmPitPath
-
                 case .leftArmPit:
                     let leftArmPitPath = UIBezierPath()
-                    leftArmPitPath.move(to: CGPoint(x: 484.59, y: 472.78))
-                    leftArmPitPath.addCurve(to: CGPoint(x: 530.4, y: 453.97), controlPoint1: CGPoint(x: 504.69, y: 458.53), controlPoint2: CGPoint(x: 530.4, y: 454.03))
-                    leftArmPitPath.addCurve(to: CGPoint(x: 510.36, y: 557.86), controlPoint1: CGPoint(x: 522.36, y: 494.41), controlPoint2: CGPoint(x: 514.62, y: 539.77))
-                    leftArmPitPath.addCurve(to: CGPoint(x: 502.26, y: 622.18), controlPoint1: CGPoint(x: 509.7, y: 564.28), controlPoint2: CGPoint(x: 505.38, y: 596.53))
-                    leftArmPitPath.addCurve(to: CGPoint(x: 468.75, y: 561.04), controlPoint1: CGPoint(x: 502.26, y: 622.18), controlPoint2: CGPoint(x: 476.94, y: 594.43))
-                    leftArmPitPath.addCurve(to: CGPoint(x: 484.59, y: 472.78), controlPoint1: CGPoint(x: 460.56, y: 527.65), controlPoint2: CGPoint(x: 464.49, y: 487.03))
+                    leftArmPitPath.move(to: CGPoint(x: 235.47, y: 472.78))
+                    leftArmPitPath.addCurve(to: CGPoint(x: 189.66, y: 453.97), controlPoint1: CGPoint(x: 215.37, y: 458.53), controlPoint2: CGPoint(x: 189.66, y: 454.03))
+                    leftArmPitPath.addCurve(to: CGPoint(x: 209.7, y: 557.86), controlPoint1: CGPoint(x: 197.7, y: 494.41), controlPoint2: CGPoint(x: 205.44, y: 539.77))
+                    leftArmPitPath.addCurve(to: CGPoint(x: 217.8, y: 622.18), controlPoint1: CGPoint(x: 210.36, y: 564.28), controlPoint2: CGPoint(x: 214.68, y: 596.53))
+                    leftArmPitPath.addCurve(to: CGPoint(x: 251.31, y: 561.04), controlPoint1: CGPoint(x: 217.8, y: 622.18), controlPoint2: CGPoint(x: 243.12, y: 594.43))
+                    leftArmPitPath.addCurve(to: CGPoint(x: 235.47, y: 472.78), controlPoint1: CGPoint(x: 259.5, y: 527.65), controlPoint2: CGPoint(x: 255.57, y: 487.03))
                     leftArmPitPath.close()
                     return leftArmPitPath
+
+                case .rightArmPit:
+                    let rightArmPitPath = UIBezierPath()
+                    rightArmPitPath.move(to: CGPoint(x: 484.59, y: 472.78))
+                    rightArmPitPath.addCurve(to: CGPoint(x: 530.4, y: 453.97), controlPoint1: CGPoint(x: 504.69, y: 458.53), controlPoint2: CGPoint(x: 530.4, y: 454.03))
+                    rightArmPitPath.addCurve(to: CGPoint(x: 510.36, y: 557.86), controlPoint1: CGPoint(x: 522.36, y: 494.41), controlPoint2: CGPoint(x: 514.62, y: 539.77))
+                    rightArmPitPath.addCurve(to: CGPoint(x: 502.26, y: 622.18), controlPoint1: CGPoint(x: 509.7, y: 564.28), controlPoint2: CGPoint(x: 505.38, y: 596.53))
+                    rightArmPitPath.addCurve(to: CGPoint(x: 468.75, y: 561.04), controlPoint1: CGPoint(x: 502.26, y: 622.18), controlPoint2: CGPoint(x: 476.94, y: 594.43))
+                    rightArmPitPath.addCurve(to: CGPoint(x: 484.59, y: 472.78), controlPoint1: CGPoint(x: 460.56, y: 527.65), controlPoint2: CGPoint(x: 464.49, y: 487.03))
+                    rightArmPitPath.close()
+                    return rightArmPitPath
 
                 case .head, .backOfHead:
                     let headPath = UIBezierPath()
@@ -2090,25 +2090,25 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
                     pelvisFrontPath.close()
                     return pelvisFrontPath
 
-                case .leftArmPit:
+                case .rightArmPit:
                     let rightArmPitPath = UIBezierPath()
-                    rightArmPitPath.move(to: CGPoint(x: 484.62, y: 473.07))
-                    rightArmPitPath.addCurve(to: CGPoint(x: 530.42, y: 454.26), controlPoint1: CGPoint(x: 504.71, y: 458.82), controlPoint2: CGPoint(x: 530.42, y: 454.32))
-                    rightArmPitPath.addCurve(to: CGPoint(x: 510.38, y: 558.15), controlPoint1: CGPoint(x: 522.38, y: 494.7), controlPoint2: CGPoint(x: 514.64, y: 540.06))
-                    rightArmPitPath.addCurve(to: CGPoint(x: 502.29, y: 622.47), controlPoint1: CGPoint(x: 509.73, y: 564.57), controlPoint2: CGPoint(x: 505.4, y: 596.82))
-                    rightArmPitPath.addCurve(to: CGPoint(x: 468.77, y: 561.33), controlPoint1: CGPoint(x: 502.29, y: 622.47), controlPoint2: CGPoint(x: 476.96, y: 594.72))
-                    rightArmPitPath.addCurve(to: CGPoint(x: 484.62, y: 473.07), controlPoint1: CGPoint(x: 460.58, y: 527.94), controlPoint2: CGPoint(x: 464.51, y: 487.32))
+                    rightArmPitPath.move(to: CGPoint(x: 235.5, y: 473.07))
+                    rightArmPitPath.addCurve(to: CGPoint(x: 189.69, y: 454.26), controlPoint1: CGPoint(x: 215.4, y: 458.82), controlPoint2: CGPoint(x: 189.69, y: 454.32))
+                    rightArmPitPath.addCurve(to: CGPoint(x: 209.73, y: 558.15), controlPoint1: CGPoint(x: 197.72, y: 494.7), controlPoint2: CGPoint(x: 205.47, y: 540.06))
+                    rightArmPitPath.addCurve(to: CGPoint(x: 217.82, y: 622.47), controlPoint1: CGPoint(x: 210.39, y: 564.57), controlPoint2: CGPoint(x: 214.71, y: 596.82))
+                    rightArmPitPath.addCurve(to: CGPoint(x: 251.34, y: 561.33), controlPoint1: CGPoint(x: 217.82, y: 622.47), controlPoint2: CGPoint(x: 243.15, y: 594.72))
+                    rightArmPitPath.addCurve(to: CGPoint(x: 235.5, y: 473.07), controlPoint1: CGPoint(x: 259.53, y: 527.94), controlPoint2: CGPoint(x: 255.59, y: 487.32))
                     rightArmPitPath.close()
                     return rightArmPitPath
 
-                case .rightArmPit:
+                case .leftArmPit:
                     let leftArmPitPath = UIBezierPath()
-                    leftArmPitPath.move(to: CGPoint(x: 235.5, y: 473.07))
-                    leftArmPitPath.addCurve(to: CGPoint(x: 189.69, y: 454.26), controlPoint1: CGPoint(x: 215.4, y: 458.82), controlPoint2: CGPoint(x: 189.69, y: 454.32))
-                    leftArmPitPath.addCurve(to: CGPoint(x: 209.73, y: 558.15), controlPoint1: CGPoint(x: 197.72, y: 494.7), controlPoint2: CGPoint(x: 205.47, y: 540.06))
-                    leftArmPitPath.addCurve(to: CGPoint(x: 217.82, y: 622.47), controlPoint1: CGPoint(x: 210.39, y: 564.57), controlPoint2: CGPoint(x: 214.71, y: 596.82))
-                    leftArmPitPath.addCurve(to: CGPoint(x: 251.34, y: 561.33), controlPoint1: CGPoint(x: 217.82, y: 622.47), controlPoint2: CGPoint(x: 243.15, y: 594.72))
-                    leftArmPitPath.addCurve(to: CGPoint(x: 235.5, y: 473.07), controlPoint1: CGPoint(x: 259.53, y: 527.94), controlPoint2: CGPoint(x: 255.59, y: 487.32))
+                    leftArmPitPath.move(to: CGPoint(x: 484.62, y: 473.07))
+                    leftArmPitPath.addCurve(to: CGPoint(x: 530.42, y: 454.26), controlPoint1: CGPoint(x: 504.71, y: 458.82), controlPoint2: CGPoint(x: 530.42, y: 454.32))
+                    leftArmPitPath.addCurve(to: CGPoint(x: 510.38, y: 558.15), controlPoint1: CGPoint(x: 522.38, y: 494.7), controlPoint2: CGPoint(x: 514.64, y: 540.06))
+                    leftArmPitPath.addCurve(to: CGPoint(x: 502.29, y: 622.47), controlPoint1: CGPoint(x: 509.73, y: 564.57), controlPoint2: CGPoint(x: 505.4, y: 596.82))
+                    leftArmPitPath.addCurve(to: CGPoint(x: 468.77, y: 561.33), controlPoint1: CGPoint(x: 502.29, y: 622.47), controlPoint2: CGPoint(x: 476.96, y: 594.72))
+                    leftArmPitPath.addCurve(to: CGPoint(x: 484.62, y: 473.07), controlPoint1: CGPoint(x: 460.58, y: 527.94), controlPoint2: CGPoint(x: 464.51, y: 487.32))
                     leftArmPitPath.close()
                     return leftArmPitPath
 
