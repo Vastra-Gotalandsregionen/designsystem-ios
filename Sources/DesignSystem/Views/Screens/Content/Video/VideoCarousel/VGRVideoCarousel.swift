@@ -18,6 +18,9 @@ public struct VGRVideoCarousel: View {
     /// Closure called when a carousel item is tapped, passing the tapped item.
     let onItemTapped: (any VGRVideoCarouselItem) -> Void
 
+    /// Optional fixed color for all video card circles. If nil, colors cycle automatically.
+    private let customCircleColor: Color?
+
     private var videoStatusService = VGRVideoStatusService.shared
 
     /// Creates a new video carousel with the specified properties.
@@ -25,16 +28,19 @@ public struct VGRVideoCarousel: View {
     ///   - title: The main title displayed in the carousel header.
     ///   - subtitle: The subtitle displayed below the title in the carousel header.
     ///   - items: The array of items conforming to `VGRVideoCarouselItem` to display in the carousel.
+    ///   - circleColor: Optional fixed color for all video card circles. If nil, colors cycle through accent colors.
     ///   - onItemTapped: Closure called when a carousel item is tapped, passing the tapped item.
     public init(
         title: String,
         subtitle: String,
         items: [any VGRVideoCarouselItem],
+        circleColor: Color? = nil,
         onItemTapped: @escaping (any VGRVideoCarouselItem) -> Void
     ) {
         self.title = title
         self.subtitle = subtitle
         self.items = items
+        self.customCircleColor = circleColor
         self.onItemTapped = onItemTapped
     }
 
@@ -208,7 +214,7 @@ public struct VGRVideoCarousel: View {
             }
             .scrollTargetLayout()
         }
-        .scrollPosition(id: $position)
+        .scrollPosition(id: $position, anchor: .leading)
         .onChange(of: position) { _, newValue in
             a11yPosition = newValue
         }
@@ -245,14 +251,14 @@ public struct VGRVideoCarousel: View {
                 title: item.title,
                 subtitle: item.subtitle,
                 duration: item.duration,
-                circleColor: colors[index % colors.count],
+                circleColor: customCircleColor ?? colors[index % colors.count],
                 watchStatus: watchStatus(for: item.id),
                 publishDate: item.publishDate
             )
             .id(item.id)
             .containerRelativeFrame(.horizontal,
-                                    count: items.count,
-                                    span: items.count,
+                                    count: 1,
+                                    span: 1,
                                     spacing: 16,
                                     alignment: .leading)
             .scrollTransition { view, transition in

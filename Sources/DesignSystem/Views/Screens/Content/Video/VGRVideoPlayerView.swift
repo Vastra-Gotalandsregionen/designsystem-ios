@@ -5,12 +5,29 @@ import OSLog
 
 /// A full-screen video player view for playing videos.
 ///
-/// This view handles video playback with features including:
-/// - Automatic Swedish subtitle selection
-/// - Tracks if the user has started playback
-/// - Progress tracking at 85% completion
-/// - Error handling with user-friendly alerts
-/// - Accessibility announcements for playback completion
+/// - Important: This view is deprecated. Use `VGRVideoPlayer` instead for proper VoiceOver accessibility.
+///
+/// `VGRVideoPlayerView` uses SwiftUI's `VideoPlayer` which lacks native VoiceOver support for playback controls.
+/// `VGRVideoPlayer` uses `AVPlayerViewController` which provides full accessibility.
+///
+/// **Migration:**
+/// ```swift
+/// // Before (deprecated)
+/// .sheet(isPresented: $showVideo) {
+///     VGRVideoPlayerView(title: "Video", videoUrl: url, videoId: id)
+/// }
+///
+/// // After (accessible)
+/// .fullScreenCover(isPresented: $showVideo) {
+///     VGRVideoPlayer(
+///         url: URL(string: url)!,
+///         onWatchedThresholdReached: { VGRVideoStatusService.shared.markAsWatched(videoId: id) },
+///         onDismiss: { showVideo = false }
+///     )
+///     .ignoresSafeArea()
+/// }
+/// ```
+@available(*, deprecated, message: "Use VGRVideoPlayer instead for proper VoiceOver accessibility")
 public struct VGRVideoPlayerView: View {
     private let logger = Logger(subsystem: "com.vgregion.designsystem", category: "VGRVideoPlayerView")
 

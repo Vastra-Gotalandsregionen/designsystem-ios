@@ -34,13 +34,18 @@ public struct VGRContentVideoView: View {
             .accessibilityAddTraits(.isLink)
         }
         .buttonStyle(VGRVideoCardButtonStyle())
-        .sheet(isPresented: $showVideoPlayer) {
-            NavigationStack {
-                VGRVideoPlayerView(
-                    title: element.title,
-                    videoUrl: element.videoUrl,
-                    videoId: element.videoId
+        .fullScreenCover(isPresented: $showVideoPlayer) {
+            if let url = URL(string: element.videoUrl) {
+                VGRVideoPlayer(
+                    url: url,
+                    onWatchedThresholdReached: {
+                        videoStatusService.markAsWatched(videoId: element.videoId)
+                    },
+                    onDismiss: {
+                        showVideoPlayer = false
+                    }
                 )
+                .ignoresSafeArea()
             }
         }
     }

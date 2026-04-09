@@ -33,7 +33,7 @@ public enum VGRVideoWatchStatus: Equatable {
 /// The service tracks three states:
 /// - **Not watched**: Video hasn't been started
 /// - **Partially watched**: Video was started but didn't reach 85%
-/// - **Completed**: Video reached 85% completion
+/// - **Completed**: Video reached 85% completion2
 ///
 /// Example usage:
 /// ```swift
