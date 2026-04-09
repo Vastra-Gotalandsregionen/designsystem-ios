@@ -89,7 +89,7 @@ public struct VGRWhatsNewScreen: View {
 
     /// The label for the next/confirm button
     var nextButtonTitle: String {
-        let key = (isLastTab ? "whatsnew.confirm" : "whatsnew.next")
+        let key = (isLastTab ? "whatsnew.done" : "whatsnew.next")
         return key.localizedBundle
     }
 

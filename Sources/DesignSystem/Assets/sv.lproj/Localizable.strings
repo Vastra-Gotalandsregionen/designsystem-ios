@@ -211,6 +211,7 @@
 "whatsnew.steps" = "%d av %d";
 "whatsnew.next" = "Nästa";
 "whatsnew.confirm" = "Bekräfta";
+"whatsnew.done" = "Klar";
 "whatsnew.back" = "Tillbaka";
 "whatsnew.skip" = "Hoppa över";
 
