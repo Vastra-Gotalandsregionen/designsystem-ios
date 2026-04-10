@@ -11,6 +11,7 @@
 "general.today" = "Idag";
 "general.yesterday" = "Igår";
 "general.tomorrow" = "Imorgon";
+"general.warning" = "Varning";
 "general.button.done" = "Klar";
 "general.button.ok" = "OK";
 
