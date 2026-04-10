@@ -29,12 +29,17 @@ public struct VGRValidationLabel: View {
         HStack(alignment: .firstTextBaseline, spacing: 4) {
             Image(systemName: "exclamationmark.circle.fill")
                 .isVisible(isWarning)
+                .accessibilityHidden(!isWarning)
+                .accessibilityLabel("general.warning".localizedBundle)
 
             Text(text)
                 .maxLeading()
         }
         .font(.footnoteRegular)
+        .contentShape(Rectangle())
         .foregroundStyle(isWarning ? Color.Status.errorText : Color.Neutral.text)
+        .accessibilityElement(children: .combine)
+
     }
 }
 
