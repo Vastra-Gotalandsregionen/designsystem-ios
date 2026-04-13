@@ -218,3 +218,13 @@
 
 /* Tips */
 "tips.close.a11y" = "Stäng tips";
+
+/* Alerts */
+"alert.unsaved.title" = "Osparade ändringar";
+"alert.unsaved.message" = "Vill du lämna utan att spara?";
+"alert.unsaved.discard" = "Spara inte";
+"alert.delete.title" = "Ta bort %@?";
+"alert.delete.message" = "Den här åtgärden kan inte ångras.";
+"alert.delete.confirm" = "Ta bort";
+"alert.error.title" = "Något gick fel";
+"alert.error.unknown" = "Okänt fel";
