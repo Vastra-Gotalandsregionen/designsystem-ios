@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// A single selectable entry in a ``VGRSelectionList``.
+/// A single selectable entry in a ``VGRMultiSelectionList`` or
+/// ``VGRSingleSelectionList``.
 ///
 /// Each item is identified by its ``id`` and displays ``name`` as its row label.
 /// The ``id`` is what appears in the selection binding — use a stable, unique
@@ -16,7 +17,7 @@ import SwiftUI
 public struct VGRSelectionListItem: Hashable, Identifiable {
 
     /// A stable, unique identifier for the item. Used as the value stored in
-    /// the selection binding of a ``VGRSelectionList``.
+    /// the selection binding of a ``VGRMultiSelectionList``.
     public let id: String
 
     /// The human-readable label displayed for the item.

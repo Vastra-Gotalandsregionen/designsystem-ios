@@ -1,16 +1,16 @@
 import SwiftUI
 
 
-/// A single row in a ``VGRSelectionList``. Renders the checkmark indicator and
-/// wraps the caller-supplied label in a tappable button. Kept as a separate
-/// view so the parent's `body` stays small enough for the Swift type checker
-/// to handle in reasonable time.
+/// A single row in a ``VGRMultiSelectionList``. Renders the checkmark
+/// indicator and wraps the caller-supplied label in a tappable button. Kept
+/// as a separate view so the parent's `body` stays small enough for the
+/// Swift type checker to handle in reasonable time.
 ///
 /// The checkmark explicitly opts out of implicit animations via
 /// `.transaction { $0.animation = nil }` so toggling selection inside a
 /// `withAnimation { ... }` block in surrounding code does not animate the
 /// indicator.
-public struct VGRSelectionListRow<Label: View>: View {
+public struct VGRMultiSelectionListRow<Label: View>: View {
 
     @ScaledMetric private var symbolSize: CGFloat = 16
 
@@ -43,7 +43,7 @@ public struct VGRSelectionListRow<Label: View>: View {
 
 #Preview {
     ScrollView {
-        VGRSelectionListRow(isSelected: true) {
+        VGRMultiSelectionListRow(isSelected: true) {
             print("Toggle")
         } label: {
             Text("Label")
@@ -51,7 +51,7 @@ public struct VGRSelectionListRow<Label: View>: View {
 
         VGRDivider()
 
-        VGRSelectionListRow(isSelected: false) {
+        VGRMultiSelectionListRow(isSelected: false) {
             print("Toggle 2")
         } label: {
             Text("Label 2")

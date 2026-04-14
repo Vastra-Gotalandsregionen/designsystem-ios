@@ -1,29 +1,29 @@
 import SwiftUI
 
-/// A ready-made screen that presents a ``VGRSelectionList`` with standard
-/// chrome: a navigation title, an optional description header, and the list
-/// wrapped in a rounded card on the app's background.
+/// A ready-made screen that presents a ``VGRSingleSelectionList`` with
+/// standard chrome: a navigation title, an optional description header, and
+/// the list wrapped in a rounded card on the app's background.
 ///
-/// Use this when you need the common "pick one or more items from a list"
+/// Use this when you need the common "pick exactly one item from a list"
 /// flow without repeating the surrounding layout in every caller. For more
-/// control over the layout, compose ``VGRSelectionList`` directly.
+/// control over the layout, compose ``VGRSingleSelectionList`` directly.
 ///
 /// The screen does not supply its own `NavigationStack` — present it inside
 /// one (or as a navigation destination) so the title is shown.
 ///
 /// ### Usage
 /// ```swift
-/// @State private var selection: Set<String> = ["domination"]
+/// @State private var selection: String? = nil
 ///
 /// let items = [
-///     VGRSelectionListItem(name: "Hello", id: "hello"),
-///     VGRSelectionListItem(name: "Domination", id: "domination"),
+///     VGRSelectionListItem(id: "hello", name: "Hello"),
+///     VGRSelectionListItem(id: "domination", name: "Domination"),
 /// ]
 ///
 /// NavigationStack {
-///     VGRSelectionListScreen(
-///         title: "Välj faktorer",
-///         description: "Vad påverkade händelsen?",
+///     VGRSingleSelectionListScreen(
+///         title: "Välj en faktor",
+///         description: "Vad påverkade händelsen mest?",
 ///         items: items,
 ///         selection: $selection
 ///     ) { item in
@@ -34,7 +34,7 @@ import SwiftUI
 ///     }
 /// }
 /// ```
-public struct VGRSelectionListScreen<Item: Identifiable, Label: View>: View {
+public struct VGRSingleSelectionListScreen<Item: Identifiable, Label: View>: View {
 
     /// Title shown in the navigation bar.
     public let title: String
@@ -45,27 +45,27 @@ public struct VGRSelectionListScreen<Item: Identifiable, Label: View>: View {
     /// The selectable items displayed in the list.
     public let items: [Item]
 
-    /// Binding to the set of currently selected item IDs. Seed it with IDs
-    /// to pre-select the corresponding items.
-    @Binding public var selection: Set<Item.ID>
+    /// Binding to the currently selected item ID, or `nil` if nothing is
+    /// selected. Seed it before presenting to pre-select an item.
+    @Binding public var selection: Item.ID?
 
-    /// Builds the label view shown to the right of the checkbox for a given item.
+    /// Builds the label view shown on the leading edge of each row.
     public let label: (Item) -> Label
 
-    /// Creates a selection list screen.
+    /// Creates a single-selection list screen.
     /// - Parameters:
     ///   - title: Title shown in the navigation bar.
     ///   - description: Optional descriptive text shown above the list.
     ///   - items: The selectable items to display.
-    ///   - selection: A binding to the set of selected item IDs. Seed it
-    ///     with IDs to pre-select the corresponding items.
-    ///   - label: A view builder that produces the label shown next to the
-    ///     checkbox for each item.
+    ///   - selection: A binding to the selected item ID. Seed it with an ID
+    ///     to pre-select the corresponding item, or `nil` for no selection.
+    ///   - label: A view builder that produces the label shown on the
+    ///     leading edge of each row.
     public init(
         title: String,
         description: String? = nil,
         items: [Item],
-        selection: Binding<Set<Item.ID>>,
+        selection: Binding<Item.ID?>,
         @ViewBuilder label: @escaping (Item) -> Label
     ) {
         self.title = title
@@ -85,7 +85,7 @@ public struct VGRSelectionListScreen<Item: Identifiable, Label: View>: View {
                         .padding(.horizontal, .Margins.medium)
                 }
 
-                VGRSelectionList(items: items, selection: $selection, label: label)
+                VGRSingleSelectionList(items: items, selection: $selection, label: label)
                     .background(Color.Elevation.elevation1)
                     .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
             }
@@ -98,9 +98,9 @@ public struct VGRSelectionListScreen<Item: Identifiable, Label: View>: View {
     }
 }
 
-#Preview("VGRSelectionListScreen") {
+#Preview("VGRSingleSelectionListScreen") {
 
-    @Previewable @State var selection: Set<String> = ["domination"]
+    @Previewable @State var selection: String? = nil
 
     let items = [
         VGRSelectionListItem(name: "Hello"),
@@ -111,9 +111,9 @@ public struct VGRSelectionListScreen<Item: Identifiable, Label: View>: View {
     ]
 
     NavigationStack {
-        VGRSelectionListScreen(
-            title: "Selection List",
-            description: "Choose one or more items from the list below.",
+        VGRSingleSelectionListScreen(
+            title: "Single Selection List",
+            description: "Choose one item from the list below.",
             items: items,
             selection: $selection
         ) { item in
