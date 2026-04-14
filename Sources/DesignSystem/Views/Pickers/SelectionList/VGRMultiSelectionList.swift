@@ -15,6 +15,8 @@ import SwiftUI
 /// `ScrollView`, or `NavigationStack`. The caller is responsible for any
 /// surrounding chrome (titles, headers, scroll container, etc.).
 ///
+/// For single-choice selection, use `VGRSingleSelectionList` instead (when available).
+///
 /// ### Usage
 /// ```swift
 /// @State private var selection: Set<String> = ["world"]
@@ -24,13 +26,13 @@ import SwiftUI
 ///     VGRSelectionListItem(id: "world", name: "World"),
 /// ]
 ///
-/// VGRSelectionList(items: items, selection: $selection) { item in
+/// VGRMultiSelectionList(items: items, selection: $selection) { item in
 ///     Text(item.name)
 ///         .foregroundStyle(Color.Neutral.text)
 ///         .fontWeight(.medium)
 /// }
 /// ```
-public struct VGRSelectionList<Item: Identifiable, Label: View>: View {
+public struct VGRMultiSelectionList<Item: Identifiable, Label: View>: View {
 
     /// The selectable items displayed in the list.
     public let items: [Item]
@@ -42,7 +44,7 @@ public struct VGRSelectionList<Item: Identifiable, Label: View>: View {
     /// Builds the label view shown to the right of the checkbox for a given item.
     public let label: (Item) -> Label
 
-    /// Creates a selection list.
+    /// Creates a multi-selection list.
     /// - Parameters:
     ///   - items: The selectable items to display.
     ///   - selection: A binding to the set of selected item IDs. Seed it with
@@ -62,7 +64,7 @@ public struct VGRSelectionList<Item: Identifiable, Label: View>: View {
     public var body: some View {
         VStack(spacing: 0) {
             ForEach(items) { item in
-                VGRSelectionListRow(
+                VGRMultiSelectionListRow(
                     isSelected: selection.contains(item.id),
                     toggle: { toggle(item) }
                 ) {
@@ -85,7 +87,7 @@ public struct VGRSelectionList<Item: Identifiable, Label: View>: View {
     }
 }
 
-#Preview("VGRSelectionList") {
+#Preview("VGRMultiSelectionList") {
 
     @Previewable @State var selection: Set<String> = ["domination"]
 
@@ -105,7 +107,7 @@ public struct VGRSelectionList<Item: Identifiable, Label: View>: View {
                     .font(.headlineSemibold)
                     .padding(.horizontal, .Margins.medium)
 
-                VGRSelectionList(items: items, selection: $selection) { item in
+                VGRMultiSelectionList(items: items, selection: $selection) { item in
                     Text(item.name)
                         .foregroundStyle(Color.Neutral.text)
                         .fontWeight(.medium)
@@ -117,7 +119,7 @@ public struct VGRSelectionList<Item: Identifiable, Label: View>: View {
             .padding(.horizontal, .Margins.medium)
         }
         .background(Color.Elevation.background)
-        .navigationTitle("VGRSelectionList")
+        .navigationTitle("VGRMultiSelectionList")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
