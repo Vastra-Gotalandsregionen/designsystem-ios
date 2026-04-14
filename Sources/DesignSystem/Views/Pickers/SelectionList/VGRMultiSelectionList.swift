@@ -7,9 +7,9 @@ import SwiftUI
 /// `Identifiable` value works, so callers can either use ``VGRSelectionListItem`` for the
 /// simple case or pass their own domain model.
 ///
-/// Selection is synced through a `Set` of item IDs, which also doubles as the
-/// pre-selection mechanism — any IDs present in the set when the view appears
-/// will be shown as selected.
+/// Selection is synced through a `Set` of items, which also doubles as the
+/// pre-selection mechanism — any items present in the set when the view
+/// appears will be shown as selected.
 ///
 /// The rendering is a plain `VStack`; it does not wrap itself in a `List`,
 /// `ScrollView`, or `NavigationStack`. The caller is responsible for any
@@ -19,7 +19,7 @@ import SwiftUI
 ///
 /// ### Usage
 /// ```swift
-/// @State private var selection: Set<String> = ["world"]
+/// @State private var selection: Set<VGRSelectionListItem> = []
 ///
 /// let items = [
 ///     VGRSelectionListItem(id: "hello", name: "Hello"),
@@ -32,14 +32,14 @@ import SwiftUI
 ///         .fontWeight(.medium)
 /// }
 /// ```
-public struct VGRMultiSelectionList<Item: Identifiable, Label: View>: View {
+public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Label: View>: View {
 
     /// The selectable items displayed in the list.
     public let items: [Item]
 
-    /// Binding to the set of currently selected item IDs. Seed it with IDs to
-    /// pre-select the corresponding items.
-    @Binding public var selection: Set<Item.ID>
+    /// Binding to the set of currently selected items. Seed it before
+    /// presenting to pre-select items.
+    @Binding public var selection: Set<Item>
 
     /// Builds the label view shown to the right of the checkbox for a given item.
     public let label: (Item) -> Label
@@ -47,13 +47,13 @@ public struct VGRMultiSelectionList<Item: Identifiable, Label: View>: View {
     /// Creates a multi-selection list.
     /// - Parameters:
     ///   - items: The selectable items to display.
-    ///   - selection: A binding to the set of selected item IDs. Seed it with
-    ///     IDs to pre-select the corresponding items.
+    ///   - selection: A binding to the set of selected items. Seed it with
+    ///     items to pre-select the corresponding rows.
     ///   - label: A view builder that produces the label shown next to the
     ///     checkbox for each item.
     public init(
         items: [Item],
-        selection: Binding<Set<Item.ID>>,
+        selection: Binding<Set<Item>>,
         @ViewBuilder label: @escaping (Item) -> Label
     ) {
         self.items = items
@@ -65,7 +65,7 @@ public struct VGRMultiSelectionList<Item: Identifiable, Label: View>: View {
         VStack(spacing: 0) {
             ForEach(items) { item in
                 VGRMultiSelectionListRow(
-                    isSelected: selection.contains(item.id),
+                    isSelected: selection.contains(item),
                     toggle: { toggle(item) }
                 ) {
                     label(item)
@@ -79,17 +79,17 @@ public struct VGRMultiSelectionList<Item: Identifiable, Label: View>: View {
     }
 
     private func toggle(_ item: Item) {
-        if selection.contains(item.id) {
-            selection.remove(item.id)
+        if selection.contains(item) {
+            selection.remove(item)
         } else {
-            selection.insert(item.id)
+            selection.insert(item)
         }
     }
 }
 
 #Preview("VGRMultiSelectionList") {
 
-    @Previewable @State var selection: Set<String> = ["domination"]
+    @Previewable @State var selection: Set<VGRSelectionListItem> = []
 
     let items = [
         VGRSelectionListItem(name: "Hello"),

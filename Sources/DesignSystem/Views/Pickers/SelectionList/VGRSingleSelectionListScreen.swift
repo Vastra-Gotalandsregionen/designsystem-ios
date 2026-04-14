@@ -13,7 +13,7 @@ import SwiftUI
 ///
 /// ### Usage
 /// ```swift
-/// @State private var selection: String? = nil
+/// @State private var selection: VGRSelectionListItem? = nil
 ///
 /// let items = [
 ///     VGRSelectionListItem(id: "hello", name: "Hello"),
@@ -45,9 +45,19 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable, Label: View>: Vie
     /// The selectable items displayed in the list.
     public let items: [Item]
 
-    /// Binding to the currently selected item ID, or `nil` if nothing is
+    /// Binding to the currently selected item, or `nil` if nothing is
     /// selected. Seed it before presenting to pre-select an item.
-    @Binding public var selection: Item.ID?
+    ///
+    /// Items are matched by their `Identifiable.id`, so the bound value does
+    /// not need to be reference-equal to an element in ``items`` — any item
+    /// with the same `id` counts as the selection.
+    @Binding public var selection: Item?
+
+    /// Whether tapping the already-selected row clears the selection back to
+    /// `nil`. Defaults to `false` — classic radio-button behavior. Set to
+    /// `true` to allow tapping the selected row to deselect it. Forwarded to
+    /// the underlying ``VGRSingleSelectionList``.
+    public let allowsDeselection: Bool
 
     /// Builds the label view shown on the leading edge of each row.
     public let label: (Item) -> Label
@@ -57,21 +67,25 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable, Label: View>: Vie
     ///   - title: Title shown in the navigation bar.
     ///   - description: Optional descriptive text shown above the list.
     ///   - items: The selectable items to display.
-    ///   - selection: A binding to the selected item ID. Seed it with an ID
-    ///     to pre-select the corresponding item, or `nil` for no selection.
+    ///   - selection: A binding to the selected item. Seed it to pre-select
+    ///     the corresponding row, or `nil` for no selection.
+    ///   - allowsDeselection: When `true`, tapping the already-selected row
+    ///     clears the selection to `nil`. Defaults to `false`.
     ///   - label: A view builder that produces the label shown on the
     ///     leading edge of each row.
     public init(
         title: String,
         description: String? = nil,
         items: [Item],
-        selection: Binding<Item.ID?>,
+        selection: Binding<Item?>,
+        allowsDeselection: Bool = false,
         @ViewBuilder label: @escaping (Item) -> Label
     ) {
         self.title = title
         self.description = description
         self.items = items
         self._selection = selection
+        self.allowsDeselection = allowsDeselection
         self.label = label
     }
 
@@ -85,9 +99,14 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable, Label: View>: Vie
                         .padding(.horizontal, .Margins.medium)
                 }
 
-                VGRSingleSelectionList(items: items, selection: $selection, label: label)
-                    .background(Color.Elevation.elevation1)
-                    .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
+                VGRSingleSelectionList(
+                    items: items,
+                    selection: $selection,
+                    allowsDeselection: allowsDeselection,
+                    label: label
+                )
+                .background(Color.Elevation.elevation1)
+                .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
             }
             .padding(.horizontal, .Margins.medium)
         }
@@ -100,7 +119,7 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable, Label: View>: Vie
 
 #Preview("VGRSingleSelectionListScreen") {
 
-    @Previewable @State var selection: String? = nil
+    @Previewable @State var selection: VGRSelectionListItem? = nil
 
     let items = [
         VGRSelectionListItem(name: "Hello"),

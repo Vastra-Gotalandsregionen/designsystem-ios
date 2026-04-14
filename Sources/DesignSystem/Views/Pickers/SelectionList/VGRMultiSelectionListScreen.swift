@@ -13,11 +13,11 @@ import SwiftUI
 ///
 /// ### Usage
 /// ```swift
-/// @State private var selection: Set<String> = ["domination"]
+/// @State private var selection: Set<VGRSelectionListItem> = []
 ///
 /// let items = [
-///     VGRSelectionListItem(name: "Hello", id: "hello"),
-///     VGRSelectionListItem(name: "Domination", id: "domination"),
+///     VGRSelectionListItem(id: "hello", name: "Hello"),
+///     VGRSelectionListItem(id: "domination", name: "Domination"),
 /// ]
 ///
 /// NavigationStack {
@@ -34,7 +34,7 @@ import SwiftUI
 ///     }
 /// }
 /// ```
-public struct VGRMultiSelectionListScreen<Item: Identifiable, Label: View>: View {
+public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable, Label: View>: View {
 
     /// Title shown in the navigation bar.
     public let title: String
@@ -45,9 +45,9 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable, Label: View>: View
     /// The selectable items displayed in the list.
     public let items: [Item]
 
-    /// Binding to the set of currently selected item IDs. Seed it with IDs
-    /// to pre-select the corresponding items.
-    @Binding public var selection: Set<Item.ID>
+    /// Binding to the set of currently selected items. Seed it before
+    /// presenting to pre-select items.
+    @Binding public var selection: Set<Item>
 
     /// Builds the label view shown to the right of the checkbox for a given item.
     public let label: (Item) -> Label
@@ -57,15 +57,15 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable, Label: View>: View
     ///   - title: Title shown in the navigation bar.
     ///   - description: Optional descriptive text shown above the list.
     ///   - items: The selectable items to display.
-    ///   - selection: A binding to the set of selected item IDs. Seed it
-    ///     with IDs to pre-select the corresponding items.
+    ///   - selection: A binding to the set of selected items. Seed it with
+    ///     items to pre-select the corresponding rows.
     ///   - label: A view builder that produces the label shown next to the
     ///     checkbox for each item.
     public init(
         title: String,
         description: String? = nil,
         items: [Item],
-        selection: Binding<Set<Item.ID>>,
+        selection: Binding<Set<Item>>,
         @ViewBuilder label: @escaping (Item) -> Label
     ) {
         self.title = title
@@ -100,7 +100,7 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable, Label: View>: View
 
 #Preview("VGRMultiSelectionListScreen") {
 
-    @Previewable @State var selection: Set<String> = ["domination"]
+    @Previewable @State var selection: Set<VGRSelectionListItem> = []
 
     let items = [
         VGRSelectionListItem(name: "Hello"),

@@ -6,11 +6,11 @@ import SwiftUI
 /// trailing checkmark — drawn by the component — that appears only on the
 /// currently selected row. Unselected rows have no trailing indicator.
 ///
-/// Tapping an unselected row reassigns the selection to that row. Tapping
-/// the already-selected row clears the selection (the binding becomes
-/// `nil`), mirroring the toggle semantics of ``VGRMultiSelectionList``. If
-/// your flow should never allow an empty selection, seed the binding with an
-/// initial value and ignore the `nil` case in your own state.
+/// Tapping an unselected row reassigns the selection to that row. By
+/// default, tapping the already-selected row is a no-op (classic radio
+/// behavior) — once a selection exists it can only be changed, not cleared.
+/// Pass `allowsDeselection: true` to opt into toggle semantics where tapping
+/// the selected row sets the binding back to `nil`.
 ///
 /// The component is generic over the item type; any `Identifiable` value
 /// works, so callers can either use ``VGRSelectionListItem`` for the simple
@@ -24,7 +24,7 @@ import SwiftUI
 ///
 /// ### Usage
 /// ```swift
-/// @State private var selection: String? = "world"
+/// @State private var selection: VGRSelectionListItem? = nil
 ///
 /// let items = [
 ///     VGRSelectionListItem(id: "hello", name: "Hello"),
@@ -42,9 +42,20 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
     /// The selectable items displayed in the list.
     public let items: [Item]
 
-    /// Binding to the currently selected item ID, or `nil` if nothing is
+    /// Binding to the currently selected item, or `nil` if nothing is
     /// selected. Seed it before presenting to pre-select an item.
-    @Binding public var selection: Item.ID?
+    ///
+    /// Items are matched by their `Identifiable.id`, so the bound value does
+    /// not need to be reference-equal to an element in ``items`` — any item
+    /// with the same `id` counts as the selection.
+    @Binding public var selection: Item?
+
+    /// Whether tapping the already-selected row clears the selection back to
+    /// `nil`. Defaults to `false` — once an item is selected the user must
+    /// pick a different one to change the selection, matching classic
+    /// radio-button behavior. Set to `true` to allow tapping the selected
+    /// row to deselect it.
+    public let allowsDeselection: Bool
 
     /// Builds the label view shown on the leading edge of each row.
     public let label: (Item) -> Label
@@ -52,17 +63,21 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
     /// Creates a single-selection list.
     /// - Parameters:
     ///   - items: The selectable items to display.
-    ///   - selection: A binding to the selected item ID. Seed it with an ID
-    ///     to pre-select the corresponding item, or `nil` for no selection.
+    ///   - selection: A binding to the selected item. Seed it to pre-select
+    ///     the corresponding row, or `nil` for no selection.
+    ///   - allowsDeselection: When `true`, tapping the already-selected row
+    ///     clears the selection to `nil`. Defaults to `false`.
     ///   - label: A view builder that produces the label shown on the
     ///     leading edge of each row.
     public init(
         items: [Item],
-        selection: Binding<Item.ID?>,
+        selection: Binding<Item?>,
+        allowsDeselection: Bool = false,
         @ViewBuilder label: @escaping (Item) -> Label
     ) {
         self.items = items
         self._selection = selection
+        self.allowsDeselection = allowsDeselection
         self.label = label
     }
 
@@ -70,7 +85,7 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
         VStack(spacing: 0) {
             ForEach(items) { item in
                 VGRSingleSelectionListRow(
-                    isSelected: selection == item.id,
+                    isSelected: selection?.id == item.id,
                     toggle: { toggle(item) }
                 ) {
                     label(item)
@@ -84,17 +99,19 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
     }
 
     private func toggle(_ item: Item) {
-        if selection == item.id {
-            selection = nil
+        if selection?.id == item.id {
+            if allowsDeselection {
+                selection = nil
+            }
         } else {
-            selection = item.id
+            selection = item
         }
     }
 }
 
 #Preview("VGRSingleSelectionList") {
 
-    @Previewable @State var selection: String? = nil
+    @Previewable @State var selection: VGRSelectionListItem? = nil
 
     let items = [
         VGRSelectionListItem(name: "Hello"),
