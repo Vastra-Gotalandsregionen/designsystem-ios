@@ -149,7 +149,7 @@ public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
             .padding()
             .frame(maxWidth: .infinity)
             .background(Color.Primary.action)
-            .cornerRadius(16)
+            .cornerRadius(.Radius.mainRadius)
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
         .disabled(!configuration.isEnabled || configuration.isLoading)
@@ -182,9 +182,8 @@ public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
             }
             .foregroundColor(Color.Primary.action)
             .padding()
-            .frame(maxWidth: .infinity)
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: .Radius.mainRadius)
                     .stroke(Color.Primary.action, lineWidth: 2)
             )
             .opacity(configuration.isEnabled ? 1 : 0.5)
@@ -221,7 +220,7 @@ public struct VerticalButtonVariant: VGRButtonVariantProtocol {
             .padding()
             .frame(maxWidth: .infinity)
             .background(Color.Primary.blueSurfaceMinimal)
-            .cornerRadius(16)
+            .cornerRadius(.Radius.mainRadius)
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
         .disabled(!configuration.isEnabled || configuration.isLoading)
@@ -255,7 +254,7 @@ public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
             .padding()
             .frame(maxWidth: .infinity)
             .background(Color.Primary.blueSurfaceMinimal)
-            .cornerRadius(12)
+            .cornerRadius(.Radius.mainRadius)
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
         .disabled(!configuration.isEnabled || configuration.isLoading)
@@ -298,7 +297,7 @@ public struct ListRowButtonVariant: VGRButtonVariantProtocol {
             .padding()
             .frame(maxWidth: .infinity)
             .background(Color.Elevation.elevation1)
-            .cornerRadius(16)
+            .cornerRadius(.Radius.mainRadius)
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
         .disabled(!configuration.isEnabled || configuration.isLoading)
