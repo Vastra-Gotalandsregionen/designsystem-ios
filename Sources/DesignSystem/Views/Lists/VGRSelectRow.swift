@@ -38,8 +38,10 @@ struct VGRSelectRow<Icon: View>: View {
                     .foregroundStyle(Color.Primary.action)
             }
         })
+        .transaction { $0.animation = nil }
         .contentShape(Rectangle())
         .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 }
 

@@ -36,8 +36,10 @@ struct VGRCheckRow<Accessory: View>: View {
         }, accessory: {
             accessory
         })
+        .transaction { $0.animation = nil }
         .contentShape(Rectangle())
         .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 }
 

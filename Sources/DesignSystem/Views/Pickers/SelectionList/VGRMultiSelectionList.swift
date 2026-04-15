@@ -32,6 +32,19 @@ import SwiftUI
 ///         .fontWeight(.medium)
 /// }
 /// ```
+///
+/// ### Usage (alternative, using strings instead of arbitrary View)
+/// ```swift
+/// @State private var selection: Set<VGRSelectionListItem> = []
+///
+/// let items = [
+///     VGRSelectionListItem(id: "hello", name: "Hello"),
+///     VGRSelectionListItem(id: "world", name: "World"),
+/// ]
+///
+/// VGRMultiSelectionList(items: items, selection: $selection) { $0.name }
+/// ```
+
 public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Label: View>: View {
 
     /// The selectable items displayed in the list.
@@ -42,9 +55,16 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Label: View>:
     @Binding public var selection: Set<Item>
 
     /// Builds the label view shown to the right of the checkbox for a given item.
-    public let label: (Item) -> Label
+    /// Nil when the list was created with a ``name`` closure — rendering
+    /// then goes through the string-based path instead.
+    private let label: ((Item) -> Label)?
 
-    /// Creates a multi-selection list.
+    /// Returns the display name for an item. When provided, the list uses a
+    /// simpler built-in row rendering (``VGRCheckRow``) instead of the
+    /// caller-supplied ``label`` view.
+    private let name: ((Item) -> String)?
+
+    /// Creates a multi-selection list with a custom row label.
     /// - Parameters:
     ///   - items: The selectable items to display.
     ///   - selection: A binding to the set of selected items. Seed it with
@@ -59,20 +79,47 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Label: View>:
         self.items = items
         self._selection = selection
         self.label = label
+        self.name = nil
+    }
+
+    /// Creates a multi-selection list that renders each row using the design
+    /// system's built-in ``VGRCheckRow`` styling with the string returned by
+    /// `name` as the title.
+    /// - Parameters:
+    ///   - items: The selectable items to display.
+    ///   - selection: A binding to the set of selected items.
+    ///   - name: A closure that returns the display name for an item.
+    public init(
+        items: [Item],
+        selection: Binding<Set<Item>>,
+        name: @escaping (Item) -> String
+    ) where Label == EmptyView {
+        self.items = items
+        self._selection = selection
+        self.label = nil
+        self.name = name
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
+        VGRList {
             ForEach(items) { item in
-                VGRMultiSelectionListRow(
-                    isSelected: selection.contains(item),
-                    toggle: { toggle(item) }
-                ) {
-                    label(item)
-                }
-
-                if items.last?.id != item.id {
-                    VGRDivider()
+                if let name {
+                    Button {
+                        toggle(item)
+                    } label: {
+                        VGRCheckRow(
+                            title: name(item),
+                            isSelected: selection.contains(item)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                } else if let label {
+                    VGRMultiSelectionListRow(
+                        isSelected: selection.contains(item),
+                        toggle: { toggle(item) }
+                    ) {
+                        label(item)
+                    }
                 }
             }
         }
@@ -103,18 +150,21 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Label: View>:
         ScrollView {
             VStack(alignment: .leading, spacing: .Margins.medium) {
 
-                Text("Choose one or more items from the list below.")
+                Text("Choose one or more items from the string list below.")
+                    .font(.headlineSemibold)
+                    .padding(.horizontal, .Margins.medium)
+
+                VGRMultiSelectionList(items: items, selection: $selection) { $0.name }
+
+                Text("Choose one or more items from the view list below.")
                     .font(.headlineSemibold)
                     .padding(.horizontal, .Margins.medium)
 
                 VGRMultiSelectionList(items: items, selection: $selection) { item in
                     Text(item.name)
-                        .foregroundStyle(Color.Neutral.text)
-                        .fontWeight(.medium)
-                        .padding(.vertical, .Margins.medium)
+                        .foregroundStyle(.cyan)
+                        .padding(.vertical, .Margins.small)
                 }
-                .background(Color.Elevation.elevation1)
-                .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
             }
             .padding(.horizontal, .Margins.medium)
         }

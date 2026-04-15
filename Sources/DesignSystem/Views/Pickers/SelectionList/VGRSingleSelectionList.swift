@@ -37,6 +37,19 @@ import SwiftUI
 ///         .fontWeight(.medium)
 /// }
 /// ```
+///
+/// ### Usage (alternative, using strings instead of arbitrary View)
+/// ```swift
+/// @State private var selection: VGRSelectionListItem? = nil
+///
+/// let items = [
+///     VGRSelectionListItem(id: "hello", name: "Hello"),
+///     VGRSelectionListItem(id: "world", name: "World"),
+/// ]
+///
+/// VGRSingleSelectionList(items: items, selection: $selection) { $0.name }
+/// ```
+
 public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
 
     /// The selectable items displayed in the list.
@@ -58,9 +71,16 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
     public let allowsDeselection: Bool
 
     /// Builds the label view shown on the leading edge of each row.
-    public let label: (Item) -> Label
+    /// Nil when the list was created with a ``name`` closure — rendering
+    /// then goes through the string-based path instead.
+    private let label: ((Item) -> Label)?
 
-    /// Creates a single-selection list.
+    /// Returns the display name for an item. When provided, the list uses a
+    /// simpler built-in row rendering (``VGRSelectRow``) instead of the
+    /// caller-supplied ``label`` view.
+    private let name: ((Item) -> String)?
+
+    /// Creates a single-selection list with a custom row label.
     /// - Parameters:
     ///   - items: The selectable items to display.
     ///   - selection: A binding to the selected item. Seed it to pre-select
@@ -79,20 +99,51 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
         self._selection = selection
         self.allowsDeselection = allowsDeselection
         self.label = label
+        self.name = nil
+    }
+
+    /// Creates a single-selection list that renders each row using the design
+    /// system's built-in ``VGRSelectRow`` styling with the string returned by
+    /// `name` as the title.
+    /// - Parameters:
+    ///   - items: The selectable items to display.
+    ///   - selection: A binding to the selected item.
+    ///   - allowsDeselection: When `true`, tapping the already-selected row
+    ///     clears the selection to `nil`. Defaults to `false`.
+    ///   - name: A closure that returns the display name for an item.
+    public init(
+        items: [Item],
+        selection: Binding<Item?>,
+        allowsDeselection: Bool = false,
+        name: @escaping (Item) -> String
+    ) where Label == EmptyView {
+        self.items = items
+        self._selection = selection
+        self.allowsDeselection = allowsDeselection
+        self.label = nil
+        self.name = name
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
+        VGRList {
             ForEach(items) { item in
-                VGRSingleSelectionListRow(
-                    isSelected: selection?.id == item.id,
-                    toggle: { toggle(item) }
-                ) {
-                    label(item)
-                }
-
-                if items.last?.id != item.id {
-                    VGRDivider()
+                if let name {
+                    Button {
+                        toggle(item)
+                    } label: {
+                        VGRSelectRow(
+                            title: name(item),
+                            isSelected: selection?.id == item.id
+                        )
+                    }
+                    .buttonStyle(.plain)
+                } else if let label {
+                    VGRSingleSelectionListRow(
+                        isSelected: selection?.id == item.id,
+                        toggle: { toggle(item) }
+                    ) {
+                        label(item)
+                    }
                 }
             }
         }
@@ -125,18 +176,22 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
         ScrollView {
             VStack(alignment: .leading, spacing: .Margins.medium) {
 
-                Text("Choose one item from the list below.")
+                Text("Choose one item from the string list below.")
+                    .font(.headlineSemibold)
+                    .padding(.horizontal, .Margins.medium)
+
+                VGRSingleSelectionList(items: items, selection: $selection) { $0.name }
+
+                Text("Choose one item from the view list below.")
                     .font(.headlineSemibold)
                     .padding(.horizontal, .Margins.medium)
 
                 VGRSingleSelectionList(items: items, selection: $selection) { item in
                     Text(item.name)
-                        .foregroundStyle(Color.Neutral.text)
-                        .fontWeight(.medium)
-                        .padding(.vertical, .Margins.medium)
+                        .foregroundStyle(.cyan)
+                        .padding(.vertical, .Margins.small)
                 }
-                .background(Color.Elevation.elevation1)
-                .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
+
             }
             .padding(.horizontal, .Margins.medium)
         }
