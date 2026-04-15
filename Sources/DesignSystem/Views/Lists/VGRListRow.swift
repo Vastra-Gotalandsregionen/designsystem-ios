@@ -1,13 +1,51 @@
 import SwiftUI
 
+/// The standard row layout used inside a ``VGRList``.
+///
+/// A row renders a required `title` and optional `subtitle` in the center,
+/// with an optional leading `icon` and optional trailing `accessory` built
+/// from caller-supplied view builders. Typography, padding and the muted
+/// accessory tint are applied by the design system — callers only provide
+/// the content.
+///
+/// The vertical padding adjusts automatically: rows with a subtitle use
+/// `.Margins.small`, rows without one use `.Margins.medium`, so compact and
+/// two-line variants visually balance each other when stacked.
+///
+/// ### Usage
+/// ```swift
+/// VGRListRow(title: "Title")
+///
+/// VGRListRow(title: "Title", subtitle: "Subtitle")
+///
+/// VGRListRow(title: "Title") {
+///     Text("Date") // trailing accessory via trailing closure
+/// }
+///
+/// VGRListRow(title: "Title",
+///            subtitle: "Subtitle",
+///            icon: { Image(systemName: "bolt") },
+///            accessory: { Text("Detail") })
+/// ```
 struct VGRListRow<Icon: View, Accessory: View>: View {
 
+    /// The primary text shown on the row.
     let title: String
+
+    /// Optional secondary text shown below the title. When `nil`, the row
+    /// renders as a single-line layout with larger vertical padding.
     var subtitle: String? = nil
 
     private let icon: Icon?
     private let accessory: Accessory?
 
+    /// Creates a row with optional icon and accessory view builders.
+    /// - Parameters:
+    ///   - title: The primary text shown on the row.
+    ///   - subtitle: Optional secondary text shown below the title.
+    ///   - icon: A view builder that produces a leading icon. Defaults to empty.
+    ///   - accessory: A view builder that produces a trailing accessory.
+    ///     Defaults to empty.
     public init(
         title: String,
         subtitle: String? = nil,
@@ -20,6 +58,14 @@ struct VGRListRow<Icon: View, Accessory: View>: View {
         self.accessory = accessory()
     }
 
+    /// Creates a row without an icon, using the trailing closure as the
+    /// accessory. Provided so the common case
+    /// `VGRListRow(title: "…") { accessory }` routes the trailing closure
+    /// to the accessory slot rather than the icon slot.
+    /// - Parameters:
+    ///   - title: The primary text shown on the row.
+    ///   - subtitle: Optional secondary text shown below the title.
+    ///   - accessory: A view builder that produces a trailing accessory.
     public init(
         title: String,
         subtitle: String? = nil,

@@ -26,20 +26,16 @@ import SwiftUI
 ///         description: "Vad påverkade händelsen mest?",
 ///         items: items,
 ///         selection: $selection
-///     ) { item in
-///         Text(item.name)
-///             .foregroundStyle(Color.Neutral.text)
-///             .fontWeight(.medium)
-///             .padding(.vertical, .Margins.medium)
-///     }
+///     ) { $0.name }
 /// }
 /// ```
-public struct VGRSingleSelectionListScreen<Item: Identifiable, Label: View>: View {
+public struct VGRSingleSelectionListScreen<Item: Identifiable>: View {
 
     /// Title shown in the navigation bar.
     public let title: String
 
-    /// Optional descriptive text shown above the list. Pass `nil` to hide.
+    /// Optional descriptive text shown above the list as its header. Pass
+    /// `nil` to hide.
     public let description: String?
 
     /// The selectable items displayed in the list.
@@ -59,8 +55,8 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable, Label: View>: Vie
     /// the underlying ``VGRSingleSelectionList``.
     public let allowsDeselection: Bool
 
-    /// Builds the label view shown on the leading edge of each row.
-    public let label: (Item) -> Label
+    /// Returns the display name for an item, shown as the row title.
+    public let name: (Item) -> String
 
     /// Creates a single-selection list screen.
     /// - Parameters:
@@ -71,42 +67,33 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable, Label: View>: Vie
     ///     the corresponding row, or `nil` for no selection.
     ///   - allowsDeselection: When `true`, tapping the already-selected row
     ///     clears the selection to `nil`. Defaults to `false`.
-    ///   - label: A view builder that produces the label shown on the
-    ///     leading edge of each row.
+    ///   - name: A closure that returns the display name for an item.
     public init(
         title: String,
         description: String? = nil,
         items: [Item],
         selection: Binding<Item?>,
         allowsDeselection: Bool = false,
-        @ViewBuilder label: @escaping (Item) -> Label
+        name: @escaping (Item) -> String
     ) {
         self.title = title
         self.description = description
         self.items = items
         self._selection = selection
         self.allowsDeselection = allowsDeselection
-        self.label = label
+        self.name = name
     }
 
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: .Margins.medium) {
-                if let description {
-                    Text(description)
-                        .font(.headlineSemibold)
-                        .maxLeading()
-                        .padding(.horizontal, .Margins.medium)
-                }
-
                 VGRSingleSelectionList(
+                    header: description,
                     items: items,
                     selection: $selection,
                     allowsDeselection: allowsDeselection,
-                    label: label
+                    name: name
                 )
-                .background(Color.Elevation.elevation1)
-                .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
             }
             .padding(.horizontal, .Margins.medium)
         }
@@ -135,11 +122,6 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable, Label: View>: Vie
             description: "Choose one item from the list below.",
             items: items,
             selection: $selection
-        ) { item in
-            Text(item.name)
-                .font(.bodyRegular)
-                .foregroundStyle(Color.Neutral.text)
-                .padding(.vertical, .Margins.medium)
-        }
+        ) { $0.name }
     }
 }

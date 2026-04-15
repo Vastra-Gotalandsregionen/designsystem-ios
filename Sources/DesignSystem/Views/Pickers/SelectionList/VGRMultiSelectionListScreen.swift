@@ -26,20 +26,16 @@ import SwiftUI
 ///         description: "Vad påverkade händelsen?",
 ///         items: items,
 ///         selection: $selection
-///     ) { item in
-///         Text(item.name)
-///             .foregroundStyle(Color.Neutral.text)
-///             .fontWeight(.medium)
-///             .padding(.vertical, .Margins.medium)
-///     }
+///     ) { $0.name }
 /// }
 /// ```
-public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable, Label: View>: View {
+public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable>: View {
 
     /// Title shown in the navigation bar.
     public let title: String
 
-    /// Optional descriptive text shown above the list. Pass `nil` to hide.
+    /// Optional descriptive text shown above the list as its header. Pass
+    /// `nil` to hide.
     public let description: String?
 
     /// The selectable items displayed in the list.
@@ -49,8 +45,8 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable, Label: 
     /// presenting to pre-select items.
     @Binding public var selection: Set<Item>
 
-    /// Builds the label view shown to the right of the checkbox for a given item.
-    public let label: (Item) -> Label
+    /// Returns the display name for an item, shown as the row title.
+    public let name: (Item) -> String
 
     /// Creates a multi-selection list screen.
     /// - Parameters:
@@ -59,35 +55,30 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable, Label: 
     ///   - items: The selectable items to display.
     ///   - selection: A binding to the set of selected items. Seed it with
     ///     items to pre-select the corresponding rows.
-    ///   - label: A view builder that produces the label shown next to the
-    ///     checkbox for each item.
+    ///   - name: A closure that returns the display name for an item.
     public init(
         title: String,
         description: String? = nil,
         items: [Item],
         selection: Binding<Set<Item>>,
-        @ViewBuilder label: @escaping (Item) -> Label
+        name: @escaping (Item) -> String
     ) {
         self.title = title
         self.description = description
         self.items = items
         self._selection = selection
-        self.label = label
+        self.name = name
     }
 
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: .Margins.medium) {
-                if let description {
-                    Text(description)
-                        .font(.headlineSemibold)
-                        .maxLeading()
-                        .padding(.horizontal, .Margins.medium)
-                }
-
-                VGRMultiSelectionList(items: items, selection: $selection, label: label)
-                    .background(Color.Elevation.elevation1)
-                    .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
+                VGRMultiSelectionList(
+                    header: description,
+                    items: items,
+                    selection: $selection,
+                    name: name
+                )
             }
             .padding(.horizontal, .Margins.medium)
         }
@@ -115,12 +106,7 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable, Label: 
             title: "Selection List",
             description: "Choose one or more items from the list below.",
             items: items,
-            selection: $selection
-        ) { item in
-            Text(item.name)
-                .font(.bodyRegular)
-                .foregroundStyle(Color.Neutral.text)
-                .padding(.vertical, .Margins.medium)
-        }
+            selection: $selection,
+        ) { $0.name }
     }
 }

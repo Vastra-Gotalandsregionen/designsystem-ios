@@ -2,8 +2,8 @@ import SwiftUI
 
 /// A vertically stacked list that lets the user pick exactly one item from a set of options.
 ///
-/// Each row shows the caller-supplied label on the leading edge and a
-/// trailing checkmark — drawn by the component — that appears only on the
+/// Each row shows the item's display name — produced by the caller-supplied
+/// `name` closure — and a trailing checkmark that appears only on the
 /// currently selected row. Unselected rows have no trailing indicator.
 ///
 /// Tapping an unselected row reassigns the selection to that row. By
@@ -16,9 +16,9 @@ import SwiftUI
 /// works, so callers can either use ``VGRSelectionListItem`` for the simple
 /// case or pass their own domain model.
 ///
-/// The rendering is a plain `VStack`; it does not wrap itself in a `List`,
-/// `ScrollView`, or `NavigationStack`. The caller is responsible for any
-/// surrounding chrome (titles, headers, scroll container, etc.).
+/// The rendering is a ``VGRList``; it does not wrap itself in a `ScrollView`
+/// or `NavigationStack`. The caller is responsible for any surrounding
+/// chrome (titles, scroll container, etc.).
 ///
 /// For multi-choice selection, use ``VGRMultiSelectionList`` instead.
 ///
@@ -31,26 +31,16 @@ import SwiftUI
 ///     VGRSelectionListItem(id: "world", name: "World"),
 /// ]
 ///
-/// VGRSingleSelectionList(items: items, selection: $selection) { item in
-///     Text(item.name)
-///         .foregroundStyle(Color.Neutral.text)
-///         .fontWeight(.medium)
-/// }
-/// ```
-///
-/// ### Usage (alternative, using strings instead of arbitrary View)
-/// ```swift
-/// @State private var selection: VGRSelectionListItem? = nil
-///
-/// let items = [
-///     VGRSelectionListItem(id: "hello", name: "Hello"),
-///     VGRSelectionListItem(id: "world", name: "World"),
-/// ]
-///
 /// VGRSingleSelectionList(items: items, selection: $selection) { $0.name }
 /// ```
+public struct VGRSingleSelectionList<Item: Identifiable>: View {
 
-public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
+    /// Optional flag to show warning indicator if no item is selected
+    public var warnIfNotSelected: Bool = false
+
+    /// Optional header string rendered above the list by the underlying
+    /// ``VGRList``. Pass `nil` (the default) to omit.
+    public let header: String?
 
     /// The selectable items displayed in the list.
     public let items: [Item]
@@ -70,82 +60,59 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
     /// row to deselect it.
     public let allowsDeselection: Bool
 
-    /// Builds the label view shown on the leading edge of each row.
-    /// Nil when the list was created with a ``name`` closure — rendering
-    /// then goes through the string-based path instead.
-    private let label: ((Item) -> Label)?
+    /// Returns the display name for an item, shown as the row title.
+    public let name: (Item) -> String
 
-    /// Returns the display name for an item. When provided, the list uses a
-    /// simpler built-in row rendering (``VGRSelectRow``) instead of the
-    /// caller-supplied ``label`` view.
-    private let name: ((Item) -> String)?
-
-    /// Creates a single-selection list with a custom row label.
+    /// Creates a single-selection list.
     /// - Parameters:
+    ///   - header: Optional header string rendered above the list.
     ///   - items: The selectable items to display.
     ///   - selection: A binding to the selected item. Seed it to pre-select
     ///     the corresponding row, or `nil` for no selection.
     ///   - allowsDeselection: When `true`, tapping the already-selected row
     ///     clears the selection to `nil`. Defaults to `false`.
-    ///   - label: A view builder that produces the label shown on the
-    ///     leading edge of each row.
-    public init(
-        items: [Item],
-        selection: Binding<Item?>,
-        allowsDeselection: Bool = false,
-        @ViewBuilder label: @escaping (Item) -> Label
-    ) {
-        self.items = items
-        self._selection = selection
-        self.allowsDeselection = allowsDeselection
-        self.label = label
-        self.name = nil
-    }
-
-    /// Creates a single-selection list that renders each row using the design
-    /// system's built-in ``VGRSelectRow`` styling with the string returned by
-    /// `name` as the title.
-    /// - Parameters:
-    ///   - items: The selectable items to display.
-    ///   - selection: A binding to the selected item.
-    ///   - allowsDeselection: When `true`, tapping the already-selected row
-    ///     clears the selection to `nil`. Defaults to `false`.
+    ///   - warnIfNotSelected: Optional property to show warning if no item is selected
     ///   - name: A closure that returns the display name for an item.
     public init(
+        header: String? = nil,
         items: [Item],
         selection: Binding<Item?>,
         allowsDeselection: Bool = false,
+        warnIfNotSelected: Bool = false,
         name: @escaping (Item) -> String
-    ) where Label == EmptyView {
+    ) {
+        self.warnIfNotSelected = warnIfNotSelected
+        self.header = header
         self.items = items
         self._selection = selection
         self.allowsDeselection = allowsDeselection
-        self.label = nil
         self.name = name
     }
 
-    public var body: some View {
-        VGRList {
-            ForEach(items) { item in
-                if let name {
-                    Button {
-                        toggle(item)
-                    } label: {
-                        VGRSelectRow(
-                            title: name(item),
-                            isSelected: selection?.id == item.id
-                        )
-                    }
-                    .buttonStyle(.plain)
-                } else if let label {
-                    VGRSingleSelectionListRow(
-                        isSelected: selection?.id == item.id,
-                        toggle: { toggle(item) }
-                    ) {
-                        label(item)
-                    }
-                }
+    @ViewBuilder
+    private var rows: some View {
+        ForEach(items) { item in
+            Button {
+                toggle(item)
+            } label: {
+                VGRSelectRow(
+                    title: name(item),
+                    isSelected: selection?.id == item.id
+                )
             }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private var showWarning: Bool {
+        warnIfNotSelected && selection == nil
+    }
+
+    public var body: some View {
+        if let header {
+            VGRList(showWarning: showWarning, header: header) { rows }
+        } else {
+            VGRList(showWarning: showWarning) { rows }
         }
     }
 
@@ -175,23 +142,19 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
     NavigationStack {
         ScrollView {
             VStack(alignment: .leading, spacing: .Margins.medium) {
+                VGRSingleSelectionList(
+                    header: "Choose one item from the list below.",
+                    items: items,
+                    selection: $selection
+                ) { $0.name }
 
-                Text("Choose one item from the string list below.")
-                    .font(.headlineSemibold)
-                    .padding(.horizontal, .Margins.medium)
-
-                VGRSingleSelectionList(items: items, selection: $selection) { $0.name }
-
-                Text("Choose one item from the view list below.")
-                    .font(.headlineSemibold)
-                    .padding(.horizontal, .Margins.medium)
-
-                VGRSingleSelectionList(items: items, selection: $selection) { item in
-                    Text(item.name)
-                        .foregroundStyle(.cyan)
-                        .padding(.vertical, .Margins.small)
-                }
-
+                VGRSingleSelectionList(
+                    header: "Warns if no item is selected.",
+                    items: items,
+                    selection: $selection,
+                    allowsDeselection: true,
+                    warnIfNotSelected: true
+                ) { $0.name }
             }
             .padding(.horizontal, .Margins.medium)
         }
