@@ -101,6 +101,10 @@
 "bodypicker.right.foot.sole" = "Fotsula";
 "bodypicker.right.foot.toenails" = "Tånaglar";
 
+/* Duration picker */
+"durationpicker.minutes.full" = "minuter";
+"durationpicker.seconds.full" = "sekunder";
+
 /* Recurrence picker */
 "recurrence.title" = "Upprepa";
 "recurrence.interval" = "Intervall";
