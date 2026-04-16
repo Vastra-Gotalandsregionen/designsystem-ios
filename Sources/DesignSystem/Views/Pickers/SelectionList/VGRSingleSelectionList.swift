@@ -42,6 +42,13 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
     /// ``VGRSection``. Pass `nil` (the default) to omit.
     public let header: String?
 
+    /// Whether the underlying ``VGRSection`` horizontally insets its
+    /// content. Forwarded to ``VGRSection/init(header:footer:inset:content:)``.
+    /// Defaults to `true` — pass `false` when the list is already placed
+    /// inside a container that supplies its own horizontal framing
+    /// (for example a ``VGRShape``).
+    public let inset: Bool
+
     /// The selectable items displayed in the list.
     public let items: [Item]
 
@@ -72,6 +79,9 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
     ///   - allowsDeselection: When `true`, tapping the already-selected row
     ///     clears the selection to `nil`. Defaults to `false`.
     ///   - warnIfNotSelected: Optional property to show warning if no item is selected
+    ///   - inset: Whether the underlying ``VGRSection`` horizontally insets
+    ///     its content. Defaults to `true`. Pass `false` when the list is
+    ///     wrapped in a container that already supplies horizontal framing.
     ///   - name: A closure that returns the display name for an item.
     public init(
         header: String? = nil,
@@ -79,10 +89,12 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
         selection: Binding<Item?>,
         allowsDeselection: Bool = false,
         warnIfNotSelected: Bool = false,
+        inset: Bool = true,
         name: @escaping (Item) -> String
     ) {
         self.warnIfNotSelected = warnIfNotSelected
         self.header = header
+        self.inset = inset
         self.items = items
         self._selection = selection
         self.allowsDeselection = allowsDeselection
@@ -109,7 +121,7 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
     }
 
     public var body: some View {
-        VGRSection(header: header) {
+        VGRSection(header: header, inset: inset) {
             VGRList(showWarning: showWarning) { rows }
         }
     }
