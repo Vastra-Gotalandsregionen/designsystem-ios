@@ -40,6 +40,13 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
     /// ``VGRSection``. Pass `nil` (the default) to omit.
     public let header: String?
 
+    /// Whether the underlying ``VGRSection`` horizontally insets its
+    /// content. Forwarded to ``VGRSection/init(header:footer:inset:content:)``.
+    /// Defaults to `true` — pass `false` when the list is already placed
+    /// inside a container that supplies its own horizontal framing
+    /// (for example a ``VGRShape``).
+    public let inset: Bool
+
     /// The selectable items displayed in the list.
     public let items: [Item]
 
@@ -57,16 +64,21 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
     ///   - selection: A binding to the set of selected items. Seed it with
     ///     items to pre-select the corresponding rows.
     ///   - warnIfNotSelected: Optional flag to show warning if no item is selected
+    ///   - inset: Whether the underlying ``VGRSection`` horizontally insets
+    ///     its content. Defaults to `true`. Pass `false` when the list is
+    ///     wrapped in a container that already supplies horizontal framing.
     ///   - name: A closure that returns the display name for an item.
     public init(
         header: String? = nil,
         items: [Item],
         selection: Binding<Set<Item>>,
         warnIfNotSelected: Bool = false,
+        inset: Bool = true,
         name: @escaping (Item) -> String
     ) {
         self.warnIfNotSelected = warnIfNotSelected
         self.header = header
+        self.inset = inset
         self.items = items
         self._selection = selection
         self.name = name
@@ -92,7 +104,7 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
     }
 
     public var body: some View {
-        VGRSection(header: header) {
+        VGRSection(header: header, inset: inset) {
             VGRList(showWarning: showWarning) { rows }
         }
     }
@@ -126,12 +138,15 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
                 selection: $selection
             ) { $0.name }
 
-            VGRMultiSelectionList(
-                header: "Warns when nothing is selected",
-                items: items,
-                selection: $selection,
-                warnIfNotSelected: true
-            ) { $0.name }
+            VGRShape {
+                VGRMultiSelectionList(
+                    header: "Warns when nothing is selected",
+                    items: items,
+                    selection: $selection,
+                    warnIfNotSelected: true,
+                    inset: false
+                ) { $0.name }
+            }
         }
         .navigationTitle("VGRMultiSelectionList")
         .navigationBarTitleDisplayMode(.inline)
