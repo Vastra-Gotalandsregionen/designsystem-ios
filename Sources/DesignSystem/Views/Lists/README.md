@@ -11,7 +11,8 @@ VGRContainer
         ├── VGRNavRow
         ├── VGRCheckRow
         ├── VGRSelectRow
-        └── VGRToggleRow
+        ├── VGRToggleRow
+        └── VGRMenuRow
 ```
 
 Varje nivå har ett tydligt ansvar. Detta gör att vyer kan staplas flexibelt utan att varje lista behöver hantera egen scroll, bakgrund eller rubrik.
@@ -41,8 +42,9 @@ Det rundade kortet med `elevation1`-bakgrund och automatiska `VGRDivider` mellan
 | `VGRCheckRow`    | Rad för flerval — rund indikator som växlar mellan markerad/omarkerad    |
 | `VGRSelectRow`   | Rad för enval — bockmarkering endast på den valda raden                  |
 | `VGRToggleRow`   | Rad med en `Toggle`-kontroll — exponerar tillståndet via `Binding<Bool>` |
+| `VGRMenuRow`     | Rad med en `Menu` — visar valt värde + upp/ned-chevron på höger sida     |
 
-Alla rader kan användas fritt inuti en `VGRList`, men i praktiken är `VGRCheckRow` och `VGRSelectRow` avsedda att omslutas av en `Button` så att anroparen styr markeringstillståndet. `VGRToggleRow` hanterar sin egen interaktion via den inbyggda `Toggle`-kontrollen.
+Alla rader kan användas fritt inuti en `VGRList`, men i praktiken är `VGRCheckRow` och `VGRSelectRow` avsedda att omslutas av en `Button` så att anroparen styr markeringstillståndet. `VGRToggleRow` och `VGRMenuRow` hanterar sin egen interaktion via de inbyggda kontrollerna.
 
 ---
 
@@ -98,3 +100,4 @@ VGRContainer {
 | `VGRCheckRow.swift`       | Flervalsrad                             |
 | `VGRSelectRow.swift`      | Envalsrad                               |
 | `VGRToggleRow.swift`      | Rad med `Toggle`-kontroll               |
+| `VGRMenuRow.swift`        | Rad med `Menu`-kontroll                 |
