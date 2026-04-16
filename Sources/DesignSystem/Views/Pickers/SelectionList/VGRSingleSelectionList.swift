@@ -16,9 +16,9 @@ import SwiftUI
 /// works, so callers can either use ``VGRSelectionListItem`` for the simple
 /// case or pass their own domain model.
 ///
-/// The rendering is a ``VGRList``; it does not wrap itself in a `ScrollView`
-/// or `NavigationStack`. The caller is responsible for any surrounding
-/// chrome (titles, scroll container, etc.).
+/// The rendering is a ``VGRList`` wrapped in a ``VGRSection``; it does not
+/// wrap itself in a `ScrollView` or `NavigationStack`. The caller is
+/// responsible for any surrounding chrome (titles, scroll container, etc.).
 ///
 /// For multi-choice selection, use ``VGRMultiSelectionList`` instead.
 ///
@@ -38,8 +38,8 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
     /// Optional flag to show warning indicator if no item is selected
     public var warnIfNotSelected: Bool = false
 
-    /// Optional header string rendered above the list by the underlying
-    /// ``VGRList``. Pass `nil` (the default) to omit.
+    /// Optional header string rendered above the list by the enclosing
+    /// ``VGRSection``. Pass `nil` (the default) to omit.
     public let header: String?
 
     /// The selectable items displayed in the list.
@@ -109,9 +109,7 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
     }
 
     public var body: some View {
-        if let header {
-            VGRList(showWarning: showWarning, header: header) { rows }
-        } else {
+        VGRSection(header: header) {
             VGRList(showWarning: showWarning) { rows }
         }
     }
@@ -138,27 +136,23 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
         VGRSelectionListItem(name: "Series"),
         VGRSelectionListItem(name: "Deluxe"),
     ]
-
+    
     NavigationStack {
-        ScrollView {
-            VStack(alignment: .leading, spacing: .Margins.medium) {
-                VGRSingleSelectionList(
-                    header: "Choose one item from the list below.",
-                    items: items,
-                    selection: $selection
-                ) { $0.name }
-
-                VGRSingleSelectionList(
-                    header: "Warns if no item is selected.",
-                    items: items,
-                    selection: $selection,
-                    allowsDeselection: true,
-                    warnIfNotSelected: true
-                ) { $0.name }
-            }
-            .padding(.horizontal, .Margins.medium)
+        VGRContainer {
+            VGRSingleSelectionList(
+                header: "Choose one item from the list below.",
+                items: items,
+                selection: $selection
+            ) { $0.name }
+            
+            VGRSingleSelectionList(
+                header: "Warns if no item is selected.",
+                items: items,
+                selection: $selection,
+                allowsDeselection: true,
+                warnIfNotSelected: true
+            ) { $0.name }
         }
-        .background(Color.Elevation.background)
         .navigationTitle("VGRSingleSelectionList")
         .navigationBarTitleDisplayMode(.inline)
     }

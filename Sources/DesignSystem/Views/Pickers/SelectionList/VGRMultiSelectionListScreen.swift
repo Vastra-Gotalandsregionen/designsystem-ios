@@ -71,19 +71,14 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable>: View {
     }
 
     public var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: .Margins.medium) {
-                VGRMultiSelectionList(
-                    header: description,
-                    items: items,
-                    selection: $selection,
-                    name: name
-                )
-            }
-            .padding(.horizontal, .Margins.medium)
+        VGRContainer {
+            VGRMultiSelectionList(
+                header: description,
+                items: items,
+                selection: $selection,
+                name: name
+            )
         }
-        .background(Color.Elevation.background)
-        .foregroundStyle(Color.Neutral.text)
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
     }

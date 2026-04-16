@@ -8,9 +8,9 @@ import SwiftUI
 /// design system's `Color.Elevation.elevation1` background and clipped to
 /// the standard `.Radius.mainRadius` corner radius.
 ///
-/// An optional header can be supplied either as a plain string (rendered
-/// with the design system's `headline` font above the card) or as a custom
-/// view built with a ``@ViewBuilder`` closure for full control.
+/// `VGRList` is purely the card — it does not own a header, footer, or
+/// horizontal padding. Compose it inside a ``VGRSection`` (which provides
+/// header, footer, and inset control) placed in a ``VGRContainer``.
 ///
 /// The list is intended to hold the rows provided by the design system —
 /// ``VGRListRow``, ``VGRNavRow``, ``VGRSelectRow``, ``VGRCheckRow`` — but
@@ -18,94 +18,45 @@ import SwiftUI
 ///
 /// ### Usage
 /// ```swift
-/// VGRList {
-///     VGRListRow(title: "Title", subtitle: "Subtitle")
-///     VGRListRow(title: "Second", subtitle: "Row")
+/// VGRContainer {
+///     VGRSection(header: "Section title") {
+///         VGRList {
+///             VGRListRow(title: "Title", subtitle: "Subtitle")
+///             VGRListRow(title: "Second", subtitle: "Row")
+///         }
+///     }
 /// }
 /// ```
-///
-/// ### Usage with a string header
-/// ```swift
-/// VGRList(header: "Section title") {
-///     VGRListRow(title: "Title", subtitle: "Subtitle")
-/// }
-/// ```
-///
-/// ### Usage with a custom header view
-/// ```swift
-/// VGRList(header: { Image(systemName: "star").font(.title) }) {
-///     VGRListRow(title: "Title", subtitle: "Subtitle")
-/// }
-/// ```
-struct VGRList<Header: View, Content: View>: View {
+struct VGRList<Content: View>: View {
 
-    private let headerTitle: String?
-    private let header: Header
     private let content: Content
     private var showWarning: Bool = false
 
-    /// Creates a list with a custom header view.
+    /// Creates a list of rows wrapped in a rounded card.
     /// - Parameters:
-    ///   - header: A view builder that produces the header shown above the list.
+    ///   - showWarning: When `true`, a warning border is drawn around the card.
     ///   - content: A view builder that produces the rows; each top-level
     ///     view becomes a row separated by a ``VGRDivider``.
     public init(showWarning: Bool = false,
-                @ViewBuilder header: () -> Header,
                 @ViewBuilder content: () -> Content) {
         self.showWarning = showWarning
-        self.headerTitle = nil
-        self.header = header()
-        self.content = content()
-    }
-
-    /// Creates a list with a plain-string header rendered above the card.
-    /// - Parameters:
-    ///   - header: The header text.
-    ///   - content: A view builder that produces the rows.
-    public init(showWarning: Bool = false,
-                header: String,
-                @ViewBuilder content: () -> Content) where Header == EmptyView {
-        self.showWarning = showWarning
-        self.headerTitle = header
-        self.header = EmptyView()
-        self.content = content()
-    }
-
-    /// Creates a list without a header.
-    /// - Parameter content: A view builder that produces the rows.
-    public init(showWarning: Bool = false,
-                @ViewBuilder content: () -> Content) where Header == EmptyView {
-        self.showWarning = showWarning
-        self.headerTitle = nil
-        self.header = EmptyView()
         self.content = content()
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: .Margins.medium) {
-            if let headerTitle {
-                Text(headerTitle)
-                    .font(.headline)
-                    .multilineTextAlignment(.leading)
-                    .padding(.horizontal, .Margins.medium)
-            } else {
-                header
-            }
-
-            VStack(spacing: 0) {
-                Group(subviews: content) { subviews in
-                    ForEach(subviews.indices, id: \.self) { index in
-                        subviews[index]
-                        if index < subviews.count - 1 {
-                            VGRDivider()
-                        }
+        VStack(spacing: 0) {
+            Group(subviews: content) { subviews in
+                ForEach(subviews.indices, id: \.self) { index in
+                    subviews[index]
+                    if index < subviews.count - 1 {
+                        VGRDivider()
                     }
                 }
             }
-            .background(Color.Elevation.elevation1)
-            .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
-            .warningBorder(showWarning)
         }
+        .background(Color.Elevation.elevation1)
+        .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
+        .warningBorder(showWarning)
         .foregroundStyle(Color.Neutral.text)
     }
 }
@@ -114,15 +65,15 @@ struct VGRList<Header: View, Content: View>: View {
     @Previewable @State var selectedDate: Date = .now
 
     NavigationStack {
-        ScrollView {
-            VStack(spacing: .Margins.medium) {
+        VGRContainer {
+            VGRSection {
                 VGRList {
                     VGRListRow(title: "Title", subtitle: "Subtitle")
-                    
+
                     VGRListRow(title: "Title",
                                subtitle: "Subtitle",
                                icon: { Image(systemName: "bolt") })
-                    
+
                     VGRListRow(title: "Title",
                                subtitle: "Subtitle",
                                icon: { Image(systemName: "bolt") },
@@ -131,26 +82,21 @@ struct VGRList<Header: View, Content: View>: View {
                             .labelsHidden()
                     })
                 }
+            }
 
-                VGRList(header: "Section title") {
+            VGRSection(header: "Section title") {
+                VGRList {
                     VGRListRow(title: "Title", subtitle: "Subtitle")
                     VGRListRow(title: "Title", subtitle: "Subtitle")
                 }
-                
-                VGRList(showWarning: true,
-                        header: "Lorem ipsum dolor etcetera och annat som brukar stå här när man testar saker för flera rader") {
-                    VGRListRow(title: "Title", subtitle: "Subtitle")
-                    VGRListRow(title: "Title", subtitle: "Subtitle")
-                }
-                
-                VGRList(header: { Image(systemName: "star").font(.title) }) {
-                    VGRListRow(title: "Title", subtitle: "Subtitle")
-                }
+            }
 
+            VGRSection(header: "Lorem ipsum dolor etcetera och annat som brukar stå här när man testar saker för flera rader") {
+                VGRList(showWarning: true) {
+                    VGRListRow(title: "Title", subtitle: "Subtitle")
+                    VGRListRow(title: "Title", subtitle: "Subtitle")
+                }
             }
         }
-        .padding(.horizontal, .Margins.medium)
-        .background(Color.Elevation.background)
-        .maxLeading()
     }
 }

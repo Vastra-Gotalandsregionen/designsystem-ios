@@ -88,40 +88,41 @@ struct VGRCheckRow<Accessory: View>: View {
     @Previewable @State var thirdButton: Bool = false
 
     NavigationStack {
-        ScrollView {
-            VGRList {
-                Button {
-                    firstButton.toggle()
-                } label: {
-                    VGRCheckRow(title: "Title", isSelected: firstButton)
-                }
+        VGRContainer {
+            VGRSection {
+                VGRList {
+                    Button {
+                        firstButton.toggle()
+                    } label: {
+                        VGRCheckRow(title: "Title", isSelected: firstButton)
+                    }
+                    .buttonStyle(.plain)
 
-                Button {
-                    secondButton.toggle()
-                } label: {
-                    VGRCheckRow(title: "Title",
-                                subtitle: "Subtitle",
-                                isSelected: secondButton)
-                }
+                    Button {
+                        secondButton.toggle()
+                    } label: {
+                        VGRCheckRow(title: "Title",
+                                    subtitle: "Subtitle",
+                                    isSelected: secondButton)
+                    }
 
-                Button {
-                    thirdButton.toggle()
-                } label: {
-                    VGRCheckRow(title: "Title",
-                                subtitle: "Subtitle",
-                                isSelected: thirdButton) {
-                        HStack {
-                            Text("Detail")
+                    Button {
+                        thirdButton.toggle()
+                    } label: {
+                        VGRCheckRow(title: "Title",
+                                    subtitle: "Subtitle",
+                                    isSelected: thirdButton) {
+                            HStack {
+                                Text("Detail")
 
-                            Image(systemName: "star.fill")
+                                Image(systemName: "star.fill")
+                            }
+                            .foregroundStyle(.purple)
                         }
-                        .foregroundStyle(.purple)
                     }
                 }
             }
-            .padding(.horizontal, .Margins.medium)
         }
-        .background(Color.Elevation.background)
         .navigationTitle("VGRCheckRow")
     }
 }

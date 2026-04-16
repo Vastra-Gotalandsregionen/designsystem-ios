@@ -142,37 +142,41 @@ struct VGRNavRow<Icon: View, Accessory: View, Destination: View>: View {
 
 #Preview {
     NavigationStack {
-        ScrollView {
-            VGRList {
-                VGRNavRow(title:"Title") { Text("Destination") }
+        VGRContainer {
+            VGRSection(header: "No Detail set") {
+                VGRList {
+                    VGRNavRow(title:"Title") { Text("Destination") }
 
-                VGRNavRow(title:"Title",
-                          subtitle: "Subtitle",
-                          icon: { Image(systemName: "bolt") }) {
-                    Text("Destination")
-                }
-
-                VGRNavRow(title:"Title",
-                          subtitle: "Subtitle",
-                          accessory: {
-                    Text("Detail")
-                        .foregroundStyle(.purple)
-                }) {
-                    Text("Destination")
-                }
-
-                VGRNavRow(title:"Title",
-                          subtitle: "Subtitle",
-                          icon: { Image(systemName: "bolt") },
-                          accessory: {
-                    Text("Detail")
-                        .foregroundStyle(.cyan)
-                }) {
-                    Text("Destination")
+                    VGRNavRow(title:"Title",
+                              subtitle: "Subtitle",
+                              icon: { Image(systemName: "bolt") }) {
+                        Text("Destination")
+                    }
                 }
             }
-            .padding(.horizontal, .Margins.medium)
+
+            VGRSection(header: "With Detail set") {
+                VGRList {
+                    VGRNavRow(title:"Title",
+                              subtitle: "Subtitle",
+                              accessory: {
+                        Text("Detail")
+                            .foregroundStyle(.purple)
+                    }) {
+                        Text("Destination")
+                    }
+
+                    VGRNavRow(title:"Title",
+                              subtitle: "Subtitle",
+                              icon: { Image(systemName: "bolt") },
+                              accessory: {
+                        Text("Detail")
+                            .foregroundStyle(.cyan)
+                    }) {
+                        Text("Destination")
+                    }
+                }
+            }
         }
-        .background(Color.Elevation.background)
     }
 }

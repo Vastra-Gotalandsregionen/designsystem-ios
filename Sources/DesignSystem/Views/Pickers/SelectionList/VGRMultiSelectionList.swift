@@ -14,9 +14,9 @@ import SwiftUI
 /// pre-selection mechanism — any items present in the set when the view
 /// appears will be shown as selected.
 ///
-/// The rendering is a ``VGRList``; it does not wrap itself in a `ScrollView`
-/// or `NavigationStack`. The caller is responsible for any surrounding
-/// chrome (titles, scroll container, etc.).
+/// The rendering is a ``VGRList`` wrapped in a ``VGRSection``; it does not
+/// wrap itself in a `ScrollView` or `NavigationStack`. The caller is
+/// responsible for any surrounding chrome (titles, scroll container, etc.).
 ///
 /// For single-choice selection, use ``VGRSingleSelectionList`` instead.
 ///
@@ -36,8 +36,8 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
     /// Optional flag to show warning indicator if no item is selected
     public var warnIfNotSelected: Bool = false
 
-    /// Optional header string rendered above the list by the underlying
-    /// ``VGRList``. Pass `nil` (the default) to omit.
+    /// Optional header string rendered above the list by the enclosing
+    /// ``VGRSection``. Pass `nil` (the default) to omit.
     public let header: String?
 
     /// The selectable items displayed in the list.
@@ -92,9 +92,7 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
     }
 
     public var body: some View {
-        if let header {
-            VGRList(showWarning: showWarning, header: header) { rows }
-        } else {
+        VGRSection(header: header) {
             VGRList(showWarning: showWarning) { rows }
         }
     }
@@ -121,24 +119,20 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
     ]
 
     NavigationStack {
-        ScrollView {
-            VStack(alignment: .leading, spacing: .Margins.medium) {
-                VGRMultiSelectionList(
-                    header: "Choose one or more items from the list below.",
-                    items: items,
-                    selection: $selection
-                ) { $0.name }
+        VGRContainer {
+            VGRMultiSelectionList(
+                header: "Choose one or more items from the list below.",
+                items: items,
+                selection: $selection
+            ) { $0.name }
 
-                VGRMultiSelectionList(
-                    header: "Warns when nothing is selected",
-                    items: items,
-                    selection: $selection,
-                    warnIfNotSelected: true
-                ) { $0.name }
-            }
-            .padding(.horizontal, .Margins.medium)
+            VGRMultiSelectionList(
+                header: "Warns when nothing is selected",
+                items: items,
+                selection: $selection,
+                warnIfNotSelected: true
+            ) { $0.name }
         }
-        .background(Color.Elevation.background)
         .navigationTitle("VGRMultiSelectionList")
         .navigationBarTitleDisplayMode(.inline)
     }

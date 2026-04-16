@@ -85,20 +85,15 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable>: View {
     }
 
     public var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: .Margins.medium) {
-                VGRSingleSelectionList(
-                    header: description,
-                    items: items,
-                    selection: $selection,
-                    allowsDeselection: allowsDeselection,
-                    name: name
-                )
-            }
-            .padding(.horizontal, .Margins.medium)
+        VGRContainer {
+            VGRSingleSelectionList(
+                header: description,
+                items: items,
+                selection: $selection,
+                allowsDeselection: allowsDeselection,
+                name: name
+            )
         }
-        .background(Color.Elevation.background)
-        .foregroundStyle(Color.Neutral.text)
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -121,7 +116,8 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable>: View {
             title: "Single Selection List",
             description: "Choose one item from the list below.",
             items: items,
-            selection: $selection
+            selection: $selection,
+            allowsDeselection: true
         ) { $0.name }
     }
 }

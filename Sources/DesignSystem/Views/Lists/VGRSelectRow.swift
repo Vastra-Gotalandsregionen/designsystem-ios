@@ -88,34 +88,35 @@ struct VGRSelectRow<Icon: View>: View {
     @Previewable @State var selectedId: Int = 0
 
     NavigationStack {
-        ScrollView {
-            VGRList {
-                Button {
-                    selectedId = 0
-                } label: {
-                    VGRSelectRow(title: "Title",
-                                 isSelected: selectedId == 0)
-                }
+        VGRContainer {
+            VGRSection(header: "VGRSelectRow",
+                       footer: "This row blanks out accessory view for the checkmark symbol") {
+                VGRList {
+                    Button {
+                        selectedId = 0
+                    } label: {
+                        VGRSelectRow(title: "Title",
+                                     isSelected: selectedId == 0)
+                    }
 
-                Button {
-                    selectedId = 1
-                } label: {
-                    VGRSelectRow(title: "Title",
-                                 subtitle: "Subtitle",
-                                 isSelected: selectedId == 1)
-                }
+                    Button {
+                        selectedId = 1
+                    } label: {
+                        VGRSelectRow(title: "Title",
+                                     subtitle: "Subtitle",
+                                     isSelected: selectedId == 1)
+                    }
 
-                Button {
-                    selectedId = 2
-                } label: {
-                    VGRSelectRow(title: "Title",
-                                 subtitle: "Subtitle",
-                                 isSelected: selectedId == 2,
-                                 icon: { Image(systemName: "bolt") })
+                    Button {
+                        selectedId = 2
+                    } label: {
+                        VGRSelectRow(title: "Title",
+                                     subtitle: "Subtitle",
+                                     isSelected: selectedId == 2,
+                                     icon: { Image(systemName: "bolt") })
+                    }
                 }
             }
-            .padding(.horizontal, .Margins.medium)
         }
-        .background(Color.Elevation.background)
     }
 }
