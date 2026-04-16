@@ -10,8 +10,14 @@ import SwiftUI
 /// ### Usage
 /// ```swift
 /// let items = [
-///     VGRSelectionListItem(name: "Hello", id: "hello"),
-///     VGRSelectionListItem(name: "World", id: "world"),
+///     VGRSelectionListItem(id: "hello", name: "Hello"),
+///     VGRSelectionListItem(id: "world", name: "World"),
+/// ]
+///
+/// // Or, if a stable id is not required, a UUID id is generated automatically:
+/// let generated = [
+///     VGRSelectionListItem(name: "Hello"),
+///     VGRSelectionListItem(name: "World"),
 /// ]
 /// ```
 public struct VGRSelectionListItem: Hashable, Identifiable {

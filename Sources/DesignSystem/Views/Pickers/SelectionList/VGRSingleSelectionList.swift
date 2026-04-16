@@ -2,8 +2,8 @@ import SwiftUI
 
 /// A vertically stacked list that lets the user pick exactly one item from a set of options.
 ///
-/// Each row shows the caller-supplied label on the leading edge and a
-/// trailing checkmark — drawn by the component — that appears only on the
+/// Each row shows the item's display name — produced by the caller-supplied
+/// `name` closure — and a trailing checkmark that appears only on the
 /// currently selected row. Unselected rows have no trailing indicator.
 ///
 /// Tapping an unselected row reassigns the selection to that row. By
@@ -16,9 +16,9 @@ import SwiftUI
 /// works, so callers can either use ``VGRSelectionListItem`` for the simple
 /// case or pass their own domain model.
 ///
-/// The rendering is a plain `VStack`; it does not wrap itself in a `List`,
-/// `ScrollView`, or `NavigationStack`. The caller is responsible for any
-/// surrounding chrome (titles, headers, scroll container, etc.).
+/// The rendering is a ``VGRList`` wrapped in a ``VGRSection``; it does not
+/// wrap itself in a `ScrollView` or `NavigationStack`. The caller is
+/// responsible for any surrounding chrome (titles, scroll container, etc.).
 ///
 /// For multi-choice selection, use ``VGRMultiSelectionList`` instead.
 ///
@@ -31,13 +31,16 @@ import SwiftUI
 ///     VGRSelectionListItem(id: "world", name: "World"),
 /// ]
 ///
-/// VGRSingleSelectionList(items: items, selection: $selection) { item in
-///     Text(item.name)
-///         .foregroundStyle(Color.Neutral.text)
-///         .fontWeight(.medium)
-/// }
+/// VGRSingleSelectionList(items: items, selection: $selection) { $0.name }
 /// ```
-public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
+public struct VGRSingleSelectionList<Item: Identifiable>: View {
+
+    /// Optional flag to show warning indicator if no item is selected
+    public var warnIfNotSelected: Bool = false
+
+    /// Optional header string rendered above the list by the enclosing
+    /// ``VGRSection``. Pass `nil` (the default) to omit.
+    public let header: String?
 
     /// The selectable items displayed in the list.
     public let items: [Item]
@@ -57,44 +60,57 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
     /// row to deselect it.
     public let allowsDeselection: Bool
 
-    /// Builds the label view shown on the leading edge of each row.
-    public let label: (Item) -> Label
+    /// Returns the display name for an item, shown as the row title.
+    public let name: (Item) -> String
 
     /// Creates a single-selection list.
     /// - Parameters:
+    ///   - header: Optional header string rendered above the list.
     ///   - items: The selectable items to display.
     ///   - selection: A binding to the selected item. Seed it to pre-select
     ///     the corresponding row, or `nil` for no selection.
     ///   - allowsDeselection: When `true`, tapping the already-selected row
     ///     clears the selection to `nil`. Defaults to `false`.
-    ///   - label: A view builder that produces the label shown on the
-    ///     leading edge of each row.
+    ///   - warnIfNotSelected: Optional property to show warning if no item is selected
+    ///   - name: A closure that returns the display name for an item.
     public init(
+        header: String? = nil,
         items: [Item],
         selection: Binding<Item?>,
         allowsDeselection: Bool = false,
-        @ViewBuilder label: @escaping (Item) -> Label
+        warnIfNotSelected: Bool = false,
+        name: @escaping (Item) -> String
     ) {
+        self.warnIfNotSelected = warnIfNotSelected
+        self.header = header
         self.items = items
         self._selection = selection
         self.allowsDeselection = allowsDeselection
-        self.label = label
+        self.name = name
+    }
+
+    @ViewBuilder
+    private var rows: some View {
+        ForEach(items) { item in
+            Button {
+                toggle(item)
+            } label: {
+                VGRSelectRow(
+                    title: name(item),
+                    isSelected: selection?.id == item.id
+                )
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private var showWarning: Bool {
+        warnIfNotSelected && selection == nil
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            ForEach(items) { item in
-                VGRSingleSelectionListRow(
-                    isSelected: selection?.id == item.id,
-                    toggle: { toggle(item) }
-                ) {
-                    label(item)
-                }
-
-                if items.last?.id != item.id {
-                    VGRDivider()
-                }
-            }
+        VGRSection(header: header) {
+            VGRList(showWarning: showWarning) { rows }
         }
     }
 
@@ -120,27 +136,23 @@ public struct VGRSingleSelectionList<Item: Identifiable, Label: View>: View {
         VGRSelectionListItem(name: "Series"),
         VGRSelectionListItem(name: "Deluxe"),
     ]
-
+    
     NavigationStack {
-        ScrollView {
-            VStack(alignment: .leading, spacing: .Margins.medium) {
-
-                Text("Choose one item from the list below.")
-                    .font(.headlineSemibold)
-                    .padding(.horizontal, .Margins.medium)
-
-                VGRSingleSelectionList(items: items, selection: $selection) { item in
-                    Text(item.name)
-                        .foregroundStyle(Color.Neutral.text)
-                        .fontWeight(.medium)
-                        .padding(.vertical, .Margins.medium)
-                }
-                .background(Color.Elevation.elevation1)
-                .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
-            }
-            .padding(.horizontal, .Margins.medium)
+        VGRContainer {
+            VGRSingleSelectionList(
+                header: "Choose one item from the list below.",
+                items: items,
+                selection: $selection
+            ) { $0.name }
+            
+            VGRSingleSelectionList(
+                header: "Warns if no item is selected.",
+                items: items,
+                selection: $selection,
+                allowsDeselection: true,
+                warnIfNotSelected: true
+            ) { $0.name }
         }
-        .background(Color.Elevation.background)
         .navigationTitle("VGRSingleSelectionList")
         .navigationBarTitleDisplayMode(.inline)
     }
