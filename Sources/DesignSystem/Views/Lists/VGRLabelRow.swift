@@ -63,6 +63,10 @@ public struct VGRLabelRow<Icon: View>: View {
         self.icon = EmptyView()
     }
 
+    private var a11yLabel: String {
+        [title, subtitle].compactMap{ $0 }.joined(separator: ", ")
+    }
+
     public var body: some View {
         VGRListRow(title: title,
                    subtitle: subtitle,
@@ -71,7 +75,14 @@ public struct VGRLabelRow<Icon: View>: View {
             Text(value)
                 .font(.bodyRegular)
                 .foregroundStyle(Color.Neutral.textVariant)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .multilineTextAlignment(.trailing)
+                .fixedSize(horizontal: true, vertical: false)
         })
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(a11yLabel)
+        .accessibilityValue(value)
+
     }
 }
 
@@ -81,6 +92,10 @@ public struct VGRLabelRow<Icon: View>: View {
             VGRSection(header: "VGRLabelRow") {
                 VGRList {
                     VGRLabelRow("Hello", value: "World")
+
+                    VGRLabelRow("Hello", value: "23 februari 2026, 13:37 is the time")
+
+                    VGRLabelRow("Hello", subtitle: "World domination sequence", value: "23 februari 2026, 13:37")
 
                     VGRLabelRow("Hello", subtitle: "World", value: "Domination")
 

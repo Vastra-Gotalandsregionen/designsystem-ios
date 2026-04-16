@@ -5,14 +5,15 @@
 ```
 VGRContainer
 └── VGRSection
-    └── VGRList
-        ├── VGRListRow
-        ├── VGRLabelRow
-        ├── VGRNavRow
-        ├── VGRCheckRow
-        ├── VGRSelectRow
-        ├── VGRToggleRow
-        └── VGRMenuRow
+    ├── VGRList
+    │   ├── VGRListRow
+    │   ├── VGRLabelRow
+    │   ├── VGRNavRow
+    │   ├── VGRCheckRow
+    │   ├── VGRSelectRow
+    │   ├── VGRToggleRow
+    │   └── VGRMenuRow
+    └── VGRNoteRow
 ```
 
 Varje nivå har ett tydligt ansvar. Detta gör att vyer kan staplas flexibelt utan att varje lista behöver hantera egen scroll, bakgrund eller rubrik.
@@ -43,8 +44,9 @@ Det rundade kortet med `elevation1`-bakgrund och automatiska `VGRDivider` mellan
 | `VGRSelectRow`   | Rad för enval — bockmarkering endast på den valda raden                  |
 | `VGRToggleRow`   | Rad med en `Toggle`-kontroll — exponerar tillståndet via `Binding<Bool>` |
 | `VGRMenuRow`     | Rad med en `Menu` — visar valt värde + upp/ned-chevron på höger sida     |
+| `VGRNoteRow`     | Fristående textblock med egen rundad ram — för läsbara anteckningar      |
 
-Alla rader kan användas fritt inuti en `VGRList`, men i praktiken är `VGRCheckRow` och `VGRSelectRow` avsedda att omslutas av en `Button` så att anroparen styr markeringstillståndet. `VGRToggleRow` och `VGRMenuRow` hanterar sin egen interaktion via de inbyggda kontrollerna.
+Alla rader utom `VGRNoteRow` är avsedda att placeras inuti en `VGRList`. `VGRCheckRow` och `VGRSelectRow` omsluts typiskt av en `Button` så att anroparen styr markeringstillståndet; `VGRToggleRow` och `VGRMenuRow` hanterar sin egen interaktion via de inbyggda kontrollerna. `VGRNoteRow` renderar sin egen ram och placeras direkt i en `VGRSection` — inte i en `VGRList` — för att undvika nästlade ramar.
 
 ---
 
@@ -101,3 +103,4 @@ VGRContainer {
 | `VGRSelectRow.swift`      | Envalsrad                               |
 | `VGRToggleRow.swift`      | Rad med `Toggle`-kontroll               |
 | `VGRMenuRow.swift`        | Rad med `Menu`-kontroll                 |
+| `VGRNoteRow.swift`        | Fristående textblock med egen ram       |
