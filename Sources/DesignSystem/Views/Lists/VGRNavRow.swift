@@ -31,7 +31,7 @@ import SwiftUI
 ///     DestinationView()
 /// }
 /// ```
-struct VGRNavRow<Icon: View, Accessory: View, Destination: View>: View {
+public struct VGRNavRow<Icon: View, Accessory: View, Destination: View>: View {
 
     @ScaledMetric private var chevronSize: CGFloat = 25
 
@@ -115,7 +115,7 @@ struct VGRNavRow<Icon: View, Accessory: View, Destination: View>: View {
         self.destination = destination()
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationLink {
             destination
         } label: {

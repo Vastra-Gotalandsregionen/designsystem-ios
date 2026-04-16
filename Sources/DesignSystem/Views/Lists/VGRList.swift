@@ -27,7 +27,7 @@ import SwiftUI
 ///     }
 /// }
 /// ```
-struct VGRList<Content: View>: View {
+public struct VGRList<Content: View>: View {
 
     private let content: Content
     private var showWarning: Bool = false
@@ -43,7 +43,7 @@ struct VGRList<Content: View>: View {
         self.content = content()
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             Group(subviews: content) { subviews in
                 ForEach(subviews.indices, id: \.self) { index in

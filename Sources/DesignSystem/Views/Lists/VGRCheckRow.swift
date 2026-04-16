@@ -22,7 +22,7 @@ import SwiftUI
 ///     VGRCheckRow(title: item.title, isSelected: selection.contains(item))
 /// }
 /// ```
-struct VGRCheckRow<Accessory: View>: View {
+public struct VGRCheckRow<Accessory: View>: View {
 
     /// The primary text shown on the row.
     var title: String
@@ -65,7 +65,7 @@ struct VGRCheckRow<Accessory: View>: View {
         self.accessory = EmptyView()
     }
 
-    var body: some View {
+    public var body: some View {
         VGRListRow(title: title,
                    subtitle: subtitle,
                    icon: {
