@@ -31,7 +31,7 @@ import SwiftUI
 ///     VGRList { VGRListRow(title: "…") }
 /// }
 /// ```
-struct VGRSection<Header: View, Footer: View, Content: View>: View {
+public struct VGRSection<Header: View, Footer: View, Content: View>: View {
 
     private let headerTitle: String?
     private let footerTitle: String?
@@ -116,7 +116,7 @@ struct VGRSection<Header: View, Footer: View, Content: View>: View {
         self.content = content()
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: .Margins.medium) {
             if let headerTitle {
                 Group {

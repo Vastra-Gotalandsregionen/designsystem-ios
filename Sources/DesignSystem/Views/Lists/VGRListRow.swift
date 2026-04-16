@@ -27,7 +27,7 @@ import SwiftUI
 ///            icon: { Image(systemName: "bolt") },
 ///            accessory: { Text("Detail") })
 /// ```
-struct VGRListRow<Icon: View, Accessory: View>: View {
+public struct VGRListRow<Icon: View, Accessory: View>: View {
 
     /// The primary text shown on the row.
     let title: String
@@ -81,7 +81,7 @@ struct VGRListRow<Icon: View, Accessory: View>: View {
         return subtitle != nil ? .Margins.small : .Margins.medium
     }
 
-    var body: some View {
+    public var body: some View {
         HStack(spacing: .Margins.xtraSmall) {
 
             if let icon {

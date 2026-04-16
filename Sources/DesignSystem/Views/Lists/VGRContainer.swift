@@ -21,7 +21,7 @@ import SwiftUI
 ///     }
 /// }
 /// ```
-struct VGRContainer<Content: View>: View {
+public struct VGRContainer<Content: View>: View {
 
     private let content: Content
 
@@ -32,7 +32,7 @@ struct VGRContainer<Content: View>: View {
         self.content = content()
     }
 
-    var body: some View {
+    public var body: some View {
         ScrollView {
             VStack(spacing: .Margins.xtraLarge) {
                 content

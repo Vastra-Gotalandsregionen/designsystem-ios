@@ -22,7 +22,7 @@ import SwiftUI
 ///     VGRSelectRow(title: item.title, isSelected: selectedId == item.id)
 /// }
 /// ```
-struct VGRSelectRow<Icon: View>: View {
+public struct VGRSelectRow<Icon: View>: View {
 
     /// The primary text shown on the row.
     var title: String
@@ -65,7 +65,7 @@ struct VGRSelectRow<Icon: View>: View {
         self.icon = EmptyView()
     }
 
-    var body: some View {
+    public var body: some View {
         VGRListRow(title: title,
                    subtitle: subtitle,
                    icon: {
