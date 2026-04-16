@@ -5,9 +5,14 @@ import SwiftUI
 ///
 /// The picker's value is exposed via a `Binding<Date>`, mirroring the
 /// native `DatePicker(selection:)` API — the caller owns and observes
-/// the value. An optional `ClosedRange<Date>` constrains the selectable
-/// range, and `displayedComponents` controls whether the picker exposes
-/// date, time, or both.
+/// the value. An optional range constrains the selectable dates, and
+/// `displayedComponents` controls whether the picker exposes date,
+/// time, or both.
+///
+/// The row mirrors `DatePicker`'s range overloads: it accepts a
+/// `ClosedRange<Date>`, a `PartialRangeFrom<Date>` (`start...`) or a
+/// `PartialRangeThrough<Date>` (`...end`), so callers can express lower
+/// bounds, upper bounds or both.
 ///
 /// Title, optional subtitle and an optional leading icon are forwarded
 /// to the underlying row. Use inside a ``VGRList`` for settings-style
@@ -30,8 +35,23 @@ import SwiftUI
 ///                  in: Date.distantPast ... .now,
 ///                  displayedComponents: [.date],
 ///                  icon: { Image(systemName: "calendar") })
+///
+/// VGRDatePickerRow(title: "Möte",
+///                  selection: $meeting,
+///                  in: Date()...)
+///
+/// VGRDatePickerRow(title: "Utgår senast",
+///                  selection: $expiry,
+///                  in: ...Date.distantFuture)
 /// ```
 public struct VGRDatePickerRow<Icon: View>: View {
+
+    private enum DateRange {
+        case unbounded
+        case closed(ClosedRange<Date>)
+        case from(PartialRangeFrom<Date>)
+        case through(PartialRangeThrough<Date>)
+    }
 
     /// The primary text shown on the row.
     let title: String
@@ -42,25 +62,15 @@ public struct VGRDatePickerRow<Icon: View>: View {
     /// Binding to the selected date.
     @Binding var selection: Date
 
-    /// Optional closed range that constrains the selectable dates. When
-    /// `nil`, any date is selectable.
-    let range: ClosedRange<Date>?
+    private let range: DateRange
 
     /// Which calendar components the picker exposes (date, time, or both).
     let displayedComponents: DatePicker.Components
 
     private let icon: Icon
 
-    /// Creates a date picker row with a leading icon.
-    /// - Parameters:
-    ///   - title: The primary text shown on the row.
-    ///   - subtitle: Optional secondary text shown below the title.
-    ///   - selection: Binding to the selected date.
-    ///   - range: Optional closed range that constrains the selectable
-    ///     dates. Defaults to `nil` (unconstrained).
-    ///   - displayedComponents: Which calendar components the picker
-    ///     exposes. Defaults to `[.hourAndMinute, .date]`.
-    ///   - icon: A view builder that produces the leading icon.
+    /// Creates a date picker row with a leading icon and an optional
+    /// closed range.
     public init(title: String,
                 subtitle: String? = nil,
                 selection: Binding<Date>,
@@ -70,20 +80,13 @@ public struct VGRDatePickerRow<Icon: View>: View {
         self.title = title
         self.subtitle = subtitle
         self._selection = selection
-        self.range = range
+        self.range = range.map(DateRange.closed) ?? .unbounded
         self.displayedComponents = displayedComponents
         self.icon = icon()
     }
 
-    /// Creates a date picker row without a leading icon.
-    /// - Parameters:
-    ///   - title: The primary text shown on the row.
-    ///   - subtitle: Optional secondary text shown below the title.
-    ///   - selection: Binding to the selected date.
-    ///   - range: Optional closed range that constrains the selectable
-    ///     dates. Defaults to `nil` (unconstrained).
-    ///   - displayedComponents: Which calendar components the picker
-    ///     exposes. Defaults to `[.hourAndMinute, .date]`.
+    /// Creates a date picker row without a leading icon and an optional
+    /// closed range.
     public init(title: String,
                 subtitle: String? = nil,
                 selection: Binding<Date>,
@@ -92,7 +95,69 @@ public struct VGRDatePickerRow<Icon: View>: View {
         self.title = title
         self.subtitle = subtitle
         self._selection = selection
-        self.range = range
+        self.range = range.map(DateRange.closed) ?? .unbounded
+        self.displayedComponents = displayedComponents
+        self.icon = EmptyView()
+    }
+
+    /// Creates a date picker row with a leading icon and a lower-bound
+    /// range (`start...`).
+    public init(title: String,
+                subtitle: String? = nil,
+                selection: Binding<Date>,
+                in range: PartialRangeFrom<Date>,
+                displayedComponents: DatePicker.Components = [.hourAndMinute, .date],
+                @ViewBuilder icon: () -> Icon) {
+        self.title = title
+        self.subtitle = subtitle
+        self._selection = selection
+        self.range = .from(range)
+        self.displayedComponents = displayedComponents
+        self.icon = icon()
+    }
+
+    /// Creates a date picker row without a leading icon and a
+    /// lower-bound range (`start...`).
+    public init(title: String,
+                subtitle: String? = nil,
+                selection: Binding<Date>,
+                in range: PartialRangeFrom<Date>,
+                displayedComponents: DatePicker.Components = [.hourAndMinute, .date]) where Icon == EmptyView {
+        self.title = title
+        self.subtitle = subtitle
+        self._selection = selection
+        self.range = .from(range)
+        self.displayedComponents = displayedComponents
+        self.icon = EmptyView()
+    }
+
+    /// Creates a date picker row with a leading icon and an upper-bound
+    /// range (`...end`).
+    public init(title: String,
+                subtitle: String? = nil,
+                selection: Binding<Date>,
+                in range: PartialRangeThrough<Date>,
+                displayedComponents: DatePicker.Components = [.hourAndMinute, .date],
+                @ViewBuilder icon: () -> Icon) {
+        self.title = title
+        self.subtitle = subtitle
+        self._selection = selection
+        self.range = .through(range)
+        self.displayedComponents = displayedComponents
+        self.icon = icon()
+    }
+
+    /// Creates a date picker row without a leading icon and an
+    /// upper-bound range (`...end`).
+    public init(title: String,
+                subtitle: String? = nil,
+                selection: Binding<Date>,
+                in range: PartialRangeThrough<Date>,
+                displayedComponents: DatePicker.Components = [.hourAndMinute, .date]) where Icon == EmptyView {
+        self.title = title
+        self.subtitle = subtitle
+        self._selection = selection
+        self.range = .through(range)
         self.displayedComponents = displayedComponents
         self.icon = EmptyView()
     }
@@ -102,15 +167,28 @@ public struct VGRDatePickerRow<Icon: View>: View {
                    subtitle: subtitle,
                    icon: { icon },
                    accessory: {
-            if let range {
+            switch range {
+            case .unbounded:
                 DatePicker("",
                            selection: $selection,
-                           in: range,
                            displayedComponents: displayedComponents)
                     .labelsHidden()
-            } else {
+            case .closed(let r):
                 DatePicker("",
                            selection: $selection,
+                           in: r,
+                           displayedComponents: displayedComponents)
+                    .labelsHidden()
+            case .from(let r):
+                DatePicker("",
+                           selection: $selection,
+                           in: r,
+                           displayedComponents: displayedComponents)
+                    .labelsHidden()
+            case .through(let r):
+                DatePicker("",
+                           selection: $selection,
+                           in: r,
                            displayedComponents: displayedComponents)
                     .labelsHidden()
             }
@@ -122,6 +200,8 @@ public struct VGRDatePickerRow<Icon: View>: View {
     @Previewable @State var reminder: Date = .now
     @Previewable @State var start: Date = .now
     @Previewable @State var birthday: Date = .now
+    @Previewable @State var meeting: Date = .now
+    @Previewable @State var expiry: Date = .now
 
     NavigationStack {
         VGRContainer {
@@ -146,10 +226,17 @@ public struct VGRDatePickerRow<Icon: View>: View {
                                      icon: { Image(systemName: "calendar") })
 
                     VGRDatePickerRow(title: "Möte",
-                                     subtitle: "Välj datum och tid",
-                                     selection: $reminder,
-                                     in: Date() ... Date.distantFuture,
+                                     subtitle: "Endast framtida tidpunkter",
+                                     selection: $meeting,
+                                     in: Date()...,
                                      icon: { Image(systemName: "clock") })
+
+                    VGRDatePickerRow(title: "Utgår senast",
+                                     subtitle: "Endast datum i det förflutna",
+                                     selection: $expiry,
+                                     in: ...Date(),
+                                     displayedComponents: [.date],
+                                     icon: { Image(systemName: "hourglass") })
                 }
             }
         }

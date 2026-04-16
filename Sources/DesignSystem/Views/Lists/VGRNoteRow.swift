@@ -26,17 +26,28 @@ public struct VGRNoteRow: View {
     @ScaledMetric private var minHeight: CGFloat = 172
 
     /// The note text displayed in the row.
-    let note: String
+    var note: String?
+
+    /// The placeholder to show if the note is empty
+    let placeholder: String
 
     /// Creates a note row.
     /// - Parameter note: The text to display.
-    public init(_ note: String) {
+    /// - Parameter placeholder: The placeholder text to display if `note` is empty
+    public init(_ note: String?, placeholder: String = "") {
         self.note = note
+        self.placeholder = placeholder
+    }
+
+    /// Computed property, to support placeholder / empty state
+    private var noteText: String {
+        guard let text = self.note else { return self.placeholder }
+        return text.isEmpty ? self.placeholder : text
     }
 
     public var body: some View {
         HStack {
-            Text(note)
+            Text(noteText)
                 .font(.bodyRegular)
                 .foregroundStyle(Color.Neutral.text)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -61,7 +72,12 @@ public struct VGRNoteRow: View {
 
             VGRSection(header: "Kort anteckning",
                        footer: "Minsta höjden håller uppe raden även när noten är kort.") {
-                VGRNoteRow("OK")
+                VGRNoteRow("", placeholder: "Ingen anteckning")
+            }
+
+            VGRSection(header: "Kort anteckning",
+                       footer: "Detta är en footer") {
+                VGRNoteRow(nil, placeholder: "Även ett 'nil' värde accepteras för att trigga placeholdern")
             }
         }
         .navigationTitle("VGRNoteRow")
