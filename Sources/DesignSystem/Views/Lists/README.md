@@ -12,7 +12,8 @@ VGRContainer
     │   ├── VGRCheckRow
     │   ├── VGRSelectRow
     │   ├── VGRToggleRow
-    │   └── VGRMenuRow
+    │   ├── VGRMenuRow
+    │   └── VGRDatePickerRow
     └── VGRNoteRow
 ```
 
@@ -44,6 +45,7 @@ Det rundade kortet med `elevation1`-bakgrund och automatiska `VGRDivider` mellan
 | `VGRSelectRow`   | Rad för enval — bockmarkering endast på den valda raden                  |
 | `VGRToggleRow`   | Rad med en `Toggle`-kontroll — exponerar tillståndet via `Binding<Bool>` |
 | `VGRMenuRow`     | Rad med en `Menu` — visar valt värde + upp/ned-chevron på höger sida     |
+| `VGRDatePickerRow` | Rad med en `DatePicker` — exponerar datum/tid via `Binding<Date>`       |
 | `VGRNoteRow`     | Fristående textblock med egen rundad ram — för läsbara anteckningar      |
 
 Alla rader utom `VGRNoteRow` är avsedda att placeras inuti en `VGRList`. `VGRCheckRow` och `VGRSelectRow` omsluts typiskt av en `Button` så att anroparen styr markeringstillståndet; `VGRToggleRow` och `VGRMenuRow` hanterar sin egen interaktion via de inbyggda kontrollerna. `VGRNoteRow` renderar sin egen ram och placeras direkt i en `VGRSection` — inte i en `VGRList` — för att undvika nästlade ramar.
@@ -103,4 +105,5 @@ VGRContainer {
 | `VGRSelectRow.swift`      | Envalsrad                               |
 | `VGRToggleRow.swift`      | Rad med `Toggle`-kontroll               |
 | `VGRMenuRow.swift`        | Rad med `Menu`-kontroll                 |
+| `VGRDatePickerRow.swift`  | Rad med `DatePicker`-kontroll           |
 | `VGRNoteRow.swift`        | Fristående textblock med egen ram       |
