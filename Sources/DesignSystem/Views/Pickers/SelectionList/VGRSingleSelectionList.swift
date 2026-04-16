@@ -33,7 +33,7 @@ import SwiftUI
 ///
 /// VGRSingleSelectionList(items: items, selection: $selection) { $0.name }
 /// ```
-public struct VGRSingleSelectionList<Item: Identifiable>: View {
+public struct VGRSingleSelectionList<Item: Identifiable, Icon: View>: View {
 
     /// Optional flag to show warning indicator if no item is selected
     public var warnIfNotSelected: Bool = false
@@ -70,6 +70,9 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
     /// Returns the display name for an item, shown as the row title.
     public let name: (Item) -> String
 
+    /// Returns the icon for an item, show in the left-hand side of the row
+    public let icon: (Item) -> Icon
+
     /// Creates a single-selection list.
     /// - Parameters:
     ///   - header: Optional header string rendered above the list.
@@ -82,6 +85,7 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
     ///   - inset: Whether the underlying ``VGRSection`` horizontally insets
     ///     its content. Defaults to `true`. Pass `false` when the list is
     ///     wrapped in a container that already supplies horizontal framing.
+    ///   - icon: A closure that returns an icon view for an item.
     ///   - name: A closure that returns the display name for an item.
     public init(
         header: String? = nil,
@@ -90,6 +94,7 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
         allowsDeselection: Bool = false,
         warnIfNotSelected: Bool = false,
         inset: Bool = true,
+        @ViewBuilder icon: @escaping (Item) -> Icon,
         name: @escaping (Item) -> String
     ) {
         self.warnIfNotSelected = warnIfNotSelected
@@ -99,6 +104,7 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
         self._selection = selection
         self.allowsDeselection = allowsDeselection
         self.name = name
+        self.icon = icon
     }
 
     @ViewBuilder
@@ -109,7 +115,8 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
             } label: {
                 VGRSelectRow(
                     title: name(item),
-                    isSelected: selection?.id == item.id
+                    isSelected: selection?.id == item.id,
+                    icon: { icon(item) }
                 )
             }
             .buttonStyle(.plain)
@@ -137,6 +144,42 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
     }
 }
 
+extension VGRSingleSelectionList where Icon == EmptyView {
+    /// Creates a single-selection list.
+    /// - Parameters:
+    ///   - header: Optional header string rendered above the list.
+    ///   - items: The selectable items to display.
+    ///   - selection: A binding to the selected item. Seed it to pre-select
+    ///     the corresponding row, or `nil` for no selection.
+    ///   - allowsDeselection: When `true`, tapping the already-selected row
+    ///     clears the selection to `nil`. Defaults to `false`.
+    ///   - warnIfNotSelected: Optional property to show warning if no item is selected
+    ///   - inset: Whether the underlying ``VGRSection`` horizontally insets
+    ///     its content. Defaults to `true`. Pass `false` when the list is
+    ///     wrapped in a container that already supplies horizontal framing.
+    ///   - name: A closure that returns the display name for an item.
+    public init(
+        header: String? = nil,
+        items: [Item],
+        selection: Binding<Item?>,
+        allowsDeselection: Bool = false,
+        warnIfNotSelected: Bool = false,
+        inset: Bool = true,
+        name: @escaping (Item) -> String
+    ) {
+        self.init(
+            header: header,
+            items: items,
+            selection: selection,
+            allowsDeselection: allowsDeselection,
+            warnIfNotSelected: warnIfNotSelected,
+            inset: inset,
+            icon: { _ in EmptyView() }, /// Clears out the icon
+            name: name
+        )
+    }
+}
+
 #Preview("VGRSingleSelectionList") {
 
     @Previewable @State var selection: VGRSelectionListItem? = nil
@@ -154,7 +197,11 @@ public struct VGRSingleSelectionList<Item: Identifiable>: View {
             VGRSingleSelectionList(
                 header: "Choose one item from the list below.",
                 items: items,
-                selection: $selection
+                selection: $selection,
+                icon: { _ in
+                    Image(systemName: "bolt")
+                        .foregroundStyle(Color.red)
+                }
             ) { $0.name }
             
             VGRSingleSelectionList(
