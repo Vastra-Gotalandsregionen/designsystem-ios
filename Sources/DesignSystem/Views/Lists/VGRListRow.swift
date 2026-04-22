@@ -89,7 +89,7 @@ public struct VGRListRow<Icon: View, Accessory: View>: View {
                     .accessibilityHidden(true)
             }
 
-            VStack(spacing: .Margins.xtraSmall / 2) {
+            VStack(spacing: 2) {
                 Text(title)
                     .font(.bodyRegular)
                     .maxLeading()

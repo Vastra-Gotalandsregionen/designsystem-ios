@@ -33,6 +33,17 @@ public extension View {
     }
 
     /// Expands the view to take up the maximum available horizontal space
+    /// and aligns its content in the center.
+    ///
+    /// This is equivalent to applying:
+    /// `frame(maxWidth: .infinity, alignment: .center)`
+    ///
+    /// - Returns: A view that fills the available width and is center-aligned.
+    func maxCentered() -> some View {
+        self.frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    /// Expands the view to take up the maximum available horizontal space
     /// and aligns its content to the trailing edge.
     ///
     /// This is equivalent to applying:
