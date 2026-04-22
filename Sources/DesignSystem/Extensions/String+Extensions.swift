@@ -20,7 +20,7 @@ public extension String {
     ///   Defaults to `.main`.
     /// - Returns: The localized string, or the key itself if no translation exists.
     func loc(in bundle: Bundle = .main) -> String {
-        NSLocalizedString(self, bundle: Bundle.module, comment: "")
+        NSLocalizedString(self, bundle: bundle, comment: "")
     }
 
     /// Looks up the receiver as a localization key and formats the result
