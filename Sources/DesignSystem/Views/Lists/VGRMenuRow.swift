@@ -100,7 +100,7 @@ public struct VGRMenuRow<Icon: View, Content: View>: View {
             } label: {
                 HStack(spacing: .Margins.xtraSmall / 2) {
                     Text(value)
-                        .font(.bodyRegular)
+                        .font(.bodySemibold)
 
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.footnoteSemibold)
@@ -108,6 +108,7 @@ public struct VGRMenuRow<Icon: View, Content: View>: View {
                         .accessibilityHidden(true)
                 }
                 .foregroundStyle(Color.Primary.action)
+                .fixedSize(horizontal: true, vertical: false)
             }
         })
     }
