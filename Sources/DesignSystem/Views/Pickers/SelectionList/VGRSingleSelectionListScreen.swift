@@ -26,10 +26,12 @@ import SwiftUI
 ///         description: "Vad påverkade händelsen mest?",
 ///         items: items,
 ///         selection: $selection
-///     ) { $0.name }
+///     ) { item, isSelected in
+///         VGRSelectRow(title: item.name, isSelected: isSelected)
+///     }
 /// }
 /// ```
-public struct VGRSingleSelectionListScreen<Item: Identifiable>: View {
+public struct VGRSingleSelectionListScreen<Item: Identifiable, Row: View>: View {
 
     /// Title shown in the navigation bar.
     public let title: String
@@ -55,8 +57,10 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable>: View {
     /// the underlying ``VGRSingleSelectionList``.
     public let allowsDeselection: Bool
 
-    /// Returns the display name for an item, shown as the row title.
-    public let name: (Item) -> String
+    /// Builds the row view for an item. Receives the item and whether it is
+    /// the currently-selected row, so callers can vary content and styling
+    /// based on selection state.
+    public let row: (Item, Bool) -> Row
 
     /// Creates a single-selection list screen.
     /// - Parameters:
@@ -67,21 +71,22 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable>: View {
     ///     the corresponding row, or `nil` for no selection.
     ///   - allowsDeselection: When `true`, tapping the already-selected row
     ///     clears the selection to `nil`. Defaults to `false`.
-    ///   - name: A closure that returns the display name for an item.
+    ///   - row: A view builder that produces the row for an item given its
+    ///     current `isSelected` state.
     public init(
         title: String,
         description: String? = nil,
         items: [Item],
         selection: Binding<Item?>,
         allowsDeselection: Bool = false,
-        name: @escaping (Item) -> String
+        @ViewBuilder row: @escaping (Item, Bool) -> Row
     ) {
         self.title = title
         self.description = description
         self.items = items
         self._selection = selection
         self.allowsDeselection = allowsDeselection
-        self.name = name
+        self.row = row
     }
 
     public var body: some View {
@@ -91,7 +96,7 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable>: View {
                 items: items,
                 selection: $selection,
                 allowsDeselection: allowsDeselection,
-                name: name
+                row: row
             )
         }
         .navigationTitle(title)
@@ -118,6 +123,8 @@ public struct VGRSingleSelectionListScreen<Item: Identifiable>: View {
             items: items,
             selection: $selection,
             allowsDeselection: true
-        ) { $0.name }
+        ) { item, isSelected in
+            VGRSelectRow(title: item.name, isSelected: isSelected)
+        }
     }
 }
