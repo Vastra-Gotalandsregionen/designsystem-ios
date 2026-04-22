@@ -31,15 +31,19 @@ public struct VGRList<Content: View>: View {
 
     private let content: Content
     private var showWarning: Bool = false
+    private var hideDividers: Bool = false
 
     /// Creates a list of rows wrapped in a rounded card.
     /// - Parameters:
     ///   - showWarning: When `true`, a warning border is drawn around the card.
+    ///   - hideDividers: When `true`, the dividers between the elements of the list are hidden.
     ///   - content: A view builder that produces the rows; each top-level
     ///     view becomes a row separated by a ``VGRDivider``.
     public init(showWarning: Bool = false,
+                hideDividers: Bool = false,
                 @ViewBuilder content: () -> Content) {
         self.showWarning = showWarning
+        self.hideDividers = hideDividers
         self.content = content()
     }
 
@@ -48,7 +52,7 @@ public struct VGRList<Content: View>: View {
             Group(subviews: content) { subviews in
                 ForEach(subviews.indices, id: \.self) { index in
                     subviews[index]
-                    if index < subviews.count - 1 {
+                    if !hideDividers && index < subviews.count - 1 {
                         VGRDivider()
                     }
                 }
@@ -94,6 +98,13 @@ public struct VGRList<Content: View>: View {
             VGRSection(header: "Lorem ipsum dolor etcetera och annat som brukar stå här när man testar saker för flera rader") {
                 VGRList(showWarning: true) {
                     VGRListRow(title: "Title", subtitle: "Subtitle")
+                    VGRListRow(title: "Title", subtitle: "Subtitle")
+                }
+            }
+
+            VGRSection(header: "Lorem ipsum dolor etcetera och annat som brukar stå här när man testar saker för flera rader, inga dividers") {
+                VGRList(showWarning: false, hideDividers: true) {
+                    VGRDatePickerRow(title: "Datum", selection: $selectedDate)
                     VGRListRow(title: "Title", subtitle: "Subtitle")
                 }
             }
