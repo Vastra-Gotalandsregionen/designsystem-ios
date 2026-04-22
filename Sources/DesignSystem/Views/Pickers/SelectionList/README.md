@@ -25,27 +25,27 @@ En enkel datamodell för enskilda val i listan. Innehåller ett stabilt `id` (`S
 Komponenterna är generiska, så det går lika bra att använda en egen domänmodell så länge den uppfyller `Identifiable` (enval) eller `Identifiable & Hashable` (flerval).
 
 ### `VGRSingleSelectionList`
-Lista där användaren kan välja **exakt ett** alternativ. Markerat val visas med en bockmarkering på höger sida. Som standard går det inte att avmarkera ett redan valt objekt — klassiskt radio-beteende — men detta kan slås på via `allowsDeselection: true`.
+Lista där användaren kan välja **exakt ett** alternativ. Listan äger bara urvalstillståndet — radens innehåll byggs av en `row`-closure som tar `(item, isSelected)` och kan returnera vilken vy som helst (ex. `VGRSelectRow`). Som standard går det inte att avmarkera ett redan valt objekt — klassiskt radio-beteende — men detta kan slås på via `allowsDeselection: true`.
 
-| Parameter            | Typ                  | Default | Beskrivning                                               |
-|----------------------|----------------------|---------|-----------------------------------------------------------|
-| `header`             | `String?`            | `nil`   | Rubrik för omslutande `VGRSection`                         |
-| `items`              | `[Item]`             | –       | Alternativen som visas i listan                           |
-| `selection`          | `Binding<Item?>`     | –       | Det aktuella valet, eller `nil`                           |
-| `allowsDeselection`  | `Bool`               | `false` | Tillåt att tömma valet genom att klicka på markerad rad   |
-| `warnIfNotSelected`  | `Bool`               | `false` | Visar en varningsram runt listan när inget är valt        |
-| `name`               | `(Item) -> String`   | –       | Returnerar det som ska visas som radens titel             |
+| Parameter            | Typ                          | Default | Beskrivning                                               |
+|----------------------|------------------------------|---------|-----------------------------------------------------------|
+| `header`             | `String?`                    | `nil`   | Rubrik för omslutande `VGRSection`                         |
+| `items`              | `[Item]`                     | –       | Alternativen som visas i listan                           |
+| `selection`          | `Binding<Item?>`             | –       | Det aktuella valet, eller `nil`                           |
+| `allowsDeselection`  | `Bool`                       | `false` | Tillåt att tömma valet genom att klicka på markerad rad   |
+| `warnIfNotSelected`  | `Bool`                       | `false` | Visar en varningsram runt listan när inget är valt        |
+| `row`                | `(Item, Bool) -> some View`  | –       | Bygger radens vy givet aktuell `isSelected`-status         |
 
 ### `VGRMultiSelectionList`
-Lista där användaren kan välja **noll eller fler** alternativ. Varje rad har en cirkulär indikator som växlar mellan markerad och omarkerad när raden trycks. Valet exponeras som ett `Set` av objekt — samma struktur används för att förvälja rader när vyn visas.
+Lista där användaren kan välja **noll eller fler** alternativ. Listan äger bara urvalstillståndet — radens innehåll byggs av en `row`-closure som tar `(item, isSelected)` och kan returnera vilken vy som helst (ex. `VGRCheckRow`). Valet exponeras som ett `Set` av objekt — samma struktur används för att förvälja rader när vyn visas.
 
-| Parameter            | Typ                    | Default | Beskrivning                                                |
-|----------------------|------------------------|---------|------------------------------------------------------------|
-| `header`             | `String?`              | `nil`   | Rubrik för omslutande `VGRSection`                          |
-| `items`              | `[Item]`               | –       | Alternativen som visas i listan                            |
-| `selection`          | `Binding<Set<Item>>`   | –       | Aktuellt urval. Seed:a för att förvälja rader              |
-| `warnIfNotSelected`  | `Bool`                 | `false` | Visar en varningsram runt listan när urvalet är tomt       |
-| `name`               | `(Item) -> String`     | –       | Returnerar det som ska visas som radens titel              |
+| Parameter            | Typ                          | Default | Beskrivning                                                |
+|----------------------|------------------------------|---------|------------------------------------------------------------|
+| `header`             | `String?`                    | `nil`   | Rubrik för omslutande `VGRSection`                          |
+| `items`              | `[Item]`                     | –       | Alternativen som visas i listan                            |
+| `selection`          | `Binding<Set<Item>>`         | –       | Aktuellt urval. Seed:a för att förvälja rader              |
+| `warnIfNotSelected`  | `Bool`                       | `false` | Visar en varningsram runt listan när urvalet är tomt       |
+| `row`                | `(Item, Bool) -> some View`  | –       | Bygger radens vy givet aktuell `isSelected`-status          |
 
 ### `VGRSingleSelectionListScreen` / `VGRMultiSelectionListScreen`
 Kompletta skärmar som paketerar respektive lista med standardramverk: navigationstitel, valfri beskrivande rubrik och en `VGRContainer` runt listan. Använd dessa när du behöver det vanliga "välj från en lista"-flödet utan att upprepa layouten i varje anropare. För mer kontroll — komponera listan direkt i din egen vy.
@@ -71,7 +71,9 @@ VGRContainer {
         header: "Välj en nivå",
         items: items,
         selection: $selection
-    ) { $0.name }
+    ) { item, isSelected in
+        VGRSelectRow(title: item.name, isSelected: isSelected)
+    }
 }
 ```
 
@@ -85,7 +87,9 @@ VGRContainer {
         items: items,
         selection: $selection,
         warnIfNotSelected: true
-    ) { $0.name }
+    ) { item, isSelected in
+        VGRCheckRow(title: item.name, isSelected: isSelected)
+    }
 }
 ```
 
@@ -98,7 +102,9 @@ NavigationStack {
         items: items,
         selection: $selection,
         allowsDeselection: true
-    ) { $0.name }
+    ) { item, isSelected in
+        VGRSelectRow(title: item.name, isSelected: isSelected)
+    }
 }
 ```
 

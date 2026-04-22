@@ -2,9 +2,11 @@ import SwiftUI
 
 /// A vertically stacked list that lets the user pick one or more items from a set of options.
 ///
-/// Each row shows the item's display name — produced by the caller-supplied
-/// `name` closure — alongside a circular checkmark indicator that reflects
-/// the current selection state.
+/// The list owns selection state only — each row's appearance is produced by
+/// a caller-supplied `row` builder that receives the item and its current
+/// `isSelected` state. Wrap the returned view in anything you like
+/// (``VGRCheckRow``, a custom layout, etc.); the list wraps it in a tappable
+/// `Button` for you.
 ///
 /// The component is generic over the item type; any `Identifiable & Hashable`
 /// value works, so callers can either use ``VGRSelectionListItem`` for the
@@ -29,9 +31,11 @@ import SwiftUI
 ///     VGRSelectionListItem(id: "world", name: "World"),
 /// ]
 ///
-/// VGRMultiSelectionList(items: items, selection: $selection) { $0.name }
+/// VGRMultiSelectionList(items: items, selection: $selection) { item, isSelected in
+///     VGRCheckRow(title: item.name, isSelected: isSelected)
+/// }
 /// ```
-public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
+public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Row: View>: View {
 
     /// Optional flag to show warning indicator if no item is selected
     public var warnIfNotSelected: Bool = false
@@ -54,8 +58,10 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
     /// presenting to pre-select items.
     @Binding public var selection: Set<Item>
 
-    /// Returns the display name for an item, shown as the row title.
-    public let name: (Item) -> String
+    /// Builds the row view for an item. Receives the item and whether it is
+    /// currently part of the selection set, so callers can vary content and
+    /// styling based on selection state.
+    public let row: (Item, Bool) -> Row
 
     /// Creates a multi-selection list.
     /// - Parameters:
@@ -63,37 +69,36 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
     ///   - items: The selectable items to display.
     ///   - selection: A binding to the set of selected items. Seed it with
     ///     items to pre-select the corresponding rows.
-    ///   - warnIfNotSelected: Optional flag to show warning if no item is selected
+    ///   - warnIfNotSelected: Optional flag to show warning if no item is selected.
     ///   - inset: Whether the underlying ``VGRSection`` horizontally insets
     ///     its content. Defaults to `true`. Pass `false` when the list is
     ///     wrapped in a container that already supplies horizontal framing.
-    ///   - name: A closure that returns the display name for an item.
+    ///   - row: A view builder that produces the row for an item given its
+    ///     current `isSelected` state.
     public init(
         header: String? = nil,
         items: [Item],
         selection: Binding<Set<Item>>,
         warnIfNotSelected: Bool = false,
         inset: Bool = true,
-        name: @escaping (Item) -> String
+        @ViewBuilder row: @escaping (Item, Bool) -> Row
     ) {
         self.warnIfNotSelected = warnIfNotSelected
         self.header = header
         self.inset = inset
         self.items = items
         self._selection = selection
-        self.name = name
+        self.row = row
     }
 
     @ViewBuilder
     private var rows: some View {
         ForEach(items) { item in
+            let isSelected = selection.contains(item)
             Button {
                 toggle(item)
             } label: {
-                VGRCheckRow(
-                    title: name(item),
-                    isSelected: selection.contains(item)
-                )
+                row(item, isSelected)
             }
             .buttonStyle(.plain)
         }
@@ -136,7 +141,9 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
                 header: "Choose one or more items from the list below.",
                 items: items,
                 selection: $selection
-            ) { $0.name }
+            ) { item, isSelected in
+                VGRCheckRow(title: item.name, isSelected: isSelected)
+            }
 
             VGRShape {
                 VGRMultiSelectionList(
@@ -145,7 +152,9 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable>: View {
                     selection: $selection,
                     warnIfNotSelected: true,
                     inset: false
-                ) { $0.name }
+                ) { item, isSelected in
+                    VGRCheckRow(title: item.name, isSelected: isSelected)
+                }
             }
         }
         .navigationTitle("VGRMultiSelectionList")

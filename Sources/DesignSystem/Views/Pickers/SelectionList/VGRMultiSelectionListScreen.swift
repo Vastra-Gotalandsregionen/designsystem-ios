@@ -26,10 +26,12 @@ import SwiftUI
 ///         description: "Vad påverkade händelsen?",
 ///         items: items,
 ///         selection: $selection
-///     ) { $0.name }
+///     ) { item, isSelected in
+///         VGRCheckRow(title: item.name, isSelected: isSelected)
+///     }
 /// }
 /// ```
-public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable>: View {
+public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable, Row: View>: View {
 
     /// Title shown in the navigation bar.
     public let title: String
@@ -45,8 +47,10 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable>: View {
     /// presenting to pre-select items.
     @Binding public var selection: Set<Item>
 
-    /// Returns the display name for an item, shown as the row title.
-    public let name: (Item) -> String
+    /// Builds the row view for an item. Receives the item and whether it is
+    /// currently part of the selection set, so callers can vary content and
+    /// styling based on selection state.
+    public let row: (Item, Bool) -> Row
 
     /// Creates a multi-selection list screen.
     /// - Parameters:
@@ -55,19 +59,20 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable>: View {
     ///   - items: The selectable items to display.
     ///   - selection: A binding to the set of selected items. Seed it with
     ///     items to pre-select the corresponding rows.
-    ///   - name: A closure that returns the display name for an item.
+    ///   - row: A view builder that produces the row for an item given its
+    ///     current `isSelected` state.
     public init(
         title: String,
         description: String? = nil,
         items: [Item],
         selection: Binding<Set<Item>>,
-        name: @escaping (Item) -> String
+        @ViewBuilder row: @escaping (Item, Bool) -> Row
     ) {
         self.title = title
         self.description = description
         self.items = items
         self._selection = selection
-        self.name = name
+        self.row = row
     }
 
     public var body: some View {
@@ -76,7 +81,7 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable>: View {
                 header: description,
                 items: items,
                 selection: $selection,
-                name: name
+                row: row
             )
         }
         .navigationTitle(title)
@@ -101,7 +106,9 @@ public struct VGRMultiSelectionListScreen<Item: Identifiable & Hashable>: View {
             title: "Selection List",
             description: "Choose one or more items from the list below.",
             items: items,
-            selection: $selection,
-        ) { $0.name }
+            selection: $selection
+        ) { item, isSelected in
+            VGRCheckRow(title: item.name, isSelected: isSelected)
+        }
     }
 }
