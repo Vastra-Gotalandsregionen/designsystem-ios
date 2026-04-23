@@ -38,6 +38,7 @@ public struct VGRContainer<Content: View>: View {
                 content
             }
         }
+        .maxLeading()
         .background(Color.Elevation.background)
     }
 }
@@ -67,5 +68,7 @@ public struct VGRContainer<Content: View>: View {
                 }
             }
         }
+        .navigationTitle("VGRContainer")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
