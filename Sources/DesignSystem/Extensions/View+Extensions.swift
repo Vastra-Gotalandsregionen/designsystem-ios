@@ -58,18 +58,20 @@ public extension View {
 public extension View {
     /// Overlays the view with a rounded, error-colored border to signal a warning or invalid state.
     ///
-    /// The border uses `Color.Status.errorText` with a 2pt stroke and matches the design system's
-    /// main corner radius (`.Radius.mainRadius`). When `isVisible` is `false`, no border is drawn.
+    /// The border uses `borderColor` which defaults to `Color.Status.errorText` with a 2pt stroke
+    /// and matches the design system's main corner radius (`.Radius.mainRadius`).
+    /// When `isVisible` is `false`, no border is drawn.
     ///
     /// - Parameter isVisible: A Boolean value that determines whether the warning border is shown.
     ///   - `true`: The border is rendered on top of the view.
     ///   - `false`: No border is rendered.
+    /// - Parameter borderColor: A Color value that sets the color of the warning border.
     ///
     /// - Returns: A view overlaid with a conditional warning border.
-    func warningBorder(_ isVisible: Bool) -> some View {
+    func warningBorder(_ isVisible: Bool, borderColor: Color = Color.Status.errorText) -> some View {
         self.overlay {
             RoundedRectangle(cornerRadius: .Radius.mainRadius)
-                .strokeBorder(Color.Status.errorText, lineWidth: 2)
+                .strokeBorder(borderColor, lineWidth: 2)
                 .isVisible(isVisible)
         }
     }
