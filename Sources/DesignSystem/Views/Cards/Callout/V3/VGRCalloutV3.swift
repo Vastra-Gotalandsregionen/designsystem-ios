@@ -30,11 +30,14 @@ public struct VGRCalloutV3<Content: View, Icon: View, Header: View>: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: .Margins.medium) {
+        VStack(alignment: .leading,
+               spacing: .Margins.medium) {
 
-            HStack(alignment: .top, spacing: .Margins.medium) {
+            HStack(alignment: .top,
+                   spacing: .Margins.medium) {
 
                 icon
+                    .accessibilityHidden(true)
 
                 VStack(spacing: .Margins.medium) {
                     VStack(spacing: .Margins.medium) {
@@ -200,6 +203,7 @@ extension VGRCalloutV3 where Content == EmptyView {
 
                 VGRCalloutV3(title: title,
                              text: text,
+                             backgroundColor: Color.Status.errorSurface,
                              icon: {
                     Image(systemName: "gearshape")
                         .resizable()
