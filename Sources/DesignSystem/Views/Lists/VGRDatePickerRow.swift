@@ -167,31 +167,38 @@ public struct VGRDatePickerRow<Icon: View>: View {
                    subtitle: subtitle,
                    icon: { icon },
                    accessory: {
-            switch range {
-            case .unbounded:
-                DatePicker("",
-                           selection: $selection,
-                           displayedComponents: displayedComponents)
-                    .labelsHidden()
-            case .closed(let r):
-                DatePicker("",
-                           selection: $selection,
-                           in: r,
-                           displayedComponents: displayedComponents)
-                    .labelsHidden()
-            case .from(let r):
-                DatePicker("",
-                           selection: $selection,
-                           in: r,
-                           displayedComponents: displayedComponents)
-                    .labelsHidden()
-            case .through(let r):
-                DatePicker("",
-                           selection: $selection,
-                           in: r,
-                           displayedComponents: displayedComponents)
-                    .labelsHidden()
+            Group {
+                switch range {
+                    case .unbounded:
+                        DatePicker("",
+                                   selection: $selection,
+                                   displayedComponents: displayedComponents)
+                        .labelsHidden()
+                        .padding(.vertical, .Margins.small)
+                    case .closed(let r):
+                        DatePicker("",
+                                   selection: $selection,
+                                   in: r,
+                                   displayedComponents: displayedComponents)
+                        .labelsHidden()
+                        .padding(.vertical, .Margins.small)
+                    case .from(let r):
+                        DatePicker("",
+                                   selection: $selection,
+                                   in: r,
+                                   displayedComponents: displayedComponents)
+                        .labelsHidden()
+                        .padding(.vertical, .Margins.small)
+                    case .through(let r):
+                        DatePicker("",
+                                   selection: $selection,
+                                   in: r,
+                                   displayedComponents: displayedComponents)
+                        .labelsHidden()
+                        .padding(.vertical, .Margins.small)
+                }
             }
+            .tint(Color.Primary.action)
         })
     }
 }
