@@ -32,6 +32,7 @@ public struct VGRList<Content: View>: View {
     private let content: Content
     private var showWarning: Bool = false
     private var hideDividers: Bool = false
+    private var warningBorderColor: Color = Color.Status.errorText
 
     /// Creates a list of rows wrapped in a rounded card.
     /// - Parameters:
@@ -40,9 +41,11 @@ public struct VGRList<Content: View>: View {
     ///   - content: A view builder that produces the rows; each top-level
     ///     view becomes a row separated by a ``VGRDivider``.
     public init(showWarning: Bool = false,
+                warningBorderColor: Color = Color.Status.errorText,
                 hideDividers: Bool = false,
                 @ViewBuilder content: () -> Content) {
         self.showWarning = showWarning
+        self.warningBorderColor = warningBorderColor
         self.hideDividers = hideDividers
         self.content = content()
     }
@@ -50,8 +53,10 @@ public struct VGRList<Content: View>: View {
     public var body: some View {
         VStack(spacing: 0) {
             Group(subviews: content) { subviews in
-                ForEach(subviews.indices, id: \.self) { index in
-                    subviews[index]
+                ForEach(Array(subviews.enumerated()), id: \.element.id) { index, subview in
+                    subview
+                        .background(Color.Elevation.elevation1)
+                        .zIndex(Double(subviews.count - index)) /// Higher index in the beginning of the list, to accomodate for slide/move animations
                     if !hideDividers && index < subviews.count - 1 {
                         VGRDivider()
                     }
@@ -60,12 +65,13 @@ public struct VGRList<Content: View>: View {
         }
         .background(Color.Elevation.elevation1)
         .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
-        .warningBorder(showWarning)
+        .warningBorder(showWarning, borderColor: warningBorderColor)
         .foregroundStyle(Color.Neutral.text)
     }
 }
 
 #Preview {
+    @Previewable @State var isToggleOn: Bool = false
     @Previewable @State var selectedDate: Date = .now
 
     NavigationStack {
@@ -90,8 +96,21 @@ public struct VGRList<Content: View>: View {
 
             VGRSection(header: "Section title") {
                 VGRList {
-                    VGRListRow(title: "Title", subtitle: "Subtitle")
-                    VGRListRow(title: "Title", subtitle: "Subtitle")
+                    Button {
+                        withAnimation { isToggleOn.toggle() }
+                    } label: {
+                        VGRListRow(title: "Press me to see a hidden row",
+                                   subtitle: "Subtitle") {
+                            Image(systemName: isToggleOn ? "chevron.up" : "chevron.down")
+                                .animation(nil)
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+
+                    VGRListRow(title: "Peek-a-boo!", subtitle: "This is a hidden row that you just uncovered")
+                        .isVisible(isToggleOn)
+                        .transition(.move(edge: .top))
                 }
             }
 
@@ -103,7 +122,8 @@ public struct VGRList<Content: View>: View {
             }
 
             VGRSection(header: "Lorem ipsum dolor etcetera och annat som brukar stå här när man testar saker för flera rader, inga dividers") {
-                VGRList(showWarning: false, hideDividers: true) {
+                VGRList(showWarning: true,
+                        warningBorderColor: Color.Primary.action) {
                     VGRDatePickerRow(title: "Datum", selection: $selectedDate)
                     VGRListRow(title: "Title", subtitle: "Subtitle")
                 }
