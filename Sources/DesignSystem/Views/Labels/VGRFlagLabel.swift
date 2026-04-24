@@ -2,11 +2,13 @@ import SwiftUI
 
 /// Definierar de olika tillstånden för en `VGRFlagLabel`.
 /// Varje tillstånd styr standardfärger för bakgrund och förgrund samt standardikon.
-public enum VGRFlagLabelState {
+public enum VGRFlagLabelState: String, Equatable, Identifiable, Hashable, Sendable {
     case success
     case warning
     case error
     case information
+
+    public var id: String { self.rawValue }
 
     var backgroundColor: Color {
         switch self {
