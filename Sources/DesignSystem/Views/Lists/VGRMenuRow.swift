@@ -38,7 +38,7 @@ import SwiftUI
 ///     Button("Mörkt") { theme = "Mörkt" }
 /// }
 /// ```
-public struct VGRMenuRow<Icon: View, Content: View>: View {
+public struct VGRMenuRow<Icon: View, ValueLabel: View, Content: View>: View {
 
     @ScaledMetric private var chevronSize: CGFloat = 25
 
@@ -48,13 +48,11 @@ public struct VGRMenuRow<Icon: View, Content: View>: View {
     /// Optional secondary text shown below the title.
     var subtitle: String?
 
-    /// The currently-selected value shown as the menu's label.
-    let value: String
-
     private let icon: Icon
+    private let valueLabel: ValueLabel
     private let menuContent: Content
 
-    /// Creates a menu row with a leading icon.
+    /// Creates a menu row with a leading icon and a string value label.
     /// - Parameters:
     ///   - title: The primary text shown on the row.
     ///   - subtitle: Optional secondary text shown below the title.
@@ -65,15 +63,15 @@ public struct VGRMenuRow<Icon: View, Content: View>: View {
                 subtitle: String? = nil,
                 @ViewBuilder icon: () -> Icon,
                 value: String,
-                @ViewBuilder menu: () -> Content) {
+                @ViewBuilder menu: () -> Content) where ValueLabel == Text {
         self.title = title
         self.subtitle = subtitle
-        self.value = value
         self.icon = icon()
+        self.valueLabel = Text(value).font(.bodySemibold)
         self.menuContent = menu()
     }
 
-    /// Creates a menu row without a leading icon.
+    /// Creates a menu row without a leading icon, using a string value label.
     /// - Parameters:
     ///   - title: The primary text shown on the row.
     ///   - subtitle: Optional secondary text shown below the title.
@@ -82,11 +80,47 @@ public struct VGRMenuRow<Icon: View, Content: View>: View {
     public init(title: String,
                 subtitle: String? = nil,
                 value: String,
+                @ViewBuilder menu: () -> Content) where Icon == EmptyView, ValueLabel == Text {
+        self.title = title
+        self.subtitle = subtitle
+        self.icon = EmptyView()
+        self.valueLabel = Text(value).font(.bodySemibold)
+        self.menuContent = menu()
+    }
+
+    /// Creates a menu row with a leading icon and a custom value label view.
+    /// - Parameters:
+    ///   - title: The primary text shown on the row.
+    ///   - subtitle: Optional secondary text shown below the title.
+    ///   - icon: A view builder that produces the leading icon.
+    ///   - valueLabel: A view builder that produces the menu's label view.
+    ///   - menu: A view builder that produces the menu's items.
+    public init(title: String,
+                subtitle: String? = nil,
+                @ViewBuilder icon: () -> Icon,
+                @ViewBuilder valueLabel: () -> ValueLabel,
+                @ViewBuilder menu: () -> Content) {
+        self.title = title
+        self.subtitle = subtitle
+        self.icon = icon()
+        self.valueLabel = valueLabel()
+        self.menuContent = menu()
+    }
+
+    /// Creates a menu row without a leading icon, using a custom value label view.
+    /// - Parameters:
+    ///   - title: The primary text shown on the row.
+    ///   - subtitle: Optional secondary text shown below the title.
+    ///   - valueLabel: A view builder that produces the menu's label view.
+    ///   - menu: A view builder that produces the menu's items.
+    public init(title: String,
+                subtitle: String? = nil,
+                @ViewBuilder valueLabel: () -> ValueLabel,
                 @ViewBuilder menu: () -> Content) where Icon == EmptyView {
         self.title = title
         self.subtitle = subtitle
-        self.value = value
         self.icon = EmptyView()
+        self.valueLabel = valueLabel()
         self.menuContent = menu()
     }
 
@@ -99,8 +133,7 @@ public struct VGRMenuRow<Icon: View, Content: View>: View {
                 menuContent
             } label: {
                 HStack(spacing: .Margins.xtraSmall / 2) {
-                    Text(value)
-                        .font(.bodySemibold)
+                    valueLabel
 
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.footnoteSemibold)
@@ -118,6 +151,16 @@ public struct VGRMenuRow<Icon: View, Content: View>: View {
     @Previewable @State var sort: String = "Datum"
     @Previewable @State var theme: String = "Auto"
     @Previewable @State var unit: String = "Metric"
+    @Previewable @State var status: VGRFlagLabelState = .success
+
+    let statusText: LocalizedStringKey = {
+        switch status {
+        case .success:     return "Success"
+        case .warning:     return "Warning"
+        case .error:       return "Error"
+        case .information: return "Information"
+        }
+    }()
 
     NavigationStack {
         VGRContainer {
@@ -159,7 +202,30 @@ public struct VGRMenuRow<Icon: View, Content: View>: View {
                     }
                 }
             }
+
+            VGRSection(header: "VGRMenuRow anpassad label") {
+                VGRList {
+                    VGRMenuRow(title: "Status",
+                               valueLabel: { VGRFlagLabel(statusText, state: status) }) {
+                        Button("Success")   { status = .success }
+                        Button("Warning") { status = .warning }
+                        Button("Error")   { status = .error }
+                        Button("Information") { status = .information }
+                    }
+
+                    VGRMenuRow(title: "Status",
+                               subtitle: "Med ikon och flagg-etikett",
+                               icon: { Image(systemName: "flag") },
+                               valueLabel: { VGRFlagLabel(statusText, state: status) }) {
+                        Button("Success")   { status = .success }
+                        Button("Warning") { status = .warning }
+                        Button("Error")   { status = .error }
+                        Button("Information") { status = .information }
+                    }
+                }
+            }
         }
         .navigationTitle("VGRMenuRow")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
