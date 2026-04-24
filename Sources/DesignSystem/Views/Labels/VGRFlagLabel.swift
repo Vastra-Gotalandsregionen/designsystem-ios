@@ -39,8 +39,8 @@ public enum VGRFlagLabelState: String, Equatable, Identifiable, Hashable, Sendab
 }
 
 /// En flagg-etikett som visar en text tillsammans med en symbol i en pillform.
-/// Bakgrunds- och förgrundsfärg bestäms av `state`, som även anger en standardikon.
-/// Konsumenten kan valfritt ange en egen symbol som ersätter standardikonen.
+/// Bakgrunds- och förgrundsfärg bestäms som standard av `state`, som även anger en standardikon.
+/// Konsumenten kan valfritt ange en egen symbol samt egna förgrund- och bakgrundsfärger.
 ///
 /// ### Användning
 /// ```swift
@@ -49,6 +49,9 @@ public enum VGRFlagLabelState: String, Equatable, Identifiable, Hashable, Sendab
 /// VGRFlagLabel("Error", state: .error)
 /// VGRFlagLabel("Neutral") // information är default
 /// VGRFlagLabel("Anpassad", symbolName: "star.fill", state: .success)
+/// VGRFlagLabel("Lila",
+///              foregroundColor: .Accent.purple,
+///              backgroundColor: .Accent.purpleSurfaceMinimal)
 /// ```
 public struct VGRFlagLabel: View {
     @ScaledMetric private var iconSize: CGFloat = 10
@@ -57,21 +60,27 @@ public struct VGRFlagLabel: View {
 
     let text: LocalizedStringKey
     let symbolName: String
-    let state: VGRFlagLabelState
+    let foregroundColor: Color
+    let backgroundColor: Color
 
     /// Initierar en `VGRFlagLabel`.
     /// - Parameters:
     ///   - text: Den lokaliserade texten som visas i etiketten.
     ///   - symbolName: Valfri SF Symbol att visa. Om `nil` används standardikonen för `state`.
-    ///   - state: Tillståndet som styr färgsättning och standardikon. Standard är `.information`.
+    ///   - state: Tillståndet som styr standardfärger och standardikon. Standard är `.information`.
+    ///   - foregroundColor: Valfri förgrundsfärg som ersätter standardfärgen för `state`.
+    ///   - backgroundColor: Valfri bakgrundsfärg som ersätter standardfärgen för `state`.
     public init(
         _ text: LocalizedStringKey,
         symbolName: String? = nil,
-        state: VGRFlagLabelState = .information
+        state: VGRFlagLabelState = .information,
+        foregroundColor: Color? = nil,
+        backgroundColor: Color? = nil
     ) {
         self.text = text
         self.symbolName = symbolName ?? state.defaultSymbolName
-        self.state = state
+        self.foregroundColor = foregroundColor ?? state.foregroundColor
+        self.backgroundColor = backgroundColor ?? state.backgroundColor
     }
 
     public var body: some View {
@@ -85,10 +94,10 @@ public struct VGRFlagLabel: View {
                 .font(.captionSemibold)
                 .lineLimit(1)
         }
-        .foregroundStyle(state.foregroundColor)
+        .foregroundStyle(foregroundColor)
         .padding(.horizontal, horizontalSpacing)
         .padding(.vertical, verticalSpacing)
-        .background(state.backgroundColor)
+        .background(backgroundColor)
         .clipShape(Capsule())
         .accessibilityElement(children: .combine)
     }
@@ -97,14 +106,24 @@ public struct VGRFlagLabel: View {
 #Preview("VGRFlagLabel") {
     NavigationStack {
         VGRContainer {
-            VStack(alignment: .leading, spacing: .Margins.medium) {
+            VGRSection(header: "Status variants") {
                 VGRFlagLabel("Taget", state: .success)
                 VGRFlagLabel("Varning", state: .warning)
                 VGRFlagLabel("Error", state: .error)
                 VGRFlagLabel("Neutral")
                 VGRFlagLabel("Custom symbol", symbolName: "star.fill", state: .success)
             }
-            .padding()
+
+            VGRSection(header: "Custom colors") {
+                VGRFlagLabel("Purple",
+                             symbolName: "arrowshape.up.fill",
+                             foregroundColor: .Accent.purple,
+                             backgroundColor: .Accent.purpleSurfaceMinimal)
+                VGRFlagLabel("Cyan",
+                             symbolName: "arrowshape.down.fill",
+                             foregroundColor: .Accent.cyan,
+                             backgroundColor: .Accent.cyanSurfaceMinimal)
+            }
         }
         .navigationTitle("VGRFlagLabel")
         .navigationBarTitleDisplayMode(.inline)
