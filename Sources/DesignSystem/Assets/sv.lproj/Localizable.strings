@@ -14,6 +14,8 @@
 "general.warning" = "Varning";
 "general.button.done" = "Klar";
 "general.button.ok" = "OK";
+"general.time.at" = "Klockan";
+"general.time.at.short" = "Kl";
 
 /* Toggle */
 "toggle.a11y.hint" = "Dubbeltryck för att slå";

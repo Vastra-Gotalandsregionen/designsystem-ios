@@ -150,16 +150,29 @@ public extension Date {
         return "Vecka " + self.formatted(.dateTime.week()) + ", " + self.formatted(.dateTime.year())
     }
 
+    /// vgrTimeFormat formats a time with a short localized "at" prefix (e.g. "Kl 14:30")
+    var vgrTimeFormat: String {
+        return "\("general.time.at.short".localizedBundle) \(self.formatted(date: .omitted, time: .shortened))"
+    }
+
+    /// vgrTimeA11yFormat formats a time with a fully spelled-out localized "at" prefix for VoiceOver (e.g. "Klockan 14:30")
+    var vgrTimeA11yFormat: String {
+        return "\("general.time.at".localizedBundle) \(self.formatted(date: .omitted, time: .shortened))"
+    }
+
+    /// vgrShortTimeFormat formats a time using the locale's short time style, with no prefix
     var vgrShortTimeFormat: String {
         return self.formatted(date: .omitted, time: .shortened)
     }
 
+    /// vgrDateTimeFormat combines vgrDateFormat and vgrShortTimeFormat, separated by a space
     var vgrDateTimeFormat: String {
         return "\(self.vgrDateFormat) \(self.vgrShortTimeFormat)"
     }
 
+    /// vgrDateTimeA11yFormat combines vgrDateFormat and vgrShortTimeFormat with a lowercased localized "at" connector, intended for VoiceOver
     var vgrDateTimeA11yFormat: String {
-        return "\(self.vgrDateFormat) \("general.time.at".localized.lowercased()) \(self.vgrShortTimeFormat)"
+        return "\(self.vgrDateFormat) \("general.time.at".localizedBundle.lowercased()) \(self.vgrShortTimeFormat)"
     }
 }
 
