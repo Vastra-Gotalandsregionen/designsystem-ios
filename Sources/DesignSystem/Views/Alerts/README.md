@@ -1,6 +1,6 @@
 # VGRAlert
 
-A lightweight wrapper around SwiftUI's `.alert` API that keeps alert definitions close to the logic that triggers them.
+A lightweight wrapper around `UIAlertController` that keeps alert definitions close to the logic that triggers them. The UIKit backing means the alert renders with the iOS 26 HIG anatomy — including the blue primary capsule for `.confirm(...)` buttons.
 
 ## Setup
 
@@ -56,7 +56,7 @@ alert = VGRAlert(
     title: "Ändra schema?",
     message: "Detta påverkar alla doser.",
     buttons: [
-        .destructive("Ändra") { performSave() },
+        .confirm("Ändra") { performSave() },
         .cancel()
     ]
 )
@@ -89,14 +89,22 @@ This keeps navigation logic in the view while letting the viewmodel control when
 
 ## Buttons
 
-Three factory methods are available on `VGRAlertButton`:
+Factory methods on `VGRAlertButton`:
 
 ```swift
-.default("OK") { handleOK() }           // Standard button
+.default("OK") { handleOK() }            // Standard button
+.confirm("Spara") { save() }             // Preferred action — blue capsule on iOS 26
 .destructive("Ta bort") { delete() }     // Destructive (red) button
+.close("Stäng") { dismiss() }            // iOS 26 close role, falls back to cancel
 .cancel()                                // Cancel button, defaults to localized "Avbryt"
 .cancel("Stäng")                         // Cancel button with custom label
 ```
+
+Use `.confirm(...)` to mark the preferred action. On iOS 26 it renders as the blue primary capsule from the HIG anatomy; on earlier iOS it gets the bold "preferred" treatment.
+
+## Implementation notes
+
+The `.vgrAlert(item:)` modifier is backed by `UIAlertController` (presented through a `UIViewControllerRepresentable`) rather than SwiftUI's `.alert(...)`. This is required to access `UIAlertController.preferredAction`, which is what triggers the blue primary capsule on iOS 26 — SwiftUI's alert API does not expose this.
 
 ## Files
 
@@ -104,5 +112,5 @@ Three factory methods are available on `VGRAlertButton`:
 |---|---|
 | `VGRAlert.swift` | `VGRAlert` and `VGRAlertButton` types |
 | `VGRAlert+Common.swift` | Factory methods: `unsavedChanges`, `confirmDelete`, `error` |
-| `View+VGRAlert.swift` | `.vgrAlert(item:)` view modifier |
+| `View+VGRAlert.swift` | `.vgrAlert(item:)` view modifier (UIKit-backed) |
 | `VGRAlertExample.swift` | Preview with usage examples |
