@@ -128,7 +128,7 @@ public struct VGRSingleSelectionList<Item: Identifiable, Row: View>: View {
 
     public var body: some View {
         VGRSection(header: header, inset: inset) {
-            VGRList(showWarning: showWarning) { rows }
+            VGRList(showBorder: showWarning) { rows }
         }
     }
 

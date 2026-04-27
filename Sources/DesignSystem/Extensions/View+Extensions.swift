@@ -58,21 +58,53 @@ public extension View {
 public extension View {
     /// Overlays the view with a rounded, error-colored border to signal a warning or invalid state.
     ///
-    /// The border uses `borderColor` which defaults to `Color.Status.errorText` with a 2pt stroke
+    /// The border defaults to `Color.Status.errorText` with a 2pt stroke
     /// and matches the design system's main corner radius (`.Radius.mainRadius`).
     /// When `isVisible` is `false`, no border is drawn.
     ///
     /// - Parameter isVisible: A Boolean value that determines whether the warning border is shown.
     ///   - `true`: The border is rendered on top of the view.
     ///   - `false`: No border is rendered.
-    /// - Parameter borderColor: A Color value that sets the color of the warning border.
     ///
     /// - Returns: A view overlaid with a conditional warning border.
-    func warningBorder(_ isVisible: Bool, borderColor: Color = Color.Status.errorText) -> some View {
+    func warningBorder(_ isVisible: Bool) -> some View {
+        self.roundedBorder(isVisible, borderColor: Color.Status.errorText, lineWidth: 2)
+    }
+
+    /// Overlays the view with a configurable rounded border that matches the
+    /// design system's main corner radius (`.Radius.mainRadius`). A general-purpose
+    /// counterpart to ``warningBorder(_:)`` for non-warning use cases.
+    ///
+    /// - Parameter isVisible: A Boolean value that determines whether the border is shown.
+    ///   - `true`: The border is rendered on top of the view.
+    ///   - `false`: No border is rendered.
+    /// - Parameter borderColor: The color of the border. Defaults to `Color.Neutral.divider`.
+    /// - Parameter lineWidth: The stroke width of the border. Defaults to `1`.
+    ///
+    /// - Returns: A view overlaid with a conditional rounded border.
+    func roundedBorder(
+        _ isVisible: Bool = true,
+        borderColor: Color = Color.Neutral.divider,
+        lineWidth: CGFloat = 1
+    ) -> some View {
         self.overlay {
             RoundedRectangle(cornerRadius: .Radius.mainRadius)
-                .strokeBorder(borderColor, lineWidth: 2)
+                .strokeBorder(borderColor, lineWidth: lineWidth)
                 .isVisible(isVisible)
+        }
+    }
+}
+
+
+public extension View {
+    /// Applicerar `.frame(maxWidth: .infinity, alignment:)` endast när
+    /// `isFullWidth` är `true`.
+    @ViewBuilder
+    func applyFullWidth(_ isFullWidth: Bool, alignment: Alignment = .center) -> some View {
+        if isFullWidth {
+            frame(maxWidth: .infinity, alignment: alignment)
+        } else {
+            self
         }
     }
 }

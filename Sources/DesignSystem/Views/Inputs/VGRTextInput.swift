@@ -136,11 +136,7 @@ public struct VGRTextInput: View {
                 .font(.bodyRegular)
                 .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
                 .contentShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
-                .overlay(
-                    RoundedRectangle(cornerRadius: .Radius.mainRadius)
-                        .strokeBorder(Color.Neutral.border, style: StrokeStyle(lineWidth: 1))
-                        .isVisible(!showWarning)
-                )
+                .roundedBorder(!showWarning, borderColor: Color.Neutral.border, lineWidth: 1)
                 .warningBorder(showWarning)
         }
     }
