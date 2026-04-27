@@ -47,9 +47,35 @@ import SwiftUI
                         title: "Ändra schema?",
                         message: "Detta påverkar alla doser.",
                         buttons: [
-                            .destructive("Ändra") { print("Changed schema") },
+                            .confirm("Ändra") { print("Changed schema") },
                             .destructive("Destructive 2") { print("Destructive 2") },
                             .default("Koka soppa") { print("Did something else") },
+                            .cancel()
+                        ]
+                    )
+                }
+
+                /// Custom: inline alert
+                VGRButton(label: "Confirm Alert") {
+                    alert = VGRAlert(
+                        title: "Bekräfta",
+                        message: "Vill du verkligen göra detta?.",
+                        buttons: [
+                            .confirm("Ja, fortsätt") { print("Did something else") },
+                            .cancel()
+                        ]
+                    )
+                }
+
+                /// Custom: inline alert
+                VGRButton(label: "Close Alert") {
+                    alert = VGRAlert(
+                        title: "Stäng",
+                        message: "Vill du verkligen göra detta?.",
+                        buttons: [
+                            .destructive("Ja, stäng", isPreferred: true) {
+                                print("Did something else")
+                            },
                             .cancel()
                         ]
                     )

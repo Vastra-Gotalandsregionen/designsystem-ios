@@ -21,15 +21,15 @@ public extension VGRAlert {
     ///   - message: Alert message. Defaults to localized "alert.unsaved.message".
     ///   - onDiscard: Called when the user chooses to discard changes.
     static func unsavedChanges(
-        title: LocalizedStringKey? = nil,
-        message: LocalizedStringKey? = nil,
+        title: String? = nil,
+        message: String? = nil,
         onDiscard: @escaping () -> Void
     ) -> VGRAlert {
         VGRAlert(
-            title: title ?? "\("alert.unsaved.title".localizedBundle)",
-            message: message ?? "\("alert.unsaved.message".localizedBundle)",
+            title: title ?? "alert.unsaved.title".localizedBundle,
+            message: message ?? "alert.unsaved.message".localizedBundle,
             buttons: [
-                .destructive("\("alert.unsaved.discard".localizedBundle)", action: onDiscard),
+                .destructive("alert.unsaved.discard".localizedBundle, action: onDiscard),
                 .cancel()
             ]
         )
@@ -43,15 +43,15 @@ public extension VGRAlert {
     ///   - onDelete: Called when the user confirms deletion.
     static func confirmDelete(
         name: String,
-        title: LocalizedStringKey? = nil,
-        message: LocalizedStringKey? = nil,
+        title: String? = nil,
+        message: String? = nil,
         onDelete: @escaping () -> Void
     ) -> VGRAlert {
         VGRAlert(
-            title: title ?? "\("alert.delete.title".localizedBundleFormat(arguments: name))",
-            message: message ?? "\("alert.delete.message".localizedBundle)",
+            title: title ?? "alert.delete.title".localizedBundleFormat(arguments: name),
+            message: message ?? "alert.delete.message".localizedBundle,
             buttons: [
-                .destructive("\("alert.delete.confirm".localizedBundle)", action: onDelete),
+                .destructive("alert.delete.confirm".localizedBundle, action: onDelete),
                 .cancel()
             ]
         )
@@ -63,11 +63,11 @@ public extension VGRAlert {
     ///   - title: Alert title. Defaults to localized "alert.error.title".
     static func error(
         _ error: Error?,
-        title: LocalizedStringKey? = nil
+        title: String? = nil
     ) -> VGRAlert {
         VGRAlert(
-            title: title ?? "\("alert.error.title".localizedBundle)",
-            message: "\(error?.localizedDescription ?? "alert.error.unknown".localizedBundle)",
+            title: title ?? "alert.error.title".localizedBundle,
+            message: error?.localizedDescription ?? "alert.error.unknown".localizedBundle,
             buttons: [.default("OK", action: {})]
         )
     }
