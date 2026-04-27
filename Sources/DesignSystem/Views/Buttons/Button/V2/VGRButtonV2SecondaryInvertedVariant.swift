@@ -27,7 +27,7 @@ public struct VGRButtonV2SecondaryInvertedVariant: VGRButtonV2VariantProtocol {
             )
             .contentShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(VGRButtonV2BareStyle())
         .disabled(!configuration.isEnabled)
     }
 }
@@ -64,8 +64,8 @@ public struct VGRButtonV2SecondaryInvertedVariant: VGRButtonV2VariantProtocol {
                     }
 
                     VGRButtonV2(isEnabled ? "Aktiverad" : "Inaktiverad",
-                                variant: .secondaryInverted,
-                                isEnabled: $isEnabled) { }
+                                variant: .secondaryInverted) { }
+                        .disabled(!isEnabled)
                 }
             }
 

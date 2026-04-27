@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Primär knappvariant — fylld actionfärg, centrerad headline, fyller bredden.
-public struct VGRButtonV2PrimaryVariant: VGRButtonV2VariantProtocol {
+/// Tonal knappvariant — tonad actionfärg på mjuk surface, centrerad headline, fyller bredden.
+public struct VGRButtonV2TonalVariant: VGRButtonV2VariantProtocol {
     public init() {}
 
     public func makeBody(configuration: Configuration) -> some View {
@@ -14,14 +14,16 @@ public struct VGRButtonV2PrimaryVariant: VGRButtonV2VariantProtocol {
                     .font(configuration.size.font)
             }
             .foregroundStyle(configuration.isEnabled ?
-                             Color.Neutral.textInverted :
-                                Color.Neutral.disabledVariant)
+                             Color.Primary.action :
+                                Color.Neutral.disabled)
             .padding(.horizontal, configuration.size.padding)
             .padding(.vertical, configuration.size.verticalPadding)
             .applyFullWidth(configuration.fullWidth)
             .background(
                 RoundedRectangle(cornerRadius: .Radius.mainRadius)
-                    .fill(configuration.isEnabled ? Color.Primary.action : Color.Neutral.disabled)
+                    .fill(
+                        configuration.isEnabled ? Color.Primary.blueSurfaceMinimal : Color.Neutral.disabledVariant
+                    )
             )
             .contentShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
         }
@@ -30,15 +32,15 @@ public struct VGRButtonV2PrimaryVariant: VGRButtonV2VariantProtocol {
     }
 }
 
-#Preview("Primary") {
+#Preview("Tonal") {
     @Previewable @State var isEnabled: Bool = false
 
     NavigationStack {
         VGRContainer {
-            VGRSection(header: "Primary") {
-                VGRButtonV2("Spara") { }
+            VGRSection(header: "Tonal") {
+                VGRButtonV2("Spara", variant: .tonal) { }
 
-                VGRButtonV2("Spara med ikon") { } icon: {
+                VGRButtonV2("Spara med ikon", variant: .tonal) { } icon: {
                     Image(systemName: "tray.and.arrow.down")
                 }
             }
@@ -48,31 +50,41 @@ public struct VGRButtonV2PrimaryVariant: VGRButtonV2VariantProtocol {
                     VGRToggleRow(title: "State", isOn: $isEnabled)
                 }
 
-                VGRButtonV2(isEnabled ? "Aktiverad" : "Inaktiverad") { }
+                VGRButtonV2(isEnabled ? "Aktiverad" : "Inaktiverad",
+                            variant: .tonal) { }
                     .disabled(!isEnabled)
-                VGRButtonV2(isEnabled ? "Aktiverad" : "Inaktiverad") { } icon: {
+                VGRButtonV2(isEnabled ? "Aktiverad" : "Inaktiverad",
+                            variant: .tonal) { } icon: {
                     Image(systemName: "tray.and.arrow.down")
                 }
                 .disabled(!isEnabled)
             }
 
             VGRSection(header: "Sizes") {
-                VGRButtonV2("Medium", size: .medium, systemImage: "tray.and.arrow.down") { }
-                VGRButtonV2("Small",  size: .small,  systemImage: "tray.and.arrow.down") { }
+                VGRButtonV2("Medium", variant: .tonal, size: .medium, systemImage: "tray.and.arrow.down") { }
+                VGRButtonV2("Small",  variant: .tonal, size: .small,  systemImage: "tray.and.arrow.down") { }
             }
 
             VGRSection(header: "systemImage") {
-                VGRButtonV2("Ladda ner", systemImage: "square.and.arrow.down") { }
+                VGRButtonV2("Ladda ner", variant: .tonal, systemImage: "square.and.arrow.down") { }
             }
 
             VGRSection(header: "Hug content (fullWidth: false)") {
                 HStack(spacing: .Margins.small) {
-                    VGRButtonV2("Spara", fullWidth: false) { }
-                    VGRButtonV2("Small", size: .small, fullWidth: false) { }
+                    VGRButtonV2("Spara", variant: .tonal, fullWidth: false) { }
+                    VGRButtonV2(
+                        "Small",
+                        variant: .tonal,
+                        size: .small,
+                        fullWidth: false,
+                        systemImage: "gearshape"
+                    ) {
+
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
             }
         }
-        .navigationTitle("Primary")
+        .navigationTitle("Tonal")
     }
 }

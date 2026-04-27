@@ -22,7 +22,7 @@ public struct VGRButtonV2DestructiveInlineVariant: VGRButtonV2VariantProtocol {
             .contentShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(VGRButtonV2BareStyle())
         .disabled(!configuration.isEnabled)
     }
 }
