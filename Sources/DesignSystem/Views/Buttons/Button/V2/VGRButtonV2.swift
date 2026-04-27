@@ -28,6 +28,9 @@ public enum VGRButtonV2Variant {
     /// Huvudåtgärd på färgad yta — inverterade färger.
     case primaryInverted
 
+    /// Tonad åtgärd — mjuk tintad yta med actionfärgad text.
+    case tonal
+
     /// Alternativ åtgärd — konturstil.
     case secondary
 
@@ -47,6 +50,7 @@ public enum VGRButtonV2Variant {
         switch self {
             case .primary:           return VGRButtonV2PrimaryVariant()
             case .primaryInverted:   return VGRButtonV2PrimaryInvertedVariant()
+            case .tonal:             return VGRButtonV2TonalVariant()
             case .secondary:         return VGRButtonV2SecondaryVariant()
             case .secondaryInverted: return VGRButtonV2SecondaryInvertedVariant()
             case .inline:            return VGRButtonV2InlineVariant()
@@ -86,9 +90,10 @@ public enum VGRButtonV2Variant {
 /// - Note: Under utveckling. Kommer att ersätta ``VGRButton`` när migreringen är klar.
 public struct VGRButtonV2<Icon: View>: View {
 
+    @Environment(\.isEnabled) private var isEnabled
+
     private let label: String
     private let variant: any VGRButtonV2VariantProtocol
-    @Binding private var isEnabled: Bool
     private let fullWidth: Bool
     private let size: VGRButtonV2Size
     private let accessibilityHint: String
@@ -101,7 +106,6 @@ public struct VGRButtonV2<Icon: View>: View {
     ///   - label: Knappens textetikett.
     ///   - variant: Visuell variant. Defaultar till `.primary`.
     ///   - size: Storleksskala. Defaultar till `.medium`.
-    ///   - isEnabled: Binding som styr om knappen är klickbar.
     ///   - fullWidth: Om `true` fyller knappen hela tillgängliga bredden.
     ///     Om `false` hugger knappen sitt innehåll. Defaultar till `true`.
     ///   - accessibilityHint: VoiceOver-hint som beskriver åtgärden.
@@ -110,11 +114,13 @@ public struct VGRButtonV2<Icon: View>: View {
     ///   - action: Closure som körs när knappen trycks.
     ///   - icon: Valfri ikon som vybyggare. Defaultar till tom vy. Ignoreras
     ///     när `systemImage` är satt.
+    ///
+    /// Aktivt/inaktivt-läge styrs via SwiftUIs `.disabled(_:)` modifier,
+    /// som propagerar genom `\.isEnabled` i environment.
     public init(
         _ label: String,
         variant: VGRButtonV2Variant = .primary,
         size: VGRButtonV2Size = .medium,
-        isEnabled: Binding<Bool> = .constant(true),
         fullWidth: Bool = true,
         accessibilityHint: String = "",
         systemImage: String? = nil,
@@ -123,7 +129,6 @@ public struct VGRButtonV2<Icon: View>: View {
     ) {
         self.label = label
         self.variant = variant.resolve()
-        self._isEnabled = isEnabled
         self.fullWidth = fullWidth
         self.size = size
         self.accessibilityHint = accessibilityHint
@@ -140,7 +145,6 @@ public struct VGRButtonV2<Icon: View>: View {
     ///   - customVariant: En instans av en typ som uppfyller
     ///     ``VGRButtonV2VariantProtocol``.
     ///   - size: Storleksskala. Defaultar till `.medium`.
-    ///   - isEnabled: Binding som styr om knappen är klickbar.
     ///   - fullWidth: Om `true` fyller knappen hela tillgängliga bredden.
     ///     Om `false` omsluter knappen sitt innehåll. Defaultar till `true`.
     ///   - accessibilityHint: VoiceOver-hint som beskriver åtgärden.
@@ -149,11 +153,13 @@ public struct VGRButtonV2<Icon: View>: View {
     ///   - action: Closure som körs när knappen trycks.
     ///   - icon: Valfri ikon som vybyggare. Defaultar till tom vy. Ignoreras
     ///     när `systemImage` är satt.
+    ///
+    /// Aktivt/inaktivt-läge styrs via SwiftUIs `.disabled(_:)` modifier,
+    /// som propagerar genom `\.isEnabled` i environment.
     public init(
         _ label: String,
         customVariant: any VGRButtonV2VariantProtocol,
         size: VGRButtonV2Size = .medium,
-        isEnabled: Binding<Bool> = .constant(true),
         fullWidth: Bool = true,
         accessibilityHint: String = "",
         systemImage: String? = nil,
@@ -162,7 +168,6 @@ public struct VGRButtonV2<Icon: View>: View {
     ) {
         self.label = label
         self.variant = customVariant
-        self._isEnabled = isEnabled
         self.fullWidth = fullWidth
         self.size = size
         self.accessibilityHint = accessibilityHint
@@ -207,6 +212,11 @@ public struct VGRButtonV2<Icon: View>: View {
             VGRSection(header: "Primary") {
                 VGRButtonV2("Medium", variant: .primary, size: .medium, systemImage: "tray.and.arrow.down") { }
                 VGRButtonV2("Small",  variant: .primary, size: .small,  systemImage: "tray.and.arrow.down") { }
+            }
+
+            VGRSection(header: "Tonal") {
+                VGRButtonV2("Medium", variant: .tonal, size: .medium, systemImage: "tray.and.arrow.down") { }
+                VGRButtonV2("Small",  variant: .tonal, size: .small,  systemImage: "tray.and.arrow.down") { }
             }
 
             VGRSection(header: "Secondary") {

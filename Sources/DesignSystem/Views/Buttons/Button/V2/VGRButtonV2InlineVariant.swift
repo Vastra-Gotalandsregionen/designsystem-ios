@@ -15,7 +15,7 @@ public struct VGRButtonV2InlineVariant: VGRButtonV2VariantProtocol {
             }
             .foregroundStyle(Color.Primary.action)
             .padding(.horizontal, configuration.size.padding)
-            .padding(.vertical, configuration.size.verticalPadding)
+            .padding(.vertical, configuration.size.verticalPadding + .Margins.small / 2)
             .applyFullWidth(configuration.fullWidth, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: .Radius.mainRadius)
@@ -24,7 +24,7 @@ public struct VGRButtonV2InlineVariant: VGRButtonV2VariantProtocol {
             .contentShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(VGRButtonV2BareStyle())
         .disabled(!configuration.isEnabled)
     }
 }

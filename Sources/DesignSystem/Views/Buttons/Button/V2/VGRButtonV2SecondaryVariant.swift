@@ -24,7 +24,7 @@ public struct VGRButtonV2SecondaryVariant: VGRButtonV2VariantProtocol {
             )
             .contentShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(VGRButtonV2BareStyle())
         .disabled(!configuration.isEnabled)
     }
 }
@@ -48,13 +48,13 @@ public struct VGRButtonV2SecondaryVariant: VGRButtonV2VariantProtocol {
                 }
 
                 VGRButtonV2(isEnabled ? "Aktiverad" : "Inaktiverad",
-                            variant: .secondary,
-                            isEnabled: $isEnabled) { }
+                            variant: .secondary) { }
+                    .disabled(!isEnabled)
                 VGRButtonV2(isEnabled ? "Aktiverad" : "Inaktiverad",
-                            variant: .secondary,
-                            isEnabled: $isEnabled) { } icon: {
+                            variant: .secondary) { } icon: {
                     Image(systemName: "tray.and.arrow.down")
                 }
+                .disabled(!isEnabled)
             }
 
             VGRSection(header: "Sizes") {
