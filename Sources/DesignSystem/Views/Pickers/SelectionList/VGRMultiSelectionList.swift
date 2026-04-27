@@ -110,7 +110,7 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Row: View>: V
 
     public var body: some View {
         VGRSection(header: header, inset: inset) {
-            VGRList(showWarning: showWarning) { rows }
+            VGRList(showBorder: showWarning) { rows }
         }
     }
 

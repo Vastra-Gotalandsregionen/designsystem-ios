@@ -1,90 +1,5 @@
 import SwiftUI
 
-// MARK: - Size
-
-/// Storlek på knappen. Påverkar font, padding och ikonens storlek.
-/// Alla varianter respekterar samma storleksskala.
-public enum VGRButtonV2Size: Equatable, Hashable, Sendable {
-    case medium
-    case small
-
-    public var font: Font {
-        switch self {
-            case .medium: return .bodyRegular
-            case .small:  return .subheadline
-        }
-    }
-
-    public var padding: CGFloat {
-        switch self {
-            case .medium: return .Margins.medium
-            case .small:  return .Margins.large
-        }
-    }
-
-    public var verticalPadding: CGFloat {
-        switch self {
-            case .medium: return .Margins.small
-            case .small:  return .Margins.xtraSmall
-        }
-    }
-
-    public var iconSize: CGFloat {
-        switch self {
-            case .medium: return 20
-            case .small:  return 14
-        }
-    }
-}
-
-// MARK: - Configuration
-
-/// Datan som skickas till en variant när den ska rendera knappen.
-/// Icon är typraderad (`AnyView`) så alla varianter kan ta emot samma
-/// configuration oavsett vilken vy anroparen har skickat in.
-public struct VGRButtonV2Configuration {
-    public let label: String
-    public let icon: AnyView
-    public let isEnabled: Bool
-    public let fullWidth: Bool
-    public let size: VGRButtonV2Size
-    public let accessibilityHint: String
-    public let action: () -> Void
-
-    public init(
-        label: String,
-        icon: AnyView,
-        isEnabled: Bool,
-        fullWidth: Bool = true,
-        size: VGRButtonV2Size = .medium,
-        accessibilityHint: String,
-        action: @escaping () -> Void
-    ) {
-        self.label = label
-        self.icon = icon
-        self.isEnabled = isEnabled
-        self.fullWidth = fullWidth
-        self.size = size
-        self.accessibilityHint = accessibilityHint
-        self.action = action
-    }
-}
-
-// MARK: - Layout helper
-
-/// Applicerar `.frame(maxWidth: .infinity, alignment:)` endast när
-/// `isFullWidth` är `true`. Används av de inbyggda varianterna för att
-/// respektera ``VGRButtonV2Configuration/fullWidth``.
-extension View {
-    @ViewBuilder
-    func applyFullWidth(_ isFullWidth: Bool, alignment: Alignment = .center) -> some View {
-        if isFullWidth {
-            frame(maxWidth: .infinity, alignment: alignment)
-        } else {
-            self
-        }
-    }
-}
 
 // MARK: - Protocol
 
@@ -227,7 +142,7 @@ public struct VGRButtonV2<Icon: View>: View {
     ///   - size: Storleksskala. Defaultar till `.medium`.
     ///   - isEnabled: Binding som styr om knappen är klickbar.
     ///   - fullWidth: Om `true` fyller knappen hela tillgängliga bredden.
-    ///     Om `false` hugger knappen sitt innehåll. Defaultar till `true`.
+    ///     Om `false` omsluter knappen sitt innehåll. Defaultar till `true`.
     ///   - accessibilityHint: VoiceOver-hint som beskriver åtgärden.
     ///   - systemImage: Valfritt SF Symbol-namn. Om satt ersätter det
     ///     `icon`-vybyggaren och skalas enligt `size.iconSize`.
@@ -263,6 +178,7 @@ public struct VGRButtonV2<Icon: View>: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: size.iconSize, height: size.iconSize)
+                    .accessibilityHidden(true)
             )
         }
         return AnyView(icon)
@@ -280,5 +196,52 @@ public struct VGRButtonV2<Icon: View>: View {
         )
         AnyView(variant.makeBody(configuration: configuration))
             .accessibilityHint(accessibilityHint)
+    }
+}
+
+// MARK: - Preview
+
+#Preview("All variants") {
+    NavigationStack {
+        VGRContainer {
+            VGRSection(header: "Primary") {
+                VGRButtonV2("Medium", variant: .primary, size: .medium, systemImage: "tray.and.arrow.down") { }
+                VGRButtonV2("Small",  variant: .primary, size: .small,  systemImage: "tray.and.arrow.down") { }
+            }
+
+            VGRSection(header: "Secondary") {
+                VGRButtonV2("Medium", variant: .secondary, size: .medium, systemImage: "xmark") { }
+                VGRButtonV2("Small",  variant: .secondary, size: .small,  systemImage: "xmark") { }
+            }
+
+            VGRSection(header: "Inline") {
+                VGRButtonV2("Medium", variant: .inline, size: .medium, systemImage: "plus.circle.fill") { }
+                VGRButtonV2("Small",  variant: .inline, size: .small,  systemImage: "plus.circle.fill") { }
+            }
+
+            VGRSection(header: "Destructive") {
+                VGRButtonV2("Medium", variant: .destructive, size: .medium, systemImage: "trash") { }
+                VGRButtonV2("Small",  variant: .destructive, size: .small,  systemImage: "trash") { }
+            }
+
+            VGRSection(header: "DestructiveInline") {
+                VGRButtonV2("Medium", variant: .destructiveInline, size: .medium, systemImage: "trash") { }
+                VGRButtonV2("Small",  variant: .destructiveInline, size: .small,  systemImage: "trash") { }
+            }
+
+            VGRShape(backgroundColor: Color.Primary.action) {
+                VGRSection(header: "PrimaryInverted") {
+                    VGRButtonV2("Medium", variant: .primaryInverted, size: .medium, systemImage: "tray.and.arrow.down") { }
+                    VGRButtonV2("Small",  variant: .primaryInverted, size: .small,  systemImage: "tray.and.arrow.down") { }
+                }
+
+                VGRSection(header: "SecondaryInverted") {
+                    VGRButtonV2("Medium", variant: .secondaryInverted, size: .medium, systemImage: "xmark") { }
+                    VGRButtonV2("Small",  variant: .secondaryInverted, size: .small,  systemImage: "xmark") { }
+                }
+            }
+        }
+        .navigationTitle("VGRButtonV2")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

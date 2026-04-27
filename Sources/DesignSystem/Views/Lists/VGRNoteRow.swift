@@ -55,11 +55,7 @@ public struct VGRNoteRow: View {
                 .padding(.Margins.medium)
         }
         .frame(minHeight: minHeight, alignment: .topLeading)
-        .overlay {
-            RoundedRectangle(cornerRadius: .Radius.mainRadius)
-                .strokeBorder(Color.Neutral.borderDisabled, lineWidth: 1)
-                .accessibilityHidden(true)
-        }
+        .roundedBorder(borderColor: Color.Neutral.borderDisabled, lineWidth: 1)
     }
 }
 

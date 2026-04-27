@@ -30,22 +30,23 @@ import SwiftUI
 public struct VGRList<Content: View>: View {
 
     private let content: Content
-    private var showWarning: Bool = false
+    private var showBorder: Bool = false
     private var hideDividers: Bool = false
-    private var warningBorderColor: Color = Color.Status.errorText
+    private var borderColor: Color = Color.Status.errorText
 
     /// Creates a list of rows wrapped in a rounded card.
     /// - Parameters:
-    ///   - showWarning: When `true`, a warning border is drawn around the card.
+    ///   - showBorder: When `true`, a border is drawn around the card.
+    ///   - bordercolor: Color of the border
     ///   - hideDividers: When `true`, the dividers between the elements of the list are hidden.
     ///   - content: A view builder that produces the rows; each top-level
     ///     view becomes a row separated by a ``VGRDivider``.
-    public init(showWarning: Bool = false,
-                warningBorderColor: Color = Color.Status.errorText,
+    public init(showBorder: Bool = false,
+                borderColor: Color = Color.Status.errorText,
                 hideDividers: Bool = false,
                 @ViewBuilder content: () -> Content) {
-        self.showWarning = showWarning
-        self.warningBorderColor = warningBorderColor
+        self.showBorder = showBorder
+        self.borderColor = borderColor
         self.hideDividers = hideDividers
         self.content = content()
     }
@@ -65,7 +66,7 @@ public struct VGRList<Content: View>: View {
         }
         .background(Color.Elevation.elevation1)
         .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
-        .warningBorder(showWarning, borderColor: warningBorderColor)
+        .roundedBorder(showBorder, borderColor: borderColor)
         .foregroundStyle(Color.Neutral.text)
     }
 }
@@ -115,15 +116,15 @@ public struct VGRList<Content: View>: View {
             }
 
             VGRSection(header: "Lorem ipsum dolor etcetera och annat som brukar stå här när man testar saker för flera rader") {
-                VGRList(showWarning: true) {
+                VGRList(showBorder: true) {
                     VGRListRow(title: "Title", subtitle: "Subtitle")
                     VGRListRow(title: "Title", subtitle: "Subtitle")
                 }
             }
 
             VGRSection(header: "Lorem ipsum dolor etcetera och annat som brukar stå här när man testar saker för flera rader, inga dividers") {
-                VGRList(showWarning: true,
-                        warningBorderColor: Color.Primary.action) {
+                VGRList(showBorder: true,
+                        borderColor: Color.Primary.action) {
                     VGRDatePickerRow(title: "Datum", selection: $selectedDate)
                     VGRListRow(title: "Title", subtitle: "Subtitle")
                 }

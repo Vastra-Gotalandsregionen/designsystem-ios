@@ -34,7 +34,7 @@ public struct VGRContainer<Content: View>: View {
 
     public var body: some View {
         ScrollView {
-            VStack(spacing: .Margins.xtraLarge) {
+            VStack(alignment: .leading, spacing: .Margins.xtraLarge) {
                 content
             }
         }
@@ -63,7 +63,7 @@ public struct VGRContainer<Content: View>: View {
             }
 
             VGRSection {
-                VGRList(showWarning: true) {
+                VGRList(showBorder: true) {
                     VGRListRow(title: "Headerless section")
                 }
             }
