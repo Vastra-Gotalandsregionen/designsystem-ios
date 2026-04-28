@@ -78,7 +78,8 @@ public struct VGRListRow<Icon: View, Accessory: View>: View {
     }
 
     private var verticalPadding: CGFloat {
-        return subtitle != nil ? .Margins.small : .Margins.medium
+        let hasSubtitle = !(subtitle?.isEmpty ?? true)
+        return hasSubtitle ? .Margins.small : .Margins.medium
     }
 
     public var body: some View {
@@ -94,7 +95,7 @@ public struct VGRListRow<Icon: View, Accessory: View>: View {
                     .font(.bodyRegular)
                     .maxLeading()
 
-                if let subtitle {
+                if let subtitle, !subtitle.isEmpty {
                     Text(subtitle)
                         .font(.subheadline)
                         .maxLeading()
@@ -131,6 +132,11 @@ public struct VGRListRow<Icon: View, Accessory: View>: View {
 
                     /// ListRow with title and subtitle as inline
                     VGRListRow(title:"Title", subtitle: "Subtitle")
+
+                    /// ListRow with title and subtitle as inline
+                    VGRListRow(title:"Title with empty subtitle", subtitle: "")
+
+                    VGRListRow(title:"Title with no subtitle")
 
                     /// ListRow with title, subtitle as inline and accessory as trailing closure
                     VGRListRow(title:"Title", subtitle: "Subtitle") {
