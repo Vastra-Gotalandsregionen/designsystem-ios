@@ -2,6 +2,7 @@
 "general.cancel" = "Avbryt";
 "general.done" = "Klar";
 "general.close" = "Stäng";
+"general.edit" = "Ändra";
 "general.decrease" = "Minska";
 "general.increase" = "Öka";
 "general.selected" = "Vald";
