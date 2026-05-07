@@ -40,6 +40,7 @@ public struct VGRContainer<Content: View>: View {
         }
         .maxLeading()
         .background(Color.Elevation.background)
+        .foregroundStyle(Color.Neutral.text)
     }
 }
 
