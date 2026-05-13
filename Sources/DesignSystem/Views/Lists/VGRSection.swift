@@ -160,6 +160,23 @@ public struct VGRSection<Header: View, Footer: View, Content: View>: View {
                 }
             }
 
+            VGRSection {
+                VGRList {
+                    VGRListRow(title: "Title", subtitle: "Subtitle")
+                }
+            } header: {
+                VGRSectionTitle(
+                    "Header only",
+                    description: "A short explanatory text",
+                    variant: .small
+                ) {
+                    Image(systemName: "star.fill")
+                        .resizable()
+                        .frame(width: 25, height: 25)
+                        .maxTrailing()
+                }
+            }
+
             VGRSection(header: "Header and footer",
                        footer: "A short explanatory note that can wrap across multiple lines if needed.") {
                 VGRList {
