@@ -31,21 +31,30 @@ public struct VGRList<Content: View>: View {
 
     private let content: Content
     private var showBorder: Bool = false
+    private var showBackground: Bool = true
     private var hideDividers: Bool = false
     private var borderColor: Color = Color.Status.errorText
+
+    private var backgroundColor: Color {
+        showBackground ? Color.Elevation.elevation1 : Color.clear
+    }
 
     /// Creates a list of rows wrapped in a rounded card.
     /// - Parameters:
     ///   - showBorder: When `true`, a border is drawn around the card.
+    ///   - showBackground: Defaults to `true`, when false - no background is drawn
+    ///     giving the table a more static or "fixed" view
     ///   - bordercolor: Color of the border
     ///   - hideDividers: When `true`, the dividers between the elements of the list are hidden.
     ///   - content: A view builder that produces the rows; each top-level
     ///     view becomes a row separated by a ``VGRDivider``.
     public init(showBorder: Bool = false,
+                showBackground: Bool = true,
                 borderColor: Color = Color.Status.errorText,
                 hideDividers: Bool = false,
                 @ViewBuilder content: () -> Content) {
         self.showBorder = showBorder
+        self.showBackground = showBackground
         self.borderColor = borderColor
         self.hideDividers = hideDividers
         self.content = content()
@@ -56,7 +65,7 @@ public struct VGRList<Content: View>: View {
             Group(subviews: content) { subviews in
                 ForEach(Array(subviews.enumerated()), id: \.element.id) { index, subview in
                     subview
-                        .background(Color.Elevation.elevation1)
+                        .background(backgroundColor)
                         .zIndex(Double(subviews.count - index)) /// Higher index in the beginning of the list, to accomodate for slide/move animations
                     if !hideDividers && index < subviews.count - 1 {
                         VGRDivider()
@@ -64,7 +73,7 @@ public struct VGRList<Content: View>: View {
                 }
             }
         }
-        .background(Color.Elevation.elevation1)
+        .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
         .roundedBorder(showBorder, borderColor: borderColor)
         .foregroundStyle(Color.Neutral.text)
