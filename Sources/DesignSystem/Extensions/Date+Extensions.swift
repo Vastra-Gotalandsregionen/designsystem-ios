@@ -174,6 +174,38 @@ public extension Date {
     var vgrDateTimeA11yFormat: String {
         return "\(self.vgrDateFormat) \("general.time.at".localizedBundle.lowercased()) \(self.vgrShortTimeFormat)"
     }
+
+    /// Returns the complete, localized date, prefixed with a relative-day word
+    /// (`"Idag"` / `"Igår"` / `"Imorgon"`) when the date falls on today, yesterday or
+    /// tomorrow — otherwise just the complete date on its own.
+    ///
+    /// Intended for VoiceOver labels, where a spoken relative-day hint aids orientation.
+    /// The relative-day words are resolved from the package bundle
+    /// (`general.today` / `general.yesterday` / `general.tomorrow`); the date uses the
+    /// current locale's `.complete` style.
+    ///
+    /// ### Example
+    /// Assuming the Swedish locale and that today is *onsdag 3 juni 2025*:
+    /// ```swift
+    /// yesterday.vgrRelativeDateA11yFormat    // "Igår, tisdag 2 juni 2025"
+    /// today.vgrRelativeDateA11yFormat        // "Idag, onsdag 3 juni 2025"
+    /// tomorrow.vgrRelativeDateA11yFormat     // "Imorgon, torsdag 4 juni 2025"
+    /// someOtherDay.vgrRelativeDateA11yFormat // "måndag 22 september 2025"
+    /// ```
+    var vgrRelativeDateA11yFormat: String {
+        let calendar = Calendar.current
+        let fullDate = self.formatted(date: .complete, time: .omitted)
+
+        if calendar.isDateInToday(self) {
+            return "\("general.today".localizedBundle), \(fullDate)"
+        } else if calendar.isDateInYesterday(self) {
+            return "\("general.yesterday".localizedBundle), \(fullDate)"
+        } else if calendar.isDateInTomorrow(self) {
+            return "\("general.tomorrow".localizedBundle), \(fullDate)"
+        }
+
+        return fullDate
+    }
 }
 
 public extension Date {
@@ -228,13 +260,16 @@ public extension Date {
 
 #Preview {
     let today = Date()
+    let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
+    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
     let lastYear = Calendar.current.date(byAdding: .year, value: -1, to: today)!
     let nextYear = Calendar.current.date(byAdding: .year, value: 1, to: today)!
-    let dates = [lastYear, today, nextYear]
+    let dates = [lastYear, yesterday, today, tomorrow, nextYear]
 
     ScrollView {
         VStack(alignment: .leading, spacing: 16) {
             ForEach(dates, id: \.self) { date in
+                Text(".vgrRelativeDateA11yFormat: **\(date.vgrRelativeDateA11yFormat)**")
                 Text(".vgrDateFormat: **\(date.vgrDateFormat)**")
                 Text(".vgrDateTimeFormat: **\(date.vgrDateTimeFormat)**")
                 Text(".vgrMonthFormat: **\(date.vgrMonthFormat)**")
