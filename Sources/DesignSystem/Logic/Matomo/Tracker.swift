@@ -14,19 +14,29 @@ public class Tracker {
     init() {
         let matomoSiteId = Bundle.main.object(forInfoDictionaryKey:"MATOMO_SITE_ID") as? String ?? ""
         let matomoURL = Bundle.main.object(forInfoDictionaryKey:"MATOMO_URL") as? String ?? ""
+        let appVersionDimensionIndex = Int(Bundle.main.object(forInfoDictionaryKey:"MATOMO_APPVERSION_DIMENSION") as? String ?? "") ?? -1
+        let appVersion = Bundle.main.appVersionLong
 
 #if targetEnvironment(simulator)
-        print("📱 Tracker is running in simulated environment")
+        logger.info("📱 Tracker is running in simulated environment")
         matomoTracker = nil
 #else
         if matomoURL.isEmpty || matomoSiteId.isEmpty {
             fatalError("invalid configuration for analytics")
         }
 
+
         let url = URL(string: matomoURL)
         if let baseURL = url {
             let newTracker = MatomoTracker(siteId: matomoSiteId, baseURL: baseURL)
             newTracker.logger = DefaultLogger(minLevel: .info)
+
+            if appVersionDimensionIndex != -1 {
+                newTracker.setDimension(appVersion, forIndex: appVersionDimensionIndex)
+            } else {
+                logger.warning("no app version dimension set")
+            }
+
             matomoTracker = newTracker
         } else {
             fatalError("failed initializing tracker, invalid URL")
@@ -50,18 +60,12 @@ public class Tracker {
         // TODO: (ea) - Find a way to include voiceOver state in tracking
         // let isVoiceOverActive = UIAccessibility.isVoiceOverRunning
 
-        let isOptedIn = getOptInSetting()
-        if !isOptedIn {
-            return
-        }
+        guard getOptInSetting() else { return }
 
 #if targetEnvironment(simulator)
         /// When we're in a simulator environment (iOS Simulator & xcode preview), we do not actually call the tracker - just log it.
-        if let note {
-            print("👀 Tracker: \(screen.identifier), 🗒️ \"\(note)\"")
-        } else {
-            print("👀 Tracker: \(screen.identifier)")
-        }
+        let noteSuffix = note.map { ", 🗒️ \"\($0)\"" } ?? ""
+        logger.info("👀 Tracker: \(screen.identifier)\(noteSuffix)")
 #else
         guard let tracker = matomoTracker else { return }
         
@@ -70,6 +74,38 @@ public class Tracker {
         } else {
             tracker.track(view: [screen.identifier])
         }
+#endif
+    }
+
+    /// Tracks a user interaction that occurs within a screen.
+    ///
+    /// Unlike `trackScreen`, which records that a screen was viewed, this method records a
+    /// discrete interaction the user performed *while on* that screen — for example adding a
+    /// symptom or choosing a value. It is reported as a proper Matomo event: the screen supplies
+    /// the event category, and the interaction supplies the action, name, and value.
+    /// The tracking only occurs if the user has opted in to analytics.
+    ///
+    /// - Parameters:
+    ///   - interaction: The interaction to track, conforming to `TrackableInteraction`. Provides
+    ///     the event's action (`e_a`), and optionally its name (`e_n`) and value (`e_v`).
+    ///   - screen: The screen the interaction happened on, conforming to `TrackableScreen`. Its
+    ///     `identifier` is used as the event category (`e_c`).
+    public func trackEvent(_ interaction: TrackableInteraction, on screen: TrackableScreen) {
+        guard getOptInSetting() else { return }
+
+#if targetEnvironment(simulator)
+        /// When we're in a simulator environment (iOS Simulator & xcode preview), we do not actually call the tracker - just log it.
+        let n = interaction.name.map { " / \($0)" } ?? ""
+        let v = interaction.value.map { " = \($0)" } ?? ""
+        logger.info("⚡️ Event: \(screen.identifier) / \(interaction.action)\(n)\(v)")
+#else
+        guard let tracker = matomoTracker else { return }
+        tracker.track(
+            eventWithCategory: screen.identifier,   // ← your TrackableScreen, as the category
+            action: interaction.action,
+            name: interaction.name,
+            value: interaction.value
+        )
 #endif
     }
 
@@ -105,14 +141,24 @@ public class Tracker {
         UserDefaults.standard.set(now, forKey: lastTrackedKey)
     }
 
-    /// Tracks an event in the analytics system.
+    /// Tracks an action-triggered screen view in the analytics system.
     ///
-    /// This is a convenience method that internally calls `trackScreen`. Use this when
-    /// tracking user interactions or events rather than screen views.
+    /// - Note: Despite its name, this method registers the call as a **view**, not as a Matomo
+    ///   event. It is a thin convenience wrapper around `trackScreen`.
+    ///
+    /// Use this for things that are *triggered* like events in the app but that you want recorded
+    /// as their own self-contained view rather than as an action performed on another view. For
+    /// example, deleting a medication intake is logged as a single `"delete_medication"` view —
+    /// not as a `"delete"` action on a `"view_medication"` category.
+    ///
+    /// For interactions that should be recorded as true Matomo events (a category with a separate
+    /// action, name, and value), use `trackEvent(_:on:)` instead.
+    ///
+    /// The tracking only occurs if the user has opted in to analytics.
     ///
     /// - Parameters:
-    ///   - screen: The event to track, conforming to `TrackableScreen` protocol.
-    ///   - note: An optional additional note to include with the event tracking.
+    ///   - screen: The screen to track, conforming to `TrackableScreen` protocol.
+    ///   - note: An optional additional note to include with the tracking.
     public func trackEvent(_ screen: TrackableScreen, note: String? = nil) {
         trackScreen(screen, note: note)
     }
@@ -171,14 +217,45 @@ public class Tracker {
     /// This method updates both the UserDefaults preference and configures the underlying
     /// Matomo tracker accordingly. When the user opts out, no analytics data will be collected.
     ///
+    /// When the preference genuinely changes (a user-initiated toggle — not the re-application that
+    /// happens on every launch via `initTracker()`), a `consent` event carrying the new value is
+    /// reported. For an opt-**out** the event is tracked and flushed *before* `isOptedOut` is set:
+    /// once that flag is on, `MatomoTracker` discards every event at enqueue time, so the opt-out
+    /// could never otherwise be recorded. This is what lets us measure how many users disable
+    /// tracking.
+    ///
     /// - Parameter isOptedIn: `true` to enable analytics tracking, `false` to disable it.
     public func setOptInSetting(_ isOptedIn: Bool) {
+        /// Detect a genuine change *before* overwriting the stored value. `setOptInSetting` is also
+        /// called on every launch to re-apply the persisted setting, so reporting unconditionally
+        /// would massively over-count. `hasOptInSetting()` also excludes the first-launch default.
+        let didChange = hasOptInSetting() && getOptInSetting() != isOptedIn
+
         UserDefaults.standard.set(isOptedIn, forKey: personalDataAgreementAccepted)
+
         guard let tracker = matomoTracker else {
-            print("👀 Tracker is disabled: Opt-in setting should be set to '\(isOptedIn)'")
+            logger.info("👀 Tracker is disabled: Opt-in setting should be set to '\(isOptedIn)'")
             return
         }
-        tracker.isOptedOut = !isOptedIn
+
+        /// The consent event goes straight through the wrapped tracker, bypassing the public
+        /// tracking methods: their `getOptInSetting()` guard reads the value we just persisted,
+        /// which for an opt-out would suppress this very event.
+        if isOptedIn {
+            /// Enabling: lift the opt-out first so the event can be queued, then report the change.
+            tracker.isOptedOut = false
+            if didChange {
+                tracker.track(eventWithCategory: "consent", action: "opt_in", value: 1.0)
+            }
+        } else {
+            /// Disabling: report and flush the opt-out while still opted in, BEFORE isOptedOut is
+            /// set — afterwards `queue(event:)` would silently drop it.
+            if didChange {
+                tracker.track(eventWithCategory: "consent", action: "opt_out", value: 0.0)
+                tracker.dispatch()
+            }
+            tracker.isOptedOut = true
+        }
     }
 }
 
@@ -193,7 +270,7 @@ extension Tracker {
 
 #if targetEnvironment(simulator)
         /// When we're in a simulator environment (iOS Simulator & xcode preview), we do not actually call the tracker - just log it.
-        print("👀 Tracker: \(screen.toString)")
+        logger.info("👀 Tracker: \(screen.toString)")
 #else
         guard let tracker = matomoTracker else { return }
         if let note = note {

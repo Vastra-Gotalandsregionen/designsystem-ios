@@ -1,37 +1,5 @@
 import Foundation
 
-/// `TrackableScreen` is a protocol that represents a screen or view that can be tracked.
-/// Each conforming type must provide a unique `identifier` string used for analytics or logging.
-///
-/// Example:
-/// ```swift
-/// enum MyApp: TrackableScreen {
-///     case home
-///     case settings
-///     case profile(action: TrackerAction)   // Using built-in TrackerAction
-///     case custom(action: CustomAction)     // Using a custom action enum
-///
-///     var identifier: String {
-///         switch self {
-///         case .home: return "home"
-///         case .settings: return "settings"
-///         case .profile(let action): return "profile_\(action.rawValue)"
-///         case .custom(let action): return "custom_\(action.rawValue)"
-///         }
-///     }
-/// }
-///
-/// enum CustomAction: String {
-///     case like, share, comment
-/// }
-///
-/// // Usage:
-/// tracker.trackScreen(MyApp.profile(action: .select))
-/// tracker.trackScreen(MyApp.custom(action: .like))
-/// ```
-public protocol TrackableScreen {
-    var identifier: String { get }
-}
 
 /// TrackerScreen enum is a convenience enum used for type-safe annotation of views that should be tracked
 @available(*, deprecated, message: "Define TrackerScreen constants in your app instead, utilize the TrackableScreen protocol.")
