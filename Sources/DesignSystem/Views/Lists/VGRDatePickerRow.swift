@@ -198,6 +198,7 @@ public struct VGRDatePickerRow<Icon: View>: View {
                         .padding(.vertical, .Margins.small)
                 }
             }
+            .accessibilityLabel(title)
             .tint(Color.Primary.action)
         })
     }
