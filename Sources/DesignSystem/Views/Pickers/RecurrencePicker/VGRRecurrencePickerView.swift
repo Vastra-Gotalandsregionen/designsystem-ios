@@ -75,7 +75,7 @@ public struct VGRRecurrencePickerView: View {
             frequency: self.selectedFrequency,
             period: self.selectedPeriod,
             index: self.selectedIndex,
-            weekdays: self.selectedWeekdays.map(Array.init) ?? []
+            weekdays: self.selectedWeekdays?.sorted() ?? []
         )
         return recurrence.formatString(startDate: startDate)
     }
@@ -86,25 +86,6 @@ public struct VGRRecurrencePickerView: View {
 
     var isMonthPeriod: Bool {
         return self.selections[1] == RecurrencePeriod.month.rawValue
-    }
-
-    func toggleWeekday(_ weekDay: RecurrenceWeekday) {
-        guard var weekdays = selectedWeekdays else {
-            /// If nil, initialize with the tapped weekday
-            selectedWeekdays = [weekDay]
-            return
-        }
-
-        if weekdays.contains(weekDay) {
-            /// Prevent clearing out all weekdays
-            if weekdays.count > 1 {
-                weekdays.remove(weekDay)
-            }
-        } else {
-            weekdays.insert(weekDay)
-        }
-
-        selectedWeekdays = weekdays
     }
 
     func setSelections() {
