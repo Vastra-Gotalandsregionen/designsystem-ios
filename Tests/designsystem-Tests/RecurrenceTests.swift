@@ -804,4 +804,74 @@ final class RecurrenceTests: XCTestCase {
         // Should include Jan 1, 2, 3 despite the specific times
         XCTAssertEqual(dates.count, 3, "Should normalize to full days")
     }
+
+    // MARK: - Weekday Normalization Tests
+
+    func testWeekdaysSortedOnInit() throws {
+        let recurrence = Recurrence(frequency: 1, period: .week, weekdays: [.friday, .sunday, .monday])
+
+        XCTAssertEqual(recurrence.weekdays, [.monday, .friday, .sunday],
+                       "Weekdays should be sorted on init, with Sunday last")
+    }
+
+    func testWeekdaysSortedOnMutation() throws {
+        var recurrence = Recurrence(frequency: 1, period: .week, weekdays: [.monday])
+        recurrence.weekdays = [.saturday, .tuesday]
+
+        XCTAssertEqual(recurrence.weekdays, [.tuesday, .saturday],
+                       "Weekdays should be sorted when assigned after init")
+    }
+
+    func testWeekdaysSortedOnDecoding() throws {
+        let json = """
+        {
+            "frequency": 1,
+            "period": 1,
+            "weekdays": [6, 1, 2]
+        }
+        """
+
+        let recurrence = try JSONDecoder().decode(Recurrence.self, from: Data(json.utf8))
+
+        XCTAssertEqual(recurrence.weekdays, [.monday, .friday, .sunday],
+                       "Weekdays persisted in arbitrary order should be sorted on decode")
+    }
+
+    func testWeekdaysFromUnorderedSetAreEqualRegardlessOfOrder() throws {
+        /// A `Set` has no defined iteration order, so a recurrence built from
+        /// one must not depend on the order the elements happen to come out in.
+        let selection: Set<RecurrenceWeekday> = [.monday, .wednesday, .friday]
+
+        let r1 = Recurrence(frequency: 1, period: .week, weekdays: Array(selection))
+        let r2 = Recurrence(frequency: 1, period: .week, weekdays: [.friday, .monday, .wednesday])
+
+        XCTAssertEqual(r1, r2, "Same weekdays in a different order should be equal")
+        XCTAssertEqual(r1.hashValue, r2.hashValue, "Equal recurrences should hash alike")
+    }
+
+    func testEncodingIsStableAcrossWeekdayOrder() throws {
+        let r1 = Recurrence(frequency: 1, period: .week, weekdays: [.wednesday, .monday])
+        let r2 = Recurrence(frequency: 1, period: .week, weekdays: [.monday, .wednesday])
+
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+
+        XCTAssertEqual(try encoder.encode(r1), try encoder.encode(r2),
+                       "Weekday order should not change the persisted JSON")
+    }
+
+    func testFormatStringUnaffectedByWeekdayOrder() throws {
+        let r1 = Recurrence(frequency: 1, period: .week, weekdays: [.friday, .monday])
+        let r2 = Recurrence(frequency: 1, period: .week, weekdays: [.monday, .friday])
+
+        XCTAssertEqual(r1.formatString(), r2.formatString(),
+                       "Description should not depend on weekday order")
+    }
+
+    func testNilWeekdaysStayNil() throws {
+        var recurrence = Recurrence(frequency: 1, period: .week, weekdays: [.monday])
+        recurrence.weekdays = nil
+
+        XCTAssertNil(recurrence.weekdays, "Sorting should not turn nil into an empty array")
+    }
 }

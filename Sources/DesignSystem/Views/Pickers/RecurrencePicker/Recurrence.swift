@@ -13,7 +13,15 @@ public struct Recurrence: Codable, Equatable, Hashable, Sendable {
 
     /// weekdays is used to control which weekdays are affected
     /// this is only applicable when period is set to _week_
-    public var weekdays: [RecurrenceWeekday]?
+    ///
+    /// The list is kept sorted no matter which order it is assigned in, so
+    /// that two recurrences covering the same weekdays always compare equal,
+    /// hash alike and encode to identical JSON. Callers building the list
+    /// from an unordered collection — a `Set` from ``VGRMultiSelectionList``,
+    /// for instance — therefore do not have to sort it themselves.
+    public var weekdays: [RecurrenceWeekday]? {
+        didSet { weekdays = weekdays?.sorted() }
+    }
 
     enum CodingKeys: String, CodingKey {
         case frequency = "frequency"
@@ -26,7 +34,22 @@ public struct Recurrence: Codable, Equatable, Hashable, Sendable {
         self.frequency = frequency
         self.period = period
         self.index = index
-        self.weekdays = weekdays
+        /// Property observers do not run during initialization, so the sort
+        /// is repeated here to keep every entry point normalized
+        self.weekdays = weekdays?.sorted()
+    }
+
+    /// Decoding is routed through the memberwise initializer so that weekdays
+    /// persisted before normalization are sorted on the way in, and compare
+    /// equal to a freshly built recurrence covering the same days.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            frequency: try container.decode(Int.self, forKey: .frequency),
+            period: try container.decode(RecurrencePeriod.self, forKey: .period),
+            index: try container.decodeIfPresent(Int.self, forKey: .index),
+            weekdays: try container.decodeIfPresent([RecurrenceWeekday].self, forKey: .weekdays)
+        )
     }
 
     /// decodeFromString takes a string containing a JSON object and decodes it into a `Recurrence` struct.
