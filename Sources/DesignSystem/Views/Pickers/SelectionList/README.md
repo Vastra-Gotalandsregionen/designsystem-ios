@@ -39,13 +39,16 @@ Lista där användaren kan välja **exakt ett** alternativ. Listan äger bara ur
 ### `VGRMultiSelectionList`
 Lista där användaren kan välja **noll eller fler** alternativ. Listan äger bara urvalstillståndet — radens innehåll byggs av en `row`-closure som tar `(item, isSelected)` och kan returnera vilken vy som helst (ex. `VGRCheckRow`). Valet exponeras som ett `Set` av objekt — samma struktur används för att förvälja rader när vyn visas.
 
-| Parameter            | Typ                          | Default | Beskrivning                                                |
-|----------------------|------------------------------|---------|------------------------------------------------------------|
-| `header`             | `String?`                    | `nil`   | Rubrik för omslutande `VGRSection`                          |
-| `items`              | `[Item]`                     | –       | Alternativen som visas i listan                            |
-| `selection`          | `Binding<Set<Item>>`         | –       | Aktuellt urval. Seed:a för att förvälja rader              |
-| `warnIfNotSelected`  | `Bool`                       | `false` | Visar en varningsram runt listan när urvalet är tomt       |
-| `row`                | `(Item, Bool) -> some View`  | –       | Bygger radens vy givet aktuell `isSelected`-status          |
+Med `minimumSelectionCount` går det att sätta ett golv för hur många objekt som måste vara valda. Klick på en redan vald rad ignoreras när urvalet nått golvet, så användaren kan aldrig avmarkera sig under gränsen. Gränsen bevakar bara avmarkering — den väljer aldrig objekt åt anroparen, så ett urval som seed:as under gränsen lämnas orört tills användaren valt tillräckligt många.
+
+| Parameter               | Typ                          | Default | Beskrivning                                                          |
+|-------------------------|------------------------------|---------|----------------------------------------------------------------------|
+| `header`                | `String?`                    | `nil`   | Rubrik för omslutande `VGRSection`                                    |
+| `items`                 | `[Item]`                     | –       | Alternativen som visas i listan                                      |
+| `selection`             | `Binding<Set<Item>>`         | –       | Aktuellt urval. Seed:a för att förvälja rader                        |
+| `minimumSelectionCount` | `Int`                        | `0`     | Minsta antal valda objekt — förhindrar avmarkering under gränsen     |
+| `warnIfNotSelected`     | `Bool`                       | `false` | Visar en varningsram runt listan tills minsta antalet objekt är valt |
+| `row`                   | `(Item, Bool) -> some View`  | –       | Bygger radens vy givet aktuell `isSelected`-status                    |
 
 ### `VGRSingleSelectionListScreen` / `VGRMultiSelectionListScreen`
 Kompletta skärmar som paketerar respektive lista med standardramverk: navigationstitel, valfri beskrivande rubrik och en `VGRContainer` runt listan. Använd dessa när du behöver det vanliga "välj från en lista"-flödet utan att upprepa layouten i varje anropare. För mer kontroll — komponera listan direkt i din egen vy.
@@ -83,9 +86,10 @@ VGRContainer {
 
 VGRContainer {
     VGRMultiSelectionList(
-        header: "Välj en eller flera faktorer",
+        header: "Välj minst två faktorer",
         items: items,
         selection: $selection,
+        minimumSelectionCount: 2,
         warnIfNotSelected: true
     ) { item, isSelected in
         VGRCheckRow(title: item.name, isSelected: isSelected)

@@ -16,6 +16,9 @@ import SwiftUI
 /// pre-selection mechanism — any items present in the set when the view
 /// appears will be shown as selected.
 ///
+/// Pass `minimumSelectionCount` to keep the user from deselecting below a
+/// given number of items.
+///
 /// The rendering is a ``VGRList`` wrapped in a ``VGRSection``; it does not
 /// wrap itself in a `ScrollView` or `NavigationStack`. The caller is
 /// responsible for any surrounding chrome (titles, scroll container, etc.).
@@ -58,6 +61,18 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Row: View>: V
     /// presenting to pre-select items.
     @Binding public var selection: Set<Item>
 
+    /// The smallest number of items the list lets the user keep selected.
+    /// Defaults to `0` — no lower bound. When set, tapping an already
+    /// selected row is a no-op once the selection has shrunk to this size,
+    /// so the user can never deselect below the limit.
+    ///
+    /// The limit only guards deselection; it never selects items on the
+    /// caller's behalf. A selection seeded below the limit is left as-is
+    /// until the user picks enough items — combine with
+    /// ``warnIfNotSelected`` to flag that state, which then warns while the
+    /// selection is smaller than the limit rather than only when empty.
+    public let minimumSelectionCount: Int
+
     /// Builds the row view for an item. Receives the item and whether it is
     /// currently part of the selection set, so callers can vary content and
     /// styling based on selection state.
@@ -69,7 +84,10 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Row: View>: V
     ///   - items: The selectable items to display.
     ///   - selection: A binding to the set of selected items. Seed it with
     ///     items to pre-select the corresponding rows.
-    ///   - warnIfNotSelected: Optional flag to show warning if no item is selected.
+    ///   - minimumSelectionCount: The smallest number of items the user is
+    ///     allowed to keep selected. Defaults to `0` — no lower bound.
+    ///   - warnIfNotSelected: Optional flag to show warning if the minimum
+    ///     number of items is not selected.
     ///   - inset: Whether the underlying ``VGRSection`` horizontally insets
     ///     its content. Defaults to `true`. Pass `false` when the list is
     ///     wrapped in a container that already supplies horizontal framing.
@@ -79,6 +97,7 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Row: View>: V
         header: String? = nil,
         items: [Item],
         selection: Binding<Set<Item>>,
+        minimumSelectionCount: Int = 0,
         warnIfNotSelected: Bool = false,
         inset: Bool = true,
         @ViewBuilder row: @escaping (Item, Bool) -> Row
@@ -88,6 +107,7 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Row: View>: V
         self.inset = inset
         self.items = items
         self._selection = selection
+        self.minimumSelectionCount = minimumSelectionCount
         self.row = row
     }
 
@@ -105,7 +125,7 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Row: View>: V
     }
 
     private var showWarning: Bool {
-        return warnIfNotSelected && selection.isEmpty
+        return warnIfNotSelected && selection.count < max(minimumSelectionCount, 1)
     }
 
     public var body: some View {
@@ -116,6 +136,7 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Row: View>: V
 
     private func toggle(_ item: Item) {
         if selection.contains(item) {
+            guard selection.count > minimumSelectionCount else { return }
             selection.remove(item)
         } else {
             selection.insert(item)
@@ -126,6 +147,7 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Row: View>: V
 #Preview("VGRMultiSelectionList") {
 
     @Previewable @State var selection: Set<VGRSelectionListItem> = []
+    @Previewable @State var minimumSelection: Set<VGRSelectionListItem> = []
 
     let items = [
         VGRSelectionListItem(name: "Hello"),
@@ -155,6 +177,16 @@ public struct VGRMultiSelectionList<Item: Identifiable & Hashable, Row: View>: V
                 ) { item, isSelected in
                     VGRCheckRow(title: item.name, isSelected: isSelected)
                 }
+            }
+
+            VGRMultiSelectionList(
+                header: "Requires at least two items, and warns until two are picked.",
+                items: items,
+                selection: $minimumSelection,
+                minimumSelectionCount: 2,
+                warnIfNotSelected: true
+            ) { item, isSelected in
+                VGRCheckRow(title: item.name, isSelected: isSelected)
             }
         }
         .navigationTitle("VGRMultiSelectionList")
