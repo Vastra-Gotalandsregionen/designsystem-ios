@@ -29,15 +29,16 @@ import SwiftUI
 /// ```
 public struct VGRRecurrencePickerView: View {
 
+    @ScaledMetric private var iconSize: CGFloat = 22
     @Binding var startDate: Date
     @Binding var selectedFrequency: Int
     @Binding var selectedPeriod: RecurrencePeriod
-    @Binding var selectedWeekdays: [RecurrenceWeekday]?
+    @Binding var selectedWeekdays: Set<RecurrenceWeekday>?
 
     public init(startDate: Binding<Date>,
                 selectedFrequency: Binding<Int>,
                 selectedPeriod: Binding<RecurrencePeriod>,
-                selectedWeekdays: Binding<[RecurrenceWeekday]?>) {
+                selectedWeekdays: Binding<Set<RecurrenceWeekday>?>) {
         self._startDate = startDate
         self._selectedFrequency = selectedFrequency
         self._selectedPeriod = selectedPeriod
@@ -55,6 +56,15 @@ public struct VGRRecurrencePickerView: View {
 
     @State private var selections: [Int] = [0, 0]
 
+    /// Bridges the optional `selectedWeekdays` binding to the non-optional
+    /// selection binding required by `VGRMultiSelectionList`, treating `nil` as empty.
+    private var weekdaySelection: Binding<Set<RecurrenceWeekday>> {
+        Binding(
+            get: { selectedWeekdays ?? [] },
+            set: { selectedWeekdays = $0 }
+        )
+    }
+
     /// selectedIndex only returns a valid value when the user has selected a monthly recurrence pattern
     var selectedIndex: Int? {
         return self.selectedPeriod == .month ? self.startDate.dayInMonth : nil
@@ -65,7 +75,7 @@ public struct VGRRecurrencePickerView: View {
             frequency: self.selectedFrequency,
             period: self.selectedPeriod,
             index: self.selectedIndex,
-            weekdays: self.selectedWeekdays ?? []
+            weekdays: self.selectedWeekdays.map(Array.init) ?? []
         )
         return recurrence.formatString(startDate: startDate)
     }
@@ -88,10 +98,10 @@ public struct VGRRecurrencePickerView: View {
         if weekdays.contains(weekDay) {
             /// Prevent clearing out all weekdays
             if weekdays.count > 1 {
-                weekdays.removeAll { $0 == weekDay }
+                weekdays.remove(weekDay)
             }
         } else {
-            weekdays.append(weekDay)
+            weekdays.insert(weekDay)
         }
 
         selectedWeekdays = weekdays
@@ -117,25 +127,17 @@ public struct VGRRecurrencePickerView: View {
     }
 
     public var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                VStack(spacing: 0) {
-                    HStack(alignment: .top, spacing: 16) {
-                        Text("recurrence.interval".localizedBundle)
-                            .font(.body).fontWeight(.medium)
-                            .foregroundStyle(Color.Neutral.text)
-                        Text(currentSelection)
-                            .multilineTextAlignment(.trailing)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                            .font(.body).fontWeight(.regular)
-                            .foregroundStyle(Color.Neutral.text)
-                    }
-                    .foregroundColor(Color.Neutral.text)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 16)
-
-                    Divider()
-                        .foregroundStyle(Color.Neutral.divider)
+        VGRContainer {
+            VGRSection {
+                VGRList {
+                    VGRListRow(title: "recurrence.interval".localizedBundle,
+                               subtitle: currentSelection,
+                               icon: {
+                        Image(systemName: "repeat")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: iconSize)
+                    })
 
                     VGRMultiPickerView(data: self.pickerData,
                                        widths: self.widths,
@@ -144,66 +146,20 @@ public struct VGRRecurrencePickerView: View {
                         updateSelection(newVal)
                     }
                 }
-                .frame(maxWidth: .infinity)
-                .background(Color.Elevation.elevation1)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .padding([.top,.leading,.trailing],16)
+            }
 
-                if isWeekPeriod {
-                    VStack(spacing: 16) {
-                        Text("recurrence.weekday.choose".localizedBundle)
-                            .textCase(.none)
-                            .font(.headline)
-                            .foregroundStyle(Color.Neutral.text)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading, 32)
-
-                        VStack(spacing: 0) {
-                            ForEach(RecurrenceWeekday.allCases, id:\.id) { weekday in
-                                Label {
-                                    if selectedWeekdays?.contains(weekday) == true {
-                                        Text("recurrence.weekday.\(weekday.description)".localizedBundle)
-                                            .foregroundStyle(Color.Neutral.text)
-                                            .accessibilityLabel("\("general.selected".localizedBundle), \("recurrence.weekday.\(weekday.description)".localizedBundle)")
-                                    } else {
-                                        Text("recurrence.weekday.\(weekday.description)".localizedBundle)
-                                            .foregroundStyle(Color.Neutral.text)
-                                            .accessibilityLabel("\("general.notselected".localizedBundle), \("recurrence.weekday.\(weekday.description)".localizedBundle)")
-                                    }
-
-                                } icon: {
-                                    if selectedWeekdays?.contains(weekday) == true {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundStyle(Color.Primary.action)
-                                    } else {
-                                        Image(systemName: "circle")
-                                            .foregroundStyle(Color.Primary.action)
-                                    }
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(16)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    toggleWeekday(weekday)
-                                }
-
-                                if weekday != .sunday {
-                                    Divider()
-                                        .foregroundStyle(Color.Neutral.divider)
-                                }
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        .background(Color.Elevation.elevation1)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .padding([.leading, .trailing, .bottom], 16)
+            if isWeekPeriod {
+                VGRMultiSelectionList(
+                    header: "recurrence.weekday.choose".localizedBundle,
+                    items: RecurrenceWeekday.allCases,
+                    selection: weekdaySelection,
+                    minimumSelectionCount: 1,
+                    warnIfNotSelected: false) { weekday, selected in
+                        VGRCheckRow(title: "recurrence.weekday.\(weekday.description)".localizedBundle,
+                                     isSelected: selected)
                     }
-                    .padding(.top, 16)
-                }
             }
         }
-        .frame(maxWidth: .infinity)
-        .background(Color.Elevation.background)
         .navigationTitle("recurrence.title".localizedBundle)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -216,7 +172,7 @@ public struct VGRRecurrencePickerView: View {
     @Previewable @State var startDate: Date = .now
     @Previewable @State var frequency: Int = 1
     @Previewable @State var period: RecurrencePeriod = .week
-    @Previewable @State var weekdays: [RecurrenceWeekday]? = []
+    @Previewable @State var weekdays: Set<RecurrenceWeekday>? = []
 
     NavigationStack {
         VGRRecurrencePickerView(startDate: $startDate,
