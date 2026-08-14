@@ -16,6 +16,12 @@ import SwiftUI
 /// ```swift
 /// TableRowNavigationLink(destination: SettingsView(), title: "Inställningar", subtitle: "Hantera dina preferenser", iconName: "gear")
 /// ```
+///
+/// > Deprecated: Använd ``VGRNavRow`` i en ``VGRList`` istället. Ersättaren tar
+/// > ikon och accessory som view builders istället för `iconName`/`details`,
+/// > och bygger sin destination först när raden trycks — den här komponenten
+/// > konstruerar varje destination direkt, även de som aldrig visas.
+@available(*, deprecated, message: "Use VGRNavRow inside a VGRList instead.")
 public struct VGRTableRowNavigationLink<Destination: View>: View {
     
     // MARK: - Properties
@@ -128,34 +134,35 @@ public struct VGRTableRowNavigationLink<Destination: View>: View {
     }
 }
 
-#Preview("SettingsListRow") {
-    
-    NavigationStack {
-        ScrollView {
-            VStack (alignment: .leading) {
+//MARK: This component is deprecated - Preview is commented out to reduce number of unescessary Xcode-warnings in the project.
 
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Anfallshantering", iconName: "settings_attack")
-
-                VGRDivider()
-                
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Användarvillkor")
-
-                VGRDivider()
-
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Ge oss Feedback")
-
-                VGRDivider()
-
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Personuppgiftspolicy")
-
-                VGRDivider()
-
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Tillgänglighetsredogörelse")
-
-                VGRDivider()
-
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Tillgänglighetsredogörelse", subtitle: "Hej", details: "Test")
-            }
-        }
-    }
-}
+//#Preview {
+//    NavigationStack {
+//        ScrollView {
+//            VStack (alignment: .leading) {
+//
+//                VGRTableRowNavigationLink(destination: EmptyView(), title: "Anfallshantering", iconName: "settings_attack")
+//
+//                VGRDivider()
+//
+//                VGRTableRowNavigationLink(destination: EmptyView(), title: "Användarvillkor")
+//
+//                VGRDivider()
+//
+//                VGRTableRowNavigationLink(destination: EmptyView(), title: "Ge oss Feedback")
+//
+//                VGRDivider()
+//
+//                VGRTableRowNavigationLink(destination: EmptyView(), title: "Personuppgiftspolicy")
+//
+//                VGRDivider()
+//
+//                VGRTableRowNavigationLink(destination: EmptyView(), title: "Tillgänglighetsredogörelse")
+//
+//                VGRDivider()
+//
+//                VGRTableRowNavigationLink(destination: EmptyView(), title: "Tillgänglighetsredogörelse", subtitle: "Hej", details: "Test")
+//            }
+//        }
+//    }
+//}

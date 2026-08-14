@@ -18,31 +18,37 @@ public struct VGRTableRowDivider: View {
             .background(Color.Neutral.divider)
     }
 }
-#Preview {
-    return NavigationStack {
-        ScrollView {
-            VStack (alignment: .leading) {
-                
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Anfallshantering", iconName: "settings_attack")
-                
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Användarvillkor")
 
-                VGRDivider()
+//MARK: This component is deprecated - Preview is commented out to reduce number of unescessary Xcode-warnings in the project.
 
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Ge oss Feedback")
-                
-                VGRDivider()
-
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Personuppgiftspolicy")
-                
-                VGRDivider()
-
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Tillgänglighetsredogörelse")
-                
-                VGRDivider()
-
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Tillgänglighetsredogörelse", subtitle: "Hej", details: "Test")
-            }
-        }
-    }
-}
+//#Preview {
+//    return NavigationStack {
+//        ScrollView {
+//            VStack (alignment: .leading) {
+//                
+//                VGRNavRow(title: "Anfallshantering",
+//                          icon: { Image(systemName: "gearshape") }) { EmptyView() }
+//
+//                VGRNavRow(title: "Användarvillkor") { EmptyView() }
+//
+//                VGRDivider()
+//
+//                VGRNavRow(title: "Ge oss Feedback") { EmptyView() }
+//
+//                VGRDivider()
+//
+//                VGRNavRow(title: "Personuppgiftspolicy") { EmptyView() }
+//
+//                VGRDivider()
+//
+//                VGRNavRow(title: "Tillgänglighetsredogörelse") { EmptyView() }
+//
+//                VGRDivider()
+//
+//                VGRNavRow(title: "Tillgänglighetsredogörelse",
+//                          subtitle: "Hej",
+//                          accessory: { Text("Test") }) { EmptyView() }
+//            }
+//        }
+//    }
+//}
