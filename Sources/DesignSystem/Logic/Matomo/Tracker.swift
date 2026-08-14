@@ -18,7 +18,11 @@ public class Tracker {
         let appVersion = Bundle.main.appVersionLong
 
 #if targetEnvironment(simulator)
-        logger.info("📱 Tracker is running in simulated environment")
+        /// Surface the configuration the tracker *would* have used. These values are never validated here,
+        /// so an empty one is only discovered on device, where it trips the `fatalError` below.
+        let siteIdDescription = matomoSiteId.isEmpty ? "⚠️ missing" : matomoSiteId
+        let urlDescription = matomoURL.isEmpty ? "⚠️ missing" : matomoURL
+        print("📱 Tracker is running in simulated environment — MATOMO_SITE_ID: \(siteIdDescription), MATOMO_URL: \(urlDescription)")
         matomoTracker = nil
 #else
         if matomoURL.isEmpty || matomoSiteId.isEmpty {
@@ -60,12 +64,19 @@ public class Tracker {
         // TODO: (ea) - Find a way to include voiceOver state in tracking
         // let isVoiceOverActive = UIAccessibility.isVoiceOverRunning
 
-        guard getOptInSetting() else { return }
+        guard getOptInSetting() else {
+#if targetEnvironment(simulator)
+            /// Report the suppression so a silent console distinguishes "the user is opted out" from "the call never happened".
+            let noteSuffix = note.map { ", 🗒️ \"\($0)\"" } ?? ""
+            print("🚫 Tracker: opted out, skipping \(screen.identifier)\(noteSuffix)")
+#endif
+            return
+        }
 
 #if targetEnvironment(simulator)
         /// When we're in a simulator environment (iOS Simulator & xcode preview), we do not actually call the tracker - just log it.
         let noteSuffix = note.map { ", 🗒️ \"\($0)\"" } ?? ""
-        logger.info("👀 Tracker: \(screen.identifier)\(noteSuffix)")
+        print("👀 Tracker: \(screen.identifier)\(noteSuffix)")
 #else
         guard let tracker = matomoTracker else { return }
         
@@ -91,13 +102,21 @@ public class Tracker {
     ///   - screen: The screen the interaction happened on, conforming to `TrackableScreen`. Its
     ///     `identifier` is used as the event category (`e_c`).
     public func trackEvent(_ interaction: TrackableInteraction, on screen: TrackableScreen) {
-        guard getOptInSetting() else { return }
+        guard getOptInSetting() else {
+#if targetEnvironment(simulator)
+            /// Report the suppression so a silent console distinguishes "the user is opted out" from "the call never happened".
+            let n = interaction.name.map { " / \($0)" } ?? ""
+            let v = interaction.value.map { " = \($0)" } ?? ""
+            print("🚫 Event: opted out, skipping \(screen.identifier) / \(interaction.action)\(n)\(v)")
+#endif
+            return
+        }
 
 #if targetEnvironment(simulator)
         /// When we're in a simulator environment (iOS Simulator & xcode preview), we do not actually call the tracker - just log it.
         let n = interaction.name.map { " / \($0)" } ?? ""
         let v = interaction.value.map { " = \($0)" } ?? ""
-        logger.info("⚡️ Event: \(screen.identifier) / \(interaction.action)\(n)\(v)")
+        print("⚡️ Event: \(screen.identifier) / \(interaction.action)\(n)\(v)")
 #else
         guard let tracker = matomoTracker else { return }
         tracker.track(
@@ -234,7 +253,9 @@ public class Tracker {
         UserDefaults.standard.set(isOptedIn, forKey: personalDataAgreementAccepted)
 
         guard let tracker = matomoTracker else {
-            logger.info("👀 Tracker is disabled: Opt-in setting should be set to '\(isOptedIn)'")
+#if targetEnvironment(simulator)
+            print("👀 Tracker is disabled: Opt-in setting should be set to '\(isOptedIn)'")
+#endif
             return
         }
 
@@ -270,7 +291,7 @@ extension Tracker {
 
 #if targetEnvironment(simulator)
         /// When we're in a simulator environment (iOS Simulator & xcode preview), we do not actually call the tracker - just log it.
-        logger.info("👀 Tracker: \(screen.toString)")
+        print("👀 Tracker: \(screen.toString)")
 #else
         guard let tracker = matomoTracker else { return }
         if let note = note {
