@@ -70,7 +70,7 @@ Komponenter bör ha tydliga `#Preview`-block för att enkelt kunna testas i Xcod
 - `VGRDoneButton` - Klar-knapp med iOS 26-stöd och fallback
 - `VGRStepper` - Steg-kontroll för att öka/minska värden
 - `VGRToggle` - Anpassad toggle-switch
-- `VGRTableRowNavigationLink` - Navigationslänk för tabellrader
+- `VGRTableRowNavigationLink` - Navigationslänk för tabellrader (**deprecated** — använd `VGRNavRow`)
 
 ### Kort & Utrop
 - `VGRCallout` - Informations-/varningsruta med valfria ikoner och illustrationer

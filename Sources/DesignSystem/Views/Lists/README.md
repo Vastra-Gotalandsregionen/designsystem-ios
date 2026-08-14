@@ -52,6 +52,16 @@ Alla rader utom `VGRNoteRow` är avsedda att placeras inuti en `VGRList`. `VGRCh
 
 ---
 
+## 🧰 Uppskjuten destination i `VGRNavRow`
+
+`NavigationLink` tar sin destination som en *non-escaping* closure och bygger den direkt. En lista med `VGRNavRow` skulle därför konstruera varje destination redan när listan renderas — och bygga om dem vid varje omritning — trots att ingen av dem visas.
+
+`VGRNavRow` lagrar därför sin destination som en closure och anropar den först via en privat hjälpvy vars `body` bygger destinationen. Det flyttar bygget från konstruktionstid till renderingstid, så destinationen skapas först när raden trycks. Anropare får beteendet utan att göra något — API:t är oförändrat.
+
+Observera att endast *konstruktionen* skjuts upp. Destinationens `body`, `onAppear` och `task` skjuts redan upp av SwiftUI tills vyn visas. Bygger du en egen `NavigationLink` med en dyr destination behöver du samma mönster på anropssidan.
+
+---
+
 ## 🧪 Användning
 
 ```swift

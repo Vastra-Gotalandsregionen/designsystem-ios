@@ -17,30 +17,31 @@ public struct VGRDivider: View {
             .background(Color.Neutral.divider)
     }
 }
+
 #Preview {
-    return NavigationStack {
-        ScrollView {
-            VStack (alignment: .leading) {
+    NavigationStack {
+        VGRContainer {
 
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Anfallshantering", iconName: "settings_attack")
+            VGRSection {
 
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Användarvillkor")
+                /// VGRList skjuter in VGRDivider mellan varje element
+                VGRList {
 
-                VGRDivider()
+                    VGRNavRow(title: "Anfallshantering",
+                              icon: { Image(systemName: "gearshape") }) { EmptyView() }
 
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Ge oss Feedback")
+                    VGRNavRow(title: "Användarvillkor") { EmptyView() }
 
-                VGRDivider()
+                    VGRNavRow(title: "Ge oss Feedback") { EmptyView() }
 
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Personuppgiftspolicy")
+                    VGRNavRow(title: "Personuppgiftspolicy") { EmptyView() }
 
-                VGRDivider()
+                    VGRNavRow(title: "Tillgänglighetsredogörelse") { Text("Karl Anka") }
 
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Tillgänglighetsredogörelse")
-
-                VGRDivider()
-
-                VGRTableRowNavigationLink(destination: EmptyView(), title: "Tillgänglighetsredogörelse", subtitle: "Hej", details: "Test")
+                    VGRNavRow(title: "Tillgänglighetsredogörelse",
+                              subtitle: "Hej",
+                              accessory: { Text("Test") }) { EmptyView() }
+                }
             }
         }
     }
