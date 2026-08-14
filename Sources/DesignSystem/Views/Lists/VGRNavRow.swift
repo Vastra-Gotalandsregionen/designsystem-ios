@@ -14,6 +14,13 @@ import SwiftUI
 /// the trailing closure always binds to the navigation destination
 /// regardless of which other slots are filled.
 ///
+/// The destination builder is stored rather than called, and handed to the
+/// `NavigationLink` behind a deferring wrapper, so the destination is only
+/// constructed when the row is actually tapped. Without that indirection
+/// every destination in a list would be built up front — and rebuilt on
+/// every re-render — because `NavigationLink` takes its destination as a
+/// non-escaping closure and evaluates it immediately.
+///
 /// ### Usage
 /// ```swift
 /// VGRNavRow(title: "Title") {
@@ -33,6 +40,18 @@ import SwiftUI
 /// ```
 public struct VGRNavRow<Icon: View, Accessory: View, Destination: View>: View {
 
+    /// Defers building the destination until it is rendered.
+    ///
+    /// A view's `init` runs as soon as the struct is created, while its
+    /// `body` runs only when SwiftUI needs to draw it. `NavigationLink` takes
+    /// its destination as a non-escaping closure and so always builds
+    /// something immediately — this keeps that something trivial, and leaves
+    /// the real destination to be built on push.
+    private struct LazyDestination: View {
+        let build: () -> Destination
+        var body: Destination { build() }
+    }
+
     @ScaledMetric private var chevronSize: CGFloat = 25
 
     /// The primary text shown on the row.
@@ -43,7 +62,10 @@ public struct VGRNavRow<Icon: View, Accessory: View, Destination: View>: View {
 
     let icon: Icon
     let accessory: Accessory
-    let destination: Destination
+
+    /// Held as a closure rather than a built view so that the destination is
+    /// not constructed until the row is tapped.
+    let destination: () -> Destination
 
     /// Creates a nav row with both an icon and an accessory.
     /// - Parameters:
@@ -57,12 +79,12 @@ public struct VGRNavRow<Icon: View, Accessory: View, Destination: View>: View {
                 subtitle: String? = nil,
                 @ViewBuilder icon: () -> Icon,
                 @ViewBuilder accessory: () -> Accessory,
-                @ViewBuilder destination: () -> Destination) {
+                @ViewBuilder destination: @escaping () -> Destination) {
         self.title = title
         self.subtitle = subtitle
         self.icon = icon()
         self.accessory = accessory()
-        self.destination = destination()
+        self.destination = destination
     }
 
     /// Creates a nav row without an icon.
@@ -74,12 +96,12 @@ public struct VGRNavRow<Icon: View, Accessory: View, Destination: View>: View {
     public init(title: String,
                 subtitle: String? = nil,
                 @ViewBuilder accessory: () -> Accessory,
-                @ViewBuilder destination: () -> Destination) where Icon == EmptyView {
+                @ViewBuilder destination: @escaping () -> Destination) where Icon == EmptyView {
         self.title = title
         self.subtitle = subtitle
         self.icon = EmptyView()
         self.accessory = accessory()
-        self.destination = destination()
+        self.destination = destination
     }
 
     /// Creates a nav row without an accessory.
@@ -91,12 +113,12 @@ public struct VGRNavRow<Icon: View, Accessory: View, Destination: View>: View {
     public init(title: String,
                 subtitle: String? = nil,
                 @ViewBuilder icon: () -> Icon,
-                @ViewBuilder destination: () -> Destination) where Accessory == EmptyView {
+                @ViewBuilder destination: @escaping () -> Destination) where Accessory == EmptyView {
         self.title = title
         self.subtitle = subtitle
         self.icon = icon()
         self.accessory = EmptyView()
-        self.destination = destination()
+        self.destination = destination
     }
 
     /// Creates a nav row with neither an icon nor an accessory — the
@@ -107,17 +129,17 @@ public struct VGRNavRow<Icon: View, Accessory: View, Destination: View>: View {
     ///   - destination: A view builder that produces the navigation destination.
     public init(title: String,
                 subtitle: String? = nil,
-                @ViewBuilder destination: () -> Destination) where Icon == EmptyView, Accessory == EmptyView {
+                @ViewBuilder destination: @escaping () -> Destination) where Icon == EmptyView, Accessory == EmptyView {
         self.title = title
         self.subtitle = subtitle
         self.icon = EmptyView()
         self.accessory = EmptyView()
-        self.destination = destination()
+        self.destination = destination
     }
 
     public var body: some View {
         NavigationLink {
-            destination
+            LazyDestination(build: destination)
         } label: {
             VGRListRow(title: title,
                        subtitle: subtitle,
