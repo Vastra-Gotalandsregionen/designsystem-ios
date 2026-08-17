@@ -13,15 +13,18 @@ public struct VGRTextArea: View {
     @ScaledMetric private var minHeight: CGFloat = 172
 
     let title: String?
+    let accessibilityLabel: String?
     @Binding var value: String
 
     /// Creates a `VGRTextArea`.
     ///
     /// - Parameters:
     ///   - title: Optional label rendered above the editor. Pass `nil` for an editor without a title.
+    ///   - accessibilityLabel: Overrides the accessibility label on the text editor. Defaults to `title` when not provided.
     ///   - value: Binding to the edited text.
-    public init(title: String? = nil, value: Binding<String>) {
+    public init(title: String? = nil, accessibilityLabel: String? = nil, value: Binding<String>) {
         self.title = title
+        self.accessibilityLabel = accessibilityLabel ?? title
         self._value = value
     }
 
@@ -33,22 +36,32 @@ public struct VGRTextArea: View {
                     .font(.headlineSemibold)
                     .foregroundStyle(Color.Neutral.text)
                     .padding(.horizontal, .Margins.medium)
+                    .accessibilityHidden(true)
             }
 
-            TextEditor(text: $value)
-                .contentMargins(.Margins.xtraSmall)
-                .autocorrectionDisabled()
-                .frame(minHeight: minHeight, maxHeight: .infinity)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.Elevation.elevation1)
-                .font(.bodyRegular)
-                .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
-                .contentShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
-                .overlay(
-                    RoundedRectangle(cornerRadius: .Radius.mainRadius)
-                        .strokeBorder(Color.Neutral.border, style: StrokeStyle(lineWidth: 1))
-                )
+            if let accessibilityLabel {
+                styledEditor
+                    .accessibilityLabel(accessibilityLabel)
+            } else {
+                styledEditor
+            }
         }
+    }
+
+    private var styledEditor: some View {
+        TextEditor(text: $value)
+            .contentMargins(.Margins.xtraSmall)
+            .autocorrectionDisabled()
+            .frame(minHeight: minHeight, maxHeight: .infinity)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.Elevation.elevation1)
+            .font(.bodyRegular)
+            .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
+            .contentShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: .Radius.mainRadius)
+                    .strokeBorder(Color.Neutral.border, style: StrokeStyle(lineWidth: 1))
+            )
     }
 }
 
