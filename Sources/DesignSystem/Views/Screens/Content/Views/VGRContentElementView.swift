@@ -93,6 +93,31 @@ struct VGRContentElementView: View {
 #Preview("All Element Types") {
     let linkedArticle = VGRContent.random()
 
+    let videoFeed = VGRContent(
+        title: "Videoklipp",
+        subtitle: "Korta filmer om psoriasis",
+        type: .videofeed,
+        imageUrl: "",
+        elements: [
+            VGRContentElement(
+                type: .video,
+                title: "Del 1:",
+                subtitle: "Vad är psoriasis?",
+                readTime: "3 minuter",
+                videoUrl: "https://player.vgregion.se/mobilapp1/smil:mc1/Y93sDHAABx5AnnK6V8uyEJ_iWRmspME7rM5UHSTvWcxFr/master.smil/playlist.m3u8",
+                videoId: "preview-selector-video-1"
+            ),
+            VGRContentElement(
+                type: .video,
+                title: "Del 2:",
+                subtitle: "Behandling och egenvård",
+                readTime: "5 minuter",
+                videoUrl: "https://player.vgregion.se/mobilapp1/smil:mc1/Hx5WiFEdNRwBinJhiUcqBn_bihwAfXDtaczHmBzJFgD46/master.smil/playlist.m3u8",
+                videoId: "preview-selector-video-2"
+            )
+        ]
+    )
+
     NavigationStack {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -244,6 +269,30 @@ struct VGRContentElementView: View {
                         readTime: "5 minuter",
                         videoUrl: "https://player.vgregion.se/mobilapp1/smil:mc1/Hx5WiFEdNRwBinJhiUcqBn_bihwAfXDtaczHmBzJFgD46/master.smil/playlist.m3u8",
                         videoId: "preview-video-2"
+                    )
+                )
+
+                // Video selector link, pointing at an already resolved video feed
+                VGRContentElementView(
+                    element: VGRContentElement(
+                        type: .internalVideoSelectorLink,
+                        internalArticle: videoFeed
+                    )
+                )
+
+                // H2 Title
+                VGRContentElementView(
+                    element: VGRContentElement(
+                        type: .h2,
+                        text: "Secondary Section Title",
+                    )
+                )
+
+                // More body text
+                VGRContentElementView(
+                    element: VGRContentElement(
+                        type: .body,
+                        text: "Another paragraph of body text to show how content flows between different sections.",
                     )
                 )
             }
