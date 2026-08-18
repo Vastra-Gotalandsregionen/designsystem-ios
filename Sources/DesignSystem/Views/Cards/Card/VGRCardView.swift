@@ -57,7 +57,7 @@ public struct VGRCardView: View {
     ///   - sizeClass: The size class for the card (small, medium, or large).
     ///   - title: The main title displayed on the card.
     ///   - subtitle: The subtitle or read time displayed below the title, defaults to empty.
-    ///   - imageUrl: The URL or name of the image to display.
+    ///   - imageUrl: The URL or name of the image to display. When empty (the default), no image is shown.
     ///   - isNew: Indicates whether to show the "new" badge. Defaults to `false`.
     public init(
         sizeClass: VGRCardSizeClass,
@@ -83,8 +83,13 @@ public struct VGRCardView: View {
         }
     }
 
-    private var image: Image {
-        if imageUrl.isEmpty || imageUrl == "placeholder" {
+    /// The image to display, or `nil` when no `imageUrl` was provided.
+    private var image: Image? {
+        if imageUrl.isEmpty {
+            return nil
+        }
+
+        if imageUrl == "placeholder" {
             return Image("placeholder", bundle: .module)
         }
 
@@ -96,8 +101,8 @@ public struct VGRCardView: View {
             .font(.footnoteSemibold)
             .foregroundStyle(Color.Neutral.text)
             .dynamicTypeSize(.small ... .large)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, .Margins.xtraSmall)
+            .padding(.vertical, .Margins.xtraSmall / 2)
             .background(Color.Primary.blueSurface)
             .cornerRadius(5)
     }
@@ -119,13 +124,15 @@ public struct VGRCardView: View {
 
     private var smallCard: some View {
         HStack(alignment: .top, spacing: 0) {
-            image
-                .resizable()
-                .scaledToFill()
-                .frame(width: 118)
-                .frame(idealHeight: sizeClass.idealCardHeight,
-                       alignment: .center)
-                .clipped()
+            if let image {
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 118)
+                    .frame(idealHeight: sizeClass.idealCardHeight,
+                           alignment: .center)
+                    .clipped()
+            }
 
             VStack(alignment: .center, spacing: VGRSpacing.verticalMedium) {
                 Text(title)
@@ -152,6 +159,7 @@ public struct VGRCardView: View {
                     .padding(.top, VGRSpacing.horizontal)
             }
         }
+        .frame(idealHeight: sizeClass.idealCardHeight)
         .background(Color.Elevation.elevation1)
         .clipped()
         .cornerRadius(16)
@@ -160,17 +168,19 @@ public struct VGRCardView: View {
     private var mediumCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topTrailing) {
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxHeight: sizeClass.maxImageHeight, alignment: .center)
-                    .contentShape(Rectangle())
-                    .clipped()
-                    .clipShape(
-                        .rect(
-                            bottomLeadingRadius: VGRRadius.vgrCorner,
+                if let image {
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxHeight: sizeClass.maxImageHeight, alignment: .center)
+                        .contentShape(Rectangle())
+                        .clipped()
+                        .clipShape(
+                            .rect(
+                                bottomLeadingRadius: VGRRadius.vgrCorner,
+                            )
                         )
-                    )
+                }
 
                 if isNew {
                     newContentIcon
@@ -202,17 +212,19 @@ public struct VGRCardView: View {
     private var largeCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topTrailing) {
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxHeight: sizeClass.maxImageHeight, alignment: .center)
-                    .contentShape(Rectangle())
-                    .clipped()
-                    .clipShape(
-                        .rect(
-                            bottomLeadingRadius: VGRRadius.vgrCorner,
+                if let image {
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxHeight: sizeClass.maxImageHeight, alignment: .center)
+                        .contentShape(Rectangle())
+                        .clipped()
+                        .clipShape(
+                            .rect(
+                                bottomLeadingRadius: VGRRadius.vgrCorner,
+                            )
                         )
-                    )
+                }
 
                 if isNew {
                     newContentIcon
@@ -274,6 +286,18 @@ public struct VGRCardView: View {
                     title: "Treatment Options",
                     imageUrl: "placeholder",
                     isNew: false
+                )
+
+                VGRCardView(
+                    sizeClass: .small,
+                    title: "Migrän hos barn och ungdomar",
+                    isNew: true
+                )
+
+                VGRCardView(
+                    sizeClass: .small,
+                    title: "Läkemedelsbehandling vid migrän hos barn och ungdomar",
+                    isNew: true
                 )
 
                 VGRCardView(
