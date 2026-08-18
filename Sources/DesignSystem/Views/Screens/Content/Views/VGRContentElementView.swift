@@ -15,6 +15,9 @@ struct VGRContentElementView: View {
     /// Callback when an action callout button is tapped, passes the actionId
     var onActionCallout: ((String) -> Void)? = nil
 
+    /// Callback when a video is selected in a video selector element, passes the selected video
+    var onVideoSelected: ((VGRVideo) -> Void)? = nil
+
     var body: some View {
         Group {
             switch element.type {
@@ -46,8 +49,10 @@ struct VGRContentElementView: View {
                     VGRContentVideoView(element: element)
 
                 case .internalVideoSelectorLink:
-                    /// TODO Implement support for video selector link elements
-                    EmptyView()
+                    VGRContentVideoSelectorView(
+                        element: element,
+                        onVideoSelected: onVideoSelected
+                    )
 
                 case .faq:
                     EmptyView()

@@ -18,3 +18,21 @@ public struct VGRVideo: Identifiable, VGRVideoCarouselItem {
    public let url: String
    public var publishDate: Date?
 }
+
+extension VGRVideo {
+
+    /// Creates a video from a `VGRContentElement` of type `.video`.
+    ///
+    /// A `.video` element carries exactly the fields a `VGRVideo` needs, so the two are
+    /// interchangeable representations of the same video.
+    public init(_ element: VGRContentElement) {
+        self.init(
+            id: element.videoId,
+            title: element.title,
+            subtitle: element.subtitle,
+            duration: element.readTime,
+            url: element.videoUrl,
+            publishDate: element.publishDate
+        )
+    }
+}
