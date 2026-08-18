@@ -13,14 +13,14 @@ public struct VGRCardButton: View {
     ///   - sizeClass: The size class for the card (small, medium, or large).
     ///   - title: The main title displayed on the card.
     ///   - subtitle: The subtitle or read time displayed below the title, defaults to empty.
-    ///   - imageUrl: The URL or name of the image to display.
+    ///   - imageUrl: The URL or name of the image to display. When empty (the default), no image is shown.
     ///   - isNew: Indicates whether to show the "new" badge. Defaults to `false`.
     ///   - onPressed: Closure called when the button is pressed.
     public init(
         sizeClass: VGRCardSizeClass,
         title: String,
         subtitle: String = "",
-        imageUrl: String,
+        imageUrl: String = "",
         isNew: Bool = false,
         onPressed: @escaping () -> Void
     ) {
@@ -90,6 +90,22 @@ public struct VGRCardButton: View {
                     isNew: false
                 ) {
                     print("I pressed article Treatment Options")
+                }
+
+                VGRCardButton(
+                    sizeClass: .small,
+                    title: "Living with Psoriasis",
+                    isNew: false
+                ) {
+                    print("I pressed article Living with Psoriasis")
+                }
+
+                VGRCardButton(
+                    sizeClass: .small,
+                    title: "Living la vida loca",
+                    isNew: true
+                ) {
+                    print("I pressed article Living with Psoriasis")
                 }
 
                 VGRCardButton(
