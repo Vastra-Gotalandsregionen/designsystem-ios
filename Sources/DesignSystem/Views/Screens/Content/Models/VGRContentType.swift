@@ -14,6 +14,9 @@ public enum VGRContentType: String, Decodable {
     /// Privacy policy, structurally same as `article` and `learn`
     case privacypolicy
 
+    /// Accessibility statement, structurally same as `article` and `learn`
+    case accessibilitystatement
+
     /// FAQ article. Contains one or more elements with both question and answer.
     case faq
 
