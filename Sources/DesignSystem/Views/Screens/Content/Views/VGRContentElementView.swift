@@ -15,6 +15,9 @@ struct VGRContentElementView: View {
     /// Callback when an action callout button is tapped, passes the actionId
     var onActionCallout: ((String) -> Void)? = nil
 
+    /// Callback when a video is selected in a video selector element, passes the selected video
+    var onVideoSelected: ((VGRVideo) -> Void)? = nil
+
     var body: some View {
         Group {
             switch element.type {
@@ -46,8 +49,10 @@ struct VGRContentElementView: View {
                     VGRContentVideoView(element: element)
 
                 case .internalVideoSelectorLink:
-                    /// TODO Implement support for video selector link elements
-                    EmptyView()
+                    VGRContentVideoSelectorView(
+                        element: element,
+                        onVideoSelected: onVideoSelected
+                    )
 
                 case .faq:
                     EmptyView()
@@ -87,6 +92,31 @@ struct VGRContentElementView: View {
 
 #Preview("All Element Types") {
     let linkedArticle = VGRContent.random()
+
+    let videoFeed = VGRContent(
+        title: "Videoklipp",
+        subtitle: "Korta filmer om psoriasis",
+        type: .videofeed,
+        imageUrl: "",
+        elements: [
+            VGRContentElement(
+                type: .video,
+                title: "Del 1:",
+                subtitle: "Vad är psoriasis?",
+                readTime: "3 minuter",
+                videoUrl: "https://player.vgregion.se/mobilapp1/smil:mc1/Y93sDHAABx5AnnK6V8uyEJ_iWRmspME7rM5UHSTvWcxFr/master.smil/playlist.m3u8",
+                videoId: "preview-selector-video-1"
+            ),
+            VGRContentElement(
+                type: .video,
+                title: "Del 2:",
+                subtitle: "Behandling och egenvård",
+                readTime: "5 minuter",
+                videoUrl: "https://player.vgregion.se/mobilapp1/smil:mc1/Hx5WiFEdNRwBinJhiUcqBn_bihwAfXDtaczHmBzJFgD46/master.smil/playlist.m3u8",
+                videoId: "preview-selector-video-2"
+            )
+        ]
+    )
 
     NavigationStack {
         ScrollView {
@@ -239,6 +269,30 @@ struct VGRContentElementView: View {
                         readTime: "5 minuter",
                         videoUrl: "https://player.vgregion.se/mobilapp1/smil:mc1/Hx5WiFEdNRwBinJhiUcqBn_bihwAfXDtaczHmBzJFgD46/master.smil/playlist.m3u8",
                         videoId: "preview-video-2"
+                    )
+                )
+
+                // Video selector link, pointing at an already resolved video feed
+                VGRContentElementView(
+                    element: VGRContentElement(
+                        type: .internalVideoSelectorLink,
+                        internalArticle: videoFeed
+                    )
+                )
+
+                // H2 Title
+                VGRContentElementView(
+                    element: VGRContentElement(
+                        type: .h2,
+                        text: "Secondary Section Title",
+                    )
+                )
+
+                // More body text
+                VGRContentElementView(
+                    element: VGRContentElement(
+                        type: .body,
+                        text: "Another paragraph of body text to show how content flows between different sections.",
                     )
                 )
             }

@@ -55,6 +55,10 @@ public struct VGRContentScreen: View {
     /// Optional callback when feedback is submitted (for threshold articles with feedback elements)
     var onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil
 
+    /// Optional callback when a video is selected in a video selector element, passes the
+    /// `.video` element. When nil, the video selector presents the player itself.
+    var onVideoSelected: ((VGRVideo) -> Void)? = nil
+
     /// Optional callback when an action callout button is tapped, passes the actionId
     var onActionCallout: ((String) -> Void)? = nil
 
@@ -64,16 +68,20 @@ public struct VGRContentScreen: View {
     ///   - dismissAction: Optional closure to execute when the screen is dismissed
     ///   - onFeedbackSubmitted: Optional callback when feedback is submitted
     ///   - onActionCallout: Optional callback when an action callout button is tapped
+    ///   - onVideoSelected: Optional callback when a video is selected in a video selector
+    ///     element. Pass nil to let the selector present the player itself.
     public init(
         content: VGRContent,
         dismissAction: (() -> Void)? = nil,
         onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
-        onActionCallout: ((String) -> Void)? = nil
+        onActionCallout: ((String) -> Void)? = nil,
+        onVideoSelected: ((VGRVideo) -> Void)? = nil
     ) {
         self.content = content
         self.dismissAction = dismissAction
         self.onFeedbackSubmitted = onFeedbackSubmitted
         self.onActionCallout = onActionCallout
+        self.onVideoSelected = onVideoSelected
     }
 
     /// Focus state for managing keyboard navigation within the scroll view
@@ -99,7 +107,8 @@ public struct VGRContentScreen: View {
                         articleId: content.id,
                         dismissAction: dismissAction,
                         onFeedbackSubmitted: onFeedbackSubmitted,
-                        onActionCallout: onActionCallout
+                        onActionCallout: onActionCallout,
+                        onVideoSelected: onVideoSelected
                     )
                 }
             }
