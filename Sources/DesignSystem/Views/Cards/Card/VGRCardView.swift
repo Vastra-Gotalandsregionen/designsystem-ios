@@ -249,7 +249,7 @@ public struct VGRCardView: View {
             .padding(.trailing, VGRSpacing.horizontal)
         }
         .background(Color.Elevation.elevation1)
-        .cornerRadius(.Radius.mainRadius)
+        .cornerRadius(16)
         .clipped()
     }
 }
