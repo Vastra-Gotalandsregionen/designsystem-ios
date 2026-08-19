@@ -18,6 +18,9 @@ public struct VGRContentVideoSelectorView: View {
     /// The video feed whose `.video` elements fill the carousel.
     public let content: VGRContent?
 
+    /// Optional fixed color for all video card circles. If nil, colors cycle automatically.
+    public let circleColor: Color?
+
     /// Called with the selected video. When nil, playback is handled by this view.
     public var onVideoSelected: ((VGRVideo) -> Void)?
 
@@ -30,8 +33,10 @@ public struct VGRContentVideoSelectorView: View {
     ///   - onVideoSelected: Called with the tapped video. Pass nil to let this view present
     ///     the player.
     public init(element: VGRContentElement,
+                circleColor: Color? = nil,
                 onVideoSelected: ((VGRVideo) -> Void)? = nil) {
         self.content = element.internalArticle
+        self.circleColor = circleColor
         self.onVideoSelected = onVideoSelected
     }
 
@@ -42,8 +47,10 @@ public struct VGRContentVideoSelectorView: View {
     ///   - onVideoSelected: Called with the tapped video. Pass nil to let this view present
     ///     the player.
     public init(content: VGRContent,
+                circleColor: Color? = nil,
                 onVideoSelected: ((VGRVideo) -> Void)? = nil) {
         self.content = content
+        self.circleColor = circleColor
         self.onVideoSelected = onVideoSelected
     }
 
@@ -76,6 +83,7 @@ public struct VGRContentVideoSelectorView: View {
                 title: content.title,
                 subtitle: content.subtitle,
                 items: items,
+                circleColor: circleColor,
                 onItemTapped: select
             )
             .frame(maxWidth: .infinity, alignment: .leading)
