@@ -17,6 +17,8 @@ struct VGRContentElementView: View {
 
     /// Callback when a video is selected in a video selector element, passes the selected video
     var onVideoSelected: ((VGRVideo) -> Void)? = nil
+    /// Optional custom view rendered when the element type is `.custom`
+    var customElementView: AnyView? = nil
 
     var body: some View {
         Group {
@@ -78,6 +80,9 @@ struct VGRContentElementView: View {
 
                 case .linkGroup:
                     VGRContentLinkGroup(element: element)
+                
+                case .custom:
+                    customElementView ?? AnyView(EmptyView())
 
                 @unknown default:
                     Text("Unrecognizable content")

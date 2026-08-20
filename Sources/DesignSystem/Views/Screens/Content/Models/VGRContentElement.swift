@@ -148,7 +148,7 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
 
         self.list = try values.decodeIfPresent([String].self, forKey: .list) ?? []
         self.tags = try values.decodeIfPresent([String].self, forKey: .tags) ?? []
-        self.padding = try values.decodeIfPresent([Int].self, forKey: .tags) ?? []
+        self.padding = try values.decodeIfPresent([Int].self, forKey: .padding) ?? []
 
         self.a11y = try values.decodeIfPresent(String.self, forKey: .a11y) ?? ""
         self.crop = try values.decodeIfPresent([VGREdge].self, forKey: .crop) ?? []
