@@ -27,7 +27,8 @@ public struct VGRContentVideoView: View {
                 subtitle: element.subtitle,
                 duration: element.readTime,
                 watchStatus: watchStatus,
-                publishDate: element.publishDate
+                publishDate: element.publishDate,
+                layout: .horizontal
             )
             .padding(.horizontal, VGRSpacing.horizontal)
             .padding(.vertical, VGRSpacing.verticalSmall)
