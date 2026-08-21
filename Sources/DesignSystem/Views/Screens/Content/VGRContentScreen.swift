@@ -42,7 +42,7 @@ import SwiftUI
 /// - Inline navigation bar with dynamic title
 /// - Close button in trailing toolbar position
 /// - Automatic focus management to prevent keyboard issues
-public struct VGRContentScreen: View {
+public struct VGRContentScreen<CustomView : View> : View {
     @Environment(\.dismiss) private var dismiss
 
     /// The article data to display, containing all elements and metadata
@@ -62,26 +62,46 @@ public struct VGRContentScreen: View {
     /// Optional callback when an action callout button is tapped, passes the actionId
     var onActionCallout: ((String) -> Void)? = nil
 
+    /// Optional custom view passed to each `VGRContentElementView` for rendering `.custom` elements
+    var customElementView: (VGRContentElement) -> CustomView
+
     /// Initialize the article screen with the given article and optional dismiss action.
     /// - Parameters:
-    ///   - article: The `VGRContent` instance containing all content to display
+    ///   - content: The `VGRContent` instance containing all content to display
     ///   - dismissAction: Optional closure to execute when the screen is dismissed
     ///   - onFeedbackSubmitted: Optional callback when feedback is submitted
     ///   - onActionCallout: Optional callback when an action callout button is tapped
     ///   - onVideoSelected: Optional callback when a video is selected in a video selector
     ///     element. Pass nil to let the selector present the player itself.
+    ///   - customElementView: Optional custom view rendered for `.custom` content elements
     public init(
         content: VGRContent,
         dismissAction: (() -> Void)? = nil,
         onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
         onActionCallout: ((String) -> Void)? = nil,
         onVideoSelected: ((VGRVideo) -> Void)? = nil
-    ) {
+    ) where CustomView == EmptyView {
         self.content = content
         self.dismissAction = dismissAction
         self.onFeedbackSubmitted = onFeedbackSubmitted
         self.onActionCallout = onActionCallout
         self.onVideoSelected = onVideoSelected
+        self.customElementView = { _ in EmptyView() }
+    }
+
+    // Init with custom element view
+    public init(
+        content: VGRContent,
+        dismissAction: (() -> Void)? = nil,
+        onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
+        onActionCallout: ((String) -> Void)? = nil,
+        @ViewBuilder customElementView: @escaping (VGRContentElement) -> CustomView
+    ) {
+        self.content = content
+        self.dismissAction = dismissAction
+        self.onFeedbackSubmitted = onFeedbackSubmitted
+        self.onActionCallout = onActionCallout
+        self.customElementView = customElementView
     }
 
     /// Focus state for managing keyboard navigation within the scroll view
@@ -108,7 +128,8 @@ public struct VGRContentScreen: View {
                         dismissAction: dismissAction,
                         onFeedbackSubmitted: onFeedbackSubmitted,
                         onActionCallout: onActionCallout,
-                        onVideoSelected: onVideoSelected
+                        onVideoSelected: onVideoSelected,
+                        customElementView: { _ in  customElementView(element) }
                     )
                 }
             }

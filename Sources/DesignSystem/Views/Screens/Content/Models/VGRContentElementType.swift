@@ -69,4 +69,7 @@ public enum VGRContentElementType: String, Codable {
     /// When the button is tapped, it triggers a callback with the actionId, allowing the consuming app to handle navigation.
     /// Expects `actionId`, `actionHeader`, `actionDescription`, `actionButtonLabel`, `actionButtonA11yLabel`, and `actionImage` properties.
     case actionCallout
+    
+    /// Custom element is used if you for example want to show a `VGRCallout`
+    case custom
 }
