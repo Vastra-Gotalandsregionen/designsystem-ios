@@ -89,18 +89,20 @@ public struct VGRContentScreen<CustomView : View> : View {
         self.customElementView = { _ in EmptyView() }
     }
 
-    // Init with custom element view
+    /// Init with custom element view
     public init(
         content: VGRContent,
         dismissAction: (() -> Void)? = nil,
         onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
         onActionCallout: ((String) -> Void)? = nil,
+        onVideoSelected: ((VGRVideo) -> Void)? = nil,
         @ViewBuilder customElementView: @escaping (VGRContentElement) -> CustomView
     ) {
         self.content = content
         self.dismissAction = dismissAction
         self.onFeedbackSubmitted = onFeedbackSubmitted
         self.onActionCallout = onActionCallout
+        self.onVideoSelected = onVideoSelected
         self.customElementView = customElementView
     }
 
@@ -180,9 +182,40 @@ public struct VGRContentScreen<CustomView : View> : View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $selectedContent) { article in
             NavigationStack {
-                VGRContentScreen(content: article) {
+                VGRContentScreen(content: article, dismissAction: {
                     selectedContent = nil
-                }
+                }, customElementView: { element in
+                    if element.customId == "red" {
+                        Text("RED: \(element.text)")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.Margins.medium)
+                            .background(.red)
+                            .foregroundStyle(.white)
+                            .font(.bodyBold)
+                            .padding(.bottom, .Margins.xtraLarge)
+                    }
+
+                    if element.customId == "green" {
+                        Text("GREEN: \(element.text)")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.Margins.medium)
+                            .background(.green)
+                            .foregroundStyle(.white)
+                            .font(.bodyBold)
+                            .padding(.bottom, .Margins.xtraLarge)
+                    }
+
+                    if element.customId == "blue" {
+                        Text("BLUE: \(element.text)")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.Margins.medium)
+                            .background(.blue)
+                            .foregroundStyle(.white)
+                            .font(.bodyBold)
+                            .padding(.bottom, .Margins.xtraLarge)
+                    }
+
+                })
             }
         }
     }

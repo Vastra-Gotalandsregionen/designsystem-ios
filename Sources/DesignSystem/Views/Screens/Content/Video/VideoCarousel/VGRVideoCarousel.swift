@@ -48,16 +48,6 @@ public struct VGRVideoCarousel: View {
     @State private var position: String?
     @AccessibilityFocusState private var a11yPosition: String?
 
-    /// Array of accent colors cycled through for video card backgrounds.
-    private let colors: [Color] = [
-        Color.Accent.yellowSurface,
-        Color.Accent.purpleSurface,
-        Color.Accent.cyanSurface,
-        Color.Accent.limeSurface,
-        Color.Accent.orangeSurface,
-        Color.Accent.pinkSurface,
-    ]
-
     /// Dynamic trailing margin that adjusts based on screen width to show partial next card.
     @State private var trailingContentMargin: CGFloat = UIScreen.main.bounds.width - (UIScreen.main.bounds.width * 0.51) + 16
 
@@ -220,7 +210,7 @@ public struct VGRVideoCarousel: View {
         }
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: position)
         .defaultScrollAnchor(.leading)
-        .contentMargins(.leading, 16)
+        .contentMargins(.leading, .Margins.medium)
         .contentMargins(.trailing, trailingContentMargin)
         .scrollIndicators(.hidden)
         .scrollBounceBehavior(.always)
@@ -251,7 +241,7 @@ public struct VGRVideoCarousel: View {
                 title: item.title,
                 subtitle: item.subtitle,
                 duration: item.duration,
-                circleColor: customCircleColor ?? colors[index % colors.count],
+                circleColor: customCircleColor ?? VGRVideoCard.circleColor(at: index),
                 watchStatus: watchStatus(for: item.id),
                 publishDate: item.publishDate
             )
@@ -297,34 +287,27 @@ public struct VGRVideoCarousel: View {
 }
 
 #Preview {
-    struct PreviewVideoItem: VGRVideoCarouselItem {
-        let id: String
-        let title: String
-        let subtitle: String
-        let duration: String
-        let publishDate: Date?
-    }
+    let url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 
     let previewItems: [any VGRVideoCarouselItem] = [
-        PreviewVideoItem(id: "1", title: "Del 1:", subtitle: "alfa", duration: "3 minuter", publishDate: Calendar.current.date(byAdding: .day, value: -5, to: Date())),
-        PreviewVideoItem(id: "2", title: "Del 2:", subtitle: "beta", duration: "2 minuter", publishDate: Calendar.current.date(byAdding: .day, value: -20, to: Date())),
-        PreviewVideoItem(id: "3", title: "Del 3:", subtitle: "gamma", duration: "4 minuter", publishDate: Date()),
-        PreviewVideoItem(id: "4", title: "Del 4:", subtitle: "delta", duration: "5 minuter", publishDate: nil),
-        PreviewVideoItem(id: "5", title: "Del 5:", subtitle: "epsilon kokosnötter", duration: "3 minuter", publishDate: Calendar.current.date(byAdding: .day, value: -10, to: Date())),
-        PreviewVideoItem(id: "6", title: "Del 6:", subtitle: "zeta", duration: "2 minuter", publishDate: Calendar.current.date(byAdding: .day, value: -30, to: Date())),
-        PreviewVideoItem(id: "7", title: "Del 7:", subtitle: "eta", duration: "3 minuter", publishDate: Calendar.current.date(byAdding: .day, value: -1, to: Date())),
+        VGRVideo(id: "1", title: "Del 1:", subtitle: "alfa", duration: "3 minuter", url: url, publishDate: Calendar.current.date(byAdding: .day, value: -5, to: Date())),
+        VGRVideo(id: "2", title: "Del 2:", subtitle: "beta", duration: "2 minuter", url: url, publishDate: Calendar.current.date(byAdding: .day, value: -20, to: Date())),
+        VGRVideo(id: "3", title: "Del 3:", subtitle: "gamma", duration: "4 minuter", url: url, publishDate: Date()),
+        VGRVideo(id: "4", title: "Del 4:", subtitle: "delta", duration: "5 minuter", url: url, publishDate: nil),
+        VGRVideo(id: "5", title: "Del 5:", subtitle: "epsilon kokosnötter", duration: "3 minuter", url: url, publishDate: Calendar.current.date(byAdding: .day, value: -10, to: Date())),
+        VGRVideo(id: "6", title: "Del 6:", subtitle: "zetas fetaost pesto", duration: "2 minuter", url: url, publishDate: Calendar.current.date(byAdding: .day, value: -30, to: Date())),
+        VGRVideo(id: "7", title: "Del 7:", subtitle: "eta betyder estimated time of arrival", duration: "3 minuter", url: url, publishDate: Calendar.current.date(byAdding: .day, value: -1, to: Date())),
     ]
 
-    return NavigationStack {
-        ScrollView {
+    NavigationStack {
+        VGRContainer {
             VGRVideoCarousel(title: "Videoklipp",
                              subtitle: "Korta filmer om något",
                              items: previewItems) { item in
                 print("Tapped item \"\(item.title) \(item.subtitle)\"")
             }
-            .padding(.top, 40)
+            .border(.red, width: 1)
         }
-        .background(Color.Accent.brownSurfaceMinimal)
         .navigationTitle("VGRVideoCarousel")
     }
 }

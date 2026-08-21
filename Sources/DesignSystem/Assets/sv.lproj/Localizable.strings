@@ -183,6 +183,7 @@
 "videocarousel.count" = "%d videoklipp tillgängliga";
 "videocarousel.next" = "Nästa videoklipp";
 "videocarousel.previous" = "Föregående videoklipp";
+"videocarousel.showall" = "Visa alla";
 
 /* Survey */
 "survey.loading" = "Laddar…";
