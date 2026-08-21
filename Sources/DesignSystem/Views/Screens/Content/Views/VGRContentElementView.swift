@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct VGRContentElementView: View {
+struct VGRContentElementView<CustomView: View>: View {
     let element: VGRContentElement
 
     /// The article ID this element belongs to (used for feedback tracking)
@@ -17,6 +17,39 @@ struct VGRContentElementView: View {
 
     /// Callback when a video is selected in a video selector element, passes the selected video
     var onVideoSelected: ((VGRVideo) -> Void)? = nil
+    /// Optional custom view rendered when the element type is `.custom`
+    let customElementView: (VGRContentElement) -> CustomView
+    
+    init(element: VGRContentElement,
+         articleId: String = "",
+         dismissAction: (() -> Void)? = nil,
+         onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
+         onActionCallout: ((String) -> Void)? = nil,
+         onVideoSelected: ((VGRVideo) -> Void)? = nil,
+         @ViewBuilder customElementView: @escaping (VGRContentElement) -> CustomView) {
+        self.element = element
+        self.articleId = articleId
+        self.dismissAction = dismissAction
+        self.onFeedbackSubmitted = onFeedbackSubmitted
+        self.onActionCallout = onActionCallout
+        self.onVideoSelected = onVideoSelected
+        self.customElementView = customElementView
+    }
+    
+    init(element: VGRContentElement, articleId: String = "",
+         dismissAction: (() -> Void)? = nil,
+         onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
+         onActionCallout: ((String) -> Void)? = nil,
+         onVideoSelected: ((VGRVideo) -> Void)? = nil)
+        where CustomView == EmptyView {
+        self.element = element
+        self.articleId = articleId
+        self.dismissAction = dismissAction
+        self.onFeedbackSubmitted = onFeedbackSubmitted
+        self.onActionCallout = onActionCallout
+        self.onVideoSelected = onVideoSelected
+        self.customElementView = { _ in EmptyView() }
+    }
 
     var body: some View {
         Group {
@@ -78,6 +111,9 @@ struct VGRContentElementView: View {
 
                 case .linkGroup:
                     VGRContentLinkGroup(element: element)
+                
+                case .custom:
+                    customElementView(element)
 
                 @unknown default:
                     Text("Unrecognizable content")
