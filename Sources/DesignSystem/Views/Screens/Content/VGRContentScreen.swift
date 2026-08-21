@@ -42,7 +42,7 @@ import SwiftUI
 /// - Inline navigation bar with dynamic title
 /// - Close button in trailing toolbar position
 /// - Automatic focus management to prevent keyboard issues
-public struct VGRContentScreen: View {
+public struct VGRContentScreen<CustomView : View> : View {
     @Environment(\.dismiss) private var dismiss
 
     /// The article data to display, containing all elements and metadata
@@ -63,7 +63,7 @@ public struct VGRContentScreen: View {
     var onActionCallout: ((String) -> Void)? = nil
 
     /// Optional custom view passed to each `VGRContentElementView` for rendering `.custom` elements
-    var customElementView: AnyView?
+    var customElementView: (VGRContentElement) -> CustomView
 
     /// Initialize the article screen with the given article and optional dismiss action.
     /// - Parameters:
@@ -80,13 +80,13 @@ public struct VGRContentScreen: View {
         onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
         onActionCallout: ((String) -> Void)? = nil,
         onVideoSelected: ((VGRVideo) -> Void)? = nil
-    ) {
+    ) where CustomView == EmptyView {
         self.content = content
         self.dismissAction = dismissAction
         self.onFeedbackSubmitted = onFeedbackSubmitted
         self.onActionCallout = onActionCallout
         self.onVideoSelected = onVideoSelected
-        self.customElementView = nil
+        self.customElementView = { _ in EmptyView() }
     }
 
     // Init with custom element view
@@ -95,13 +95,13 @@ public struct VGRContentScreen: View {
         dismissAction: (() -> Void)? = nil,
         onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
         onActionCallout: ((String) -> Void)? = nil,
-        @ViewBuilder customElementView: () -> some View
+        @ViewBuilder customElementView: @escaping (VGRContentElement) -> CustomView
     ) {
         self.content = content
         self.dismissAction = dismissAction
         self.onFeedbackSubmitted = onFeedbackSubmitted
         self.onActionCallout = onActionCallout
-        self.customElementView = AnyView(customElementView())
+        self.customElementView = customElementView
     }
 
     /// Focus state for managing keyboard navigation within the scroll view
@@ -129,7 +129,7 @@ public struct VGRContentScreen: View {
                         onFeedbackSubmitted: onFeedbackSubmitted,
                         onActionCallout: onActionCallout,
                         onVideoSelected: onVideoSelected,
-                        customElementView: customElementView
+                        customElementView: { _ in  customElementView(element) }
                     )
                 }
             }

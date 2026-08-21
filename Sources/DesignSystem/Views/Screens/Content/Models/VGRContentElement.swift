@@ -97,13 +97,15 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
 
     /// internalArticle is a reference to another article. It is used to link articles to eachother.
     public var internalArticle: VGRContent?
+    
+    public var customId: String
 
     /// Added in order to exclude id from Codable protocol and conform to Identifiable
     enum CodingKeys: String, CodingKey {
         case type
         case text, title, subtitle
         case imageUrl, imageHeight, padding
-        case internalId, readTime, date, videoUrl, videoId, publishDate, list
+        case internalId, readTime, date, videoUrl, videoId, publishDate, list, customId
         case url, urlTitle
         case tags, links
         case a11y, crop, cropRadius
@@ -155,6 +157,8 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
         self.cropRadius = try values.decodeIfPresent(Int.self, forKey: .cropRadius) ?? 0
 
         self.links = try values.decodeIfPresent([VGRContentElement].self, forKey: .links) ?? []
+        
+        self.customId = try values.decodeIfPresent(String.self, forKey: .customId) ?? ""
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -198,7 +202,8 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
                 actionDescription: String = "",
                 actionButtonLabel: String = "",
                 actionButtonA11yLabel: String = "",
-                actionImage: String = "") {
+                actionImage: String = "",
+                customId: String = "") {
 
         self.type = type
         self.text = text
@@ -233,6 +238,7 @@ public struct VGRContentElement: Decodable, Identifiable, Hashable {
         self.actionButtonLabel = actionButtonLabel
         self.actionButtonA11yLabel = actionButtonA11yLabel
         self.actionImage = actionImage
+        self.customId = customId
     }
 }
 
