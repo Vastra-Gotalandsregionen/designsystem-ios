@@ -153,7 +153,11 @@
 "content.type.tips.title" = "Tips";
 "content.type.useragreement.title" = "Användarpolicy";
 "content.type.privacypolicy.title" = "Personuppgiftspolicy";
+"content.type.accessibilitystatement.title" = "Tillgänglighetsredogörelse";
 "content.type.threshold.title" = "Meddelande";
+"content.type.faq.title" = "Frågor och svar";
+"content.type.videofeed.title" = "Videoklipp";
+"content.type.warning.title" = "Meddelande";
 
 "content.button.showmore" = "Visa fler";
 
