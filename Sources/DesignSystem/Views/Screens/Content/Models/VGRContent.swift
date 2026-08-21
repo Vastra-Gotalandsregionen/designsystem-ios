@@ -172,7 +172,17 @@ extension VGRContent {
 
 
         /// Generate random content elements
-        let availableTypes: [VGRContentElementType] = [.h2, .h3, .body, .subhead, .list, .linkGroup]
+        let availableTypes: [VGRContentElementType] = [
+            .h2,
+            .h3,
+            .body,
+            .subhead,
+            .list,
+            .linkGroup,
+            .custom
+        ]
+
+        let customId: [String] = ["red", "green", "blue"]
 
         for i in 0..<elementCount {
             let randomType = availableTypes.randomElement() ?? .body
@@ -222,6 +232,13 @@ extension VGRContent {
                         type: .linkGroup,
                         links: links,
                     ))
+                case .custom:
+                    let randomTitle = Array(loremListItems.shuffled().prefix(1))[0]
+                    let randomCustomId = Array(customId.shuffled().prefix(1))[0]
+                    elements
+                        .append(VGRContentElement(type: .custom,
+                                                  text: randomTitle,
+                                                  customId: randomCustomId))
                 default:
                     break
             }

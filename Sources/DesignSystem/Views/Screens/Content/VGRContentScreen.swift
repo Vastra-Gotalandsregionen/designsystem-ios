@@ -180,9 +180,38 @@ public struct VGRContentScreen<CustomView : View> : View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $selectedContent) { article in
             NavigationStack {
-                VGRContentScreen(content: article) {
-                    selectedContent = nil
-                }
+                VGRContentScreen(content: article, customElementView: { element in
+                    if element.customId == "red" {
+                        Text("RED: \(element.text)")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.Margins.medium)
+                            .background(.red)
+                            .foregroundStyle(.white)
+                            .font(.bodyBold)
+                            .padding(.bottom, .Margins.xtraLarge)
+                    }
+
+                    if element.customId == "green" {
+                        Text("GREEN: \(element.text)")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.Margins.medium)
+                            .background(.green)
+                            .foregroundStyle(.white)
+                            .font(.bodyBold)
+                            .padding(.bottom, .Margins.xtraLarge)
+                    }
+
+                    if element.customId == "blue" {
+                        Text("BLUE: \(element.text)")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.Margins.medium)
+                            .background(.blue)
+                            .foregroundStyle(.white)
+                            .font(.bodyBold)
+                            .padding(.bottom, .Margins.xtraLarge)
+                    }
+
+                })
             }
         }
     }
