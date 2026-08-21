@@ -94,6 +94,7 @@ public struct VGRSectionTitle<Accessory: View>: View {
             VStack(alignment: .leading, spacing: variant.spacing) {
                 Text(title)
                     .font(variant.titleFont)
+                    .accessibilityAddTraits(.isHeader)
 
                 if !description.isEmpty {
                     Text(description)

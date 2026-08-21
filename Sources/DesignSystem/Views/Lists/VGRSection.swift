@@ -125,6 +125,7 @@ public struct VGRSection<Header: View, Footer: View, Content: View>: View {
                         .multilineTextAlignment(.leading)
                         .foregroundStyle(Color.Neutral.text)
                         .padding(.horizontal, .Margins.medium)
+                        .accessibilityAddTraits(.isHeader)
                 }
                 .padding(.horizontal, inset ? .Margins.medium : 0)
             } else {
