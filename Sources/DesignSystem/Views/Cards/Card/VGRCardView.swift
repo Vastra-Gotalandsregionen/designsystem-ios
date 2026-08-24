@@ -90,7 +90,7 @@ public struct VGRCardView: View {
         }
 
         if imageUrl == "placeholder" {
-            return Image("placeholder", bundle: .module)
+            return Image(imageUrl, bundle: .module)
         }
 
         return Image(imageUrl, bundle: .main)
@@ -123,7 +123,7 @@ public struct VGRCardView: View {
     }
 
     private var smallCard: some View {
-        HStack(alignment: .top, spacing: 0) {
+        HStack(alignment: .center, spacing: 0) {
             if let image {
                 image
                     .resizable()
@@ -134,7 +134,7 @@ public struct VGRCardView: View {
                     .clipped()
             }
 
-            VStack(alignment: .center, spacing: VGRSpacing.verticalMedium) {
+            VStack(alignment: .center, spacing: .Margins.small) {
                 Text(title)
                     .foregroundColor(Color.Neutral.text)
                     .font(.title3)
@@ -147,22 +147,25 @@ public struct VGRCardView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .isVisible(!subtitle.isEmpty)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, VGRSpacing.verticalMedium)
-            .padding(.leading, VGRSpacing.horizontal)
-            .padding(.bottom, VGRSpacing.verticalMedium)
-            .padding(.trailing, VGRSpacing.horizontal)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.top, .Margins.small)
+            .padding(.leading, .Margins.medium)
+            .padding(.bottom, .Margins.small)
+            .padding(.trailing, .Margins.medium)
 
             if isNew {
-                newContentIcon
-                    .padding(.trailing, VGRSpacing.horizontal)
-                    .padding(.top, VGRSpacing.horizontal)
+                VStack {
+                    newContentIcon
+                        .padding(.trailing, .Margins.medium)
+                        .padding(.top, .Margins.small)
+                }
+                .frame(maxHeight: .infinity, alignment: .top)
             }
         }
         .frame(idealHeight: sizeClass.idealCardHeight)
         .background(Color.Elevation.elevation1)
-        .clipped()
         .cornerRadius(16)
+
     }
 
     private var mediumCard: some View {
@@ -177,19 +180,19 @@ public struct VGRCardView: View {
                         .clipped()
                         .clipShape(
                             .rect(
-                                bottomLeadingRadius: VGRRadius.vgrCorner,
+                                bottomLeadingRadius: .Radius.vgrCorner,
                             )
                         )
                 }
 
                 if isNew {
                     newContentIcon
-                        .padding(.trailing, VGRSpacing.horizontal)
-                        .padding(.top, VGRSpacing.horizontal)
+                        .padding(.trailing, .Margins.medium)
+                        .padding(.top, .Margins.medium)
                 }
             }
 
-            VStack(alignment: .leading, spacing: VGRSpacing.verticalMedium) {
+            VStack(alignment: .leading, spacing: .Margins.small) {
                 Text(title)
                     .foregroundColor(Color.Neutral.text)
                     .fontWeight(.bold)
@@ -200,10 +203,10 @@ public struct VGRCardView: View {
                     .isVisible(!subtitle.isEmpty)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, VGRSpacing.verticalMedium)
-            .padding(.leading, VGRSpacing.horizontal)
-            .padding(.bottom, VGRSpacing.horizontal)
-            .padding(.trailing, VGRSpacing.horizontal)
+            .padding(.top, .Margins.small)
+            .padding(.leading, .Margins.medium)
+            .padding(.bottom, .Margins.medium)
+            .padding(.trailing, .Margins.medium)
         }
         .background(Color.Elevation.elevation1)
         .cornerRadius(16)
@@ -221,19 +224,19 @@ public struct VGRCardView: View {
                         .clipped()
                         .clipShape(
                             .rect(
-                                bottomLeadingRadius: VGRRadius.vgrCorner,
+                                bottomLeadingRadius: .Radius.vgrCorner,
                             )
                         )
                 }
 
                 if isNew {
                     newContentIcon
-                        .padding(.trailing, VGRSpacing.horizontal)
-                        .padding(.top, VGRSpacing.horizontal)
+                        .padding(.trailing, .Margins.medium)
+                        .padding(.top, .Margins.medium)
                 }
             }
 
-            VStack(alignment: .leading, spacing: VGRSpacing.verticalMedium) {
+            VStack(alignment: .leading, spacing: .Margins.small) {
                 Text(title)
                     .foregroundColor(Color.Neutral.text)
                     .fontWeight(.bold)
@@ -243,10 +246,10 @@ public struct VGRCardView: View {
                 readTimeLabel
                     .isVisible(!subtitle.isEmpty)
             }
-            .padding(.top, VGRSpacing.verticalMedium)
-            .padding(.leading, VGRSpacing.horizontal)
-            .padding(.bottom, VGRSpacing.horizontal)
-            .padding(.trailing, VGRSpacing.horizontal)
+            .padding(.top, .Margins.small)
+            .padding(.leading, .Margins.medium)
+            .padding(.bottom, .Margins.medium)
+            .padding(.trailing, .Margins.medium)
         }
         .background(Color.Elevation.elevation1)
         .cornerRadius(16)
@@ -254,10 +257,82 @@ public struct VGRCardView: View {
     }
 }
 
-#Preview {
+#Preview("Small card") {
     NavigationStack {
-        ScrollView {
-            VStack(spacing: 16) {
+        VGRContainer {
+            VGRSection {
+                VGRCardView(
+                    sizeClass: .small,
+                    title: "Vilka aktiviteter kan jag registrera i appen?",
+                    subtitle: "5 min läsning",
+                    imageUrl: "placeholder",
+                    isNew: true
+                )
+
+                VGRCardView(
+                    sizeClass: .small,
+                    title: "Understanding Psoriasis",
+                    imageUrl: "placeholder",
+                    isNew: true
+                )
+
+                VGRCardView(
+                    sizeClass: .small,
+                    title: "Understanding Psoriasis",
+                    imageUrl: "placeholder",
+                )
+
+                VGRCardView(
+                    sizeClass: .small,
+                    title: "Understanding Psoriasis",
+                )
+            }
+        }
+        .navigationTitle("VGRCardView")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+#Preview("Medium card") {
+    NavigationStack {
+        VGRContainer {
+            VGRSection {
+                VGRCardView(
+                    sizeClass: .medium,
+                    title: "Understanding Psoriasis",
+                    subtitle: "5 min läsning",
+                    imageUrl: "placeholder",
+                    isNew: true
+                )
+
+                VGRCardView(
+                    sizeClass: .medium,
+                    title: "Understanding Psoriasis",
+                    imageUrl: "placeholder",
+                    isNew: true
+                )
+
+                VGRCardView(
+                    sizeClass: .medium,
+                    title: "Understanding Psoriasis",
+                    imageUrl: "placeholder",
+                )
+
+                VGRCardView(
+                    sizeClass: .medium,
+                    title: "Understanding Psoriasis",
+                )
+            }
+        }
+        .navigationTitle("VGRCardView")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+#Preview("Large card") {
+    NavigationStack {
+        VGRContainer {
+            VGRSection {
                 VGRCardView(
                     sizeClass: .large,
                     title: "Understanding Psoriasis",
@@ -274,66 +349,18 @@ public struct VGRCardView: View {
                 )
 
                 VGRCardView(
-                    sizeClass: .medium,
-                    title: "Treatment Options",
-                    subtitle: "3 min läsning",
+                    sizeClass: .large,
+                    title: "Understanding Psoriasis",
                     imageUrl: "placeholder",
-                    isNew: false
                 )
 
                 VGRCardView(
-                    sizeClass: .medium,
-                    title: "Treatment Options",
-                    imageUrl: "placeholder",
-                    isNew: false
-                )
-
-                VGRCardView(
-                    sizeClass: .small,
-                    title: "Migrän hos barn och ungdomar",
-                    isNew: true
-                )
-
-                VGRCardView(
-                    sizeClass: .small,
-                    title: "Läkemedelsbehandling vid migrän hos barn och ungdomar",
-                    isNew: true
-                )
-
-                VGRCardView(
-                    sizeClass: .small,
-                    title: "Living with Psoriasis",
-                    subtitle: "7 min läsning",
-                    imageUrl: "placeholder",
-                    isNew: false
-                )
-
-                VGRCardView(
-                    sizeClass: .small,
-                    title: "When to See a Doctor",
-                    subtitle: "4 min läsning",
-                    imageUrl: "placeholder",
-                    isNew: true
-                )
-
-                VGRCardView(
-                    sizeClass: .small,
-                    title: "When to See a Doctor",
-                    imageUrl: "placeholder",
-                    isNew: true
-                )
-
-                VGRCardView(
-                    sizeClass: .small,
-                    title: "When to See a Doctor",
-                    imageUrl: "placeholder",
+                    sizeClass: .large,
+                    title: "Understanding Psoriasis",
                 )
             }
-            .padding(.horizontal, 16)
         }
-        .background(Color.Elevation.background)
         .navigationTitle("VGRCardView")
         .navigationBarTitleDisplayMode(.inline)
-
     }
 }
