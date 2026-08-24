@@ -15,21 +15,21 @@ public struct VGRWhatsNewItemView: View {
                     let element = change.elements[index]
                     switch element.type {
                         case .h1:
-                            Text(element.text)
+                            Text(element.attributedText)
                                 .font(.title).bold()
                                 .foregroundStyle(Color.Neutral.text)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .accessibilityAddTraits(.isHeader)
-                                .padding(.bottom, 12)
+                                .padding(.bottom, .Margins.small)
                                 .accessibilityRespondsToUserInteraction()
 
                         case .subhead:
-                            Text(element.text)
+                            Text(element.attributedText)
                                 .font(.headline).bold()
                                 .lineSpacing(6)
                                 .foregroundStyle(Color.Neutral.text)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.bottom, 32)
+                                .padding(.bottom, .Margins.xtraLarge)
                                 .accessibilityAddTraits(.isStaticText)
 
                         case .image:
@@ -45,7 +45,7 @@ public struct VGRWhatsNewItemView: View {
                             }
 
                         case .panel:
-                            VStack(spacing: 32) {
+                            VStack(spacing: .Margins.xtraLarge) {
                                 ForEach(element.elements.indices, id: \.self) { subElementIndex in
                                     let subElement = element.elements[subElementIndex]
                                     switch subElement.type {
@@ -62,7 +62,7 @@ public struct VGRWhatsNewItemView: View {
                                                     .accessibilityHidden(true)
                                             }
                                         default:
-                                            Text(subElement.text)
+                                            Text(subElement.attributedText)
                                                 .font(.body)
                                                 .lineSpacing(6)
                                                 .foregroundStyle(Color.Neutral.text)
@@ -74,21 +74,21 @@ public struct VGRWhatsNewItemView: View {
                             .padding(element.paddingValue)
                             .background(Color.Elevation.elevation1)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .padding(.bottom, 16)
+                            .padding(.bottom, .Margins.medium)
 
                         default:
-                            Text(element.text)
+                            Text(element.attributedText)
                                 .font(.body)
                                 .lineSpacing(6)
                                 .foregroundStyle(Color.Neutral.text)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.bottom, 32)
+                                .padding(.bottom, .Margins.xtraLarge)
                                 .accessibilityAddTraits(.isStaticText)
                     }
                 }
 
             }
-            .padding(16)
+            .padding(.Margins.medium)
             .frame(maxWidth: .infinity)
             .accessibilityElement(children: .contain)
             .accessibilityTextContentType(.narrative)
@@ -105,17 +105,17 @@ public struct VGRWhatsNewItemView: View {
         {
             "order": 1,
             "type": "h1",
-            "text": "Saknas läkemedlet?"
+            "text": "_Saknas_ läkemedlet?"
         },
         {
             "order": 2,
             "type": "subhead",
-            "text": "Saknas ditt läkemedel i listan över vanliga läkemedel?"
+            "text": "Saknas ditt _läkemedel_ i listan över vanliga läkemedel?"
         },
         {
             "order": 3,
             "type": "body",
-            "text": "Nu kan du ange namn på läkemedel som du själv lägger till. Du kan också ändra namn på läkemedel som du lagt till tidigare."
+            "text": "Nu kan du **ange namn** på läkemedel som du själv lägger till. Du kan också **ändra namn** på läkemedel som du lagt till tidigare."
         }
     ]
     """

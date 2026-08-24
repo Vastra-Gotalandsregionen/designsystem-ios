@@ -68,6 +68,11 @@ public struct VGRWhatsNewChangeElement: Decodable, Identifiable, Hashable {
     /// Text content (used by body, subhead, h1 types)
     public let text: String
 
+    /// Convenience property
+    public var attributedText: AttributedString {
+        (try? AttributedString(markdown: text)) ?? AttributedString(text)
+    }
+
     /// Image asset name (used by image type)
     public let url: String
 
