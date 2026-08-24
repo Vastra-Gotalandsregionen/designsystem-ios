@@ -119,7 +119,7 @@ public struct VGRWhatsNewScreen: View {
                     } label: {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
-                                .padding(.leading, 8)
+                                .padding(.leading, .Margins.xtraSmall)
                             Text("whatsnew.back".localizedBundle)
                             Spacer()
                         }
@@ -138,7 +138,7 @@ public struct VGRWhatsNewScreen: View {
                     } label: {
                         Spacer()
                         Text("whatsnew.skip".localizedBundle)
-                            .padding(.trailing, 8)
+                            .padding(.trailing, .Margins.xtraSmall)
                     }
                     .frame(maxWidth: .infinity)
                     .accessibilityIdentifier("SkipButton")
@@ -175,7 +175,7 @@ public struct VGRWhatsNewScreen: View {
                     } label: {
                         Text(nextButtonTitle)
                             .foregroundColor(Color.Neutral.textInverted)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, .Margins.small)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
@@ -185,7 +185,7 @@ public struct VGRWhatsNewScreen: View {
                     .accessibilityIdentifier("NextButton")
 
                 }
-                .padding(16)
+                .padding(.Margins.medium)
                 .background(Color.Elevation.background)
             }
 
@@ -294,7 +294,7 @@ public struct VGRWhatsNewScreen: View {
                     {
                         "order": 3,
                         "type": "body",
-                        "text": "Genom att titta på de nya filmerna kan du lära dig ännu mer om migrän."
+                        "text": "Genom att titta på **de nya filmerna** kan du lära dig ännu mer om migrän."
                     }
                 ]
             }
