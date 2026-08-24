@@ -147,6 +147,7 @@ public struct VGRVideoCarousel: View {
             .padding(.leading, 16)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11yLabel)
+            .accessibilityAddTraits(.isHeader)
 
             navigationButtons
         }
