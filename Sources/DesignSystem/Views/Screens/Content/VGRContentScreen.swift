@@ -32,6 +32,38 @@ import SwiftUI
 /// - `.list` - Bulleted list items
 /// - `.video`, `.internalVideoSelectorLink` - Placeholder for future video support
 ///
+/// ## Link Failure Notifications
+/// External links (`.link` elements, and `.link` items inside `.linkGroup`) are opened
+/// programmatically via `UIApplication`. When a link cannot be opened, a notification is
+/// posted through `NotificationCenter.default` with the failing `URL` as `object`,
+/// allowing consuming apps to observe and track failures (e.g. with analytics):
+/// - `Notification.Name.contentLinkNotSupported` - the OS has no way of opening the URL
+///   (`canOpenURL` returned false, e.g. no app handles the scheme)
+/// - `Notification.Name.contentLinkOpenFailed` - the OS attempted but failed to open the URL
+///
+/// ```swift
+/// NotificationCenter.default.addObserver(forName: .contentLinkOpenFailed,
+///                                        object: nil,
+///                                        queue: .main) { note in
+///     guard let url = note.object as? URL else { return }
+///     // Track the failed link open
+/// }
+/// ```
+///
+/// Or observe from SwiftUI using `.onReceive`:
+///
+/// ```swift
+/// VGRContentScreen(content: content)
+///     .onReceive(NotificationCenter.default.publisher(for: .contentLinkOpenFailed)) { note in
+///         guard let url = note.object as? URL else { return }
+///         // Track the failed link open
+///     }
+///     .onReceive(NotificationCenter.default.publisher(for: .contentLinkNotSupported)) { note in
+///         guard let url = note.object as? URL else { return }
+///         // Track the unsupported link
+///     }
+/// ```
+///
 /// ## Accessibility
 /// - Navigation title announced by screen readers
 /// - Proper focus management for keyboard navigation

@@ -15,6 +15,7 @@ public struct VGRDivider: View {
     public var body: some View {
         Divider()
             .background(Color.Neutral.divider)
+            .accessibilityHidden(true)
     }
 }
 
