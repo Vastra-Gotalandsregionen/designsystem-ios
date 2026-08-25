@@ -1,5 +1,9 @@
 import SwiftUI
 
+/// Navigation destination value for links opened in an in-app web view.
+///
+/// Pushed onto the navigation stack when a `.webviewLink` row is tapped; the hosting
+/// screen resolves it with `.navigationDestination(for: WebViewTarget.self)`.
 struct WebViewTarget: Hashable {
     let title: String
     let url: String
@@ -10,7 +14,22 @@ struct WebViewTarget: Hashable {
     }
 }
 
+/// Renders a `.linkGroup` element as a rounded card of link rows separated by dividers.
+///
+/// Each row shows the link text, a subtitle, and a trailing icon, and behaves according
+/// to its type:
+/// - `.webviewLink` - pushes a ``WebViewTarget`` onto the navigation stack, opening the
+///   URL in an in-app web view (chevron icon)
+/// - any other type - opens the URL externally via ``VGRContentLinkOpener``, which posts
+///   `contentLinkNotSupported`/`contentLinkOpenFailed` notifications on failure so
+///   consuming apps can track failed opens (external-link icon)
+///
+/// ## Accessibility
+/// - Each row is a single accessibility element announced as a link, prefixed with
+///   "web link" or "external link" followed by the link text and subtitle
+/// - Dividers and row icons are hidden from assistive technologies
 struct VGRContentLinkGroup: View {
+    /// The `.linkGroup` content element whose `links` are rendered as rows.
     let element: VGRContentElement
 
     var body: some View {
@@ -19,7 +38,6 @@ struct VGRContentLinkGroup: View {
             ForEach(Array(element.links.enumerated()), id: \.offset) { index, link in
                 VGRDivider()
                     .isVisible(index != 0)
-                    .accessibilityHidden(true)
 
                 if link.type == .webviewLink {
                     NavigationLink(value: WebViewTarget(link.subtitle, link.url)) {
@@ -31,7 +49,13 @@ struct VGRContentLinkGroup: View {
 
                 } else {
 
-                    Link(destination: URL(string: link.url)!) {
+                    Button {
+                        if let url = URL(string: link.url) {
+                            VGRContentLinkOpener.open(url)
+                        } else {
+                            print("Invalid URL: \"\(link.url)\"")
+                        }
+                    } label: {
                         LinkBody(link: link)
                     }
                     .accessibilityElement(children: .ignore)
@@ -42,8 +66,8 @@ struct VGRContentLinkGroup: View {
         }
         .background(Color.Elevation.elevation1)
         .clipShape(RoundedRectangle(cornerRadius: 8))
-        .padding(.horizontal, VGRSpacing.horizontal)
-        .padding(.bottom, VGRSpacing.verticalMedium)
+        .padding(.horizontal, .Margins.medium)
+        .padding(.bottom, .Margins.small)
         .accessibilityElement(children: .contain)
     }
 
@@ -66,8 +90,8 @@ struct VGRContentLinkGroup: View {
                     .foregroundStyle(Color.Primary.action)
                     .accessibilityHidden(true)
             }
-            .padding(.vertical, 12)
-            .padding(.horizontal, VGRSpacing.horizontal)
+            .padding(.vertical, .Margins.small)
+            .padding(.horizontal, .Margins.medium)
             .contentShape(Rectangle())
         }
     }

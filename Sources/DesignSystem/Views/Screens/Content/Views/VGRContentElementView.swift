@@ -19,7 +19,7 @@ struct VGRContentElementView<CustomView: View>: View {
     var onVideoSelected: ((VGRVideo) -> Void)? = nil
     /// Optional custom view rendered when the element type is `.custom`
     let customElementView: (VGRContentElement) -> CustomView
-    
+
     init(element: VGRContentElement,
          articleId: String = "",
          dismissAction: (() -> Void)? = nil,
@@ -35,7 +35,7 @@ struct VGRContentElementView<CustomView: View>: View {
         self.onVideoSelected = onVideoSelected
         self.customElementView = customElementView
     }
-    
+
     init(element: VGRContentElement, articleId: String = "",
          dismissAction: (() -> Void)? = nil,
          onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
