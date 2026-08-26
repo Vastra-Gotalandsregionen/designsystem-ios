@@ -115,6 +115,14 @@ public struct Recurrence: Codable, Equatable, Hashable, Sendable {
     public func getRecurringDates(for dateInterval: DateInterval,
                                   filter: DateInterval? = nil,
                                   deviations: [RecurrenceDeviation] = []) -> [Date] {
+        calculateRecurringDates(for: dateInterval, filter: filter, deviations: deviations).dates
+    }
+
+    /// Internal worker that also reports the number of loop iterations,
+    /// so tests can verify the loop terminates as soon as the interval is exceeded.
+    internal func calculateRecurringDates(for dateInterval: DateInterval,
+                                          filter: DateInterval? = nil,
+                                          deviations: [RecurrenceDeviation] = []) -> (dates: [Date], iterations: Int) {
         let calendar = Calendar.current
         let interval = DateInterval(start: dateInterval.start.startOfDay, end: dateInterval.end.endOfDay)
         var currentDate = interval.start
@@ -131,33 +139,37 @@ public struct Recurrence: Codable, Equatable, Hashable, Sendable {
         }
 
         var failSafe: Int = 10000
+        var iterations: Int = 0
 
-        while true {
+        // The loop label is load-bearing: an unlabeled `break` inside the switch
+        // only exits the switch, leaving the loop to spin until failSafe runs out.
+        loop: while true {
             if failSafe <= 0 { break }
             failSafe -= 1
+            iterations += 1
 
             switch self.period {
                 case .day:
                     // Every X:th day
                     // Check if currentDate is beyond the interval before processing
                     if calendar.compare(currentDate, to: interval.end, toGranularity: .day) == .orderedDescending {
-                        break
+                        break loop
                     }
 
                     addDate(currentDate)
 
-                    guard let nextDate = calendar.date(byAdding: .day, value: self.frequency, to: currentDate) else { break }
+                    guard let nextDate = calendar.date(byAdding: .day, value: self.frequency, to: currentDate) else { break loop }
                     currentDate = nextDate
 
                 case .week:
                     // Every X:th week on [Y] days
-                    guard let weekdays = self.weekdays else { break }
+                    guard let weekdays = self.weekdays else { break loop }
 
                     let currentWeek = DateInterval(start: currentDate.startOfWeek.startOfDay, end: currentDate.endOfWeek.endOfDay)
 
                     // Check if the start of the current week is beyond the interval
                     if calendar.compare(currentWeek.start, to: interval.end, toGranularity: .day) == .orderedDescending {
-                        break
+                        break loop
                     }
 
                     let weekdayInts = weekdays.map { Int($0.rawValue) }
@@ -166,7 +178,7 @@ public struct Recurrence: Codable, Equatable, Hashable, Sendable {
 
                     guard let nextDate = calendar.date(byAdding: .weekOfYear,
                                                        value: self.frequency,
-                                                       to: currentDate) else { break }
+                                                       to: currentDate) else { break loop }
                     currentDate = nextDate
 
                 case .month:
@@ -176,16 +188,16 @@ public struct Recurrence: Codable, Equatable, Hashable, Sendable {
                         dayIndex = dateInterval.start.dayInMonth
                     }
 
-                    guard let date = calendar.dateWithSpecificDay(from: currentDate, dayIndex: dayIndex) else { break }
+                    guard let date = calendar.dateWithSpecificDay(from: currentDate, dayIndex: dayIndex) else { break loop }
 
                     // Check if the calculated date is beyond the interval before adding
                     if calendar.compare(date, to: interval.end, toGranularity: .day) == .orderedDescending {
-                        break
+                        break loop
                     }
 
                     addDate(date)
 
-                    guard let nextDate = calendar.date(byAdding: .month, value: self.frequency, to: currentDate) else { break }
+                    guard let nextDate = calendar.date(byAdding: .month, value: self.frequency, to: currentDate) else { break loop }
                     currentDate = nextDate
             }
         }
@@ -207,7 +219,7 @@ public struct Recurrence: Codable, Equatable, Hashable, Sendable {
             }
         }
 
-        return dates
+        return (dates, iterations)
     }
 }
 
