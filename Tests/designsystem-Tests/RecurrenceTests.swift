@@ -215,6 +215,52 @@ final class RecurrenceTests: XCTestCase {
         XCTAssertGreaterThan(dates.count, 79, "Should return more than 79 dates (bug returned exactly 79)")
     }
 
+    // MARK: - Loop Termination Tests
+
+    /// The `while true` loop used unlabeled `break`s inside its switch, which only
+    /// exited the switch — so every call spun through all 10 000 failSafe iterations.
+    /// These tests assert the loop stops as soon as the interval is exceeded.
+
+    func testDailyRecurrenceTerminatesEarly() throws {
+        let recurrence = Recurrence(frequency: 1, period: .day)
+        let interval = DateInterval(start: createDate("2025-01-01"), end: createDate("2025-01-05"))
+
+        let result = recurrence.calculateRecurringDates(for: interval)
+
+        XCTAssertEqual(result.dates.count, 5)
+        XCTAssertLessThanOrEqual(result.iterations, 6, "Loop should stop right after passing the interval end")
+    }
+
+    func testWeeklyRecurrenceTerminatesEarly() throws {
+        let recurrence = Recurrence(frequency: 1, period: .week, weekdays: [.monday])
+        let interval = DateInterval(start: createDate("2025-01-01"), end: createDate("2025-01-31"))
+
+        let result = recurrence.calculateRecurringDates(for: interval)
+
+        XCTAssertEqual(result.dates.count, 4)
+        XCTAssertLessThanOrEqual(result.iterations, 7, "Loop should stop right after passing the interval end")
+    }
+
+    func testWeeklyRecurrenceWithoutWeekdaysTerminatesImmediately() throws {
+        let recurrence = Recurrence(frequency: 1, period: .week, weekdays: nil)
+        let interval = DateInterval(start: createDate("2025-01-01"), end: createDate("2025-01-31"))
+
+        let result = recurrence.calculateRecurringDates(for: interval)
+
+        XCTAssertEqual(result.dates.count, 0)
+        XCTAssertEqual(result.iterations, 1, "Loop should exit on the first iteration when weekdays is nil")
+    }
+
+    func testMonthlyRecurrenceTerminatesEarly() throws {
+        let recurrence = Recurrence(frequency: 1, period: .month, index: 15)
+        let interval = DateInterval(start: createDate("2025-01-01"), end: createDate("2025-12-31"))
+
+        let result = recurrence.calculateRecurringDates(for: interval)
+
+        XCTAssertEqual(result.dates.count, 12)
+        XCTAssertLessThanOrEqual(result.iterations, 13, "Loop should stop right after passing the interval end")
+    }
+
     // MARK: - Monthly Recurrence Tests
 
     func testMonthlyRecurrenceEveryMonth() throws {
