@@ -1940,6 +1940,12 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
                     facePath.addCurve(to: CGPoint(x: 474.65, y: 156.6), controlPoint1: CGPoint(x: 462.78, y: 203.37), controlPoint2: CGPoint(x: 475.22, y: 169.15))
                     facePath.addCurve(to: CGPoint(x: 463.29, y: 132.99), controlPoint1: CGPoint(x: 474.26, y: 148.44), controlPoint2: CGPoint(x: 472.23, y: 136.14))
                     facePath.close()
+
+                    /// The face outline traces around the outside of the ears, so punch
+                    /// them out as even-odd holes to keep them from being highlighted
+                    facePath.append(Front.earLeft.path)
+                    facePath.append(Front.earRight.path)
+                    facePath.usesEvenOddFillRule = true
                     return facePath
 
                 case .scalp:

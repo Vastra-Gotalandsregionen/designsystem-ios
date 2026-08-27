@@ -106,10 +106,11 @@ public struct VGRBodyView: View {
                         .accessibilityHidden(true)
                 }
 
-                /// Draw the selected body parts, in correct order to avoid overlap
+                /// Draw the selected body parts, in correct order to avoid overlap.
+                /// Even-odd fill keeps cutouts (such as the ears in the face shape) unfilled.
                 ForEach(drawableSelectedParts.sorted(by: { $0.drawOrder < $1.drawOrder }), id: \.self) { part in
                     VGRBodyPartShape(bodyPart: part)
-                        .fill(fillColorSelection)
+                        .fill(fillColorSelection, style: FillStyle(eoFill: true))
                         .stroke(strokeColorSelection, lineWidth: strokeWidth)
                         .accessibilityHidden(true)
                 }
