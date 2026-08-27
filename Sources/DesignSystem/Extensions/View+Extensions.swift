@@ -1,6 +1,16 @@
 import Foundation
 import SwiftUI
 
+extension EnvironmentValues {
+    @Entry var isSelected: Bool = false   // iOS 18 / macOS 15; use EnvironmentKey on older targets
+}
+
+public extension View {
+    func selected(_ selected: Bool) -> some View {
+        environment(\.isSelected, selected)
+    }
+}
+
 public extension View {
     /// Conditionally shows or hides the view based on a Boolean value.
     ///
