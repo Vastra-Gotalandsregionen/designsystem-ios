@@ -149,11 +149,8 @@ struct VGRBodySelectionView: View {
         }
         .frame(maxWidth: .infinity)
         /// Modal sheet for selecting children of a container part
-        .sheet(item: $parentBodyPart) {
-            print("Dismissing selection sheet")
-        } content: { part in
-            VGRBodyPartSelectionView(orientation,
-                                     parent: part,
+        .sheet(item: $parentBodyPart) { part in
+            VGRBodyPartSelectionView(parent: part,
                                      children: part.subparts,
                                      selection: selectedParts) { selection in
 
@@ -162,8 +159,6 @@ struct VGRBodySelectionView: View {
 
                 /// Add the updated selection
                 selectedParts.formUnion(selection)
-
-                
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)

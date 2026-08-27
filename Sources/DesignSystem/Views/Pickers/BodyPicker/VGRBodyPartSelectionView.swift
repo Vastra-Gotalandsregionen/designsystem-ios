@@ -1,134 +1,172 @@
 import SwiftUI
 
-/// A view that displays a parent body part and its child parts as selectable items.
+/// A sheet that displays a parent body part and its child parts as selectable chips.
 ///
-/// Tapping the parent selects or deselects all children. Tapping individual children updates
-/// their selection state and may affect the parent's selection state. The selection state is
-/// managed locally and changes are propagated through the `onChange` callback.
+/// Tapping the parent chip selects or deselects all children except the region's
+/// "other" part. The parent is considered selected when all other children are
+/// selected, and the parent and "other" are mutually exclusive: selecting the
+/// whole region deselects "other", and completing the region while "other" is
+/// selected drops "other" since the whole region covers it. The selection state
+/// is managed locally and changes are propagated immediately through the
+/// `onChange` callback.
 struct VGRBodyPartSelectionView: View {
 
-    let orientation: VGRBodyOrientation
     let parent: VGRBodyPartData
     let children: [VGRBodyPartData]
 
     @State var localSelection: Set<String>
     let onChange: (Set<String>) -> Void
 
-    init(_ orientation: VGRBodyOrientation,
-         parent: VGRBodyPartData,
+    init(parent: VGRBodyPartData,
          children: [VGRBodyPartData],
          selection: Set<String>,
          onChange: @escaping (Set<String>) -> Void) {
 
-        self.orientation = orientation
         self.parent = parent
         self.children = children
         self.onChange = onChange
 
-        let tempSelection = selection.intersection([parent.id] + children.map { $0.id })
-        self.localSelection = State(initialValue: tempSelection).wrappedValue
+        var initialSelection = selection.intersection([parent.id] + children.map { $0.id })
+
+        /// The whole region and "other" are mutually exclusive, so drop "other"
+        /// from selections stored before this rule applied
+        if initialSelection.contains(parent.id) {
+            initialSelection.remove("\(parent.id).other")
+        }
+
+        self._localSelection = State(initialValue: initialSelection)
     }
 
-    /// selectBodyPart handles selection and deselection of individual bodyparts aswell as grouped bodyparts
-    func selectBodyPart(_ part: String, isParent: Bool = false) {
-        if isParent {
-            let shouldDeselect = localSelection.contains(parent.id)
-            if shouldDeselect {
-                localSelection.remove(parent.id)
-                localSelection.subtract(children.map { $0.id })
-            } else {
-                localSelection.insert(parent.id)
-                localSelection.formUnion(children.map { $0.id })
-            }
-        } else {
-            localSelection.formSymmetricDifference([part])
+    /// The id of the region's "other" part, which is excluded from the parent group toggle
+    private var otherID: String { "\(parent.id).other" }
 
-            if children.map({ $0.id }).allSatisfy(localSelection.contains) {
-                localSelection.insert(parent.id)
-            } else {
-                localSelection.remove(parent.id)
-            }
+    /// Children that participate in the parent group toggle (everything except "other")
+    private var groupableChildren: [VGRBodyPartData] {
+        children.filter { $0.id != otherID }
+    }
+
+    /// Toggles the whole region: the parent and all groupable children.
+    /// Selecting the whole region deselects "other" since it is redundant.
+    private func toggleParent() {
+        let groupIDs = groupableChildren.map { $0.id }
+
+        if localSelection.contains(parent.id) {
+            localSelection.remove(parent.id)
+            localSelection.subtract(groupIDs)
+        } else {
+            localSelection.insert(parent.id)
+            localSelection.formUnion(groupIDs)
+            localSelection.remove(otherID)
         }
 
         onChange(localSelection)
     }
 
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading) {
-                VStack(spacing: 0) {
-                    Item(part: parent, isSelected: localSelection.contains(parent.id))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 16)
-                        .onTapGesture {
-                            selectBodyPart(parent.id, isParent: true)
-                        }
-                    
-                    ForEach(Array(children), id: \.id) { child in
-                        VGRDivider()
-                        
-                        Item(part: child, isSelected: localSelection.contains(child.id))
-                            .padding(.leading, 32)
-                            .padding(.trailing, 16)
-                            .padding(.vertical, 16)
-                            .onTapGesture {
-                                selectBodyPart(child.id)
-                            }
-                    }
-                }
-                .background(Color.Elevation.elevation1)
-                .cornerRadius(8)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 32)
-            .frame(maxHeight: .infinity, alignment: .top)
+    /// Toggles a single child and derives the parent's selection state from the groupable children.
+    /// When all groupable children are selected the whole region is selected, and "other" is
+    /// deselected since the whole region covers it.
+    private func toggleChild(_ id: String) {
+        localSelection.formSymmetricDifference([id])
+
+        if groupableChildren.map({ $0.id }).allSatisfy(localSelection.contains) {
+            localSelection.insert(parent.id)
+            localSelection.remove(otherID)
+        } else {
+            localSelection.remove(parent.id)
         }
-        .background(Color.Elevation.background)
+
+        onChange(localSelection)
     }
 
-    private struct Item: View {
-        let part: VGRBodyPartData
-        let isSelected: Bool
+    private func title(for part: VGRBodyPartData) -> String {
+        "bodypicker.\(part.id)".localizedBundle
+    }
 
-        var a11yLabel: String {
-            let name = "bodypicker.\(part.id)".localizedBundle
-            return isSelected ? "\(name), \("general.selected".localizedBundle)" : name
-        }
+    /// The side is voiced first ("Vänster, Öra") so VoiceOver users hear it before the part name
+    private func a11yLabel(title: String, side: VGRBodySide) -> String {
+        guard side != .notApplicable else { return title }
+        return "bodypicker.side.\(side.rawValue)".localizedBundle + ", " + title
+    }
 
-        var body: some View {
-            HStack(spacing: 4) {
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(Color.Primary.action)
+    var body: some View {
+        VGRContainer {
+            VGRSection {
+                /// Parent chip with a trailing side badge when the region is one-sided
+                HStack {
+                    VGRChipButton("bodypicker.\(parent.id).whole".localizedBundle) {
+                        toggleParent()
+                    }
+                    .maxLeading()
+                    .selected(localSelection.contains(parent.id))
+                    .accessibilityLabel(a11yLabel(title: "bodypicker.\(parent.id).whole".localizedBundle,
+                                                  side: parent.side))
 
-                Text("bodypicker.\(part.id)".localizedBundle)
-                    .font(.body.weight(.medium))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    if parent.side != .notApplicable {
+                        SideBadge(side: parent.side)
+                            .accessibilityHidden(true)
+                    }
+                }
 
-                if part.side != .notApplicable {
-                    Text("bodypicker.side.\(part.side.rawValue)".localizedBundle)
-                        .font(.caption2).fontWeight(.semibold)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .foregroundStyle(part.side == .left ? Color.Status.errorText : Color.Status.successText)
-                        .background(part.side == .left ? Color.Status.errorSurface : Color.Status.successSurface)
-                        .cornerRadius(46)
+                Text("bodypicker.details.count".localizedBundleFormat(arguments: children.count))
+                    .font(.bodyRegular)
+                    .padding(.horizontal, .Margins.medium)
+                    .accessibilityAddTraits(.isHeader)
+
+                VGRFlowLayout(
+                    horizontalSpacing: .Margins.xtraSmall,
+                    verticalSpacing: .Margins.medium
+                ) {
+                    ForEach(children, id: \.id) { child in
+                        /// Only show a side badge when the child's side differs from the
+                        /// parent's, e.g. ears on the head but not fingers on the left hand
+                        let showsSide = child.side != .notApplicable && child.side != parent.side
+
+                        HStack(spacing: .Margins.xtraSmall / 2) {
+                            VGRChipButton(title(for: child)) {
+                                toggleChild(child.id)
+                            }
+                            .selected(localSelection.contains(child.id))
+                            .accessibilityLabel(a11yLabel(title: title(for: child),
+                                                          side: showsSide ? child.side : .notApplicable))
+                        }
+                    }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(a11yLabel)
-            .accessibilityRespondsToUserInteraction()
+        }
+    }
+
+    /// A compact capsule indicating which side of the body a part belongs to
+    private struct SideBadge: View {
+        let side: VGRBodySide
+
+        var body: some View {
+            Text("bodypicker.side.\(side.rawValue)".localizedBundle)
+                .font(.caption2).fontWeight(.semibold)
+                .padding(.horizontal, .Margins.medium)
+                .padding(.vertical, .Margins.xtraSmall)
+                .foregroundStyle(side == .left ? Color.Status.errorText : Color.Status.successText)
+                .background(side == .left ? Color.Status.errorSurface : Color.Status.successSurface)
+                .clipShape(Capsule())
         }
     }
 }
 
-#Preview {
-    let parent: VGRBodyPartData = VGRBodyPartData.body.randomElement()!
-    let selected: Set<String> = [parent.subparts.randomElement()!.id]
+#Preview("Huvud") {
+    let parent = VGRBodyPartData.body.first(where: { $0.id == "head" })!
+    let selected: Set<String> = ["head.scalp", "head.left.ear"]
 
-    VGRBodyPartSelectionView(.front,
-                             parent: parent,
+    VGRBodyPartSelectionView(parent: parent,
+                             children: parent.subparts,
+                             selection: selected) { selected in
+        for part in selected { print("- ", part) }
+    }
+}
+
+#Preview("Vänster arm") {
+    let parent = VGRBodyPartData.body.first(where: { $0.id == "left.arm" })!
+    let selected: Set<String> = ["left.arm.other"]
+
+    VGRBodyPartSelectionView(parent: parent,
                              children: parent.subparts,
                              selection: selected) { selected in
         for part in selected { print("- ", part) }

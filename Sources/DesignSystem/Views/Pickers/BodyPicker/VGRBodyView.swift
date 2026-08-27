@@ -38,9 +38,11 @@ public struct VGRBodyView: View {
             parts.flatMap { part in
                 var result: [VGRBodyPartData] = []
 
-                /// If selected and has a visual part for the orientation, include it
+                /// If selected and has a visual part for the orientation, include it.
+                /// Parts with no visual representation at all (eg. "other" details)
+                /// are always included so they are voiced on both orientations.
                 if selectedParts.contains(part.id),
-                   part.visualparts[orientation] != nil {
+                   part.visualparts[orientation] != nil || part.visualparts.isEmpty {
                     result.append(part)
                 }
 
@@ -79,7 +81,7 @@ public struct VGRBodyView: View {
     public init(orientation: VGRBodyOrientation = .front,
                 selectedParts: Set<String>,
                 fillColor: Color = Color.Accent.brownSurfaceFixed,
-                fillColorSelection: Color = Color.Accent.pinkGraphicFixed,
+                fillColorSelection: Color = Color.Accent.purpleGraphicFixed,
                 strokeColor: Color = Color.black,
                 strokeWidth: CGFloat = 1,
                 strokeColorSelection: Color = Color.black) {

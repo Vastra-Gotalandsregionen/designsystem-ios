@@ -31,8 +31,10 @@
 "bodypicker.summary" = "Kropp där följande kroppsdelar är valda: %@";
 "bodypicker.summary.none" = "Kropp där inga kroppsdelar är valda";
 "bodypicker.unknown" = "Okänd";
+"bodypicker.details.count" = "Detaljer (%d)";
 
 "bodypicker.head" = "Huvud";
+"bodypicker.head.whole" = "Hela huvudet";
 "bodypicker.head.face" = "Ansikte";
 "bodypicker.head.throat" = "Hals";
 "bodypicker.head.scalp" = "Hårbotten";
@@ -41,51 +43,67 @@
 "bodypicker.head.eyes" = "Ögon";
 "bodypicker.head.left.ear" = "Öra";
 "bodypicker.head.right.ear" = "Öra";
+"bodypicker.head.other" = "Annan detalj";
 
 "bodypicker.torso" = "Överkropp";
+"bodypicker.torso.whole" = "Hela överkroppen";
 "bodypicker.torso.chest" = "Bröst";
 "bodypicker.torso.front" = "Mage / Bröst";
 "bodypicker.torso.back" = "Rygg";
 "bodypicker.torso.right.armpit" = "Armhåla";
 "bodypicker.torso.left.armpit" = "Armhåla";
+"bodypicker.torso.other" = "Annan detalj";
 
 "bodypicker.left.arm" = "Arm";
+"bodypicker.left.arm.whole" = "Hela armen";
 "bodypicker.left.upper.arm" = "Överarm";
 "bodypicker.left.armfold" = "Armveck";
 "bodypicker.left.elbow" = "Armbåge";
 "bodypicker.left.under.arm" = "Underarm";
+"bodypicker.left.arm.other" = "Annan detalj";
 
 "bodypicker.left.hand" = "Hand";
+"bodypicker.left.hand.whole" = "Hela handen";
 "bodypicker.left.hand.palm" = "Handflata";
 "bodypicker.left.hand.back.of.hand" = "Handrygg";
 "bodypicker.left.hand.fingers" = "Fingrar";
 "bodypicker.left.hand.nails" = "Naglar";
+"bodypicker.left.hand.other" = "Annan detalj";
 
 "bodypicker.right.arm" = "Arm";
+"bodypicker.right.arm.whole" = "Hela armen";
 "bodypicker.right.upper.arm" = "Överarm";
 "bodypicker.right.armfold" = "Armveck";
 "bodypicker.right.elbow" = "Armbåge";
 "bodypicker.right.under.arm" = "Underarm";
+"bodypicker.right.arm.other" = "Annan detalj";
 
 "bodypicker.right.hand" = "Hand";
+"bodypicker.right.hand.whole" = "Hela handen";
 "bodypicker.right.hand.palm" = "Handflata";
 "bodypicker.right.hand.back.of.hand" = "Handrygg";
 "bodypicker.right.hand.fingers" = "Fingrar";
 "bodypicker.right.hand.nails" = "Naglar";
+"bodypicker.right.hand.other" = "Annan detalj";
 
 "bodypicker.left.leg" = "Ben";
+"bodypicker.left.leg.whole" = "Hela benet";
 "bodypicker.left.upper.leg" = "Lår";
 "bodypicker.left.knee" = "Knä";
 "bodypicker.left.hollow.of.knee" = "Knäveck";
 "bodypicker.left.lower.leg" = "Smalben/vad";
+"bodypicker.left.leg.other" = "Annan detalj";
 
 "bodypicker.right.leg" = "Ben";
+"bodypicker.right.leg.whole" = "Hela benet";
 "bodypicker.right.upper.leg" = "Lår";
 "bodypicker.right.knee" = "Knä";
 "bodypicker.right.hollow.of.knee" = "Knäveck";
 "bodypicker.right.lower.leg" = "Smalben/vad";
+"bodypicker.right.leg.other" = "Annan detalj";
 
 "bodypicker.pelvis" = "Bäcken";
+"bodypicker.pelvis.whole" = "Hela bäckenet";
 "bodypicker.pelvis.front.genitalia" = "Genitalier";
 "bodypicker.pelvis.back.between.cheeks" = "Mellan skinkorna";
 "bodypicker.pelvis.left.hip" = "Höft";
@@ -93,16 +111,21 @@
 "bodypicker.pelvis.left.groin" = "Ljumske";
 "bodypicker.pelvis.right.groin" = "Ljumske";
 "bodypicker.pelvis.buttocks" = "Skinkor";
+"bodypicker.pelvis.other" = "Annan detalj";
 
 "bodypicker.left.foot" = "Fot";
+"bodypicker.left.foot.whole" = "Hela foten";
 "bodypicker.left.foot.base" = "Fotrygg";
 "bodypicker.left.foot.sole" = "Fotsula";
 "bodypicker.left.foot.toenails" = "Tånaglar";
+"bodypicker.left.foot.other" = "Annan detalj";
 
 "bodypicker.right.foot" = "Fot";
+"bodypicker.right.foot.whole" = "Hela foten";
 "bodypicker.right.foot.base" = "Fotrygg";
 "bodypicker.right.foot.sole" = "Fotsula";
 "bodypicker.right.foot.toenails" = "Tånaglar";
+"bodypicker.right.foot.other" = "Annan detalj";
 
 /* Duration picker */
 "durationpicker.minutes.full" = "minuter";
