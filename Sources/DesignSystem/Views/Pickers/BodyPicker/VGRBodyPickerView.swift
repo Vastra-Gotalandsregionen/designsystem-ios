@@ -73,9 +73,9 @@ public struct VGRBodyPickerView: View {
                     }
                 }
             }
-            .padding(.top, 32)
+            .padding(.top, .Margins.xtraLarge)
         }
-        .padding(16)
+        .padding(.Margins.medium)
         .cornerRadius(16)
     }
 }
@@ -84,13 +84,12 @@ public struct VGRBodyPickerView: View {
     @Previewable @State var selectedParts: Set<String> = []
 
     NavigationStack {
-        ScrollView {
+        VGRContainer {
             VGRBodyPickerView(selectedParts: $selectedParts)
                 .background(Color.Elevation.elevation1)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .padding(16)
         }
-        .background(Color.Accent.purpleSurfaceMinimal)
         .navigationTitle("bodypicker.title".localizedBundle)
         .navigationBarTitleDisplayMode(.inline)
     }

@@ -43,6 +43,7 @@
 "bodypicker.head.eyes" = "Ögon";
 "bodypicker.head.left.ear" = "Öra";
 "bodypicker.head.right.ear" = "Öra";
+"bodypicker.head.ears" = "Öron";
 "bodypicker.head.other" = "Annan detalj";
 
 "bodypicker.torso" = "Överkropp";

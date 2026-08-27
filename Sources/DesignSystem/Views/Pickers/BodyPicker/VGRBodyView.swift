@@ -87,7 +87,7 @@ public struct VGRBodyView: View {
                 strokeColorSelection: Color = Color.black) {
 
         self.orientation = orientation
-        self.selectedParts = selectedParts
+        self.selectedParts = VGRBodyPartData.normalized(selectedParts)
         self.fillColor = fillColor
         self.fillColorSelection = fillColorSelection
         self.strokeColor = strokeColor

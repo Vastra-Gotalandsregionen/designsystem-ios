@@ -15,6 +15,9 @@ struct VGRBodySelectionView: View {
     /// drawableSelectedParts returns the VGRBodyParts that can be drawn using the
     /// bodyHieararchy and the selectedParts property
     private var drawableSelectedParts: Set<VGRBodyPart> {
+        /// Translate legacy ids so selections stored by older app versions still highlight
+        let selectedParts = VGRBodyPartData.normalized(selectedParts)
+
         func collect(from parts: [VGRBodyPartData]) -> [VGRBodyPart] {
             parts.flatMap { part in
                 var result: [VGRBodyPart] = []
@@ -150,18 +153,24 @@ struct VGRBodySelectionView: View {
         .frame(maxWidth: .infinity)
         /// Modal sheet for selecting children of a container part
         .sheet(item: $parentBodyPart) { part in
-            VGRBodyPartSelectionView(parent: part,
-                                     children: part.subparts,
-                                     selection: selectedParts) { selection in
+            NavigationStack {
+                VGRBodyPartSelectionView(parent: part,
+                                         children: part.subparts,
+                                         selection: selectedParts) { selection in
 
-                /// Remove the parent and its children from the main selection
-                selectedParts.subtract([part.id] + (part.subparts.map { $0.id }))
+                    /// Translate legacy ids first so they are replaced by the edit
+                    /// below instead of lingering in the selection
+                    selectedParts = VGRBodyPartData.normalized(selectedParts)
 
-                /// Add the updated selection
-                selectedParts.formUnion(selection)
+                    /// Remove the parent and its children from the main selection
+                    selectedParts.subtract([part.id] + (part.subparts.map { $0.id }))
+
+                    /// Add the updated selection
+                    selectedParts.formUnion(selection)
+                }
             }
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
+             .presentationDetents([.medium, .large])
+             .presentationDragIndicator(.visible)
         }
     }
 }

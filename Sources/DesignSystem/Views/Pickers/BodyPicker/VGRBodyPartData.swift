@@ -106,6 +106,21 @@ extension VGRBodyPartData {
         return findParent(in: body, lookingFor: id)
     }
 
+    /// Maps legacy body part ids to their current replacements.
+    ///
+    /// Selections stored by client apps before a body part was renamed or merged
+    /// may still contain the old ids. Use `normalized(_:)` to translate such a
+    /// selection before matching it against the current body hierarchy.
+    public static let legacyAliases: [String: String] = [
+        "head.left.ear": "head.ears",
+        "head.right.ear": "head.ears",
+    ]
+
+    /// Returns the selection with any legacy ids replaced by their current equivalents.
+    public static func normalized(_ selection: Set<String>) -> Set<String> {
+        Set(selection.map { legacyAliases[$0] ?? $0 })
+    }
+
     public static let body: [VGRBodyPartData] = [
         .init(
             id: "left.leg",
@@ -140,8 +155,7 @@ extension VGRBodyPartData {
                 .init(id: "head.scalp", visualparts: [.front: VGRBodyPart.front(.scalp), .back: VGRBodyPart.back(.scalp)]),
                 .init(id: "head.neck", visualparts: [.back: VGRBodyPart.back(.neck)]),
                 .init(id: "head.eyes", visualparts: [.front: VGRBodyPart.front(.eyes)]),
-                .init(id: "head.left.ear", side: .left, visualparts: [.front: VGRBodyPart.front(.earLeft), .back: VGRBodyPart.back(.earLeft)]),
-                .init(id: "head.right.ear", side: .right, visualparts: [.front: VGRBodyPart.front(.earRight), .back: VGRBodyPart.back(.earRight)]),
+                .init(id: "head.ears", visualparts: [.front: VGRBodyPart.front(.ears), .back: VGRBodyPart.back(.ears)]),
                 .init(id: "head.other"),
             ]
         ),

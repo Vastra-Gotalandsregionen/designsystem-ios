@@ -80,7 +80,8 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
              backOfHead,
              scalp,
              earLeft,
-             earRight
+             earRight,
+             ears
 
         case torso,
              back,
@@ -129,6 +130,13 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
 
         var path: UIBezierPath {
             switch self {
+                case .ears:
+                    /// Combined shape of both ears, used by the merged "head.ears" body part
+                    let earsPath = UIBezierPath()
+                    earsPath.append(Back.earLeft.path)
+                    earsPath.append(Back.earRight.path)
+                    return earsPath
+
                 case .rightFoot:
                     let rightFootPath = UIBezierPath()
                     rightFootPath.move(to: CGPoint(x: 384.22, y: 1827.03))
@@ -1681,7 +1689,8 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
              scalp = "scalp",
              eyes = "eyes",
              earLeft = "ear_left",
-             earRight = "ear_right"
+             earRight = "ear_right",
+             ears = "ears"
 
         case upperBody = "upper_body",
              torso = "torso",
@@ -1731,6 +1740,13 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
 
         public var path: UIBezierPath {
             switch self {
+                case .ears:
+                    /// Combined shape of both ears, used by the merged "head.ears" body part
+                    let earsPath = UIBezierPath()
+                    earsPath.append(Front.earLeft.path)
+                    earsPath.append(Front.earRight.path)
+                    return earsPath
+
                 case .faceFeatures:
                     let faceFeaturesPath = UIBezierPath()
                     let sub0 = UIBezierPath()

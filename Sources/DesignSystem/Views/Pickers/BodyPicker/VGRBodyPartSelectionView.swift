@@ -26,7 +26,7 @@ struct VGRBodyPartSelectionView: View {
         self.children = children
         self.onChange = onChange
 
-        var initialSelection = selection.intersection([parent.id] + children.map { $0.id })
+        var initialSelection = VGRBodyPartData.normalized(selection).intersection([parent.id] + children.map { $0.id })
 
         /// The whole region and "other" are mutually exclusive, so drop "other"
         /// from selections stored before this rule applied
@@ -106,6 +106,7 @@ struct VGRBodyPartSelectionView: View {
                             .accessibilityHidden(true)
                     }
                 }
+                .padding(.top, .Margins.xtraLarge)
 
                 Text("bodypicker.details.count".localizedBundleFormat(arguments: children.count))
                     .font(.bodyRegular)
@@ -153,6 +154,7 @@ struct VGRBodyPartSelectionView: View {
 
 #Preview("Huvud") {
     let parent = VGRBodyPartData.body.first(where: { $0.id == "head" })!
+    /// "head.left.ear" is a legacy id: it should show up as the "Öron" chip being selected
     let selected: Set<String> = ["head.scalp", "head.left.ear"]
 
     VGRBodyPartSelectionView(parent: parent,
