@@ -1,13 +1,43 @@
 import SwiftUI
 
+/// A stateless capsule chip used for compact, toggleable options (filters, tags,
+/// body part details, etc).
+///
+/// The chip is purely visual and reads both of its states from the environment:
+/// selection via the design system's `.selected(_:)` modifier and enabled/disabled
+/// via SwiftUI's standard `.disabled(_:)`. Selected chips render filled with a
+/// leading checkmark; unselected chips render outlined, showing `symbol` if one
+/// is provided.
+///
+/// For a tappable chip, use ``VGRChipButton`` which wraps this view and adds
+/// button behavior.
+///
+/// ### Usage
+/// ```swift
+/// VGRChip("Hårbotten")
+///     .selected(true)
+///
+/// VGRChip("Favoriter", symbol: "heart")
+///
+/// VGRChip("Ej tillgänglig")
+///     .disabled(true)
+/// ```
 public struct VGRChip: View {
 
+    /// The chip's text label.
     public var title: String
+
+    /// Optional SF Symbol shown before the title when the chip is unselected.
+    /// When selected, the symbol is replaced by a checkmark.
     public var symbol: String = ""
 
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.isSelected) private var isSelected
 
+    /// Creates a chip.
+    /// - Parameters:
+    ///   - title: The chip's text label.
+    ///   - symbol: Optional SF Symbol name shown when the chip is unselected.
     public init(_ title: String, symbol: String = "") {
         self.title = title
         self.symbol = symbol
