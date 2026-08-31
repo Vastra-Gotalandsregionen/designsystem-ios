@@ -22,14 +22,16 @@ struct VGRBodySelectionView: View {
             parts.flatMap { part in
                 var result: [VGRBodyPart] = []
 
-                /// If selected, grab the visual part for current orientation
+                /// If selected, grab the visual part for current orientation.
+                /// A selected container is drawn as its own whole-region shape,
+                /// so its subparts are skipped to avoid stacking child shapes on top.
                 if selectedParts.contains(part.id),
                    let visual = part.visualparts[orientation] {
                     result.append(visual)
+                } else {
+                    /// Recursively collect from subparts
+                    result.append(contentsOf: collect(from: part.subparts))
                 }
-
-                /// Recursively collect from subparts
-                result.append(contentsOf: collect(from: part.subparts))
                 return result
             }
         }
@@ -141,6 +143,16 @@ struct VGRBodySelectionView: View {
                         .accessibilityHidden(true)
                 }
 
+                /// Re-stroke the default region boundaries on top of the selection
+                /// fills, so adjacent regions covered by one container shape stay
+                /// visually distinct (eg. the head shape includes the throat area)
+                ForEach(defaultBodyParts, id: \.self) { bodyPart in
+                    VGRBodyPartShape(bodyPart: bodyPart)
+                        .stroke(strokeColor, lineWidth: strokeWidth)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                }
+
                 /// Draw non-selectable overlay parts (such as facial features)
                 ForEach(overlayParts, id:\.self) { part in
                     VGRBodyPartShape(bodyPart: part)
@@ -170,7 +182,7 @@ struct VGRBodySelectionView: View {
                     selectedParts.formUnion(selection)
                 }
             }
-             .presentationDetents([.medium, .large])
+            .presentationDetents([.fraction(0.4), .medium, .large])
              .presentationDragIndicator(.visible)
         }
     }
