@@ -109,8 +109,10 @@
 "bodypicker.pelvis.back.between.cheeks" = "Ytan mellan skinkorna";
 "bodypicker.pelvis.left.hip" = "Höft";
 "bodypicker.pelvis.right.hip" = "Höft";
+"bodypicker.pelvis.hips" = "Höfter";
 "bodypicker.pelvis.left.groin" = "Ljumske";
 "bodypicker.pelvis.right.groin" = "Ljumske";
+"bodypicker.pelvis.groins" = "Ljumskar";
 "bodypicker.pelvis.buttocks" = "Skinkor";
 "bodypicker.pelvis.other" = "Annan detalj";
 

@@ -118,7 +118,8 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
         case butt,
              betweenCheeks,
              hipLeft,
-             hipRight
+             hipRight,
+             hips
 
         case fingersLeft,
              fingersRight,
@@ -136,6 +137,13 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
                     earsPath.append(Back.earLeft.path)
                     earsPath.append(Back.earRight.path)
                     return earsPath
+
+                case .hips:
+                    /// Combined shape of both hips, used by the merged "pelvis.hips" body part
+                    let hipsPath = UIBezierPath()
+                    hipsPath.append(Back.hipLeft.path)
+                    hipsPath.append(Back.hipRight.path)
+                    return hipsPath
 
                 case .rightFoot:
                     let rightFootPath = UIBezierPath()
@@ -1726,9 +1734,11 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
 
         case groinLeft = "groin_left",
              groinRight = "groin_right",
+             groins = "groins",
              genitals = "genitals",
              hipLeft = "hip_left",
-             hipRight = "hip_right"
+             hipRight = "hip_right",
+             hips = "hips"
 
         case fingersLeft = "fingers_left",
              fingersRight = "fingers_right"
@@ -1746,6 +1756,20 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
                     earsPath.append(Front.earLeft.path)
                     earsPath.append(Front.earRight.path)
                     return earsPath
+
+                case .hips:
+                    /// Combined shape of both hips, used by the merged "pelvis.hips" body part
+                    let hipsPath = UIBezierPath()
+                    hipsPath.append(Front.hipLeft.path)
+                    hipsPath.append(Front.hipRight.path)
+                    return hipsPath
+
+                case .groins:
+                    /// Combined shape of both groins, used by the merged "pelvis.groins" body part
+                    let groinsPath = UIBezierPath()
+                    groinsPath.append(Front.groinLeft.path)
+                    groinsPath.append(Front.groinRight.path)
+                    return groinsPath
 
                 case .faceFeatures:
                     let faceFeaturesPath = UIBezierPath()

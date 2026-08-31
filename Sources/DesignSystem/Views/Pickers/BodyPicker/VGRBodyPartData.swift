@@ -114,6 +114,10 @@ extension VGRBodyPartData {
     public static let legacyAliases: [String: String] = [
         "head.left.ear": "head.ears",
         "head.right.ear": "head.ears",
+        "pelvis.left.hip": "pelvis.hips",
+        "pelvis.right.hip": "pelvis.hips",
+        "pelvis.left.groin": "pelvis.groins",
+        "pelvis.right.groin": "pelvis.groins",
     ]
 
     /// Returns the selection with any legacy ids replaced by their current equivalents.
@@ -165,10 +169,8 @@ extension VGRBodyPartData {
             subparts: [
                 .init(id: "pelvis.front.genitalia", visualparts: [.front: VGRBodyPart.front(.genitals)]),
                 .init(id: "pelvis.back.between.cheeks", visualparts: [.back: VGRBodyPart.back(.betweenCheeks)]),
-                .init(id: "pelvis.left.hip", side: .left, visualparts: [.front: VGRBodyPart.front(.hipLeft), .back: VGRBodyPart.back(.hipLeft)]),
-                .init(id: "pelvis.right.hip", side: .right, visualparts: [.front: VGRBodyPart.front(.hipRight), .back: VGRBodyPart.back(.hipRight)]),
-                .init(id: "pelvis.left.groin", side: .left, visualparts: [.front: VGRBodyPart.front(.groinLeft)]),
-                .init(id: "pelvis.right.groin", side: .right, visualparts: [.front: VGRBodyPart.front(.groinRight)]),
+                .init(id: "pelvis.hips", visualparts: [.front: VGRBodyPart.front(.hips), .back: VGRBodyPart.back(.hips)]),
+                .init(id: "pelvis.groins", visualparts: [.front: VGRBodyPart.front(.groins)]),
                 .init(id: "pelvis.buttocks", visualparts: [.back: VGRBodyPart.back(.butt)]),
                 .init(id: "pelvis.other"),
             ]
