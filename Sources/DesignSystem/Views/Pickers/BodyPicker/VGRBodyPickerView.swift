@@ -31,8 +31,48 @@ public struct VGRBodyPickerView: View {
     }
 
     public var body: some View {
-        VStack {
-            VGRSegmentedPicker(
+        ScrollView {
+            VStack {
+                HStack(alignment: .center) {
+                    VGRBodySelectionView(orientation: orientationBinding,
+                                         selectedParts: $selectedParts,
+                                         fillColor: fillColor,
+                                         fillColorSelection: fillColorSelection,
+                                         strokeColor: strokeColor,
+                                         strokeWidth: strokeWidth,
+                                         strokeColorSelection: strokeColorSelection)
+                    .onChange(of: selectedParts) { oldValue, newValue in
+                        let changes = newValue.subtracting(oldValue)
+
+                        /// If the change is a single body part
+                        if changes.count == 1,
+                           let first = changes.first,
+                           let currentOrientation = selectedOrientation {
+
+                            /// Check if the newly selected part is only visible on the opposite orientation
+                            if let partData = VGRBodyPartData.parts(matching: [first]).first {
+                                let availableOrientations = Set(partData.visualparts.keys)
+
+                                /// If part is only visible on one orientation and it's not the current one, switch
+                                if availableOrientations.count == 1,
+                                   let onlyOrientation = availableOrientations.first,
+                                   onlyOrientation != currentOrientation {
+                                    selectedOrientation = onlyOrientation
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.top, .Margins.xtraLarge * 2)
+                .padding(.bottom, .Margins.xtraLarge)
+            }
+            .background(Color.Elevation.elevation1)
+            .cornerRadius(.Radius.mainRadius)
+            .padding(.horizontal, .Margins.medium)
+        }
+        .background(Color.Accent.purpleSurfaceMinimal)
+        .overlay(alignment: .top) {
+            VGRSegmentedControl(
                 items: [VGRBodyOrientation.front, VGRBodyOrientation.back],
                 selectedItem: $selectedOrientation,
                 displayText: { orientation in
@@ -42,41 +82,10 @@ public struct VGRBodyPickerView: View {
                     "bodypicker.\(orientation.rawValue)".localizedBundle
                 }
             )
-
-            HStack(alignment: .center) {
-                VGRBodySelectionView(orientation: orientationBinding,
-                                     selectedParts: $selectedParts,
-                                     fillColor: fillColor,
-                                     fillColorSelection: fillColorSelection,
-                                     strokeColor: strokeColor,
-                                     strokeWidth: strokeWidth,
-                                     strokeColorSelection: strokeColorSelection)
-                .onChange(of: selectedParts) { oldValue, newValue in
-                    let changes = newValue.subtracting(oldValue)
-
-                    /// If the change is a single body part
-                    if changes.count == 1,
-                       let first = changes.first,
-                       let currentOrientation = selectedOrientation {
-
-                        /// Check if the newly selected part is only visible on the opposite orientation
-                        if let partData = VGRBodyPartData.parts(matching: [first]).first {
-                            let availableOrientations = Set(partData.visualparts.keys)
-
-                            /// If part is only visible on one orientation and it's not the current one, switch
-                            if availableOrientations.count == 1,
-                               let onlyOrientation = availableOrientations.first,
-                               onlyOrientation != currentOrientation {
-                                selectedOrientation = onlyOrientation
-                            }
-                        }
-                    }
-                }
-            }
-            .padding(.top, .Margins.xtraLarge)
+            .padding(.horizontal, .Margins.xtraLarge)
+            .padding(.top, .Margins.medium)
         }
-        .padding(.Margins.medium)
-        .cornerRadius(16)
+
     }
 }
 
@@ -84,13 +93,8 @@ public struct VGRBodyPickerView: View {
     @Previewable @State var selectedParts: Set<String> = []
 
     NavigationStack {
-        VGRContainer {
-            VGRBodyPickerView(selectedParts: $selectedParts)
-                .background(Color.Elevation.elevation1)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .padding(16)
-        }
-        .navigationTitle("bodypicker.title".localizedBundle)
-        .navigationBarTitleDisplayMode(.inline)
+        VGRBodyPickerView(selectedParts: $selectedParts)
+            .navigationTitle("bodypicker.title".localizedBundle)
+            .navigationBarTitleDisplayMode(.inline)
     }
 }
