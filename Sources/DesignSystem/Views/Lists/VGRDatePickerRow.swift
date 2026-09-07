@@ -46,6 +46,8 @@ import SwiftUI
 /// ```
 public struct VGRDatePickerRow<Icon: View>: View {
 
+    @Environment(\.colorScheme) private var colorScheme
+
     private enum DateRange {
         case unbounded
         case closed(ClosedRange<Date>)
@@ -199,7 +201,7 @@ public struct VGRDatePickerRow<Icon: View>: View {
                 }
             }
             .accessibilityLabel(title)
-            .tint(Color.Primary.action)
+            .tint(colorScheme == .dark ? .white : Color.Primary.action)
         })
     }
 }
