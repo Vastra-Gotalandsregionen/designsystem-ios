@@ -1,59 +1,96 @@
+import Foundation
 import SwiftUI
-
 
 /// A `Shape` that renders a specific body part using a vector path.
 ///
 /// The shape is based on a `VGRBodyPart` and normalized to fit the given
-/// rectangle while preserving aspect ratio. 
+/// rectangle while preserving aspect ratio.
+///
+/// Body part paths are immutable and expensive to build (each is hand-coded as
+/// hundreds of curve commands), so the unscaled `Path` of every part is built
+/// once by `VGRBodyPathCache` and fitting it to `rect` is a single affine
+/// transform. This matters because SwiftUI evaluates `path(in:)` for the fill,
+/// again for the stroke, and again for every `contentShape` hit test.
 struct VGRBodyPartShape: Shape {
     let bodyPart: VGRBodyPart
 
     func path(in rect: CGRect) -> Path {
-        let bpath = UIBezierPath()
-        bpath.append(bodyPart.path)
-        let norm = normalize(bpath, to: rect)
-        return Path(norm.cgPath)
+        VGRBodyPathCache.shared
+            .path(for: bodyPart)
+            .applying(VGRBodyPathCache.transform(fitting: rect))
+    }
+}
+
+/// A `Shape` that renders the outlines of every neutral body part for an
+/// orientation as one path, so region boundaries can be stroked in a single
+/// pass instead of once per part.
+struct VGRBodyOutlineShape: Shape {
+    let orientation: VGRBodyOrientation
+
+    func path(in rect: CGRect) -> Path {
+        VGRBodyPathCache.shared
+            .outline(for: orientation)
+            .applying(VGRBodyPathCache.transform(fitting: rect))
+    }
+}
+
+/// Lazily filled, thread-safe cache of unscaled body part paths.
+///
+/// Keyed by `VGRBodyPart`, so composite parts (ears, hips, groins, the face
+/// with its ear cutouts) are cached as their own entries and their sub-paths
+/// are only ever built once.
+final class VGRBodyPathCache: @unchecked Sendable {
+    static let shared = VGRBodyPathCache()
+
+    /// Absolute size (hardcoded) of the Body vector (from Figma)
+    static let sourceBounds = CGRect(x: 0, y: 0, width: 721, height: 1979)
+
+    private let lock = NSLock()
+    private var paths: [VGRBodyPart: Path] = [:]
+    private var outlines: [VGRBodyOrientation: Path] = [:]
+
+    /// Returns the transform that fits the source vector into `rect`, keeping
+    /// the aspect ratio and anchoring at the rect's origin.
+    static func transform(fitting rect: CGRect) -> CGAffineTransform {
+        let scale = min(rect.width / sourceBounds.width, rect.height / sourceBounds.height)
+        return CGAffineTransform(a: scale, b: 0, c: 0, d: scale,
+                                 tx: rect.minX - sourceBounds.minX * scale,
+                                 ty: rect.minY - sourceBounds.minY * scale)
     }
 
-    /// Normalize resizes the original body image to fit the shapes rectangle
-    private func normalize(_ path: UIBezierPath, to rect: CGRect) -> UIBezierPath {
-        /// Absolute size (hardcoded) of the Body vector (from Figma)
-        let boundingBox = CGRect(x: 0, y: 0, width: 721, height: 1979)
-        let scaleX = rect.width / boundingBox.width
-        let scaleY = rect.height / boundingBox.height
-        let scale = min(scaleX, scaleY)  // Keep aspect ratio
+    /// The unscaled path of a single body part, built on first use.
+    func path(for part: VGRBodyPart) -> Path {
+        lock.lock()
+        defer { lock.unlock() }
 
-        let normalizedPath = UIBezierPath()
+        if let cached = paths[part] { return cached }
 
-        path.cgPath.applyWithBlock { elementPointer in
-            let element = elementPointer.pointee
-            let points = element.points
+        let built = Path(part.path.cgPath)
+        paths[part] = built
+        return built
+    }
 
-            switch element.type {
-                case .moveToPoint:
-                    normalizedPath.move(to: scalePoint(points[0], boundingBox, scale, rect))
-                case .addLineToPoint:
-                    normalizedPath.addLine(to: scalePoint(points[0], boundingBox, scale, rect))
-                case .addQuadCurveToPoint:
-                    normalizedPath.addQuadCurve(to: scalePoint(points[1], boundingBox, scale, rect),
-                                                controlPoint: scalePoint(points[0], boundingBox, scale, rect))
-                case .addCurveToPoint:
-                    normalizedPath.addCurve(to: scalePoint(points[2], boundingBox, scale, rect),
-                                            controlPoint1: scalePoint(points[0], boundingBox, scale, rect),
-                                            controlPoint2: scalePoint(points[1], boundingBox, scale, rect))
-                case .closeSubpath:
-                    normalizedPath.close()
-                @unknown default:
-                    break
-            }
+    /// The unscaled outlines of all neutral parts for an orientation as one
+    /// path, built on first use.
+    func outline(for orientation: VGRBodyOrientation) -> Path {
+        lock.lock()
+        if let cached = outlines[orientation] {
+            lock.unlock()
+            return cached
+        }
+        lock.unlock()
+
+        /// Built outside the lock since `path(for:)` takes it. Two threads
+        /// racing here would store the same value, which is harmless.
+        var outline = Path()
+        let parts = orientation == .front ? VGRBodyPart.neutralFront : VGRBodyPart.neutralBack
+        for part in parts {
+            outline.addPath(path(for: part))
         }
 
-        return normalizedPath
-    }
-
-    private func scalePoint(_ point: CGPoint, _ boundingBox: CGRect, _ scale: CGFloat, _ rect: CGRect) -> CGPoint {
-        let normalizedX = (point.x - boundingBox.minX) * scale + rect.minX
-        let normalizedY = (point.y - boundingBox.minY) * scale + rect.minY
-        return CGPoint(x: normalizedX, y: normalizedY)
+        lock.lock()
+        outlines[orientation] = outline
+        lock.unlock()
+        return outline
     }
 }

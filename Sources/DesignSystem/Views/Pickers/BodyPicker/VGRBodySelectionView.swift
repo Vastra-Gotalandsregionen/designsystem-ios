@@ -116,13 +116,16 @@ struct VGRBodySelectionView: View {
     }
 
     var body: some View {
+        /// Computed once per evaluation; it is read for every neutral part below
+        let selectedShapes = drawableSelectedParts
+
         VStack {
             ZStack {
                 /// Draw the default body shape
                 ForEach(defaultBodyParts, id: \.self) { bodyPart in
                     VGRBodyPartShape(bodyPart: bodyPart)
                         .fill(fillColor)
-                        .stroke(strokeColor, lineWidth: drawableSelectedParts.contains(bodyPart) ? 0 : strokeWidth)
+                        .stroke(strokeColor, lineWidth: selectedShapes.contains(bodyPart) ? 0 : strokeWidth)
                         .contentShape(VGRBodyPartShape(bodyPart: bodyPart))
                         .onTapGesture {
                             selectBodyPart(bodyPart)
@@ -135,7 +138,7 @@ struct VGRBodySelectionView: View {
 
                 /// Draw the selected body parts, in correct order to avoid overlap.
                 /// Even-odd fill keeps cutouts (such as the ears in the face shape) unfilled.
-                ForEach(drawableSelectedParts.sorted(by: { $0.drawOrder < $1.drawOrder }), id: \.self) { part in
+                ForEach(selectedShapes.sorted(by: { $0.drawOrder < $1.drawOrder }), id: \.self) { part in
                     VGRBodyPartShape(bodyPart: part)
                         .fill(fillColorSelection, style: FillStyle(eoFill: true))
                         .stroke(strokeColorSelection, lineWidth: strokeWidth)
@@ -145,13 +148,12 @@ struct VGRBodySelectionView: View {
 
                 /// Re-stroke the default region boundaries on top of the selection
                 /// fills, so adjacent regions covered by one container shape stay
-                /// visually distinct (eg. the head shape includes the throat area)
-                ForEach(defaultBodyParts, id: \.self) { bodyPart in
-                    VGRBodyPartShape(bodyPart: bodyPart)
-                        .stroke(strokeColor, lineWidth: strokeWidth)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-                }
+                /// visually distinct (eg. the head shape includes the throat area).
+                /// All boundaries are stroked as one shape in a single pass.
+                VGRBodyOutlineShape(orientation: orientation)
+                    .stroke(strokeColor, lineWidth: strokeWidth)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
 
                 /// Draw non-selectable overlay parts (such as facial features)
                 ForEach(overlayParts, id:\.self) { part in
@@ -171,15 +173,19 @@ struct VGRBodySelectionView: View {
                                          children: part.subparts,
                                          selection: selectedParts) { selection in
 
-                    /// Translate legacy ids first so they are replaced by the edit
-                    /// below instead of lingering in the selection
-                    selectedParts = VGRBodyPartData.normalized(selectedParts)
+                    /// Build the new selection locally and write the binding once, so a
+                    /// chip toggle triggers a single re-render of the body behind the sheet.
+                    /// Legacy ids are translated first so they are replaced by the edit
+                    /// instead of lingering in the selection.
+                    var updated = VGRBodyPartData.normalized(selectedParts)
 
                     /// Remove the parent and its children from the main selection
-                    selectedParts.subtract([part.id] + (part.subparts.map { $0.id }))
+                    updated.subtract([part.id] + (part.subparts.map { $0.id }))
 
                     /// Add the updated selection
-                    selectedParts.formUnion(selection)
+                    updated.formUnion(selection)
+
+                    selectedParts = updated
                 }
             }
             .presentationDetents([.fraction(0.4), .medium, .large])

@@ -6,7 +6,11 @@ import SwiftUI
 /// selected regions.
 ///
 /// Use `orientation` and `selectedParts` to configure the visible body layout.
-public struct VGRBodyView: View {
+///
+/// The view is `Equatable` over all of its inputs, so host screens that
+/// re-evaluate for unrelated state changes can skip re-rendering the body
+/// when nothing about it changed.
+public struct VGRBodyView: View, Equatable {
 
     var orientation: VGRBodyOrientation
 
@@ -121,12 +125,11 @@ public struct VGRBodyView: View {
 
                 /// Re-stroke the default region boundaries on top of the selection
                 /// fills, so adjacent regions covered by one container shape stay
-                /// visually distinct (eg. the head shape includes the throat area)
-                ForEach(defaultBodyParts, id: \.self) { bodyPart in
-                    VGRBodyPartShape(bodyPart: bodyPart)
-                        .stroke(strokeColor, lineWidth: strokeWidth)
-                        .accessibilityHidden(true)
-                }
+                /// visually distinct (eg. the head shape includes the throat area).
+                /// All boundaries are stroked as one shape in a single pass.
+                VGRBodyOutlineShape(orientation: orientation)
+                    .stroke(strokeColor, lineWidth: strokeWidth)
+                    .accessibilityHidden(true)
 
                 /// Draw non-selectable overlay parts (such as facial features)
                 ForEach(overlayParts, id:\.self) { part in
