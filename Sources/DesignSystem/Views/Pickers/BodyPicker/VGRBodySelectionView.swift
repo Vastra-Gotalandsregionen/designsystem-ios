@@ -15,18 +15,23 @@ struct VGRBodySelectionView: View {
     /// drawableSelectedParts returns the VGRBodyParts that can be drawn using the
     /// bodyHieararchy and the selectedParts property
     private var drawableSelectedParts: Set<VGRBodyPart> {
+        /// Translate legacy ids so selections stored by older app versions still highlight
+        let selectedParts = VGRBodyPartData.normalized(selectedParts)
+
         func collect(from parts: [VGRBodyPartData]) -> [VGRBodyPart] {
             parts.flatMap { part in
                 var result: [VGRBodyPart] = []
 
-                /// If selected, grab the visual part for current orientation
+                /// If selected, grab the visual part for current orientation.
+                /// A selected container is drawn as its own whole-region shape,
+                /// so its subparts are skipped to avoid stacking child shapes on top.
                 if selectedParts.contains(part.id),
                    let visual = part.visualparts[orientation] {
                     result.append(visual)
+                } else {
+                    /// Recursively collect from subparts
+                    result.append(contentsOf: collect(from: part.subparts))
                 }
-
-                /// Recursively collect from subparts
-                result.append(contentsOf: collect(from: part.subparts))
                 return result
             }
         }
@@ -128,11 +133,22 @@ struct VGRBodySelectionView: View {
                         })
                 }
 
-                /// Draw the selected body parts, in correct order to avoid overlap
+                /// Draw the selected body parts, in correct order to avoid overlap.
+                /// Even-odd fill keeps cutouts (such as the ears in the face shape) unfilled.
                 ForEach(drawableSelectedParts.sorted(by: { $0.drawOrder < $1.drawOrder }), id: \.self) { part in
                     VGRBodyPartShape(bodyPart: part)
-                        .fill(fillColorSelection)
+                        .fill(fillColorSelection, style: FillStyle(eoFill: true))
                         .stroke(strokeColorSelection, lineWidth: strokeWidth)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                }
+
+                /// Re-stroke the default region boundaries on top of the selection
+                /// fills, so adjacent regions covered by one container shape stay
+                /// visually distinct (eg. the head shape includes the throat area)
+                ForEach(defaultBodyParts, id: \.self) { bodyPart in
+                    VGRBodyPartShape(bodyPart: bodyPart)
+                        .stroke(strokeColor, lineWidth: strokeWidth)
                         .allowsHitTesting(false)
                         .accessibilityHidden(true)
                 }
@@ -149,24 +165,25 @@ struct VGRBodySelectionView: View {
         }
         .frame(maxWidth: .infinity)
         /// Modal sheet for selecting children of a container part
-        .sheet(item: $parentBodyPart) {
-            print("Dismissing selection sheet")
-        } content: { part in
-            VGRBodyPartSelectionView(orientation,
-                                     parent: part,
-                                     children: part.subparts,
-                                     selection: selectedParts) { selection in
+        .sheet(item: $parentBodyPart) { part in
+            NavigationStack {
+                VGRBodyPartSelectionView(parent: part,
+                                         children: part.subparts,
+                                         selection: selectedParts) { selection in
 
-                /// Remove the parent and its children from the main selection
-                selectedParts.subtract([part.id] + (part.subparts.map { $0.id }))
+                    /// Translate legacy ids first so they are replaced by the edit
+                    /// below instead of lingering in the selection
+                    selectedParts = VGRBodyPartData.normalized(selectedParts)
 
-                /// Add the updated selection
-                selectedParts.formUnion(selection)
+                    /// Remove the parent and its children from the main selection
+                    selectedParts.subtract([part.id] + (part.subparts.map { $0.id }))
 
-                
+                    /// Add the updated selection
+                    selectedParts.formUnion(selection)
+                }
             }
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
+            .presentationDetents([.fraction(0.4), .medium, .large])
+             .presentationDragIndicator(.visible)
         }
     }
 }

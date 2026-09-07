@@ -18,14 +18,16 @@ public struct VGRBodyView: View {
             parts.flatMap { part in
                 var result: [VGRBodyPart] = []
 
-                /// If selected, grab the visual part for current orientation
+                /// If selected, grab the visual part for current orientation.
+                /// A selected container is drawn as its own whole-region shape,
+                /// so its subparts are skipped to avoid stacking child shapes on top.
                 if selectedParts.contains(part.id),
                    let visual = part.visualparts[orientation] {
                     result.append(visual)
+                } else {
+                    /// Recursively collect from subparts
+                    result.append(contentsOf: collect(from: part.subparts))
                 }
-
-                /// Recursively collect from subparts
-                result.append(contentsOf: collect(from: part.subparts))
                 return result
             }
         }
@@ -38,14 +40,18 @@ public struct VGRBodyView: View {
             parts.flatMap { part in
                 var result: [VGRBodyPartData] = []
 
-                /// If selected and has a visual part for the orientation, include it
+                /// If selected and has a visual part for the orientation, include it.
+                /// Parts with no visual representation at all (eg. "other" details)
+                /// are always included so they are voiced on both orientations.
+                /// A selected container covers its subparts, so they are skipped
+                /// and only the whole region is voiced.
                 if selectedParts.contains(part.id),
-                   part.visualparts[orientation] != nil {
+                   part.visualparts[orientation] != nil || part.visualparts.isEmpty {
                     result.append(part)
+                } else {
+                    /// Recursively collect from subparts
+                    result.append(contentsOf: collect(from: part.subparts))
                 }
-
-                /// Recursively collect from subparts
-                result.append(contentsOf: collect(from: part.subparts))
                 return result
             }
         }
@@ -79,13 +85,13 @@ public struct VGRBodyView: View {
     public init(orientation: VGRBodyOrientation = .front,
                 selectedParts: Set<String>,
                 fillColor: Color = Color.Accent.brownSurfaceFixed,
-                fillColorSelection: Color = Color.Accent.pinkGraphicFixed,
+                fillColorSelection: Color = Color.Accent.purpleGraphicFixed,
                 strokeColor: Color = Color.black,
                 strokeWidth: CGFloat = 1,
                 strokeColorSelection: Color = Color.black) {
 
         self.orientation = orientation
-        self.selectedParts = selectedParts
+        self.selectedParts = VGRBodyPartData.normalized(selectedParts)
         self.fillColor = fillColor
         self.fillColorSelection = fillColorSelection
         self.strokeColor = strokeColor
@@ -104,11 +110,21 @@ public struct VGRBodyView: View {
                         .accessibilityHidden(true)
                 }
 
-                /// Draw the selected body parts, in correct order to avoid overlap
+                /// Draw the selected body parts, in correct order to avoid overlap.
+                /// Even-odd fill keeps cutouts (such as the ears in the face shape) unfilled.
                 ForEach(drawableSelectedParts.sorted(by: { $0.drawOrder < $1.drawOrder }), id: \.self) { part in
                     VGRBodyPartShape(bodyPart: part)
-                        .fill(fillColorSelection)
+                        .fill(fillColorSelection, style: FillStyle(eoFill: true))
                         .stroke(strokeColorSelection, lineWidth: strokeWidth)
+                        .accessibilityHidden(true)
+                }
+
+                /// Re-stroke the default region boundaries on top of the selection
+                /// fills, so adjacent regions covered by one container shape stay
+                /// visually distinct (eg. the head shape includes the throat area)
+                ForEach(defaultBodyParts, id: \.self) { bodyPart in
+                    VGRBodyPartShape(bodyPart: bodyPart)
+                        .stroke(strokeColor, lineWidth: strokeWidth)
                         .accessibilityHidden(true)
                 }
 

@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// VGRBodyPartData is a structure used to communicate the selectable parts to the user.
 /// This struct represents the data behind the user facing UI, whereas VGRBodyPart represents the visual representation
@@ -10,12 +11,23 @@ public struct VGRBodyPartData : Sendable, Hashable, Identifiable {
     public var subparts: [VGRBodyPartData] = []
 
     /// displayName returns the localized name of the current body part, prefixed with the side of the body (eg. "left hollow of knee", "right arm", etc)
+    ///
+    /// "Other" parts are qualified with the name of their region (eg. "left Leg - Other detail"),
+    /// since "Other detail" on its own carries no context outside the region sheet.
     public var displayName: String {
         /// Get localized side if applicable
         let side = self.side == .notApplicable ? "" : "bodypicker.side.\(self.side)".localizedBundle + " "
 
         /// Get localized body part name
-        let name = "bodypicker.\(self.id)".localizedBundle
+        var name = "bodypicker.\(self.id)".localizedBundle
+
+        /// Prefix "other" parts with their region. `parent(of:)` returns the part itself
+        /// for top-level regions, hence the id check.
+        if id.hasSuffix(".other"),
+           let parent = Self.parent(of: id),
+           parent.id != id {
+            name = "bodypicker.\(parent.id)".localizedBundle + " - " + name
+        }
 
         return "\(side)\(name)"
     }
@@ -43,13 +55,18 @@ extension VGRBodyPartData {
     /// `VGRBodyPartData.body`. Both top-level parts and nested subparts will be included
     /// if their `id` is contained in the input.
     ///
+    /// Legacy ids (see `legacyAliases`) are translated before matching, so several
+    /// legacy ids that were merged into one part yield a single result carrying the
+    /// current id.
+    ///
     /// Example:
     /// ```swift
     /// let matches = VGRBodyPartData.parts(matching: ["left.knee", "head"])
     /// // returns the "left.knee" subpart and the "head" top-level part
     /// ```
     public static func parts(matching ids: [String]) -> [VGRBodyPartData] {
-        let idSet = Set(ids)
+        /// Translate legacy ids so selections stored by older app versions still resolve
+        let idSet = normalized(Set(ids))
 
         func collect(from parts: [VGRBodyPartData]) -> [VGRBodyPartData] {
             parts.flatMap { part -> [VGRBodyPartData] in
@@ -70,6 +87,7 @@ extension VGRBodyPartData {
     ///   - `nil` if no part with the given identifier exists in the hierarchy.
     ///
     /// The search is recursive and will traverse the full body hierarchy until a match is found.
+    /// Legacy ids (see `legacyAliases`) are translated before the lookup.
     ///
     /// Example:
     /// ```swift
@@ -82,6 +100,8 @@ extension VGRBodyPartData {
     /// }
     /// ```
     public static func parent(of id: String) -> VGRBodyPartData? {
+        /// Translate a legacy id so selections stored by older app versions still resolve
+        let id = normalized(id)
 
         func findParent(in parts: [VGRBodyPartData], lookingFor id: String) -> VGRBodyPartData? {
             for part in parts {
@@ -106,6 +126,30 @@ extension VGRBodyPartData {
         return findParent(in: body, lookingFor: id)
     }
 
+    /// Maps legacy body part ids to their current replacements.
+    ///
+    /// Selections stored by client apps before a body part was renamed or merged
+    /// may still contain the old ids. Use `normalized(_:)` to translate such a
+    /// selection before matching it against the current body hierarchy.
+    public static let legacyAliases: [String: String] = [
+        "head.left.ear": "head.ears",
+        "head.right.ear": "head.ears",
+        "pelvis.left.hip": "pelvis.hips",
+        "pelvis.right.hip": "pelvis.hips",
+        "pelvis.left.groin": "pelvis.groins",
+        "pelvis.right.groin": "pelvis.groins",
+    ]
+
+    /// Returns the current id for the given id, translating it if it is a legacy alias.
+    public static func normalized(_ id: String) -> String {
+        legacyAliases[id] ?? id
+    }
+
+    /// Returns the selection with any legacy ids replaced by their current equivalents.
+    public static func normalized(_ selection: Set<String>) -> Set<String> {
+        Set(selection.map { normalized($0) })
+    }
+
     public static let body: [VGRBodyPartData] = [
         .init(
             id: "left.leg",
@@ -116,6 +160,7 @@ extension VGRBodyPartData {
                 .init(id: "left.knee", side: .left, visualparts: [.front: VGRBodyPart.front(.leftKnee)]),
                 .init(id: "left.hollow.of.knee", side: .left, visualparts: [.back: VGRBodyPart.back(.leftHollowOfKnee)]),
                 .init(id: "left.lower.leg", side: .left, visualparts: [.front: VGRBodyPart.front(.leftCalf), .back: VGRBodyPart.back(.leftCalf)]),
+                .init(id: "left.leg.other", side: .left),
             ]
         ),
         .init(
@@ -127,6 +172,7 @@ extension VGRBodyPartData {
                 .init(id: "right.knee", side: .right, visualparts: [.front: VGRBodyPart.front(.rightKnee)]),
                 .init(id: "right.hollow.of.knee", side: .right, visualparts: [.back: VGRBodyPart.back(.rightHollowOfKnee)]),
                 .init(id: "right.lower.leg", side: .right, visualparts: [.front: VGRBodyPart.front(.rightCalf), .back: VGRBodyPart.back(.rightCalf)]),
+                .init(id: "right.leg.other", side: .right),
             ]
         ),
         .init(
@@ -138,8 +184,8 @@ extension VGRBodyPartData {
                 .init(id: "head.scalp", visualparts: [.front: VGRBodyPart.front(.scalp), .back: VGRBodyPart.back(.scalp)]),
                 .init(id: "head.neck", visualparts: [.back: VGRBodyPart.back(.neck)]),
                 .init(id: "head.eyes", visualparts: [.front: VGRBodyPart.front(.eyes)]),
-                .init(id: "head.left.ear", side: .left, visualparts: [.front: VGRBodyPart.front(.earLeft), .back: VGRBodyPart.back(.earLeft)]),
-                .init(id: "head.right.ear", side: .right, visualparts: [.front: VGRBodyPart.front(.earRight), .back: VGRBodyPart.back(.earRight)]),
+                .init(id: "head.ears", visualparts: [.front: VGRBodyPart.front(.ears), .back: VGRBodyPart.back(.ears)]),
+                .init(id: "head.other"),
             ]
         ),
         .init(
@@ -148,11 +194,10 @@ extension VGRBodyPartData {
             subparts: [
                 .init(id: "pelvis.front.genitalia", visualparts: [.front: VGRBodyPart.front(.genitals)]),
                 .init(id: "pelvis.back.between.cheeks", visualparts: [.back: VGRBodyPart.back(.betweenCheeks)]),
-                .init(id: "pelvis.left.hip", side: .left, visualparts: [.front: VGRBodyPart.front(.hipLeft), .back: VGRBodyPart.back(.hipLeft)]),
-                .init(id: "pelvis.right.hip", side: .right, visualparts: [.front: VGRBodyPart.front(.hipRight), .back: VGRBodyPart.back(.hipRight)]),
-                .init(id: "pelvis.left.groin", side: .left, visualparts: [.front: VGRBodyPart.front(.groinLeft)]),
-                .init(id: "pelvis.right.groin", side: .right, visualparts: [.front: VGRBodyPart.front(.groinRight)]),
+                .init(id: "pelvis.hips", visualparts: [.front: VGRBodyPart.front(.hips), .back: VGRBodyPart.back(.hips)]),
+                .init(id: "pelvis.groins", visualparts: [.front: VGRBodyPart.front(.groins)]),
                 .init(id: "pelvis.buttocks", visualparts: [.back: VGRBodyPart.back(.butt)]),
+                .init(id: "pelvis.other"),
             ]
         ),
         .init(
@@ -164,6 +209,7 @@ extension VGRBodyPartData {
                 .init(id: "left.hand.back.of.hand", side: .left, visualparts: [.back: VGRBodyPart.back(.leftBackOfHand)]),
                 .init(id: "left.hand.fingers", side: .left, visualparts: [.front: VGRBodyPart.front(.fingersLeft), .back: VGRBodyPart.back(.fingersLeft)]),
                 .init(id: "left.hand.nails", side: .left, visualparts: [.back: VGRBodyPart.back(.nailsLeft)]),
+                .init(id: "left.hand.other", side: .left),
             ]
         ),
         .init(
@@ -175,6 +221,7 @@ extension VGRBodyPartData {
                 .init(id: "right.hand.back.of.hand", side: .right, visualparts: [.back: VGRBodyPart.back(.rightBackOfHand)]),
                 .init(id: "right.hand.fingers", side: .right, visualparts: [.front: VGRBodyPart.front(.fingersRight), .back: VGRBodyPart.back(.fingersRight)]),
                 .init(id: "right.hand.nails", side: .right, visualparts: [.back: VGRBodyPart.back(.nailsRight)]),
+                .init(id: "right.hand.other", side: .right),
             ]
         ),
         .init(
@@ -186,6 +233,7 @@ extension VGRBodyPartData {
                 .init(id: "left.elbow", side: .left, visualparts: [.back: VGRBodyPart.back(.leftArmElbow)]),
                 .init(id: "left.armfold", side: .left, visualparts: [.front: VGRBodyPart.front(.leftArmFold)]),
                 .init(id: "left.under.arm", side: .left, visualparts: [.front: VGRBodyPart.front(.leftUnderArm), .back: VGRBodyPart.back(.leftUnderArm)]),
+                .init(id: "left.arm.other", side: .left),
             ]
         ),
         .init(
@@ -197,6 +245,7 @@ extension VGRBodyPartData {
                 .init(id: "right.elbow", side: .right, visualparts: [.back: VGRBodyPart.back(.rightArmElbow)]),
                 .init(id: "right.armfold", side: .right, visualparts: [.front: VGRBodyPart.front(.rightArmFold)]),
                 .init(id: "right.under.arm", side: .right, visualparts: [.front: VGRBodyPart.front(.rightUnderArm), .back: VGRBodyPart.back(.rightUnderArm)]),
+                .init(id: "right.arm.other", side: .right),
             ]
         ),
         .init(
@@ -208,6 +257,7 @@ extension VGRBodyPartData {
                 .init(id: "torso.front", visualparts: [.front: VGRBodyPart.front(.torso)]),
                 .init(id: "torso.back", visualparts: [.back: VGRBodyPart.back(.back)]),
                 .init(id: "torso.right.armpit", side: .right, visualparts: [.front: VGRBodyPart.front(.rightArmPit), .back: VGRBodyPart.back(.rightArmPit)]),
+                .init(id: "torso.other"),
             ]
         ),
         .init(
@@ -218,6 +268,7 @@ extension VGRBodyPartData {
                 .init(id: "right.foot.base", side: .right, visualparts: [.front: VGRBodyPart.front(.footTopRight), .back: VGRBodyPart.back(.rightFoot)]),
                 .init(id: "right.foot.sole", side: .right, visualparts: [.back: VGRBodyPart.back(.footSoleRight)]),
                 .init(id: "right.foot.toenails", side: .right, visualparts: [.front: VGRBodyPart.front(.toenailsRight)]),
+                .init(id: "right.foot.other", side: .right),
             ]
         ),
         .init(
@@ -228,7 +279,40 @@ extension VGRBodyPartData {
                 .init(id: "left.foot.base", side: .left, visualparts: [.front: VGRBodyPart.front(.footTopLeft), .back: VGRBodyPart.back(.leftFoot)]),
                 .init(id: "left.foot.sole", side: .left, visualparts: [.back: VGRBodyPart.back(.footSoleLeft)]),
                 .init(id: "left.foot.toenails", side: .left, visualparts: [.front: VGRBodyPart.front(.toenailsLeft)]),
+                .init(id: "left.foot.other", side: .left),
             ]
         ),
     ]
+}
+
+#Preview("Body part data") {
+    /// Every region with its subparts, as client apps see them through
+    /// `VGRBodyPartData.body`, `displayName`, `side` and `visualparts`
+    List {
+        ForEach(VGRBodyPartData.body) { region in
+            Section {
+                ForEach(region.subparts) { part in
+                    HStack(alignment: .firstTextBaseline) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(part.displayName)
+                            Text(part.id)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+
+                        /// Orientations the part can be drawn in; "other" parts have none
+                        Text(part.visualparts.isEmpty
+                             ? "–"
+                             : part.visualparts.keys.map(\.rawValue).sorted().joined(separator: ", "))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            } header: {
+                Text("\(region.displayName)  ·  \(region.id)")
+            }
+        }
+    }
 }

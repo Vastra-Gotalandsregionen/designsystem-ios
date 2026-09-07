@@ -74,6 +74,7 @@ public extension Color {
         
         public static let purple = Color("purple", bundle: .module)
         public static let purpleGraphic = Color("purplegraphic", bundle: .module)
+        public static let purpleGraphicFixed = Color("purplegraphicfixed", bundle: .module)
         public static let purpleSurface = Color("purplesurface", bundle: .module)
         public static let purpleSurfaceBold = Color("purplesurfacebold", bundle: .module)
         public static let purpleSurfaceMinimal = Color("purplesurfaceminimal", bundle: .module)

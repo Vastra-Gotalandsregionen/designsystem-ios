@@ -80,7 +80,8 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
              backOfHead,
              scalp,
              earLeft,
-             earRight
+             earRight,
+             ears
 
         case torso,
              back,
@@ -117,7 +118,8 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
         case butt,
              betweenCheeks,
              hipLeft,
-             hipRight
+             hipRight,
+             hips
 
         case fingersLeft,
              fingersRight,
@@ -129,6 +131,20 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
 
         var path: UIBezierPath {
             switch self {
+                case .ears:
+                    /// Combined shape of both ears, used by the merged "head.ears" body part
+                    let earsPath = UIBezierPath()
+                    earsPath.append(Back.earLeft.path)
+                    earsPath.append(Back.earRight.path)
+                    return earsPath
+
+                case .hips:
+                    /// Combined shape of both hips, used by the merged "pelvis.hips" body part
+                    let hipsPath = UIBezierPath()
+                    hipsPath.append(Back.hipLeft.path)
+                    hipsPath.append(Back.hipRight.path)
+                    return hipsPath
+
                 case .rightFoot:
                     let rightFootPath = UIBezierPath()
                     rightFootPath.move(to: CGPoint(x: 384.22, y: 1827.03))
@@ -1681,7 +1697,8 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
              scalp = "scalp",
              eyes = "eyes",
              earLeft = "ear_left",
-             earRight = "ear_right"
+             earRight = "ear_right",
+             ears = "ears"
 
         case upperBody = "upper_body",
              torso = "torso",
@@ -1717,9 +1734,11 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
 
         case groinLeft = "groin_left",
              groinRight = "groin_right",
+             groins = "groins",
              genitals = "genitals",
              hipLeft = "hip_left",
-             hipRight = "hip_right"
+             hipRight = "hip_right",
+             hips = "hips"
 
         case fingersLeft = "fingers_left",
              fingersRight = "fingers_right"
@@ -1731,6 +1750,27 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
 
         public var path: UIBezierPath {
             switch self {
+                case .ears:
+                    /// Combined shape of both ears, used by the merged "head.ears" body part
+                    let earsPath = UIBezierPath()
+                    earsPath.append(Front.earLeft.path)
+                    earsPath.append(Front.earRight.path)
+                    return earsPath
+
+                case .hips:
+                    /// Combined shape of both hips, used by the merged "pelvis.hips" body part
+                    let hipsPath = UIBezierPath()
+                    hipsPath.append(Front.hipLeft.path)
+                    hipsPath.append(Front.hipRight.path)
+                    return hipsPath
+
+                case .groins:
+                    /// Combined shape of both groins, used by the merged "pelvis.groins" body part
+                    let groinsPath = UIBezierPath()
+                    groinsPath.append(Front.groinLeft.path)
+                    groinsPath.append(Front.groinRight.path)
+                    return groinsPath
+
                 case .faceFeatures:
                     let faceFeaturesPath = UIBezierPath()
                     let sub0 = UIBezierPath()
@@ -1924,6 +1964,12 @@ public enum VGRBodyPart: Sendable, Equatable, Hashable, Identifiable {
                     facePath.addCurve(to: CGPoint(x: 474.65, y: 156.6), controlPoint1: CGPoint(x: 462.78, y: 203.37), controlPoint2: CGPoint(x: 475.22, y: 169.15))
                     facePath.addCurve(to: CGPoint(x: 463.29, y: 132.99), controlPoint1: CGPoint(x: 474.26, y: 148.44), controlPoint2: CGPoint(x: 472.23, y: 136.14))
                     facePath.close()
+
+                    /// The face outline traces around the outside of the ears, so punch
+                    /// them out as even-odd holes to keep them from being highlighted
+                    facePath.append(Front.earLeft.path)
+                    facePath.append(Front.earRight.path)
+                    facePath.usesEvenOddFillRule = true
                     return facePath
 
                 case .scalp:
