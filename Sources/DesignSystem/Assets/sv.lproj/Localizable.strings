@@ -217,8 +217,8 @@
 
 /* Survey */
 "survey.loading" = "Laddar…";
-"survey.reciept.title" = "Tack för din feedback!";
-"survey.reciept.text" = "Dina svar har skickats in.";
+"survey.receipt.title" = "Tack för din feedback!";
+"survey.receipt.text" = "Dina svar har skickats in.";
 
 /* VideoPlayer */
 "videoplayer.error.title" = "Videoklippet går inte att spela upp";

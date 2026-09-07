@@ -31,7 +31,7 @@ Appen (hosten) styr sheet, toolbar, overlay och persistens.
 
 ```swift
 import SwiftUI
-import VGRSurvey
+import DesignSystem
 
 struct ContentView: View {
     @State private var showSurvey = false
@@ -48,7 +48,7 @@ struct ContentView: View {
         Button("Öppna enkät") { showSurvey = true }
             .sheet(isPresented: $showSurvey) {
                 NavigationStack {
-                    VGRWebSurveyView(urlString: formsURL)
+                    VGRSurveyWebView(urlString: formsURL)
                         .navigationTitle("Enkät")
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbar {

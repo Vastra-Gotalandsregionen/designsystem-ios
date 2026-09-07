@@ -17,12 +17,12 @@ public struct VGRSurveyReceiptView: View {
                 .padding(.top, 16)
             
             VStack(spacing: 16) {
-                Text(LocalizedStringKey("survey.reciept.title"), bundle: .module)
+                Text(LocalizedStringKey("survey.receipt.title"), bundle: .module)
                     .font(.title)
                     .fontWeight(.semibold)
                     .accessibilityFocused($initialFocus)
                     .accessibilitySortPriority(1)
-                Text(LocalizedStringKey("survey.reciept.text"), bundle: .module)
+                Text(LocalizedStringKey("survey.receipt.text"), bundle: .module)
                     .font(.body)
             }
             .foregroundStyle(Color.primary)
