@@ -1,4 +1,5 @@
 import SwiftUI
+import Lottie
 
 public struct VGRSurveyReceiptView: View {
     private let onComplete: () -> Void
@@ -11,46 +12,47 @@ public struct VGRSurveyReceiptView: View {
     }
     
     public var body: some View {
-        VStack(spacing: 32) {
-            VGRLottieView(animationName: "feedback-animation", loopMode: .playOnce)
+        VStack(spacing: .Margins.xtraLarge) {
+            LottieView(animation: .named("feedback-animation", bundle: .module))
+                .playing()
                 .frame(width: 200, height: 200)
-                .padding(.top, 16)
-            
-            VStack(spacing: 16) {
+                .padding(.top, .Margins.medium)
+                .accessibilityHidden(true)
+
+            VStack(spacing: .Margins.medium) {
                 Text(LocalizedStringKey("survey.receipt.title"), bundle: .module)
                     .font(.title)
                     .fontWeight(.semibold)
                     .accessibilityFocused($initialFocus)
                     .accessibilitySortPriority(1)
+
                 Text(LocalizedStringKey("survey.receipt.text"), bundle: .module)
                     .font(.body)
             }
             .foregroundStyle(Color.primary)
-            
-            Button {
+
+            VGRButtonV2("general.button.done".loc(in: .module)) {
                 onComplete()
-            } label: {
-                Text(LocalizedStringKey("general.button.done"), bundle: .module)
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            
-            Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.horizontal, 16)
-        .padding(.top, 32)
-        .background(Color(.systemBackground))
+        .padding(.horizontal, .Margins.medium)
+        .padding(.top, .Margins.xtraLarge)
         .onAppear { initialFocus = true }
+        .background(Color.Elevation.background)
     }
 }
 
 #Preview("Receipt") {
-    VGRSurveyReceiptView {
-        print("Completed")
+    NavigationStack {
+        ScrollView {
+        }
     }
-    .frame(height: 500)
-    .padding()
+    .overlay {
+        VGRSurveyReceiptView {
+            print("Completed")
+        }
+    }
+//    .frame(height: 500)
+//    .padding()
 }

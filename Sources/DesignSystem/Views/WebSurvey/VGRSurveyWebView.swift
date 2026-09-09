@@ -155,14 +155,14 @@ observer.observe(document.body, { childList: true, subtree: true });
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button("Cancel") {
+                        VGRCancelButton {
                             isPresented = false
                             isLoading = true
                         }
                         .disabled(hasSubmitted)
                     }
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Done") {
+                        VGRDoneButton {
                             isPresented = false
                         }
                         .disabled(!hasSubmitted)
