@@ -29,9 +29,9 @@ Endast själva trycket rapporteras, aldrig härledda ändringar (att en region a
 
 | Action | Namn | När |
 |--------|------|-----|
-| `open_region` | t.ex. `head` | En region i kroppsvyn trycks och arket öppnas |
-| `select_bodypart` / `deselect_bodypart` | t.ex. `head.scalp` | En enskild del trycks |
-| `select_region` / `deselect_region` | t.ex. `head` | Chippen för hela regionen trycks |
+| `region_show` | t.ex. `head` | En region i kroppsvyn trycks och arket öppnas |
+| `bodypart_selected` / `bodypart_deselected` | t.ex. `head.scalp` | En enskild del trycks |
+| `region_selected` / `region_deselected` | t.ex. `head` | Chippen för hela regionen trycks |
 
 Händelserna definieras av `VGRBodyPickerInteraction`.
 

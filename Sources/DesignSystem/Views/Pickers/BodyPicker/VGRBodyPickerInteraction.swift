@@ -8,9 +8,9 @@
 /// segmented in Matomo without parsing ids; the body part id is carried as the event name.
 ///
 /// ```
-/// open_region                             name=head
-/// select_bodypart   / deselect_bodypart   name=head.scalp
-/// select_region     / deselect_region     name=head
+/// region_show                             name=head
+/// bodypart_selected / bodypart_deselected name=head.scalp
+/// region_selected   / region_deselected   name=head
 /// ```
 public enum VGRBodyPickerInteraction: TrackableInteraction, Equatable {
     /// A region on the body diagram was tapped, opening its sheet, e.g. `head`
@@ -26,11 +26,11 @@ public enum VGRBodyPickerInteraction: TrackableInteraction, Equatable {
 
     public var action: String {
         switch self {
-            case .openRegion: return "open_region"
-            case .selectPart: return "select_bodypart"
-            case .deselectPart: return "deselect_bodypart"
-            case .selectRegion: return "select_region"
-            case .deselectRegion: return "deselect_region"
+            case .openRegion: return "region_show"
+            case .selectPart: return "bodypart_selected"
+            case .deselectPart: return "bodypart_deselected"
+            case .selectRegion: return "region_selected"
+            case .deselectRegion: return "region_deselected"
         }
     }
 
