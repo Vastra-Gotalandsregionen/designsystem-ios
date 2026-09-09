@@ -118,3 +118,20 @@ public extension View {
         }
     }
 }
+
+public extension View {
+    /// Dismisses the keyboard interactively as the user scrolls — it
+    /// follows the drag and is dismissed along with it, the same behavior
+    /// as in Messages.
+    ///
+    /// `VGRContainer` already applies this to its own `ScrollView`. Use
+    /// this modifier directly on a native `List` or `ScrollView` that
+    /// doesn't go through `VGRContainer`, so screens with text inputs
+    /// (e.g. a `TextField` for a numeric value) get the same native
+    /// dismiss-on-scroll behavior.
+    ///
+    /// - Returns: A view that dismisses the keyboard interactively on scroll.
+    func dismissesKeyboardOnScroll() -> some View {
+        self.scrollDismissesKeyboard(.interactively)
+    }
+}

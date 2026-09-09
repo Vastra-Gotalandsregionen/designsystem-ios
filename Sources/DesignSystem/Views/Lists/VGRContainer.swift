@@ -7,6 +7,11 @@ import SwiftUI
 /// horizontal inset, so `VGRContainer` intentionally does not apply any
 /// horizontal padding.
 ///
+/// The keyboard is dismissed interactively as the user scrolls (it follows
+/// the drag, the same as in Messages), so screens that place inputs
+/// (e.g. ``VGRTextInput``, ``VGRTextArea``) inside a `VGRContainer` get
+/// this behavior for free.
+///
 /// ### Usage
 /// ```swift
 /// VGRContainer {
@@ -38,6 +43,7 @@ public struct VGRContainer<Content: View>: View {
                 content
             }
         }
+        .dismissesKeyboardOnScroll()
         .maxLeading()
         .background(Color.Elevation.background)
         .foregroundStyle(Color.Neutral.text)
