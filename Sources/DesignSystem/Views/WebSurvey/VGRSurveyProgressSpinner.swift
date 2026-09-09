@@ -1,20 +1,24 @@
 import SwiftUI
 
 /// Deviate from system colors here: the MS Forms page background is white regardless of system settings.
-public struct VGRSurveyProgressSpinner: View {
-    public init() {}
-    public var body: some View {
-        ProgressView {
-            Text(LocalizedStringKey("survey.loading"), bundle: .module)
-                .foregroundStyle(Color.black)
+struct VGRSurveyProgressSpinner: View {
+    init() {}
+    var body: some View {
+        VStack {
+            ProgressView {
+                Text("survey.loading".loc(in: .module))
+                    .font(.bodyRegular)
+                    .foregroundStyle(Color.Neutral.text)
+                    .padding(.Margins.medium)
+            }
+            .tint(.Primary.action)
+            .controlSize(.extraLarge)
         }
-        .tint(.black)
-        .controlSize(.large)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.Elevation.background)
     }
 }
 
 #Preview("Spinner") {
     VGRSurveyProgressSpinner()
-        .padding()
-        .background(Color.white)
 }

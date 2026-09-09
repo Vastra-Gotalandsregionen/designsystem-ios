@@ -8,13 +8,37 @@ private struct VGRAlertPresenter: UIViewControllerRepresentable {
 
     @Binding var alert: VGRAlert?
 
+    /// Remembers which alert is on screen, so a re-render never presents the same alert twice
+    final class Coordinator {
+        var presentedAlertID: UUID?
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
     func makeUIViewController(context: Context) -> UIViewController {
         UIViewController()
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        guard let alert else { return }
+        let coordinator = context.coordinator
+
+        guard let alert else {
+            /// The binding was cleared by the owner while the alert was still up, so take it down
+            if coordinator.presentedAlertID != nil,
+               let presented = uiViewController.presentedViewController as? UIAlertController {
+                presented.dismiss(animated: true)
+            }
+            coordinator.presentedAlertID = nil
+            return
+        }
+
+        /// A button action may change state that re-renders this presenter before the binding has
+        /// been cleared. Presenting once per alert id keeps that render from showing it again.
+        guard coordinator.presentedAlertID != alert.id else { return }
         guard uiViewController.presentedViewController == nil else { return }
+        coordinator.presentedAlertID = alert.id
 
         let controller = UIAlertController(
             title: alert.title,
@@ -25,8 +49,11 @@ private struct VGRAlertPresenter: UIViewControllerRepresentable {
         var preferred: UIAlertAction?
         for button in alert.buttons {
             let action = UIAlertAction(title: button.title, style: button.style) { _ in
-                button.action()
+                /// Clear the binding before running the action, so whatever the action does cannot
+                /// re-present this alert, and an action that sets a new alert is not wiped out
+                coordinator.presentedAlertID = nil
                 self.alert = nil
+                button.action()
             }
             controller.addAction(action)
             if button.isPreferred {

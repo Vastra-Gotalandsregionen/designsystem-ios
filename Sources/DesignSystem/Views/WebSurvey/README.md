@@ -1,29 +1,21 @@
 # VGRSurvey
 
-Ett litet tillägg för att visa **Microsoft Forms** i en SwiftUI-app.  
-Består av en `WKWebView` med JS-injektion som detekterar **Submit**, samt delvyer för **spinner** och **kvittens**.  
-Appen (hosten) styr sheet, toolbar, overlay och persistens.
+Visar en **Microsoft Forms**-enkät i en SwiftUI-app som ett självständigt modalt flöde:
+laddningsindikator, formuläret, och en kvittens när svaret har tagits emot.
+
+Appen skickar in en URL och tar emot **en** händelse per visning. Allt annat – navigationsfält,
+Avbryt/Klar-knappar, bekräftelse vid avbrott, spinner och kvittens – sköter skärmen själv.
 
 ---
 
 ## Komponenter
 
-- `VGRSurveyWebView` – WebView för MS Forms, postar notiser.  
-- `VGRSurveyReceiptView` – Kvittensvy (Lottie-animation).  
-- `VGRSurveyProgressSpinner` – Laddningsindikator.  
-- `VGRSurveyNotifications` – Notisnamn (`Notification.Name`).  
-- `VGRLottieView` – Wrapper för Lottie-animationer.
+- `VGRSurveyScreen` – den publika skärmen. Avsedd att visas i en `.sheet`.
+- `VGRSurveyEvent` – vad som hände: `.completed`, `.cancelled` eller `.failed(VGRSurveyError)`.
+- `VGRSurveyError` – `.invalidURL` eller `.connectionFailed(underlying:)`.
 
----
-
-## Notiser (Notification.Name)
-
-| Notis                        | När                                     | Använd i appen |
-|------------------------------|-----------------------------------------|----------------|
-| `.webViewLoaded`             | Sida laddad                             | Slå av spinner |
-| `.surveySubmissionSuccess`   | Submit-knapp klickad **och** POST 200   | Visa kvittens, enable “Klar” |
-| `.webUrlError`               | Ogiltig URL                             | Stäng sheet, visa fel |
-| `.webConnectionFailure`      | Nätverksfel / laddning bruten           | Stäng sheet, visa fel |
+Interna byggstenar (inte publika): `MicrosoftFormsWebView`, `VGRSurveyReceiptView`,
+`VGRSurveyProgressSpinner`.
 
 ---
 
@@ -35,95 +27,80 @@ import DesignSystem
 
 struct ContentView: View {
     @State private var showSurvey = false
-    @State private var isLoading = true
-    @State private var hasSubmitted = false
-    
-    @State private var showGeneralErrorAlert = false
-    @State private var showConnectionFailureAlert = false
-    @State private var showDismissSurveyAlert = false
+    @State private var surveyError: VGRSurveyError?
 
     let formsURL = "https://forms.office.com/Pages/ResponsePage.aspx?id=..."
 
     var body: some View {
         Button("Öppna enkät") { showSurvey = true }
             .sheet(isPresented: $showSurvey) {
-                NavigationStack {
-                    VGRSurveyWebView(urlString: formsURL)
-                        .navigationTitle("Enkät")
-                        .navigationBarTitleDisplayMode(.inline)
-                        .toolbar {
-                            ToolbarItem(placement: .topBarLeading) {
-                                Button("Avbryt") { showDismissSurveyAlert = true }
-                                    .disabled(hasSubmitted)
-                            }
-                            ToolbarItem(placement: .topBarTrailing) {
-                                Button("Klar") { showSurvey = false }
-                                    .disabled(!hasSubmitted)
-                            }
-                        }
-                        .overlay {
-                            if isLoading {
-                                VGRSurveyProgressSpinner()
-                            } else if hasSubmitted {
-                                VGRSurveyReceiptView { showSurvey = false }
-                            }
-                        }
-                        // Events
-                        .onReceive(NotificationCenter.default.publisher(for: .webViewLoaded)) { _ in
-                            isLoading = false
-                        }
-                        .onReceive(NotificationCenter.default.publisher(for: .surveySubmissionSuccess)) { _ in
-                            hasSubmitted = true
-                        }
-                        .onReceive(NotificationCenter.default.publisher(for: .webUrlError)) { _ in
-                            showSurvey = false
-                            showGeneralErrorAlert = true
-                        }
-                        .onReceive(NotificationCenter.default.publisher(for: .webConnectionFailure)) { _ in
-                            showSurvey = false
-                            showConnectionFailureAlert = true
-                        }
-                        // Alerts
-                        .alert("Enkät", isPresented: $showDismissSurveyAlert) {
-                            Button("Avbryt", role: .cancel) {}
-                            Button("Hoppa över", role: .destructive) {
-                                hasSubmitted = true
-                                showSurvey = false
-                            }
-                        } message: {
-                            Text("Vill du hoppa över enkäten?")
-                        }
-                        .alert("Fel", isPresented: $showGeneralErrorAlert) {
-                            Button("OK", role: .cancel) {}
-                        } message: {
-                            Text("Något gick fel, försök igen.")
-                        }
-                        .alert("Anslutningsfel", isPresented: $showConnectionFailureAlert) {
-                            Button("OK", role: .cancel) {}
-                        } message: {
-                            Text("Kunde inte ladda enkäten på grund av nätverksproblem.")
-                        }
+                VGRSurveyScreen(urlString: formsURL) { event in
+                    showSurvey = false
+                    switch event {
+                    case .completed:
+                        // Markera enkäten som besvarad (UserDefaults etc.)
+                        break
+                    case .cancelled:
+                        // Användaren hoppade över enkäten
+                        break
+                    case .failed(let error):
+                        surveyError = error
+                    }
                 }
             }
+            .alert(
+                "Enkäten kunde inte visas",
+                isPresented: Binding(
+                    get: { surveyError != nil },
+                    set: { if !$0 { surveyError = nil } }
+                ),
+                presenting: surveyError
+            ) { _ in
+                Button("OK", role: .cancel) {}
+            } message: { error in
+                Text(message(for: error))
+            }
+    }
+
+    /// Översätt felet till något användaren kan agera på
+    private func message(for error: VGRSurveyError) -> String {
+        switch error {
+        case .invalidURL:
+            return "Länken till enkäten är felaktig. Uppdatera appen eller försök igen senare."
+        case .connectionFailed(let underlying):
+            return "Kontrollera din anslutning och försök igen.\n\n\(underlying.localizedDescription)"
+        }
     }
 }
 ```
 
-## Att tänka på 
+`.failed` bär med sig ett `VGRSurveyError`. `.invalidURL` betyder att strängen inte gick att tolka
+som en URL, `.connectionFailed(underlying:)` att sidan inte kunde laddas – `underlying` är felet
+från WebKit, t.ex. ett `URLError`, och kan loggas eller visas.
 
-- **Hosten** styr `isLoading`, `hasSubmitted`, `showSurvey` och persistens (`UserDefaults` etc.).  
-- **Avbryt** i navbar: enabled före submit, disabled efter.  
-- **Klar** i navbar: disabled före submit, enabled efter.  
-- Kvittens och spinner är valfria delvyer – kan bytas ut.  
+`title:` kan anges för att byta rubrik i navigationsfältet. Standard är "Enkät".
 
-### Alerts
+---
 
-För att ge bra UX behöver appen visa alerts för olika fel- och avbrottsscenarion.  
-Vanliga mönster:
+## Händelser
 
-- **Avbryt enkät**: visa en bekräftelsedialog om användaren vill hoppa över enkäten.  
-- **Allmänt fel** (`.webUrlError`): stäng sheet och visa en generisk felalert.  
-- **Anslutningsfel** (`.webConnectionFailure`): stäng sheet och visa en alert om nätverksproblem.  
-- **Dismissal**: vissa appar kan låta användaren markera enkäten som “inte relevant” via en destruktiv knapp.
+| Händelse       | När                                                              |
+|----------------|------------------------------------------------------------------|
+| `.completed`   | Svaret har tagits emot och användaren tryckte Klar (i navigationsfältet eller på kvittensen), eller svepte bort arket efter inskick |
+| `.cancelled`   | Användaren tryckte Avbryt och bekräftade                        |
+| `.failed`      | URL:en kunde inte tolkas, eller sidan kunde inte laddas          |
 
-> **Tips:** lägg alerts i hosten, kopplat till state som triggas av notiserna. Då blir det lätt att anpassa språk och design utan att ändra biblioteket.
+Innan inskick går arket inte att svepa bort; efter inskick stänger en svepning arket.
+Exakt en händelse skickas per visning. **Appen ansvarar för att stänga arket** när
+händelsen kommer, så att den t.ex. hinner visa en felalert.
+
+---
+
+## Hur inskick upptäcks
+
+Forms POST:ar svaret till en URL som slutar på `/responses` och godtar 200/201/202.
+Ett injicerat skript rapporterar bara det anropet – telemetri och andra POST-anrop ignoreras,
+annars skulle "klart" rapporteras även när obligatoriska frågor saknas. Som reserv bevakas
+även DOM:en efter Forms tack-sida (`data-automation-id="thankYouMessage"`).
+
+Detekteringen är knuten till Microsoft Forms. Andra enkätverktyg fungerar inte utan anpassning.
