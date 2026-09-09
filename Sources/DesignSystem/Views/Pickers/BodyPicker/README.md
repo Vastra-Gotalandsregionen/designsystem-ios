@@ -11,12 +11,29 @@
 ## Användning
 
 ```swift
-@State var frontSelected: Set<VGRBodyPart> = []
-@State var backSelected: Set<VGRBodyPart> = []
+@State var selected: Set<String> = []
 
-BodyPickerView(frontSelectedParts: $frontSelected,
-               backSelectedParts: $backSelected)
+VGRBodyPickerView(selectedParts: $selected)
 ```
+
+## Spårning
+
+Skicka med skärmen som `trackOn` så rapporteras varje tryck på en region i kroppsvyn, och varje chip-tryck i regionarket, som en Matomo-händelse med skärmen som kategori. Utan `trackOn` spåras ingenting.
+
+```swift
+VGRBodyPickerView(selectedParts: $selected,
+                  trackOn: AppScreen.assessment(action: .create))
+```
+
+Endast själva trycket rapporteras, aldrig härledda ändringar (att en region auto-markeras när sista delen väljs, att "övrigt" tas bort, översättning av äldre id:n, eller programmatiska ändringar av bindningen). Varje typ av tryck har en egen action så de kan segmenteras i Matomo utan att tolka id:n. Kroppsdelens id skickas som namn.
+
+| Action | Namn | När |
+|--------|------|-----|
+| `region_show` | t.ex. `head` | En region i kroppsvyn trycks och arket öppnas |
+| `bodypart_selected` / `bodypart_deselected` | t.ex. `head.scalp` | En enskild del trycks |
+| `region_selected` / `region_deselected` | t.ex. `head` | Chippen för hela regionen trycks |
+
+Händelserna definieras av `VGRBodyPickerInteraction`.
 
 
 # VGRBodyView
