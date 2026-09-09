@@ -5,12 +5,13 @@ import SwiftUI
 /// The user can toggle between front and back views using a segmented picker.
 /// Selected body parts are visually highlighted based on selection state.
 ///
-/// When `trackOn` is given, every chip tap in the region sheet is reported as a
-/// `VGRBodyPickerInteraction` event with that screen as the Matomo category.
+/// When `trackOn` is given, every region tap on the diagram and every chip tap in the
+/// region sheet is reported as a `VGRBodyPickerInteraction` event with that screen as
+/// the Matomo category.
 ///
 /// - Parameters:
 ///   - selectedParts: A binding to the set of selected body parts.
-///   - trackOn: The screen chip taps are tracked on. Nil (the default) disables tracking.
+///   - trackOn: The screen taps are tracked on. Nil (the default) disables tracking.
 public struct VGRBodyPickerView: View {
     @Binding var selectedParts: Set<String>
 

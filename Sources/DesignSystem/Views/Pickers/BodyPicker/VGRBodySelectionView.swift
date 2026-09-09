@@ -12,7 +12,7 @@ struct VGRBodySelectionView: View {
     @Binding var orientation: VGRBodyOrientation
     @Binding var selectedParts: Set<String>
 
-    /// The screen chip taps in the region sheet are tracked on, or nil to disable tracking
+    /// The screen region taps and chip taps in the region sheet are tracked on, or nil to disable tracking
     var trackOn: TrackableScreen? = nil
 
     /// drawableSelectedParts returns the VGRBodyParts that can be drawn using the
@@ -91,7 +91,15 @@ struct VGRBodySelectionView: View {
     private func selectBodyPart(_ part: VGRBodyPart) {
         if let cnt = getContainer(for: part, in: bodyHierarchy) {
             parentBodyPart = cnt
+            track(.openRegion(cnt.id))
         }
+    }
+
+    /// Reports a region tap on the tracked screen, if any
+    @MainActor
+    private func track(_ interaction: VGRBodyPickerInteraction) {
+        guard let trackOn else { return }
+        Tracker.shared.trackEvent(interaction, on: trackOn)
     }
 
     private func a11yLabel(for part: VGRBodyPart) -> String {
