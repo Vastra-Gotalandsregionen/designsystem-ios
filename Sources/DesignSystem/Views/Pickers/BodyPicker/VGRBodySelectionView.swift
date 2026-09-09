@@ -12,6 +12,9 @@ struct VGRBodySelectionView: View {
     @Binding var orientation: VGRBodyOrientation
     @Binding var selectedParts: Set<String>
 
+    /// The screen chip taps in the region sheet are tracked on, or nil to disable tracking
+    var trackOn: TrackableScreen? = nil
+
     /// drawableSelectedParts returns the VGRBodyParts that can be drawn using the
     /// bodyHieararchy and the selectedParts property
     private var drawableSelectedParts: Set<VGRBodyPart> {
@@ -171,7 +174,8 @@ struct VGRBodySelectionView: View {
             NavigationStack {
                 VGRBodyPartSelectionView(parent: part,
                                          children: part.subparts,
-                                         selection: selectedParts) { selection in
+                                         selection: selectedParts,
+                                         trackOn: trackOn) { selection in
 
                     /// Build the new selection locally and write the binding once, so a
                     /// chip toggle triggers a single re-render of the body behind the sheet.

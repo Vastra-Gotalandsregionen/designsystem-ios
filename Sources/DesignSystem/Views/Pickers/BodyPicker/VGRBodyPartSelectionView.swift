@@ -9,10 +9,16 @@ import SwiftUI
 /// selected drops "other" since the whole region covers it. The selection state
 /// is managed locally and changes are propagated immediately through the
 /// `onChange` callback.
+///
+/// When `trackOn` is set, every chip tap is reported as a `VGRBodyPickerInteraction`
+/// event on that screen. Only the tap itself is reported, never the derived changes.
 struct VGRBodyPartSelectionView: View {
 
     let parent: VGRBodyPartData
     let children: [VGRBodyPartData]
+
+    /// The screen chip taps are tracked on, or nil to disable tracking
+    let trackOn: TrackableScreen?
 
     @State var localSelection: Set<String>
     let onChange: (Set<String>) -> Void
@@ -20,10 +26,12 @@ struct VGRBodyPartSelectionView: View {
     init(parent: VGRBodyPartData,
          children: [VGRBodyPartData],
          selection: Set<String>,
+         trackOn: TrackableScreen? = nil,
          onChange: @escaping (Set<String>) -> Void) {
 
         self.parent = parent
         self.children = children
+        self.trackOn = trackOn
         self.onChange = onChange
 
         var initialSelection = VGRBodyPartData.normalized(selection).intersection([parent.id] + children.map { $0.id })
@@ -53,10 +61,12 @@ struct VGRBodyPartSelectionView: View {
         if localSelection.contains(parent.id) {
             localSelection.remove(parent.id)
             localSelection.subtract(groupIDs)
+            track(.deselectRegion(parent.id))
         } else {
             localSelection.insert(parent.id)
             localSelection.formUnion(groupIDs)
             localSelection.remove(otherID)
+            track(.selectRegion(parent.id))
         }
 
         onChange(localSelection)
@@ -66,6 +76,10 @@ struct VGRBodyPartSelectionView: View {
     /// When all groupable children are selected the whole region is selected, and "other" is
     /// deselected since the whole region covers it.
     private func toggleChild(_ id: String) {
+        /// Decide select vs deselect from the state before the toggle, so the event
+        /// reflects the tap and not the derived parent/"other" adjustments below
+        track(localSelection.contains(id) ? .deselectPart(id) : .selectPart(id))
+
         localSelection.formSymmetricDifference([id])
 
         if groupableChildren.map({ $0.id }).allSatisfy(localSelection.contains) {
@@ -76,6 +90,13 @@ struct VGRBodyPartSelectionView: View {
         }
 
         onChange(localSelection)
+    }
+
+    /// Reports a chip tap on the tracked screen, if any
+    @MainActor
+    private func track(_ interaction: VGRBodyPickerInteraction) {
+        guard let trackOn else { return }
+        Tracker.shared.trackEvent(interaction, on: trackOn)
     }
 
     private func title(for part: VGRBodyPartData) -> String {

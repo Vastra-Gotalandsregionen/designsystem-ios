@@ -5,10 +5,16 @@ import SwiftUI
 /// The user can toggle between front and back views using a segmented picker.
 /// Selected body parts are visually highlighted based on selection state.
 ///
+/// When `trackOn` is given, every chip tap in the region sheet is reported as a
+/// `VGRBodyPickerInteraction` event with that screen as the Matomo category.
+///
 /// - Parameters:
 ///   - selectedParts: A binding to the set of selected body parts.
+///   - trackOn: The screen chip taps are tracked on. Nil (the default) disables tracking.
 public struct VGRBodyPickerView: View {
     @Binding var selectedParts: Set<String>
+
+    let trackOn: TrackableScreen?
 
     var fillColor: Color = Color.Accent.brownSurfaceFixed
     var fillColorSelection: Color = Color.Accent.purpleGraphicFixed
@@ -26,8 +32,10 @@ public struct VGRBodyPickerView: View {
         )
     }
 
-    public init(selectedParts: Binding<Set<String>>) {
+    public init(selectedParts: Binding<Set<String>>,
+                trackOn: TrackableScreen? = nil) {
         self._selectedParts = selectedParts
+        self.trackOn = trackOn
     }
 
     public var body: some View {
@@ -36,6 +44,7 @@ public struct VGRBodyPickerView: View {
                 HStack(alignment: .center) {
                     VGRBodySelectionView(orientation: orientationBinding,
                                          selectedParts: $selectedParts,
+                                         trackOn: trackOn,
                                          fillColor: fillColor,
                                          fillColorSelection: fillColorSelection,
                                          strokeColor: strokeColor,
@@ -94,6 +103,22 @@ public struct VGRBodyPickerView: View {
 
     NavigationStack {
         VGRBodyPickerView(selectedParts: $selectedParts)
+            .navigationTitle("bodypicker.title".localizedBundle)
+            .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/// Chip taps are printed to the console as events in the simulator
+private enum PreviewScreen: TrackableScreen {
+    case bodyPicker
+    var identifier: String { "preview_bodypicker" }
+}
+
+#Preview("Tracked") {
+    @Previewable @State var selectedParts: Set<String> = []
+
+    NavigationStack {
+        VGRBodyPickerView(selectedParts: $selectedParts, trackOn: PreviewScreen.bodyPicker)
             .navigationTitle("bodypicker.title".localizedBundle)
             .navigationBarTitleDisplayMode(.inline)
     }
