@@ -216,9 +216,13 @@
 "videocarousel.showall" = "Visa alla";
 
 /* Survey */
+"survey.title" = "Enkät";
 "survey.loading" = "Laddar…";
 "survey.receipt.title" = "Tack för din feedback!";
 "survey.receipt.text" = "Dina svar har skickats in.";
+"survey.cancel.title" = "Hoppa över enkäten?";
+"survey.cancel.message" = "Dina svar sparas inte.";
+"survey.cancel.confirm" = "Hoppa över";
 
 /* VideoPlayer */
 "videoplayer.error.title" = "Videoklippet går inte att spela upp";
