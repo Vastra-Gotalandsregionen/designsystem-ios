@@ -5,9 +5,11 @@ import SwiftUI
 /// The user can toggle between front and back views using a segmented picker.
 /// Selected body parts are visually highlighted based on selection state.
 ///
-/// When `trackOn` is given, every region tap on the diagram and every chip tap in the
-/// region sheet is reported as a `VGRBodyPickerInteraction` event with that screen as
-/// the Matomo category.
+/// When `trackOn` is given, every region tap on the diagram, every chip tap in the
+/// region sheet and every front/back toggle in the segmented control is reported as a
+/// `VGRBodyPickerInteraction` event with that screen as the Matomo category. Orientation
+/// changes made by the picker itself (jumping to the side a newly selected part is on)
+/// are not reported.
 ///
 /// - Parameters:
 ///   - selectedParts: A binding to the set of selected body parts.
@@ -30,6 +32,21 @@ public struct VGRBodyPickerView: View {
         Binding(
             get: { selectedOrientation ?? .front },
             set: { selectedOrientation = $0 }
+        )
+    }
+
+    /// The binding handed to the segmented control. Its setter reports the tap before
+    /// writing state, so only user toggles are tracked; the automatic switch in
+    /// `onChange(of: selectedParts)` writes `selectedOrientation` directly and stays silent.
+    private var controlBinding: Binding<VGRBodyOrientation?> {
+        Binding(
+            get: { selectedOrientation },
+            set: { newValue in
+                if let newValue, newValue != selectedOrientation {
+                    track(.switchOrientation(newValue))
+                }
+                selectedOrientation = newValue
+            }
         )
     }
 
@@ -84,7 +101,7 @@ public struct VGRBodyPickerView: View {
         .overlay(alignment: .top) {
             VGRSegmentedControl(
                 items: [VGRBodyOrientation.front, VGRBodyOrientation.back],
-                selectedItem: $selectedOrientation,
+                selectedItem: controlBinding,
                 displayText: { orientation in
                     "bodypicker.\(orientation.rawValue)".localizedBundle
                 },
@@ -96,6 +113,13 @@ public struct VGRBodyPickerView: View {
             .padding(.top, .Margins.medium)
         }
 
+    }
+
+    /// Reports an orientation toggle on the tracked screen, if any
+    @MainActor
+    private func track(_ interaction: VGRBodyPickerInteraction) {
+        guard let trackOn else { return }
+        Tracker.shared.trackEvent(interaction, on: trackOn)
     }
 }
 
@@ -109,7 +133,7 @@ public struct VGRBodyPickerView: View {
     }
 }
 
-/// Chip taps are printed to the console as events in the simulator
+/// Chip taps and front/back toggles are printed to the console as events in the simulator
 private enum PreviewScreen: TrackableScreen {
     case bodyPicker
     var identifier: String { "preview_bodypicker" }

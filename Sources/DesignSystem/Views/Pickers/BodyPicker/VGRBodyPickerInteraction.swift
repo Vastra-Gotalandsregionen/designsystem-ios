@@ -11,6 +11,7 @@
 /// region_show                             name=head
 /// bodypart_selected / bodypart_deselected name=head.scalp
 /// region_selected   / region_deselected   name=head
+/// orientation_selected                    name=front
 /// ```
 public enum VGRBodyPickerInteraction: TrackableInteraction, Equatable {
     /// A region on the body diagram was tapped, opening its sheet, e.g. `head`
@@ -24,6 +25,9 @@ public enum VGRBodyPickerInteraction: TrackableInteraction, Equatable {
     case selectRegion(String)
     case deselectRegion(String)
 
+    /// The front/back segmented control was tapped, e.g. `back`
+    case switchOrientation(VGRBodyOrientation)
+
     public var action: String {
         switch self {
             case .openRegion: return "region_show"
@@ -31,6 +35,7 @@ public enum VGRBodyPickerInteraction: TrackableInteraction, Equatable {
             case .deselectPart: return "bodypart_deselected"
             case .selectRegion: return "region_selected"
             case .deselectRegion: return "region_deselected"
+            case .switchOrientation: return "orientation_selected"
         }
     }
 
@@ -40,6 +45,8 @@ public enum VGRBodyPickerInteraction: TrackableInteraction, Equatable {
                  .selectPart(let id), .deselectPart(let id),
                  .selectRegion(let id), .deselectRegion(let id):
                 return id
+            case .switchOrientation(let orientation):
+                return orientation.rawValue
         }
     }
 }
