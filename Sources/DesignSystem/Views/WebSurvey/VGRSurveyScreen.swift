@@ -84,12 +84,6 @@ public struct VGRSurveyScreen: View {
                     }
                     .disabled(hasSubmitted)
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    VGRDoneButton {
-                        emit(.completed)
-                    }
-                    .disabled(!hasSubmitted)
-                }
             }
             .overlay {
                 if isLoading {
