@@ -80,6 +80,8 @@ public struct VGRContentScreen<CustomView : View> : View {
     /// The article data to display, containing all elements and metadata
     let content: VGRContent
 
+    var title: String = ""
+
     /// Optional custom dismissal action. If provided, this action will be called when the close button is tapped.
     /// If not provided, the default environment dismiss action will be used.
     var dismissAction: (() -> Void)? = nil
@@ -99,6 +101,7 @@ public struct VGRContentScreen<CustomView : View> : View {
 
     /// Initialize the article screen with the given article and optional dismiss action.
     /// - Parameters:
+    ///   - title: Passed to the navigationTitle for the screen
     ///   - content: The `VGRContent` instance containing all content to display
     ///   - dismissAction: Optional closure to execute when the screen is dismissed
     ///   - onFeedbackSubmitted: Optional callback when feedback is submitted
@@ -107,12 +110,14 @@ public struct VGRContentScreen<CustomView : View> : View {
     ///     element. Pass nil to let the selector present the player itself.
     ///   - customElementView: Optional custom view rendered for `.custom` content elements
     public init(
+        title: String = "",
         content: VGRContent,
         dismissAction: (() -> Void)? = nil,
         onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
         onActionCallout: ((String) -> Void)? = nil,
         onVideoSelected: ((VGRVideo) -> Void)? = nil
     ) where CustomView == EmptyView {
+        self.title = title
         self.content = content
         self.dismissAction = dismissAction
         self.onFeedbackSubmitted = onFeedbackSubmitted
@@ -123,6 +128,7 @@ public struct VGRContentScreen<CustomView : View> : View {
 
     /// Init with custom element view
     public init(
+        title: String = "",
         content: VGRContent,
         dismissAction: (() -> Void)? = nil,
         onFeedbackSubmitted: ((VGRFeedbackResult) -> Void)? = nil,
@@ -130,6 +136,7 @@ public struct VGRContentScreen<CustomView : View> : View {
         onVideoSelected: ((VGRVideo) -> Void)? = nil,
         @ViewBuilder customElementView: @escaping (VGRContentElement) -> CustomView
     ) {
+        self.title = title
         self.content = content
         self.dismissAction = dismissAction
         self.onFeedbackSubmitted = onFeedbackSubmitted
@@ -149,7 +156,11 @@ public struct VGRContentScreen<CustomView : View> : View {
     /// Computed navigation title based on the article type and content.
     /// Returns the article title for standard articles, or a localized type-specific title for other content types.
     var navigationTitle: String {
-        content.type == .article ? content.title : "content.type.\(content.type).title".localizedBundle
+        if !title.isEmpty {
+            return title
+        } else {
+            return content.type == .article ? content.title : "content.type.\(content.type).title".localizedBundle
+        }
     }
 
     public var body: some View {
@@ -214,7 +225,10 @@ public struct VGRContentScreen<CustomView : View> : View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $selectedContent) { article in
             NavigationStack {
-                VGRContentScreen(content: article, dismissAction: {
+                VGRContentScreen(
+                    title: "My custom title",
+                    content: article,
+                    dismissAction: {
                     selectedContent = nil
                 }, customElementView: { element in
                     if element.customId == "red" {
