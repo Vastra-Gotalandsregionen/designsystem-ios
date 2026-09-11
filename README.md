@@ -68,6 +68,7 @@ Komponenter bör ha tydliga `#Preview`-block för att enkelt kunna testas i Xcod
 - `VGRButton` - Konfigurerbar knapp med olika stilar (primary, secondary, tertiary, vertical, listRow, listRowDestructive)
 - `VGRCloseButton` - Standardiserad stäng-knapp
 - `VGRDoneButton` - Klar-knapp med iOS 26-stöd och fallback
+- `VGRSaveButton` - Spara-knapp med iOS 26-stöd och fallback
 - `VGRStepper` - Steg-kontroll för att öka/minska värden
 - `VGRToggle` - Anpassad toggle-switch
 - `VGRTableRowNavigationLink` - Navigationslänk för tabellrader (**deprecated** — använd `VGRNavRow`)
