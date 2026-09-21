@@ -220,6 +220,8 @@ public struct VerticalButtonVariant: VGRButtonVariantProtocol {
             .foregroundStyle(Color.Neutral.text)
             .padding()
             .frame(maxWidth: .infinity)
+            .background(Color.Primary.blueSurfaceMinimal)
+            .cornerRadius(.Radius.mainRadius)
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
         .disabled(!configuration.isEnabled || configuration.isLoading)
@@ -354,7 +356,11 @@ public struct ListRowButtonVariant: VGRButtonVariantProtocol {
                 VGRButton(label: "Sekundär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .secondary, action: {
                     isLoading.toggle()
                 })
-                
+
+                VGRButton(label: "Vertikal med ikon", icon: Image(systemName: "heart"), variant: .vertical) {
+                    isVerticalEnabled.toggle()
+                }
+
                 VGRButton(label: "Vertikal med ikon inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isVerticalEnabled, variant: .vertical) {
                     print("Tryckt med ikon")
                 }

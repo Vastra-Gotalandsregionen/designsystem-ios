@@ -13,6 +13,7 @@ public struct VGRButtonV2VerticalPrimaryVariant: VGRButtonV2VariantProtocol {
             .padding(.horizontal, configuration.size.padding)
             .padding(.vertical, configuration.size.verticalPadding)
             .applyFullWidth(configuration.fullWidth, alignment: .center)
+            .multilineTextAlignment(.center)
             .background(
                 RoundedRectangle(cornerRadius: .Radius.mainRadius)
                     .fill(Color.Neutral.dividerVariant)
@@ -30,6 +31,12 @@ public struct VGRButtonV2VerticalPrimaryVariant: VGRButtonV2VariantProtocol {
         VGRContainer {
             VGRSection(header: "VerticalPrimary (Horizontal layout)") {
                 HStack {
+                    VGRButtonV2("Extra dos", variant: .verticalPrimary) { } icon: {
+                        Image(systemName: "pill")
+                    }
+                    VGRButtonV2("Extra dos", variant: .verticalPrimary) { } icon: {
+                        Image(systemName: "pill")
+                    }
                     VGRButtonV2("Extra dos", variant: .verticalPrimary) { } icon: {
                         Image(systemName: "pill")
                     }
