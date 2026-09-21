@@ -46,6 +46,9 @@ public enum VGRButtonV2Variant {
     /// Inline-destruktiv åtgärd i en list-kort.
     case destructiveInline
 
+    /// Vertikalt staplad huvudåtgärd (ikon över text)
+    case verticalPrimary
+
     func resolve() -> any VGRButtonV2VariantProtocol {
         switch self {
             case .primary:           return VGRButtonV2PrimaryVariant()
@@ -56,6 +59,7 @@ public enum VGRButtonV2Variant {
             case .inline:            return VGRButtonV2InlineVariant()
             case .destructive:       return VGRButtonV2DestructiveVariant()
             case .destructiveInline: return VGRButtonV2DestructiveInlineVariant()
+            case .verticalPrimary: return VGRButtonV2VerticalPrimaryVariant()
         }
     }
 }
@@ -248,6 +252,13 @@ public struct VGRButtonV2<Icon: View>: View {
                 VGRSection(header: "SecondaryInverted") {
                     VGRButtonV2("Medium", variant: .secondaryInverted, size: .medium, systemImage: "xmark") { }
                     VGRButtonV2("Small",  variant: .secondaryInverted, size: .small,  systemImage: "xmark") { }
+                }
+            }
+
+            VGRSection(header: "VerticalPrimary") {
+                HStack {
+                    VGRButtonV2("Medium", variant: .verticalPrimary, size: .medium, systemImage: "pill") { }
+                    VGRButtonV2("Small",  variant: .verticalPrimary, size: .small,  systemImage: "pill") { }
                 }
             }
         }

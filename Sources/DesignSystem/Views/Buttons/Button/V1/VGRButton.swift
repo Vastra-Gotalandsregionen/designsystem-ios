@@ -44,10 +44,6 @@ public enum VGRButtonVariant {
     /// Vertikal layout (ikon ovanför text), för mer “kort”-liknande knappar.
     case vertical
 
-    /// Vertikal layout (ikon ovanför text), för mer “kort”-liknande knappar.
-    /// Med valmöjlighet på bakgrundsfärg och kantradie
-    case verticalStyled(backgroundColor: Color? = nil, cornerRadius: CGFloat? = nil)
-
     /// Tertiär knapp med låg visuell tyngd (diskret bakgrund).
     case tertiary
     
@@ -65,7 +61,6 @@ public enum VGRButtonVariant {
         case .primary:             return PrimaryButtonStyle()
         case .secondary:           return SecondaryButtonVariant()
         case .vertical:            return VerticalButtonVariant()
-        case .verticalStyled(let backgroundColor, let cornerRadius):    return VerticalButtonVariant(backgroundColor: backgroundColor, cornerRadius: cornerRadius)
         case .tertiary:            return TertiaryButtonVariant()
         case .listRow:             return ListRowButtonVariant(intent: .enable)
         case .listRowDestructive:  return ListRowButtonVariant(intent: .destructive)
@@ -200,13 +195,6 @@ public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
 public struct VerticalButtonVariant: VGRButtonVariantProtocol {
     /// En vertikal stil knapp.
     /// - Note: Använd denna stil för knappar som arrangerar innehåll vertikalt, lämplig för specifika layouter.
-    let backgroundColor: Color?
-    let cornerRadius: CGFloat?
-
-    public init(backgroundColor: Color? = nil, cornerRadius: CGFloat? = nil) {
-        self.backgroundColor = backgroundColor
-        self.cornerRadius = cornerRadius
-    }
 
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
@@ -232,8 +220,6 @@ public struct VerticalButtonVariant: VGRButtonVariantProtocol {
             .foregroundStyle(Color.Neutral.text)
             .padding()
             .frame(maxWidth: .infinity)
-            .background(backgroundColor ?? Color.Primary.blueSurfaceMinimal)
-            .cornerRadius(cornerRadius ?? .Radius.mainRadius)
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
         .disabled(!configuration.isEnabled || configuration.isLoading)
@@ -369,27 +355,11 @@ public struct ListRowButtonVariant: VGRButtonVariantProtocol {
                     isLoading.toggle()
                 })
                 
-                VGRButton(label: "VertikalStyled med ikon,", icon: Image(systemName: "heart"), variant: .vertical) {
-                    isVerticalEnabled.toggle()
-                }
-                
                 VGRButton(label: "Vertikal med ikon inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isVerticalEnabled, variant: .vertical) {
                     print("Tryckt med ikon")
                 }
                 
                 VGRButton(label: "Vertikal laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .vertical) {
-                    print("Tryckt med ikon")
-                }
-
-                VGRButton(label: "VertikalStyled med ikon, stylad med bakgrundsfärg och hörnradie", icon: Image(systemName: "heart"), variant: .verticalStyled(backgroundColor: Color.Accent.greenSurfaceMinimal, cornerRadius: 16)) {
-                    isVerticalEnabled.toggle()
-                }
-
-                VGRButton(label: "VertikalStyled med ikon, inaktiverad stylad med bakgrundsfärg och hörnradie", icon: Image(systemName: "heart"), isEnabled: $isVerticalEnabled, variant: .verticalStyled(backgroundColor: Color.Accent.greenSurfaceMinimal, cornerRadius: 16)) {
-                    print("Tryckt med ikon")
-                }
-
-                VGRButton(label: "Vertikal laddning stylad med bakgrundsfärg och hörnradie", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .verticalStyled(backgroundColor: Color.Accent.greenSurfaceMinimal, cornerRadius: 16)) {
                     print("Tryckt med ikon")
                 }
 
