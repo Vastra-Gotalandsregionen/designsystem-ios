@@ -7,7 +7,8 @@ public struct VGRButtonV2VerticalPrimaryVariant: VGRButtonV2VariantProtocol {
         Button(action: configuration.action) {
             VStack(spacing: .Margins.xtraSmall) {
                 configuration.icon.accessibilityHidden(true)
-                Text(configuration.label).font(configuration.size.font)
+                Text(configuration.label)
+                    .font(configuration.size.font)
             }
             .foregroundStyle(Color.Neutral.text)
             .padding(.horizontal, configuration.size.padding)
@@ -21,7 +22,6 @@ public struct VGRButtonV2VerticalPrimaryVariant: VGRButtonV2VariantProtocol {
             .contentShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
             .opacity(configuration.isEnabled ? 1 : 0.5)
         }
-        .buttonStyle(VGRButtonV2BareStyle())
         .disabled(!configuration.isEnabled)
     }
 }
@@ -45,7 +45,7 @@ public struct VGRButtonV2VerticalPrimaryVariant: VGRButtonV2VariantProtocol {
                     }
                 }
             }
-
+            
             VGRSection(header: "Sizes") {
                 VGRButtonV2("Small", variant: .verticalPrimary, size: .small) { } icon: {
                     Image(systemName: "pill")
