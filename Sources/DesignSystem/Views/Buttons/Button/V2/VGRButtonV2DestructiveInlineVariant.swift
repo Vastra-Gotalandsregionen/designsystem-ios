@@ -9,7 +9,8 @@ public struct VGRButtonV2DestructiveInlineVariant: VGRButtonV2VariantProtocol {
         Button(action: configuration.action) {
             HStack(spacing: .Margins.xtraSmall) {
                 configuration.icon.accessibilityHidden(true)
-                Text(configuration.label).font(configuration.size.font)
+                Text(configuration.label)
+                    .font(configuration.size.font)
             }
             .foregroundStyle(Color.Status.errorText)
             .padding(.horizontal, configuration.size.padding)

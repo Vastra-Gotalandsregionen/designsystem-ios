@@ -43,7 +43,7 @@ public enum VGRButtonVariant {
     
     /// Vertikal layout (ikon ovanför text), för mer “kort”-liknande knappar.
     case vertical
-    
+
     /// Tertiär knapp med låg visuell tyngd (diskret bakgrund).
     case tertiary
     
@@ -195,6 +195,7 @@ public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
 public struct VerticalButtonVariant: VGRButtonVariantProtocol {
     /// En vertikal stil knapp.
     /// - Note: Använd denna stil för knappar som arrangerar innehåll vertikalt, lämplig för specifika layouter.
+
     public func makeBody(configuration: VGRButton.Configuration) -> some View {
         Button(action: configuration.action) {
             ZStack {
@@ -355,11 +356,11 @@ public struct ListRowButtonVariant: VGRButtonVariantProtocol {
                 VGRButton(label: "Sekundär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .secondary, action: {
                     isLoading.toggle()
                 })
-                
+
                 VGRButton(label: "Vertikal med ikon", icon: Image(systemName: "heart"), variant: .vertical) {
                     isVerticalEnabled.toggle()
                 }
-                
+
                 VGRButton(label: "Vertikal med ikon inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isVerticalEnabled, variant: .vertical) {
                     print("Tryckt med ikon")
                 }
@@ -367,7 +368,7 @@ public struct ListRowButtonVariant: VGRButtonVariantProtocol {
                 VGRButton(label: "Vertikal laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .vertical) {
                     print("Tryckt med ikon")
                 }
-                
+
                 VGRButton(label: "Tertiär", variant: .tertiary) {
                     isTertiaryEnabled.toggle()
                 }
