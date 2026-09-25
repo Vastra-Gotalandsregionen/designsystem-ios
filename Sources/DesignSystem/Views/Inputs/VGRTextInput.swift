@@ -130,6 +130,7 @@ public struct VGRTextInput: View {
 
             field
                 .autocorrectionDisabled()
+                .dismissesKeyboardOnEscape()
                 .padding(.Margins.medium)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.Elevation.elevation1)
