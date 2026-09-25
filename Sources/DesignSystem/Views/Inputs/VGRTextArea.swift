@@ -52,6 +52,7 @@ public struct VGRTextArea: View {
         TextEditor(text: $value)
             .contentMargins(.Margins.xtraSmall)
             .autocorrectionDisabled()
+            .dismissesKeyboardOnEscape()
             .frame(minHeight: minHeight, maxHeight: .infinity)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.Elevation.elevation1)

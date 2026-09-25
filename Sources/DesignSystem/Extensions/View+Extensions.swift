@@ -134,4 +134,22 @@ public extension View {
     func dismissesKeyboardOnScroll() -> some View {
         self.scrollDismissesKeyboard(.interactively)
     }
+
+    /// Dismisses the keyboard on hardware Escape or the VoiceOver escape
+    /// gesture (two-finger Z). Already applied by `VGRTextInput` and
+    /// `VGRTextArea`; use it directly on a native `TextField` or `TextEditor`.
+    /// Works alongside an existing `.focused(_:)` binding.
+    func dismissesKeyboardOnEscape() -> some View {
+        self
+            .accessibilityAction(.escape) { resignFirstResponder() }
+            .onKeyPress(.escape) {
+                resignFirstResponder()
+                return .handled
+            }
+    }
+}
+
+@MainActor
+private func resignFirstResponder() {
+    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
 }
