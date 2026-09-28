@@ -1,139 +1,216 @@
 # 💠 VGR Designsystem iOS
 
-Detta är ett delat Swift Package för våra iOS-appar.
+Delat Swift Package för Västra Götalandsregionens iOS-appar (dermatologi, migrän, epilepsi med flera). Paketet innehåller Figma-kompatibla UI-komponenter, färg- och typografitokens, samt gemensam logik för notifikationer och spårning. Syftet är enhetligt utseende, mindre duplicerad kod och snabbare utveckling.
 
-Syftet är att tillhandahålla generiska, design/figma-kompatibla UI-komponenter, färger och typografi – allt för att förenkla utveckling, förbättra konsekvens och minska duplicerad kod.
+Alla publika komponenter är prefixade med `VGR` (t.ex. `VGRButton`, `VGRList`) för att undvika krockar med SwiftUI och tredjepartsbibliotek. Några äldre typer saknar prefix av historiska skäl (`Blob`, `LevelSlider`, `WebView`, `Recurrence`, `Tracker`, `Notification*`).
 
-Alla komponenter är prefixed med `VGR` (t.ex. `VGRButton`, `VGRCallout`) för att undvika krock med inbyggda SwiftUI-komponenter och andra externa ramverk.
+---
+
+## 📋 Krav och beroenden
+
+| | |
+|---|---|
+| Plattform | iOS 18.0+ |
+| Swift tools | 6.0 |
+| Standardspråk | Svenska (`defaultLocalization: "sv"`) |
+
+Paketet drar in tre externa beroenden. Du behöver inte lägga till dem själv, men de följer med i din app:
+
+| Beroende | Version | Används av |
+|---|---|---|
+| [matomo-sdk-ios](https://github.com/matomo-org/matomo-sdk-ios) | 7.5+ | `Tracker` (Matomo-spårning) |
+| [lottie-spm](https://github.com/airbnb/lottie-spm) | 4.5+ | `Blob` och kvittensanimationen i `VGRSurveyScreen` |
+| [swiftui-introspect](https://github.com/siteline/swiftui-introspect) | 26.0+ | Deklarerat i `Package.swift` men används inte i källkoden i dag |
 
 ---
 
 ## 📦 Använda designpaketet i din app
 
-Lägg enkelt till det som ett Swift Package i ditt Xcode-projekt:
-
 1. Gå till **File > Add Package Dependencies**
-2. Klistra in GitHub-URL:  
-   `https://github.com/Vastra-Gotalandsregionen/designsystem-ios.git`
-3. Add Package 
-4. Importera det i kod:
+2. Klistra in `https://github.com/Vastra-Gotalandsregionen/designsystem-ios.git`
+3. Välj versionsregel **Up to Next Minor** eller pinna en exakt tagg (se [Versionshantering](#-versionshantering))
+4. Importera i kod:
 
 ```swift
 import DesignSystem
+```
+
+### Snabbstart
+
+```swift
+import SwiftUI
+import DesignSystem
+
+struct SettingsScreen: View {
+    @State private var remindersOn = true
+    @State private var name = ""
+
+    var body: some View {
+        VGRContainer {
+            VGRSection(header: "Profil") {
+                VGRList {
+                    VGRTextInput(title: "Namn", value: $name)
+                    VGRToggleRow(title: "Påminnelser", isOn: $remindersOn)
+                    VGRNavRow(title: "Kontaktuppgifter") { ContactDetailsView() }
+                }
+            }
+
+            VGRSection {
+                VGRSimpleCallout(text: "Dina uppgifter sparas lokalt på enheten.",
+                                 systemImage: "lock")
+                VGRButton(label: "Spara") { save() }
+            }
+        }
+        .navigationTitle("Inställningar")
+    }
+}
+```
+
+---
+
+## 🎨 Design tokens
+
+Färger, typografi och avstånd exponeras som statiska medlemmar på `Color`, `Font` och `CGFloat`. Alla färger har ljust och mörkt läge. Fullständig tabell finns i [Extensions/README](Sources/DesignSystem/Extensions/README.md).
+
+### Färger
+
+| Familj | Innehåll | Exempel |
+|---|---|---|
+| `Color.Primary` | Actionfärg, basfärg och blå i varianter för text, yta och grafik | `.action`, `.base`, `.blueSurfaceMinimal` |
+| `Color.Accent` | Nio accentfärger (brown, cyan, green, lime, orange, pink, purple, red, yellow), var och en med `Graphic`, `Surface`, `SurfaceBold`, `SurfaceMinimal` | `.purple`, `.greenSurface`, `.redSurfaceBold` |
+| `Color.Neutral` | Text, kanter, avdelare och inaktiverade tillstånd | `.text`, `.textVariant`, `.border`, `.divider` |
+| `Color.Status` | Yta och text för `information`, `success`, `warning`, `error` | `.errorSurface`, `.successText` |
+| `Color.Elevation` | Bakgrund och fem nivåer av upphöjda ytor | `.background`, `.elevation1` |
+
+Namnkonventionen är `<färg>` för förgrund och grafik, `<färg>Surface` för bakgrund, `<färg>SurfaceMinimal` för den ljusaste ytan och `<färg>Fixed` för färger som inte byter i mörkt läge.
+
+### Typografi
+
+`Font` får viktade varianter av systemstilarna så att Dynamic Type bevaras: `.bodyRegular`, `.bodyMedium`, `.bodySemibold`, `.bodyBold`, `.footnoteRegular` … `.footnoteBold`, `.headlineSemibold`, `.headlineBold`, `.titleSemibold`, `.title2Bold`, `.title3Semibold`, `.subheadlineSemibold`, `.captionBold` med flera.
+
+### Avstånd och radier
+
+| Token | Värden |
+|---|---|
+| `CGFloat.Margins` | `xtraSmall` 8, `small` 12, `medium` 16, `large` 24, `xtraLarge` 32, `safeArea` 16 |
+| `CGFloat.Radius` | `smallSchema` 8, `mainRadius` 26, `large38` 38, `vgrCorner` 40, `screen` 62 |
+| `CGFloat.Letterspacing` | `small` 0.2, `medium` 0 |
+
+```swift
+VStack(spacing: .Margins.medium) { ... }
+    .padding(.Margins.large)
+    .background(Color.Elevation.elevation1)
+    .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
+```
+
+---
+
+## 🧩 Komponenter
+
+Varje mapp under `Sources/DesignSystem/Views` har en README med parametrar och exempel. Översikten finns i [Views/README](Sources/DesignSystem/Views/README.md).
+
+| Område | Komponenter | Dokumentation |
+|---|---|---|
+| Listor | `VGRContainer`, `VGRSection`, `VGRList` och rader: `VGRListRow`, `VGRLabelRow`, `VGRNavRow`, `VGRCheckRow`, `VGRSelectRow`, `VGRToggleRow`, `VGRMenuRow`, `VGRDatePickerRow`, `VGRNoteRow` | [Lists](Sources/DesignSystem/Views/Lists/README.md) |
+| Knappar | `VGRButton`, `VGRButtonV2`, `VGRChip`, `VGRChipButton`, `VGRStepper`, `VGRFlexibleStepper`, `VGRToggle`, toolbar-knappar (`VGRCloseButton`, `VGRDoneButton`, `VGRSaveButton`, `VGRCancelButton`, `VGREditButton`) | [Button](Sources/DesignSystem/Views/Buttons/Button/README.md) |
+| Kort och callouts | `VGRCalloutV3`, `VGRSimpleCallout`, `VGRCalloutV2`, `VGRCardView`, `VGRCardButton`, `VGRPanel`, `VGRDisclosureGroup` | [Callout](Sources/DesignSystem/Views/Cards/Callout/README.md) |
+| Alerts | `VGRAlert`, `.vgrAlert(item:)` med iOS 26-anatomi | [Alerts](Sources/DesignSystem/Views/Alerts/README.md) |
+| Inmatning | `VGRTextInput`, `VGRTextArea` | [Inputs](Sources/DesignSystem/Views/Inputs/README.md) |
+| Etiketter | `VGRFlagLabel`, `VGRValidationLabel` | [Labels](Sources/DesignSystem/Views/Labels/README.md) |
+| Väljare | `VGRBodyPickerView`, `VGRCalendarView`, `VGRCalendarWeekView`, `VGRDatePickerPopover`, `VGRDurationPicker`, `VGRMultiPickerView`, `VGRRecurrencePickerView`, `VGRSegmentedPicker`, `VGRSegmentedControl`, `VGRSingleSelectionList`, `VGRMultiSelectionList` | [Pickers](Sources/DesignSystem/Views/Pickers/README.md) |
+| Layout | `VGRFlowLayout`, `VGRPortraitLandscapeView` | [Layouts](Sources/DesignSystem/Views/Layouts/README.md) |
+| Skärmar | `VGRContentScreen`, `VGRWhatsNewScreen`, `VGRVideoCarousel`, `VGRVideoPlayer`, `VGRVideoListScreen`, `VGRFeedbackView`, `WebView` | [Screens](Sources/DesignSystem/Views/Screens/README.md) |
+| Enkät | `VGRSurveyScreen` för Microsoft Forms | [WebSurvey](Sources/DesignSystem/Views/WebSurvey/README.md) |
+| Tips | `VGRInlineTipView` (TipKit) | [Tips](Sources/DesignSystem/Views/Tips/README.md) |
+| Slider | `LevelSlider` | [LevelSlider](Sources/DesignSystem/Views/Sliders/LevelSlider/README.md) |
+| Designelement | `VGRIcon`, `VGRShape`, `VGRDivider`, `Blob` | Källfiler |
+
+### Deprecated
+
+Dessa finns kvar för bakåtkompatibilitet och ger kompileringsvarningar. Använd ersättaren.
+
+| Deprecated | Ersätts av |
+|---|---|
+| `VGRCallout`, `CalloutView` | `VGRCalloutV3` eller `VGRCalloutV2` |
+| `ActionButton` | `VGRButton` |
+| `VGRTableRowNavigationLink` | `VGRNavRow` i en `VGRList` |
+| `VGRTableRowDivider` | `VGRDivider` |
+| `VGRVideoPlayerView` | `VGRVideoPlayer` |
+| `TrackerScreen`, `.track(TrackerScreen)` | Egen `TrackableScreen`-enum i appen |
+
+---
+
+## ⚙️ Logik och hjälpare
+
+| Modul | Innehåll | Dokumentation |
+|---|---|---|
+| `Logic/Notifications` | `NotificationManager` med lagring, schemaläggning, bakgrundsuppdatering och `@Environment(\.notifications)` | [Notifications](Sources/DesignSystem/Logic/Notifications/README.md) |
+| `Logic/Matomo` | `Tracker.shared`, `TrackableScreen`, `TrackableInteraction`, `.track(_:)` | [Matomo](Sources/DesignSystem/Logic/Matomo/README.md) |
+| `Logic/Haptics.swift` | `Haptics.lightImpact()`, `.mediumImpact()`, `.heavyImpact()`, `.success()`, `.warning()`, `.error()` | Källfil |
+| `Logic/Accessibility` | `AccessibilityHelpers.postPrioritizedAnnouncement(_:withPriority:)`, `.postAnnouncementWithDelay(_:delay:)` | Källfil |
+| `Modifiers` | `.onDayChange { }` – körs när enhetens datum byter dag | Källfil |
+| `Gestures` | `.onSwipe { direction in }` med `SwipeGesture.Direction` | Källfil |
+| `Extensions` | `Date`, `Calendar`, `DateInterval`, `String`, `Bundle` och `View`-hjälpare samt alla tokens | [Extensions](Sources/DesignSystem/Extensions/README.md) |
+
+---
+
+## 🌍 Lokalisering
+
+Paketet är svenskspråkigt. Alla strängar ligger i `Sources/DesignSystem/Assets/sv.lproj/Localizable.strings` med prefix per komponent (`bodypicker.*`, `recurrence.*`, `alert.*`, `calendar.*` …). Komponenterna läser dem via `String.localizedBundle`, som alltid slår upp i paketets eget bundle.
+
+Konsekvenser för din app:
+
+- Komponenternas inbyggda texter (t.ex. "Avbryt", "Klar", kroppsdelsnamn) kan inte skrivas över från appen utan att ändra i paketet.
+- Texter du själv skickar in (`title`, `label`, `header`) lokaliseras i appen som vanligt.
+- Fler språk kräver en ny `<lang>.lproj` i paketet.
+
+---
+
+## 📌 Versionshantering
+
+Versionen sätts automatiskt av GitHub Actions vid varje push till `main` (`.github/workflows/version.yml` kör `versioning.sh`):
+
+| Ändring i commiten | Bump | Exempel |
+|---|---|---|
+| Filer tillagda eller borttagna | Minor | `0.73.0` → `0.74.0` |
+| Endast befintliga filer ändrade | Patch | `0.73.0` → `0.73.1` |
+
+Workflowen skriver `VERSION`, genererar `LibraryInfo.swift`, committar med `[CI]` i meddelandet och skapar en git-tagg med versionsnumret (utan `v`). Taggen är det du pinnar mot i din app. Det finns ingen CHANGELOG, så PR-titlarna mellan två taggar är releasenoteringen.
+
+Kontrollera vilken version din app kör:
+
+```swift
+print("DesignSystem \(LibraryInfo.version)")
 ```
 
 ---
 
 ## 🚀 Bidra till designsystemet
 
-Vill du _utveckla_ komponenter eller förbättra designsystemet? Följ dessa steg:
+### Utveckla med lokalt paket
 
-### 1. Klona repo:t
+1. Klona repot.
+2. Öppna appen du vill utveckla i. Lägg till det klonade repot som **lokalt** paket: File > Add Package Dependencies > Add Local Package.
+3. Xcode använder nu din lokala kopia i stället för taggen. Kom ihåg att byta tillbaka innan appen släpps.
 
-### 2. Öppna projektet som du vill utveckla i
+### Arbetsflöde
 
-- Lägg till det klonade repo:t som ett **local Swift Package** i Xcode (File > Add Package Dependencies > Add Local Package...)
-- Peka på din klonade mapp (`designsystem-ios`)
+1. Skapa en branch: `feature/<beskrivning>` för nytt, `fix/<beskrivning>` för rättningar.
+2. Gör ändringen. Lägg till eller uppdatera `#Preview`-block och komponentens README.
+3. Öppna en PR mot `main` och begär granskning. PR:er squash-mergas.
+4. När PR:en mergas bumpas versionen automatiskt (se ovan).
 
-> Nu kan du se och redigera komponenterna direkt från din app.
+### Testa
 
-### 3. Skapa en ny branch
+- Varje publik vy ska ha ett `#Preview`-block. Det är den primära testytan.
+- Enhetstester ligger i `Tests/designsystem-Tests` och körs med **Product > Test** i Xcode med paketet öppet. Idag testas `Recurrence` och `VGRNavRow`.
 
-```
-git checkout -b feat/namn-på-förändring
-```
+### Dokumentation
 
-### 4. Gör dina ändringar och testa dem lokalt
+- README-filer skrivs på **svenska**. Kodkommentarer och `///`-dokumentation skrivs på **engelska**.
+- Varje mapp under `Views` med publika komponenter har en README med parametertabell och exempel.
+- Nya publika typer får `///`-kommentarer. Länka relaterade typer med dubbla backticks (``VGRList``) så DocC kan följa dem.
 
-- Bygg och testa i din app med det lokala paketet kopplat.
-- Lägg till nya previews där det är relevant.
+### Prefix
 
-### 5. Commit + Push
-
-### 6. Skapa en Pull Request
-
-Gör en PR mot `main` via GitHub, begär kodgranskning.
-
----
-
-## 🧪 Testa komponenter
-
-Komponenter bör ha tydliga `#Preview`-block för att enkelt kunna testas i Xcode.
-
----
-
-## 🧩 Tillgängliga komponenter
-
-### Knappar & Kontroller
-- `VGRButton` - Konfigurerbar knapp med olika stilar (primary, secondary, tertiary, vertical, listRow, listRowDestructive)
-- `VGRButtonV2` - Nästa generation knapp med storlek, bredd och ikon-slot (under migrering, ersätter `VGRButton`)
-- `VGRCloseButton` - Standardiserad stäng-knapp
-- `VGRDoneButton` - Klar-knapp med iOS 26-stöd och fallback
-- `VGRSaveButton` - Spara-knapp med iOS 26-stöd och fallback
-- `VGRStepper` - Steg-kontroll för att öka/minska värden
-- `VGRToggle` - Anpassad toggle-switch
-- `VGRTableRowNavigationLink` - Navigationslänk för tabellrader (**deprecated** — använd `VGRNavRow`)
-
-### Kort & Utrop
-- `VGRCalloutV3` - Aktuell callout med slots för ikon, header och innehåll
-- `VGRSimpleCallout` - Callout med rubrik/text och en SF Symbol, byggd på `VGRCalloutV3`
-- `VGRCalloutV2` - Callout som tar `Image` + `imageType` (stöds, föredra V3 i ny kod)
-- `VGRCallout` - Informations-/varningsruta (**deprecated** — använd `VGRCalloutV2` eller `VGRCalloutV3`)
-- `VGRDisclosureGroup` - Utfällbar innehållsgrupp
-- `VGRCalloutDismissButton` - Stäng-knapp för callouts
-- `VGRCalloutIllustration` - Illustration för callouts
-- `VGRCalloutShape` - Formkomponent för callout-styling
-- `VGRCalloutText` - Textkomponent för callouts
-
-### Designelement
-- `VGRIcon` - Återanvändbar ikonkomponent med stöd för assets och SF Symbols
-- `VGRShape` - Formcontainer med anpassningsbar stil
-- `VGRDivider` - Avdelare mellan rader
-- `VGRTableRowDivider` - Avdelare för tabellrader (**deprecated** — använd `VGRDivider`)
-- `Blob` - Animerad blob med Lottie-animationer
-
-### Väljare (Pickers)
-- `VGRBodyPickerView` - Kroppsdelväljare för medicinska applikationer
-- `VGRCalendarView` - Anpassningsbar kalendervy med dagval
-- `VGRCalendarWeekView` - Veckovy för kalendrar
-- `VGRCalendarWeekHeaderView` - Header för kalenderveckor
-- `VGRDatePickerPopover` - Datumväljare i popover
-- `VGRMultiPickerView` - Flerkolumnsväljare
-- `VGRRecurrencePickerView` - Väljare för upprepningsmönster
-- `VGRSegmentedPicker` - Segmenterad kontrollväljare
-- `VGRSegmentedControl` - Kapselformad segmenterad kontroll med bock på valt segment
-
-### Layout
-- `VGRPortraitLandscapeView` - Vy som anpassar innehåll baserat på enhetens orientering
-
-### Artikelkomponenter
-- `VGRContentScreen` - Komplett artikelvy
-- `VGRContent` - Datamodell för artiklar
-- `VGRContentElement` - Datamodell för artikelelement
-
-### Datamodeller
-- `VGRBodyPartData` - Datamodell för kroppsdelsinformation
-- `VGRBodyView` - Vykomponent för kroppsdiagram
-- `VGRCalendarPeriodModel` - Datamodell för kalenderperioder
-- `VGRCalendarIndexKey` - Indexnyckel för kalenderidentifiering
-
-### Stilar & Modifierare
-- `VGRDisclosureGroupStyle` - Anpassad stil för disclosure groups
-- `vgrTimePickerPopover` - View modifier för tidsväljare i popover
-
-## 🏷 Prefix
-
-Alla komponenter använder prefixet `VGR` för att undvika konflikter med standardbiblioteket eller tredjepartspaket. Undvik att skapa komponenter utan prefix – även för interna strukturer om de kan användas externt.
-
----
-
-## 📌 Versionsinformation
-
-Paketet inkluderar automatisk version via `LibraryInfo.version`. Du kan enkelt kontrollera vilken version av designsystemet din app använder:
-
-```swift
-import DesignSystem
-
-print("Använder DesignSystem version: \(LibraryInfo.version)")
-// Output: Använder DesignSystem version: 0.20.0
-```
+Alla nya publika typer prefixas med `VGR`, även interna strukturer om de kan användas externt.
