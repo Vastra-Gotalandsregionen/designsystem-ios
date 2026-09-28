@@ -41,7 +41,7 @@ public struct VGRSaveButton: View {
 
     VStack(spacing: 32) {
         HStack {
-            Text("This is the done button in a ordinary context")
+            Text("This is the save button in an ordinary context")
                 .frame(maxWidth: .infinity, alignment: .leading)
             VGRSaveButton {
                 print("Dismissing")
@@ -51,7 +51,7 @@ public struct VGRSaveButton: View {
 
 
         HStack {
-            Text("This is the done button in a ordinary context (disabled)")
+            Text("This is the save button in an ordinary context (disabled)")
                 .frame(maxWidth: .infinity, alignment: .leading)
             VGRSaveButton {
                 print("Dismissing")
@@ -65,7 +65,7 @@ public struct VGRSaveButton: View {
     .padding()
     .sheet(isPresented: $showSheet) {
         NavigationStack {
-            Text("Sheet is open, look how nice the donebutton looks in the navigationbar.")
+            Text("Sheet is open, look how nice the save button looks in the navigationbar.")
                 .padding()
                 .navigationTitle("Sheet")
                 .navigationBarTitleDisplayMode(.inline)
