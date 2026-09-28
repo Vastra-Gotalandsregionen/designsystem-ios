@@ -66,6 +66,7 @@ Komponenter bör ha tydliga `#Preview`-block för att enkelt kunna testas i Xcod
 
 ### Knappar & Kontroller
 - `VGRButton` - Konfigurerbar knapp med olika stilar (primary, secondary, tertiary, vertical, listRow, listRowDestructive)
+- `VGRButtonV2` - Nästa generation knapp med storlek, bredd och ikon-slot (under migrering, ersätter `VGRButton`)
 - `VGRCloseButton` - Standardiserad stäng-knapp
 - `VGRDoneButton` - Klar-knapp med iOS 26-stöd och fallback
 - `VGRSaveButton` - Spara-knapp med iOS 26-stöd och fallback
@@ -74,8 +75,10 @@ Komponenter bör ha tydliga `#Preview`-block för att enkelt kunna testas i Xcod
 - `VGRTableRowNavigationLink` - Navigationslänk för tabellrader (**deprecated** — använd `VGRNavRow`)
 
 ### Kort & Utrop
-- `VGRCallout` - Informations-/varningsruta med valfria ikoner och illustrationer
-- `VGRCalloutV2` - Uppdaterad version av callout-komponenten
+- `VGRCalloutV3` - Aktuell callout med slots för ikon, header och innehåll
+- `VGRSimpleCallout` - Callout med rubrik/text och en SF Symbol, byggd på `VGRCalloutV3`
+- `VGRCalloutV2` - Callout som tar `Image` + `imageType` (stöds, föredra V3 i ny kod)
+- `VGRCallout` - Informations-/varningsruta (**deprecated** — använd `VGRCalloutV2` eller `VGRCalloutV3`)
 - `VGRDisclosureGroup` - Utfällbar innehållsgrupp
 - `VGRCalloutDismissButton` - Stäng-knapp för callouts
 - `VGRCalloutIllustration` - Illustration för callouts
@@ -85,7 +88,8 @@ Komponenter bör ha tydliga `#Preview`-block för att enkelt kunna testas i Xcod
 ### Designelement
 - `VGRIcon` - Återanvändbar ikonkomponent med stöd för assets och SF Symbols
 - `VGRShape` - Formcontainer med anpassningsbar stil
-- `VGRTableRowDivider` - Avdelare för tabellrader
+- `VGRDivider` - Avdelare mellan rader
+- `VGRTableRowDivider` - Avdelare för tabellrader (**deprecated** — använd `VGRDivider`)
 - `Blob` - Animerad blob med Lottie-animationer
 
 ### Väljare (Pickers)
@@ -93,11 +97,11 @@ Komponenter bör ha tydliga `#Preview`-block för att enkelt kunna testas i Xcod
 - `VGRCalendarView` - Anpassningsbar kalendervy med dagval
 - `VGRCalendarWeekView` - Veckovy för kalendrar
 - `VGRCalendarWeekHeaderView` - Header för kalenderveckor
-- `VGRCalendarMonthView` - Månadsvy för kalendrar
 - `VGRDatePickerPopover` - Datumväljare i popover
 - `VGRMultiPickerView` - Flerkolumnsväljare
 - `VGRRecurrencePickerView` - Väljare för upprepningsmönster
 - `VGRSegmentedPicker` - Segmenterad kontrollväljare
+- `VGRSegmentedControl` - Kapselformad segmenterad kontroll med bock på valt segment
 
 ### Layout
 - `VGRPortraitLandscapeView` - Vy som anpassar innehåll baserat på enhetens orientering
@@ -114,7 +118,7 @@ Komponenter bör ha tydliga `#Preview`-block för att enkelt kunna testas i Xcod
 - `VGRCalendarIndexKey` - Indexnyckel för kalenderidentifiering
 
 ### Stilar & Modifierare
-- `VGRDisclosureStyle` - Anpassad stil för disclosure groups
+- `VGRDisclosureGroupStyle` - Anpassad stil för disclosure groups
 - `vgrTimePickerPopover` - View modifier för tidsväljare i popover
 
 ## 🏷 Prefix

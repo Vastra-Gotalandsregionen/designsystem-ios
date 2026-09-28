@@ -30,7 +30,21 @@ Skärmnivåns behållare. Äger en `ScrollView`, designsystemets bakgrund (`Colo
 Gruppering med valfri rubrik och sidfot. Innehållet är godtyckligt: vanligtvis en `VGRList`, men kan vara diagram, banners, tomma tillstånd eller egna kort. Rubrik och sidfot kan vara antingen en sträng (renderas med designsystemets typografi) eller en egen vy via `@ViewBuilder`. Horisontell indragning av innehållet styrs via flaggan `inset`.
 
 ### `VGRList`
-Det rundade kortet med `elevation1`-bakgrund och automatiska `VGRDivider` mellan rader. Stöder en valfri varningsram via `showWarning`. Listan hanterar inte rubrik, sidfot eller horisontell padding — den är enbart själva kortet.
+Det rundade kortet med `elevation1`-bakgrund och automatiska `VGRDivider` mellan rader. Listan hanterar inte rubrik, sidfot eller horisontell padding — den är enbart själva kortet.
+
+| Parameter        | Typ     | Default                  | Beskrivning                                                        |
+|------------------|---------|--------------------------|--------------------------------------------------------------------|
+| `showBorder`     | `Bool`  | `false`                  | Ritar en ram runt kortet, t.ex. som varning vid saknad inmatning   |
+| `showBackground` | `Bool`  | `true`                   | `false` tar bort kortbakgrunden så listan ser "fast" ut             |
+| `borderColor`    | `Color` | `Color.Status.errorText` | Ramens färg när `showBorder` är `true`                             |
+| `hideDividers`   | `Bool`  | `false`                  | Döljer avdelarna mellan raderna                                    |
+
+```swift
+VGRList(showBorder: !hasSelection) {
+    VGRListRow(title: "Rad 1")
+    VGRListRow(title: "Rad 2")
+}
+```
 
 ---
 
