@@ -14,13 +14,12 @@ Alla publika komponenter är prefixade med `VGR` (t.ex. `VGRButton`, `VGRList`) 
 | Swift tools | 6.0 |
 | Standardspråk | Svenska (`defaultLocalization: "sv"`) |
 
-Paketet drar in tre externa beroenden. Du behöver inte lägga till dem själv, men de följer med i din app:
+Paketet drar in två externa beroenden. Du behöver inte lägga till dem själv, men de följer med i din app:
 
 | Beroende | Version | Används av |
 |---|---|---|
 | [matomo-sdk-ios](https://github.com/matomo-org/matomo-sdk-ios) | 7.5+ | `Tracker` (Matomo-spårning) |
 | [lottie-spm](https://github.com/airbnb/lottie-spm) | 4.5+ | `Blob` och kvittensanimationen i `VGRSurveyScreen` |
-| [swiftui-introspect](https://github.com/siteline/swiftui-introspect) | 26.0+ | Deklarerat i `Package.swift` men används inte i källkoden i dag |
 
 ---
 
