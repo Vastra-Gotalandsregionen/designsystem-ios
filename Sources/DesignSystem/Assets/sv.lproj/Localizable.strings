@@ -1,6 +1,7 @@
 /* General strings */
 "general.cancel" = "Avbryt";
 "general.done" = "Klar";
+"general.save" = "Spara";
 "general.close" = "Stäng";
 "general.edit" = "Ändra";
 "general.decrease" = "Minska";
