@@ -140,16 +140,20 @@ public extension View {
     /// `VGRTextArea`; use it directly on a native `TextField` or `TextEditor`.
     /// Works alongside an existing `.focused(_:)` binding.
     func dismissesKeyboardOnEscape() -> some View {
-        self
-            .accessibilityAction(.escape) { resignFirstResponder() }
-            .onKeyPress(.escape) {
-                resignFirstResponder()
-                return .handled
-            }
+        modifier(DismissesKeyboardOnEscapeModifier())
     }
 }
 
-@MainActor
-private func resignFirstResponder() {
-    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+private struct DismissesKeyboardOnEscapeModifier: ViewModifier {
+    @FocusState private var isFocused: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .focused($isFocused)
+            .accessibilityAction(.escape) { isFocused = false }
+            .onKeyPress(.escape) {
+                isFocused = false
+                return .handled
+            }
+    }
 }
