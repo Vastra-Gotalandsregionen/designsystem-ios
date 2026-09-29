@@ -11,6 +11,7 @@ import SwiftUI
 ///
 /// VGRToggle(isOn: $isOn, text: "Aktivera notiser", description: "Få en påminnelse varje dag.")
 /// ```
+@available(*, deprecated, message: "Use VGRToggleRow inside a VGRList instead.")
 public struct VGRToggle: View {
 
     /// För att hantera tillstånd där komponenten är satt som .disabled(true)
@@ -109,20 +110,22 @@ public struct VGRToggle: View {
     }
 }
 
-#Preview {
-    @Previewable @State var isOn: Bool = false
-    
-    ScrollView {
-        VGRShape {
-            VStack (spacing: 32) {
-                VGRToggle(isOn: $isOn, text: "Hej hopp")
-                
-                VGRToggle(isOn: $isOn, text: "Hej hopp", description: "Någon slags information")
+//MARK: This component is deprecated - Preview is commented out to reduce number of unnecessary Xcode-warnings in the project.
 
-                VGRToggle(isOn: $isOn, text: "Hej hopp", description: "Någon slags information igen")
-                    .disabled(true)
-            }
-            .padding(.vertical, 32)
-        }
-    }
-}
+//#Preview {
+//    @Previewable @State var isOn: Bool = false
+    
+//    ScrollView {
+//        VGRShape {
+//            VStack (spacing: 32) {
+//                VGRToggle(isOn: $isOn, text: "Hej hopp")
+                
+//                VGRToggle(isOn: $isOn, text: "Hej hopp", description: "Någon slags information")
+
+//                VGRToggle(isOn: $isOn, text: "Hej hopp", description: "Någon slags information igen")
+//                    .disabled(true)
+//            }
+//            .padding(.vertical, 32)
+//        }
+//    }
+//}

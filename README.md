@@ -111,7 +111,7 @@ Varje mapp under `Sources/DesignSystem/Views` har en README med parametrar och e
 | Område | Komponenter | Dokumentation |
 |---|---|---|
 | Listor | `VGRContainer`, `VGRSection`, `VGRList` och rader: `VGRListRow`, `VGRLabelRow`, `VGRNavRow`, `VGRCheckRow`, `VGRSelectRow`, `VGRToggleRow`, `VGRMenuRow`, `VGRDatePickerRow`, `VGRNoteRow` | [Lists](Sources/DesignSystem/Views/Lists/README.md) |
-| Knappar | `VGRButtonV2`, `VGRChip`, `VGRChipButton`, `VGRStepper`, `VGRFlexibleStepper`, `VGRToggle`, toolbar-knappar (`VGRCloseButton`, `VGRDoneButton`, `VGRSaveButton`, `VGRCancelButton`, `VGREditButton`) | [Button](Sources/DesignSystem/Views/Buttons/Button/README.md) |
+| Knappar | `VGRButtonV2`, `VGRChip`, `VGRChipButton`, `VGRStepper`, `VGRFlexibleStepper`, toolbar-knappar (`VGRCloseButton`, `VGRDoneButton`, `VGRSaveButton`, `VGRCancelButton`, `VGREditButton`) | [Button](Sources/DesignSystem/Views/Buttons/Button/README.md) |
 | Kort och callouts | `VGRCalloutV3`, `VGRSimpleCallout`, `VGRCardView`, `VGRCardButton`, `VGRPanel`, `VGRDisclosureGroup` | [Callout](Sources/DesignSystem/Views/Cards/Callout/README.md) |
 | Alerts | `VGRAlert`, `.vgrAlert(item:)` med iOS 26-anatomi | [Alerts](Sources/DesignSystem/Views/Alerts/README.md) |
 | Inmatning | `VGRTextInput`, `VGRTextArea` | [Inputs](Sources/DesignSystem/Views/Inputs/README.md) |
@@ -132,6 +132,7 @@ Dessa finns kvar för bakåtkompatibilitet och ger kompileringsvarningar. Använ
 |---|---|
 | `VGRCallout`, `CalloutView`, `VGRCalloutV2` och V2-byggstenarna | `VGRCalloutV3` |
 | `VGRButton`, `ActionButton` | `VGRButtonV2` |
+| `VGRToggle` | `VGRToggleRow` i en `VGRList` |
 | `VGRTableRowNavigationLink` | `VGRNavRow` i en `VGRList` |
 | `VGRTableRowDivider` | `VGRDivider` |
 | `VGRVideoPlayerView` | `VGRVideoPlayer` |

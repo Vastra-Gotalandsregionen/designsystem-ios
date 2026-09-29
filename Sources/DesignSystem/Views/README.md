@@ -5,7 +5,7 @@ Alla visuella komponenter i designsystemet, grupperade per ansvarsområde. Varje
 | Mapp | Innehåll | Dokumentation |
 |------|----------|---------------|
 | `Alerts/` | `VGRAlert`, `VGRAlertButton`, `.vgrAlert(item:)` – UIKit-baserade alerts med iOS 26-anatomi | [README](Alerts/README.md) |
-| `Buttons/` | `VGRButtonV2`, `VGRChip`, `VGRChipButton`, `VGRStepper`, `VGRFlexibleStepper`, `VGRToggle`, toolbar-knappar (`VGRCloseButton`, `VGRDoneButton`, `VGRSaveButton`, `VGRCancelButton`, `VGREditButton`) | [Button/README](Buttons/Button/README.md) |
+| `Buttons/` | `VGRButtonV2`, `VGRChip`, `VGRChipButton`, `VGRStepper`, `VGRFlexibleStepper`, toolbar-knappar (`VGRCloseButton`, `VGRDoneButton`, `VGRSaveButton`, `VGRCancelButton`, `VGREditButton`) | [Button/README](Buttons/Button/README.md) |
 | `Cards/` | `VGRCalloutV3`, `VGRSimpleCallout`, `VGRCardView`, `VGRCardButton`, `VGRPanel`, `VGRDisclosureGroup` | [Callout/README](Cards/Callout/README.md) |
 | `Design/` | `VGRIcon`, `VGRShape`, `VGRDivider`, `Blob` | Källfiler |
 | `Inputs/` | `VGRTextInput`, `VGRTextArea` | [README](Inputs/README.md) |
