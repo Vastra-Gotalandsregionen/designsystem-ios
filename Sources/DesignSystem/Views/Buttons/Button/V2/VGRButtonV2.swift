@@ -91,7 +91,7 @@ public enum VGRButtonV2Variant {
 /// VGRButtonV2("Special", customVariant: MyCustomVariant()) { ... }
 /// ```
 ///
-/// - Note: Under utveckling. Kommer att ersätta ``VGRButton`` när migreringen är klar.
+/// - Note: Replaces ``VGRButton``, which is deprecated.
 public struct VGRButtonV2<Icon: View>: View {
 
     @Environment(\.isEnabled) private var isEnabled

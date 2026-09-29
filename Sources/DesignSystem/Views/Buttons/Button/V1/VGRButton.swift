@@ -2,6 +2,7 @@ import SwiftUI
 
 /// Ett protokoll som definierar en knappvariants stil.
 /// Varje typ som implementerar detta protokoll tillhandahåller en anpassad SwiftUI-vy baserat på given konfiguration.
+@available(*, deprecated, message: "Use VGRButtonV2VariantProtocol instead.")
 public protocol VGRButtonVariantProtocol {
     associatedtype Body: View
     func makeBody(configuration: VGRButton.Configuration) -> Body
@@ -34,6 +35,7 @@ public protocol VGRButtonVariantProtocol {
 ///           icon: Image(systemName: "trash"),
 ///           variant: .listRowDestructive) { ... }
 /// ```
+@available(*, deprecated, message: "Use VGRButtonV2Variant instead.")
 public enum VGRButtonVariant {
     /// Primär, mest framträdande knapp för huvudhandlingar.
     case primary
@@ -69,6 +71,7 @@ public enum VGRButtonVariant {
 }
 
 /// En konfigurerbar knappkomponent som stödjer olika stilar (varianter), valfria ikoner, laddningstillstånd och tillgänglighetsfunktioner.
+@available(*, deprecated, message: "Use VGRButtonV2 instead.")
 public struct VGRButton: View {
     
     /// Innehåller konfigurationsdetaljer för att rendera en `VGRButton`, inklusive label, ikon, tillstånd och åtgärd.
@@ -120,6 +123,7 @@ public struct VGRButton: View {
     }
 }
 
+@available(*, deprecated, message: "Use VGRButtonV2 instead.")
 public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
     /// En primär stil knapp.
     /// - Note: Använd denna stil för huvudsakliga åtgärder med framträdande utseende.
@@ -156,6 +160,7 @@ public struct PrimaryButtonStyle: VGRButtonVariantProtocol {
     }
 }
 
+@available(*, deprecated, message: "Use VGRButtonV2 instead.")
 public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
     /// En sekundär stil knapp.
     /// - Note: Använd denna stil för sekundära åtgärder som är mindre framträdande.
@@ -192,6 +197,7 @@ public struct SecondaryButtonVariant: VGRButtonVariantProtocol {
     }
 }
 
+@available(*, deprecated, message: "Use VGRButtonV2 instead.")
 public struct VerticalButtonVariant: VGRButtonVariantProtocol {
     /// En vertikal stil knapp.
     /// - Note: Använd denna stil för knappar som arrangerar innehåll vertikalt, lämplig för specifika layouter.
@@ -228,6 +234,7 @@ public struct VerticalButtonVariant: VGRButtonVariantProtocol {
     }
 }
 
+@available(*, deprecated, message: "Use VGRButtonV2 instead.")
 public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
     /// En tertiär stil knapp.
     /// - Note: Använd denna stil för mindre betonade åtgärder, ofta använda tillsammans med primära och sekundära knappar.
@@ -264,6 +271,7 @@ public struct TertiaryButtonVariant: VGRButtonVariantProtocol {
 
 /// En list-rad stil knapp.
 /// - Note: Använd denna variant i listor, formulär eller tabeller där en rad ska agera som en tryckbar åtgärd.
+@available(*, deprecated, message: "Use VGRButtonV2 instead.")
 public struct ListRowButtonVariant: VGRButtonVariantProtocol {
     
     /// Semantisk avsikt för list-rad-knappen.
@@ -305,88 +313,90 @@ public struct ListRowButtonVariant: VGRButtonVariantProtocol {
     }
 }
 
-#Preview {
+//MARK: This component is deprecated - Preview is commented out to reduce number of unnecessary Xcode-warnings in the project.
+
+//#Preview {
     
-    @Previewable @State var isPrimaryEnabled: Bool = false
-    @Previewable @State var isSecondaryEnabled: Bool = false
-    @Previewable @State var isVerticalEnabled: Bool = false
-    @Previewable @State var isTertiaryEnabled: Bool = false
-    @Previewable @State var isLoading: Bool = true
+//    @Previewable @State var isPrimaryEnabled: Bool = false
+//    @Previewable @State var isSecondaryEnabled: Bool = false
+//    @Previewable @State var isVerticalEnabled: Bool = false
+//    @Previewable @State var isTertiaryEnabled: Bool = false
+//    @Previewable @State var isLoading: Bool = true
     
-    ScrollView {
-        VGRShape(backgroundColor: Color.Elevation.background) {
-            VStack(spacing: 16) {
+//    ScrollView {
+//        VGRShape(backgroundColor: Color.Elevation.background) {
+//            VStack(spacing: 16) {
                 
-                VGRButton(
-                    label: "Lägg till läkemedel",
-                    icon: Image(systemName: "pills.circle"),
-                    variant: .listRow) {
-                        print("Beepboop")
-                    }
+//                VGRButton(
+//                    label: "Lägg till läkemedel",
+//                    icon: Image(systemName: "pills.circle"),
+//                    variant: .listRow) {
+//                        print("Beepboop")
+//                    }
                 
-                VGRButton(
-                    label: "Ta bort något",
-                    icon: Image(systemName: "pills.circle"),
-                    variant: .listRowDestructive) {
-                        print("Beepboop")
-                    }
+//                VGRButton(
+//                    label: "Ta bort något",
+//                    icon: Image(systemName: "pills.circle"),
+//                    variant: .listRowDestructive) {
+//                        print("Beepboop")
+//                    }
                 
-                VGRButton(label: "Primär", action: {
-                    isPrimaryEnabled.toggle()
-                })
+//                VGRButton(label: "Primär", action: {
+//                    isPrimaryEnabled.toggle()
+//                })
                 
-                VGRButton(label: "Primär med ikon", icon: Image(systemName: "heart"), variant: .primary) {
-                    isLoading.toggle()
-                }
+//                VGRButton(label: "Primär med ikon", icon: Image(systemName: "heart"), variant: .primary) {
+//                    isLoading.toggle()
+//                }
                 
-                VGRButton(label: "Primär inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isPrimaryEnabled, variant: .primary, action: {})
+//                VGRButton(label: "Primär inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isPrimaryEnabled, variant: .primary, action: {})
                 
-                VGRButton(label: "Primär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .primary, action: {
-                    isLoading.toggle()
-                })
+//                VGRButton(label: "Primär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .primary, action: {
+//                    isLoading.toggle()
+//                })
                 
-                VGRButton(label: "Sekundär", variant: .secondary, action: {
-                    isSecondaryEnabled.toggle()
-                })
+//                VGRButton(label: "Sekundär", variant: .secondary, action: {
+//                    isSecondaryEnabled.toggle()
+//                })
                 
-                VGRButton(label: "Sekundär med ikon", icon: Image(systemName: "heart"), variant: .secondary, action: {})
+//                VGRButton(label: "Sekundär med ikon", icon: Image(systemName: "heart"), variant: .secondary, action: {})
                 
-                VGRButton(label: "Sekundär inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isSecondaryEnabled, variant: .secondary, action: {})
+//                VGRButton(label: "Sekundär inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isSecondaryEnabled, variant: .secondary, action: {})
                 
-                VGRButton(label: "Sekundär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .secondary, action: {
-                    isLoading.toggle()
-                })
+//                VGRButton(label: "Sekundär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .secondary, action: {
+//                    isLoading.toggle()
+//                })
 
-                VGRButton(label: "Vertikal med ikon", icon: Image(systemName: "heart"), variant: .vertical) {
-                    isVerticalEnabled.toggle()
-                }
+//                VGRButton(label: "Vertikal med ikon", icon: Image(systemName: "heart"), variant: .vertical) {
+//                    isVerticalEnabled.toggle()
+//                }
 
-                VGRButton(label: "Vertikal med ikon inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isVerticalEnabled, variant: .vertical) {
-                    print("Tryckt med ikon")
-                }
+//                VGRButton(label: "Vertikal med ikon inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isVerticalEnabled, variant: .vertical) {
+//                    print("Tryckt med ikon")
+//                }
                 
-                VGRButton(label: "Vertikal laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .vertical) {
-                    print("Tryckt med ikon")
-                }
+//                VGRButton(label: "Vertikal laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .vertical) {
+//                    print("Tryckt med ikon")
+//                }
 
-                VGRButton(label: "Tertiär", variant: .tertiary) {
-                    isTertiaryEnabled.toggle()
-                }
+//                VGRButton(label: "Tertiär", variant: .tertiary) {
+//                    isTertiaryEnabled.toggle()
+//                }
                 
-                VGRButton(label: "Tertiär med ikon", icon: Image(systemName: "heart"), variant: .tertiary) {
-                    isTertiaryEnabled.toggle()
-                }
+//                VGRButton(label: "Tertiär med ikon", icon: Image(systemName: "heart"), variant: .tertiary) {
+//                    isTertiaryEnabled.toggle()
+//                }
                 
-                VGRButton(label: "Tertiär inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isTertiaryEnabled, variant: .tertiary) {
-                    print("Tryckt med ikon")
-                }
+//                VGRButton(label: "Tertiär inaktiverad", icon: Image(systemName: "heart"), isEnabled: $isTertiaryEnabled, variant: .tertiary) {
+//                    print("Tryckt med ikon")
+//                }
                 
-                VGRButton(label: "Tertiär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .tertiary) {
-                    print("Tryckt med ikon")
-                }
-            }
-            .padding(.vertical, 32)
-            .padding(.horizontal, 64)
-        }
-    }
-}
+//                VGRButton(label: "Tertiär laddning", icon: Image(systemName: "heart"), isLoading: $isLoading, variant: .tertiary) {
+//                    print("Tryckt med ikon")
+//                }
+//            }
+//            .padding(.vertical, 32)
+//            .padding(.horizontal, 64)
+//        }
+//    }
+//}

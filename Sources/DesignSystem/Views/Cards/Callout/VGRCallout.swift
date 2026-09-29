@@ -4,7 +4,7 @@ import SwiftUI
 /// Stöder olika layoutvarianter inklusive enkel, ikonbaserad och illustrationsbaserad presentation.
 ///
 
-@available(*, deprecated, renamed: "VGRCalloutV2")
+@available(*, deprecated, message: "Use VGRCalloutV3 instead.")
 public struct VGRCallout: View {
 
     @Environment(\.dynamicTypeSize) var dynamicTypeSize

@@ -4,6 +4,7 @@ import SwiftUI
 
 /// A reusable illustration component that renders an asset for Callouts.
 /// Can be used both inside an SPM package and in host apps thanks to the configurable bundle.
+@available(*, deprecated, message: "Use VGRCalloutV3 instead.")
 public struct VGRCalloutIllustration: View {
     
     // MARK: Properties
@@ -40,6 +41,8 @@ public struct VGRCalloutIllustration: View {
 
 // MARK: - Preview
 
-#Preview {
-    VGRCalloutIllustration(assetName: "illustration_presenting")
-}
+//MARK: This component is deprecated - Preview is commented out to reduce number of unnecessary Xcode-warnings in the project.
+
+//#Preview {
+//    VGRCalloutIllustration(assetName: "illustration_presenting")
+//}

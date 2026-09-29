@@ -1,6 +1,6 @@
 import SwiftUI
 
-@available(*, deprecated, renamed: "VGRCalloutV2")
+@available(*, deprecated, message: "Use VGRCalloutV3 instead.")
 public struct CalloutView<Icon: View>: View {
     private let icon: Icon
     let title: String
