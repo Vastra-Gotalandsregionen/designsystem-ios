@@ -6,8 +6,8 @@ Callouts är rundade kort som lyfter fram information, varningar eller bekräfte
 |--------------------|---------------------------------------|-------------------------------------------------------------------|
 | `VGRCalloutV3`     | **Aktuell**                           | Nya vyer. Slot-baserad med `icon`, `header` och `content`         |
 | `VGRSimpleCallout` | Aktuell (bekvämlighet ovanpå V3)      | Rubrik/text plus en SF Symbol, inget annat                        |
-| `VGRCalloutV2`     | Stöds                                 | Befintlig kod. Tar `Image` + `imageType` i stället för slots       |
-| `VGRCallout`, `CalloutView` | **Deprecated** (`renamed: VGRCalloutV2`) | Ska inte användas i ny kod                                   |
+| `VGRCalloutV2` och byggstenarna `VGRCalloutShape`, `VGRCalloutText`, `VGRCalloutIllustration`, `VGRCalloutDismissButton` | **Deprecated** | Befintlig kod. Migrera till `VGRCalloutV3` |
+| `VGRCallout`, `CalloutView` | **Deprecated** | Ska inte användas i ny kod |
 
 Alla varianter delar bakgrundsfärg via `Color.Status.*Surface`. Standard är `informationSurface`; skicka `errorSurface`, `warningSurface` eller `successSurface` för att förmedla allvarlighetsgrad.
 
@@ -82,9 +82,9 @@ VGRSimpleCallout(text: "Kontrollera din anslutning.",
 
 ---
 
-## VGRCalloutV2
+## VGRCalloutV2 (deprecated)
 
-Föregångaren till V3. Tar en färdig `Image` och en `imageType` som styr storleken (`.icon` 25 pt, `.illustration` 100 pt). Extra innehåll läggs i en `content`-closure under texten.
+Föregångaren till V3, märkt `@available(*, deprecated)`. Dokumentationen finns kvar för befintlig kod. Tar en färdig `Image` och en `imageType` som styr storleken (`.icon` 25 pt, `.illustration` 100 pt). Extra innehåll läggs i en `content`-closure under texten.
 
 | Parameter         | Typ                 | Default                           | Beskrivning                                   |
 |-------------------|---------------------|-----------------------------------|-----------------------------------------------|
@@ -106,7 +106,7 @@ VGRCalloutV2(header: "Rubrik",
              dismiss: { hide() })
 ```
 
-Byggstenarna `VGRCalloutShape`, `VGRCalloutText`, `VGRCalloutIllustration` och `VGRCalloutDismissButton` är publika och kan användas för egna layouter, men behövs normalt inte.
+Byggstenarna `VGRCalloutShape`, `VGRCalloutText`, `VGRCalloutIllustration` och `VGRCalloutDismissButton` är deprecated tillsammans med V2. V3 använder dem inte.
 
 ---
 

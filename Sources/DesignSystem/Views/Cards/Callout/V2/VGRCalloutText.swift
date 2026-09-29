@@ -2,6 +2,7 @@ import SwiftUI
 
 /// En vy som visar stylad callout-text med valfri rubrik och obligatorisk beskrivning.
 /// Används i `VGRCallout` för att presentera informativa eller varningsmeddelanden.
+@available(*, deprecated, message: "Use VGRCalloutV3 instead.")
 public struct VGRCalloutText: View {
     /// En valfri attributerad rubrik som visas överst i callouten.
     /// En obligatorisk attributerad beskrivning som visas under rubriken.

@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(*, deprecated, message: "Use VGRCalloutV3 instead.")
 public struct VGRCalloutV2<Content: View>: View {
     
     public enum ImageType {
@@ -88,97 +89,99 @@ public struct VGRCalloutV2<Content: View>: View {
     }
 }
 
-#Preview {
-    @Previewable @State var expanded1 = false
-    @Previewable @State var expanded2 = false
-    @Previewable @State var index: Int? = 0
-    @Previewable @State var isOn = false
+//MARK: This component is deprecated - Preview is commented out to reduce number of unnecessary Xcode-warnings in the project.
+
+//#Preview {
+//    @Previewable @State var expanded1 = false
+//    @Previewable @State var expanded2 = false
+//    @Previewable @State var index: Int? = 0
+//    @Previewable @State var isOn = false
     
-    ScrollView {
-        VStack(spacing: 32) {
+//    ScrollView {
+//        VStack(spacing: 32) {
             
-            VGRCalloutV2(description: "Enklaste varianten, enbart text")
+//            VGRCalloutV2(description: "Enklaste varianten, enbart text")
             
-            VGRCalloutV2(
-                description: "Text med ikon",
-                image: Image("chatbubble", bundle: .module))
+//            VGRCalloutV2(
+//                description: "Text med ikon",
+//                image: Image("chatbubble", bundle: .module))
             
-            VGRCalloutV2(
-                header: "Rubrik",
-                description: "Text med större illustration och med en rubrik",
-                image: Image("illustration_presenting", bundle: .module),
-                imageType: .illustration)
+//            VGRCalloutV2(
+//                header: "Rubrik",
+//                description: "Text med större illustration och med en rubrik",
+//                image: Image("illustration_presenting", bundle: .module),
+//                imageType: .illustration)
             
-            VGRCalloutV2(
-                header: "Rubrik",
-                description: "Rubrik\nText\nIllustration\nAnnan bakgrundsfärg\nDismiss-knapp",
-                backgroundColor: Color.Status.informationSurface,
-                image: Image("illustration_presenting", bundle: .module),
-                imageType: .illustration,
-                dismiss: {
-                    print("Dismiss")
-                } ) {
-                    VGRButton(label: "Knapp") {
-                        print("Knapp")
-                    }
-                }
+//            VGRCalloutV2(
+//                header: "Rubrik",
+//                description: "Rubrik\nText\nIllustration\nAnnan bakgrundsfärg\nDismiss-knapp",
+//                backgroundColor: Color.Status.informationSurface,
+//                image: Image("illustration_presenting", bundle: .module),
+//                imageType: .illustration,
+//                dismiss: {
+//                    print("Dismiss")
+//                } ) {
+//                    VGRButton(label: "Knapp") {
+//                        print("Knapp")
+//                    }
+//                }
             
-            VGRCalloutV2(
-                header: "Rubrik",
-                description: "Rubrik\nText\nIllustration\nAnnan bakgrundsfärg\nDismiss-knapp\nDisclosure/Accordion",
-                backgroundColor: Color.Status.informationSurface,
-                image: Image("illustration_presenting", bundle: .module),
-                imageType: .illustration,
-                dismiss: {
-                    print("Dismiss")
-                }
-            ) {
-                VStack(spacing: 0) {
-                    DisclosureGroup("Visa mer", isExpanded: $expanded1) {
-                        Text("Blablablablablbalbalb")
-                            .foregroundColor(Color.Neutral.text)
-                    }
-                    .disclosureGroupStyle(VGRDisclosureGroupStyle())
+//            VGRCalloutV2(
+//                header: "Rubrik",
+//                description: "Rubrik\nText\nIllustration\nAnnan bakgrundsfärg\nDismiss-knapp\nDisclosure/Accordion",
+//                backgroundColor: Color.Status.informationSurface,
+//                image: Image("illustration_presenting", bundle: .module),
+//                imageType: .illustration,
+//                dismiss: {
+//                    print("Dismiss")
+//                }
+//            ) {
+//                VStack(spacing: 0) {
+//                    DisclosureGroup("Visa mer", isExpanded: $expanded1) {
+//                        Text("Blablablablablbalbalb")
+//                            .foregroundColor(Color.Neutral.text)
+//                    }
+//                    .disclosureGroupStyle(VGRDisclosureGroupStyle())
 
-                    VGRDivider()
+//                    VGRDivider()
 
-                    DisclosureGroup("Avancerade inställningar", isExpanded: $expanded2) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("• Blabla **1**")
-                            Text("• Blabla **2**")
-                        }
-                        .foregroundColor(Color.Neutral.text)
-                    }
-                    .disclosureGroupStyle(VGRDisclosureGroupStyle())
-                }
-                .background(Color.Elevation.elevation1)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-            }
+//                    DisclosureGroup("Avancerade inställningar", isExpanded: $expanded2) {
+//                        VStack(alignment: .leading, spacing: 8) {
+//                            Text("• Blabla **1**")
+//                            Text("• Blabla **2**")
+//                        }
+//                        .foregroundColor(Color.Neutral.text)
+//                    }
+//                    .disclosureGroupStyle(VGRDisclosureGroupStyle())
+//                }
+//                .background(Color.Elevation.elevation1)
+//                .clipShape(RoundedRectangle(cornerRadius: 8))
+//            }
             
-            VGRCalloutV2(
-                header: "Rubrik",
-                description: "Rubrik\nText\nIllustration\nAnnan bakgrundsfärg\nDismiss-knapp",
-                backgroundColor: Color.Status.informationSurface,
-                image: Image("illustration_presenting", bundle: .module),
-                imageType: .illustration,
-                dismiss: {
-                    print("Dismiss")
-                } ) {
-                    Text("Kan skicka in **vilken vy/komponent som helst** här 🫡")
-                        .font(.title)
+//            VGRCalloutV2(
+//                header: "Rubrik",
+//                description: "Rubrik\nText\nIllustration\nAnnan bakgrundsfärg\nDismiss-knapp",
+//                backgroundColor: Color.Status.informationSurface,
+//                image: Image("illustration_presenting", bundle: .module),
+//                imageType: .illustration,
+//                dismiss: {
+//                    print("Dismiss")
+//                } ) {
+//                    Text("Kan skicka in **vilken vy/komponent som helst** här 🫡")
+//                        .font(.title)
                     
-                    Text("Typ en sån här")
+//                    Text("Typ en sån här")
                     
-                    LevelSlider(
-                        selectedIndex: $index, configuration: .dermatology) { newIndex in
-                            print("SelectedIndex: \(newIndex)")
-                        }
+//                    LevelSlider(
+//                        selectedIndex: $index, configuration: .dermatology) { newIndex in
+//                            print("SelectedIndex: \(newIndex)")
+//                        }
                     
-                    Text("eller sån här")
+//                    Text("eller sån här")
                     
-                    VGRToggle(isOn: $isOn, text: "Hello")
-                }
-        }
-        .padding()
-    }
-}
+//                    VGRToggle(isOn: $isOn, text: "Hello")
+//                }
+//        }
+//        .padding()
+//    }
+//}

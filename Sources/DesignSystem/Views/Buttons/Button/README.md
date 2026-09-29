@@ -4,14 +4,16 @@ Mappen innehåller två generationer av designsystemets knapp:
 
 | Komponent     | Status                                      | Mapp   |
 |---------------|---------------------------------------------|--------|
-| `VGRButton`   | Aktuell                                     | `V1/`  |
-| `VGRButtonV2` | Under migrering – ersätter `VGRButton` när alla appar flyttat över | `V2/`  |
+| `VGRButtonV2` | **Aktuell**                                 | `V2/`  |
+| `VGRButton`   | **Deprecated** – ger kompileringsvarning, migrera till `VGRButtonV2` | `V1/`  |
 
 Båda är variantbaserade: en `variant` skickas in i konstruktorn och en struct som implementerar variantprotokollet styr hur knappen renderas. Skillnaden är att V2 exponerar storlek, bredd och en generisk ikon-slot, och styr aktivt/inaktivt-läge via SwiftUI:s `.disabled(_:)` i stället för en `Binding`.
 
 ---
 
-## VGRButton (V1)
+## VGRButton (V1, deprecated)
+
+> Hela V1-familjen (`VGRButton`, `VGRButtonVariant`, `VGRButtonVariantProtocol` och varianterna) är märkt `@available(*, deprecated)`. Dokumentationen nedan finns kvar för befintlig kod.
 
 ### ✨ Funktioner
 

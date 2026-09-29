@@ -2,6 +2,7 @@ import SwiftUI
 
 /// En container-vy som applicerar stil och bakgrundsfärg baserat på `CalloutShapeVariant`.
 /// Används som det yttre skalet i en `VGRCallout` för att ge visuell kontext (t.ex. varning eller information).
+@available(*, deprecated, message: "Use VGRCalloutV3 instead.")
 public struct VGRCalloutShape<Content: View>: View {
 
     /// Bakgrundsfärgen för komponenten
@@ -32,46 +33,48 @@ public struct VGRCalloutShape<Content: View>: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        ScrollView {
-            VStack(spacing: 16) {
-                VGRCalloutShape {
-                    Text("Hello, `plain` **VGRCalloutShape**, world!")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.footnote).fontWeight(.regular)
+//MARK: This component is deprecated - Preview is commented out to reduce number of unnecessary Xcode-warnings in the project.
 
-                    VGRButton(label: "Action", variant: .secondary) {
-                        print("Action pressed")
-                    }
-                }
-                .padding(.horizontal, 16)
+//#Preview {
+//    NavigationStack {
+//        ScrollView {
+//            VStack(spacing: 16) {
+//                VGRCalloutShape {
+//                    Text("Hello, `plain` **VGRCalloutShape**, world!")
+//                        .frame(maxWidth: .infinity, alignment: .leading)
+//                        .font(.footnote).fontWeight(.regular)
 
-                VGRCalloutShape(backgroundColor: Color.Status.warningSurface) {
-                    Text("Hello, `plain` **VGRCalloutShape**, world!")
-                        .frame(maxWidth: .infinity, alignment: .leading)
+//                    VGRButton(label: "Action", variant: .secondary) {
+//                        print("Action pressed")
+//                    }
+//                }
+//                .padding(.horizontal, 16)
 
-                    VGRButton(
-                        label: "Ändra inställningar",
-                        icon: Image(systemName: "rectangle.portrait.and.arrow.right"),
-                        variant: .primary
-                    ) {
-                        print("Action pressed")
-                    }
-                }
-                .padding(.horizontal, 16)
+//                VGRCalloutShape(backgroundColor: Color.Status.warningSurface) {
+//                    Text("Hello, `plain` **VGRCalloutShape**, world!")
+//                        .frame(maxWidth: .infinity, alignment: .leading)
 
-                VGRShape {
-                    VGRCalloutShape(backgroundColor: Color.Primary.blueSurfaceMinimal) {
-                        VGRCalloutText(header: "Hello", description: "World")
-                    }
-                    VGRCalloutShape(backgroundColor: Color.Accent.limeSurface) {
-                        VGRCalloutText(header: "Hello", description: "World")
-                    }
-                }
-            }
-        }
-        .navigationTitle("VGRCalloutShape")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
+//                    VGRButton(
+//                        label: "Ändra inställningar",
+//                        icon: Image(systemName: "rectangle.portrait.and.arrow.right"),
+//                        variant: .primary
+//                    ) {
+//                        print("Action pressed")
+//                    }
+//                }
+//                .padding(.horizontal, 16)
+
+//                VGRShape {
+//                    VGRCalloutShape(backgroundColor: Color.Primary.blueSurfaceMinimal) {
+//                        VGRCalloutText(header: "Hello", description: "World")
+//                    }
+//                    VGRCalloutShape(backgroundColor: Color.Accent.limeSurface) {
+//                        VGRCalloutText(header: "Hello", description: "World")
+//                    }
+//                }
+//            }
+//        }
+//        .navigationTitle("VGRCalloutShape")
+//        .navigationBarTitleDisplayMode(.inline)
+//    }
+//}

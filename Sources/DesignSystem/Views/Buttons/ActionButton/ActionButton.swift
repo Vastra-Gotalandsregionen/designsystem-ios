@@ -1,7 +1,7 @@
 import SwiftUI
 
 
-@available(*, deprecated, renamed: "VGRButton")
+@available(*, deprecated, message: "Use VGRButtonV2 instead.")
 public struct ActionButton<LeadingIcon: View, TrailingIcon: View>: View {
     
     public enum ButtonStyle {

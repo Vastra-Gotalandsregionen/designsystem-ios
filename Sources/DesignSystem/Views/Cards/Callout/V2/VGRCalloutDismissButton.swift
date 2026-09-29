@@ -2,6 +2,7 @@ import SwiftUI
 
 /// En återanvändbar cirkulär knapp för att stänga vyer eller varningar.
 /// Visar en "xmark"-ikon från SF Symbols med en streckad cirkel och anpassad stil.
+@available(*, deprecated, message: "Use VGRCalloutV3 instead.")
 public struct VGRCalloutDismissButton: View {
     /// Den closure som körs när knappen trycks.
     let dismiss: (() -> Void)
@@ -29,8 +30,10 @@ public struct VGRCalloutDismissButton: View {
     }
 }
 
-#Preview {
-    VGRCalloutDismissButton {
-        print("Dismiss")
-    }
-}
+//MARK: This component is deprecated - Preview is commented out to reduce number of unnecessary Xcode-warnings in the project.
+
+//#Preview {
+//    VGRCalloutDismissButton {
+//        print("Dismiss")
+//    }
+//}
