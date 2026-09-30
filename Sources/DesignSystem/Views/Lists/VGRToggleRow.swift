@@ -9,8 +9,10 @@ import SwiftUI
 /// the underlying row.
 ///
 /// Tapping the toggle flips the binding; the row body around the toggle
-/// is not tappable. Use inside a ``VGRList`` for settings-style screens
-/// where each row represents an independent boolean.
+/// is not tappable. For VoiceOver the row is a single element that reads
+/// the title, subtitle and toggle state together. Use inside a
+/// ``VGRList`` for settings-style screens where each row represents an
+/// independent boolean.
 ///
 /// The toggle is tinted with `Color.Primary.action` so the on-state
 /// color stays consistent with other design system indicators
@@ -80,6 +82,7 @@ public struct VGRToggleRow<Icon: View>: View {
                 .labelsHidden()
                 .tint(Color.Primary.action)
         })
+        .accessibilityElement(children: .combine)
     }
 }
 
