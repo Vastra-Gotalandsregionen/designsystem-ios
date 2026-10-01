@@ -20,12 +20,17 @@ public struct VGRTextArea: View {
     ///
     /// - Parameters:
     ///   - title: Optional label rendered above the editor. Pass `nil` for an editor without a title.
-    ///   - accessibilityLabel: Overrides the accessibility label on the text editor. Defaults to `title` when not provided.
     ///   - value: Binding to the edited text.
-    public init(title: String? = nil, accessibilityLabel: String? = nil, value: Binding<String>) {
+    ///   - accessibilityLabel: Overrides the accessibility label on the text editor. Defaults to `title` when not provided.
+    public init(title: String? = nil, value: Binding<String>, accessibilityLabel: String? = nil) {
         self.title = title
         self.accessibilityLabel = accessibilityLabel ?? title
         self._value = value
+    }
+
+    @available(*, deprecated, message: "Use init(title:value:accessibilityLabel:) instead.")
+    public init(title: String? = nil, accessibilityLabel: String, value: Binding<String>) {
+        self.init(title: title, value: value, accessibilityLabel: accessibilityLabel)
     }
 
     public var body: some View {

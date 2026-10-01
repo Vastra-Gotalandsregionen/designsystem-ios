@@ -53,13 +53,13 @@ Kombinera med `VGRValidationLabel` under fältet för att förklara varningen.
 VGRTextArea(title: "Anteckningar", value: $notes)
 
 // Egen VoiceOver-etikett när rubriken saknas
-VGRTextArea(accessibilityLabel: "Fritextsvar", value: $notes)
+VGRTextArea(value: $notes, accessibilityLabel: "Fritextsvar")
 ```
 
 | Parameter            | Typ               | Default | Beskrivning                                   |
 |----------------------|-------------------|---------|-----------------------------------------------|
 | `title`              | `String?`         | `nil`   | Rubrik ovanför fältet                         |
-| `accessibilityLabel` | `String?`         | `nil`   | VoiceOver-etikett för editorn                 |
 | `value`              | `Binding<String>` | –       | Texten                                        |
+| `accessibilityLabel` | `String?`         | `nil`   | VoiceOver-etikett för editorn                 |
 
 Minsta höjd är 172 pt och skalar med Dynamic Type.
