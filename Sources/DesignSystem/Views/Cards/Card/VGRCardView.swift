@@ -75,6 +75,9 @@ public struct VGRCardView: View {
 
     @ScaledMetric private var readTimeIconSize: CGFloat = 16
 
+    /// Corner radius of the card surface.
+    private static let cardRadius: CGFloat = 16
+
     public var body: some View {
         switch sizeClass {
             case .large: largeCard
@@ -164,7 +167,7 @@ public struct VGRCardView: View {
         }
         .frame(idealHeight: sizeClass.idealCardHeight)
         .background(Color.Elevation.elevation1)
-        .cornerRadius(16)
+        .clipShape(RoundedRectangle(cornerRadius: Self.cardRadius))
 
     }
 
@@ -172,15 +175,25 @@ public struct VGRCardView: View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topTrailing) {
                 if let image {
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(maxHeight: sizeClass.maxImageHeight, alignment: .center)
-                        .contentShape(Rectangle())
-                        .clipped()
+                    // The image lives in an overlay so its scaled-to-fill size
+                    // can never leak into layout and widen the card.
+                    // The top corners are rounded here rather than relying on
+                    // the card's outer clip, which does not reach through the
+                    // image's own clip shape.
+                    Color.clear
+                        .frame(height: sizeClass.maxImageHeight)
+                        .frame(maxWidth: .infinity)
+                        .overlay {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        }
                         .clipShape(
                             .rect(
+                                topLeadingRadius: Self.cardRadius,
                                 bottomLeadingRadius: .Radius.vgrCorner,
+                                bottomTrailingRadius: 0,
+                                topTrailingRadius: Self.cardRadius
                             )
                         )
                 }
@@ -209,22 +222,32 @@ public struct VGRCardView: View {
             .padding(.trailing, .Margins.medium)
         }
         .background(Color.Elevation.elevation1)
-        .cornerRadius(16)
+        .clipShape(RoundedRectangle(cornerRadius: Self.cardRadius))
     }
 
     private var largeCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topTrailing) {
                 if let image {
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(maxHeight: sizeClass.maxImageHeight, alignment: .center)
-                        .contentShape(Rectangle())
-                        .clipped()
+                    // The image lives in an overlay so its scaled-to-fill size
+                    // can never leak into layout and widen the card.
+                    // The top corners are rounded here rather than relying on
+                    // the card's outer clip, which does not reach through the
+                    // image's own clip shape.
+                    Color.clear
+                        .frame(height: sizeClass.maxImageHeight)
+                        .frame(maxWidth: .infinity)
+                        .overlay {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        }
                         .clipShape(
                             .rect(
+                                topLeadingRadius: Self.cardRadius,
                                 bottomLeadingRadius: .Radius.vgrCorner,
+                                bottomTrailingRadius: 0,
+                                topTrailingRadius: Self.cardRadius
                             )
                         )
                 }
@@ -246,14 +269,14 @@ public struct VGRCardView: View {
                 readTimeLabel
                     .isVisible(!subtitle.isEmpty)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, .Margins.small)
             .padding(.leading, .Margins.medium)
             .padding(.bottom, .Margins.medium)
             .padding(.trailing, .Margins.medium)
         }
         .background(Color.Elevation.elevation1)
-        .cornerRadius(16)
-        .clipped()
+        .clipShape(RoundedRectangle(cornerRadius: Self.cardRadius))
     }
 }
 
