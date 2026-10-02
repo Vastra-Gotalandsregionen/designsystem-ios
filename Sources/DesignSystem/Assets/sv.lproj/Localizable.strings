@@ -18,6 +18,7 @@
 "general.button.ok" = "OK";
 "general.time.at" = "Klockan";
 "general.time.at.short" = "Kl";
+"general.settings" = "Inställningar";
 
 /* Toggle */
 "toggle.a11y.hint" = "Dubbeltryck för att slå";
