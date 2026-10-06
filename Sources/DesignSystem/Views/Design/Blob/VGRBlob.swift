@@ -46,7 +46,9 @@ public enum VGRBlobState: Int, CaseIterable, Sendable {
 /// the design system palette, so they adapt to dark mode. Changing ``state``
 /// morphs the outline and cross-fades the colors with ``VGRBlob/transition``.
 /// Both layers idle with a slow wobble, pulse and rotation that run independently
-/// of each other, so the inner layer may briefly reach past the outer one.
+/// of each other, so the inner layer may briefly reach past the outer one. When
+/// Reduce Motion is on the idle motion is off and the blob rests on its exact
+/// state shape; state changes still animate.
 ///
 /// The view is square and scales to the smaller of the proposed width and height.
 ///
@@ -63,6 +65,20 @@ public struct VGRBlob: View {
 
     @State private var startDate = Date()
     @Environment(\.self) private var environment
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// Overrides the Reduce Motion setting for the idle motion. `nil` follows the
+    /// system setting. Internal, used by previews that cannot inject the
+    /// read-only environment value.
+    var idleMotionOverride: Bool?
+
+    /// Returns a copy that runs or stops the idle motion regardless of the
+    /// Reduce Motion setting.
+    func idleMotion(_ enabled: Bool) -> VGRBlob {
+        var copy = self
+        copy.idleMotionOverride = enabled
+        return copy
+    }
 
     public init(state: VGRBlobState) {
         self.state = state
@@ -81,11 +97,14 @@ public struct VGRBlob: View {
     }
 
     public var body: some View {
-        TimelineView(.animation) { context in
+        let idle = idleMotionOverride ?? !reduceMotion
+
+        TimelineView(.animation(paused: !idle)) { context in
             BlobLayers(
                 outer: Self.outerKeyframes[state.rawValue].vector(color: state.outerColor.resolve(in: environment)),
                 inner: Self.innerKeyframes[state.rawValue].vector(color: state.innerColor.resolve(in: environment)),
-                time: context.date.timeIntervalSince(startDate)
+                time: context.date.timeIntervalSince(startDate),
+                idle: idle
             )
         }
         .animation(Self.transition, value: state)
@@ -101,6 +120,9 @@ private struct BlobLayers: View, Animatable {
     var outer: BlobVector
     var inner: BlobVector
     var time: TimeInterval
+    /// Whether the layers run their idle motion. When false they rest on the
+    /// interpolated outline.
+    var idle: Bool
 
     nonisolated var animatableData: AnimatablePair<BlobVector, BlobVector> {
         get { AnimatablePair(outer, inner) }
@@ -111,8 +133,8 @@ private struct BlobLayers: View, Animatable {
     }
 
     var body: some View {
-        let outerShape = BlobLayerShape(vector: outer, time: time, motion: .outer)
-        let innerShape = BlobLayerShape(vector: inner, time: time, motion: .inner)
+        let outerShape = BlobLayerShape(vector: outer, time: time, motion: idle ? .outer : .still)
+        let innerShape = BlobLayerShape(vector: inner, time: time, motion: idle ? .inner : .still)
 
         ZStack {
             outerShape.fill(outer.color)
@@ -134,6 +156,17 @@ struct BlobMotion {
     let wobblePeriod: Double
     /// Offsets every oscillator so two layers with similar periods never move in step.
     let phase: Double
+
+    /// No idle motion: every amplitude is zero, so the shape is the plain outline.
+    static let still = BlobMotion(
+        rotationAmplitude: 0,
+        rotationPeriod: 1,
+        pulseAmplitude: 0,
+        pulsePeriod: 1,
+        wobbleAmplitude: 0,
+        wobblePeriod: 1,
+        phase: 0
+    )
 
     static let outer = BlobMotion(
         rotationAmplitude: .pi / 28,
@@ -294,5 +327,32 @@ struct BlobVector: VectorArithmetic {
             }
             .padding(16)
         }
+    }
+}
+
+#Preview("Reduce Motion") {
+    @Previewable @State var state: VGRBlobState = .three
+
+    NavigationStack {
+        ScrollView {
+            VStack(spacing: 16) {
+                VGRBlob(state: state)
+                    .idleMotion(false)
+                    .frame(width: 164, height: 164)
+
+                Picker("State", selection: $state) {
+                    ForEach(VGRBlobState.allCases, id: \.self) {
+                        Text("\($0.rawValue + 1)").tag($0)
+                    }
+                }
+                .pickerStyle(.segmented)
+
+                Text("Idle motion is off; state changes still animate.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(16)
+        }
+        .navigationTitle("Reduce Motion")
     }
 }
