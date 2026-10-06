@@ -1,6 +1,9 @@
 import SwiftUI
 import Lottie
 
+/// Lottie-based blob, superseded by ``VGRBlob`` which draws the same states with
+/// SwiftUI and animates between them.
+@available(*, deprecated, renamed: "VGRBlob", message: "Use VGRBlob, which animates between states without Lottie.")
 public struct Blob: View {
     @Binding var state: Int?
     
@@ -24,21 +27,4 @@ public struct Blob: View {
         guard let state else { return keys[0] }
         return (state >= 0 && state < keys.count) ? keys[state] : 0
     }
-}
-
-#Preview {
-    @Previewable @State var index: Int? = 0
-
-    VStack(spacing: 16) {
-        Blob(state: $index)
-            .frame(width: 164, height: 164)
-
-        Picker("Animation index", selection: $index) {
-            ForEach(0..<5) {
-                Text("State \($0)").tag($0)
-            }
-        }
-        .pickerStyle(.segmented)
-    }
-    .padding(16)
 }

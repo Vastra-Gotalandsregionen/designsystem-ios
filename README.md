@@ -122,7 +122,7 @@ Varje mapp under `Sources/DesignSystem/Views` har en README med parametrar och e
 | Enkät | `VGRSurveyScreen` för Microsoft Forms | [WebSurvey](Sources/DesignSystem/Views/WebSurvey/README.md) |
 | Tips | `VGRInlineTipView` (TipKit) | [Tips](Sources/DesignSystem/Views/Tips/README.md) |
 | Slider | `LevelSlider` | [LevelSlider](Sources/DesignSystem/Views/Sliders/LevelSlider/README.md) |
-| Designelement | `VGRIcon`, `VGRShape`, `VGRDivider`, `VGRBlob`, `Blob` | Källfiler |
+| Designelement | `VGRIcon`, `VGRShape`, `VGRDivider`, `VGRBlob` | Källfiler |
 
 ### Deprecated
 
@@ -133,6 +133,7 @@ Dessa finns kvar för bakåtkompatibilitet och ger kompileringsvarningar. Använ
 | `VGRCallout`, `CalloutView`, `VGRCalloutV2` och V2-byggstenarna | `VGRCalloutV3` |
 | `VGRButton`, `ActionButton` | `VGRButtonV2` |
 | `VGRToggle` | `VGRToggleRow` i en `VGRList` |
+| `Blob` | `VGRBlob` |
 | `VGRTableRowNavigationLink` | `VGRNavRow` i en `VGRList` |
 | `VGRTableRowDivider` | `VGRDivider` |
 | `VGRVideoPlayerView` | `VGRVideoPlayer` |

@@ -50,6 +50,13 @@ public struct VGRBlob: View {
         self.init(state: VGRBlobState(index: index))
     }
 
+    /// Source-compatible with the legacy ``Blob`` initializer. The binding is only
+    /// read, so pass the value with ``init(index:)`` or ``init(state:)`` instead.
+    @available(*, deprecated, message: "Use init(state:) with a VGRBlobState, or init(index:) with a plain Int?.")
+    public init(state: Binding<Int?>) {
+        self.init(index: state.wrappedValue)
+    }
+
     public var body: some View {
         TimelineView(.animation) { context in
             BlobLayers(
