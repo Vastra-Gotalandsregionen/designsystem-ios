@@ -16,15 +16,37 @@ public enum VGRBlobState: Int, CaseIterable, Sendable {
     public init(index: Int?) {
         self = index.flatMap(VGRBlobState.init(rawValue:)) ?? .one
     }
+
+    /// Fill color of the inner blob, from the design system palette.
+    public var innerColor: Color {
+        switch self {
+        case .one: Color.Accent.purpleSurfaceBold
+        case .two: Color.Accent.greenSurfaceBold
+        case .three: Color.Accent.limeSurfaceBold
+        case .four: Color.Accent.yellowSurfaceBold
+        case .five: Color.Accent.redSurfaceBold
+        }
+    }
+
+    /// Fill color of the outer blob, from the design system palette.
+    public var outerColor: Color {
+        switch self {
+        case .one: Color.Accent.purpleSurface
+        case .two: Color.Accent.greenSurfaceMinimal
+        case .three: Color.Accent.limeSurfaceMinimal
+        case .four: Color.Accent.yellowSurfaceMinimal
+        case .five: Color.Accent.redSurfaceMinimal
+        }
+    }
 }
 
 /// A two-layer organic blob drawn with SwiftUI.
 ///
-/// The blob has five states that differ in shape and color. Changing ``state``
+/// The blob has five states that differ in shape and color. The colors come from
+/// the design system palette, so they adapt to dark mode. Changing ``state``
 /// morphs the outline and cross-fades the colors with ``VGRBlob/transition``.
 /// Both layers idle with a slow wobble, pulse and rotation that run independently
-/// of each other. The inner layer is clipped to the outer layer, so it can never
-/// be drawn outside it.
+/// of each other, so the inner layer may briefly reach past the outer one.
 ///
 /// The view is square and scales to the smaller of the proposed width and height.
 ///
@@ -40,6 +62,7 @@ public struct VGRBlob: View {
     let state: VGRBlobState
 
     @State private var startDate = Date()
+    @Environment(\.self) private var environment
 
     public init(state: VGRBlobState) {
         self.state = state
@@ -60,8 +83,8 @@ public struct VGRBlob: View {
     public var body: some View {
         TimelineView(.animation) { context in
             BlobLayers(
-                outer: Self.outerKeyframes[state.rawValue].vector,
-                inner: Self.innerKeyframes[state.rawValue].vector,
+                outer: Self.outerKeyframes[state.rawValue].vector(color: state.outerColor.resolve(in: environment)),
+                inner: Self.innerKeyframes[state.rawValue].vector(color: state.innerColor.resolve(in: environment)),
                 time: context.date.timeIntervalSince(startDate)
             )
         }
@@ -94,7 +117,6 @@ private struct BlobLayers: View, Animatable {
         ZStack {
             outerShape.fill(outer.color)
             innerShape.fill(inner.color)
-                .clipShape(outerShape)
         }
     }
 }

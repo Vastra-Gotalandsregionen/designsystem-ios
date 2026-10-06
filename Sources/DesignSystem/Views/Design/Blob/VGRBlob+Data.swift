@@ -1,9 +1,10 @@
-import Foundation
+import SwiftUI
 
 // Generated from Assets.xcassets/Animations/blob_animation.dataset/skattning.json.
 // Each keyframe is the Lottie animation sampled at frames [2, 8, 15, 23, 30] (the frames the
 // legacy `Blob` shows for states 0...4) with all layer and group transforms applied,
-// so the data is in the animation's 500x500 canvas coordinates.
+// so the data is in the animation's 500x500 canvas coordinates. Colors are not
+// part of this data; see `VGRBlobState.innerColor` and `outerColor`.
 //
 // `points` holds 17 vertices, six values each:
 // vertex x, vertex y, incoming control x, incoming control y, outgoing control x,
@@ -12,15 +13,11 @@ extension VGRBlob {
     static let canvasSize: Double = 500.0
 
     struct LayerKeyframe {
-        let red: Double
-        let green: Double
-        let blue: Double
         let points: [Double]
     }
 
     static let outerKeyframes: [LayerKeyframe] = [
         LayerKeyframe(
-            red: 0.8958, green: 0.8987, blue: 0.9347,
             points: [
                 350.28, 250.00, 350.28, 250.00, 350.28, 262.06,
                 344.24, 284.35, 348.14, 273.63, 340.00, 295.98,
@@ -42,7 +39,6 @@ extension VGRBlob {
             ]
         ),
         LayerKeyframe(
-            red: 0.88, green: 0.97, blue: 0.88,
             points: [
                 461.11, 250.00, 461.11, 250.00, 461.11, 275.40,
                 448.40, 322.31, 456.62, 299.75, 439.48, 346.79,
@@ -64,7 +60,6 @@ extension VGRBlob {
             ]
         ),
         LayerKeyframe(
-            red: 0.94, green: 0.96, blue: 0.78,
             points: [
                 459.17, 272.03, 459.17, 272.03, 457.73, 292.50,
                 448.40, 322.31, 456.62, 299.75, 439.48, 346.79,
@@ -86,7 +81,6 @@ extension VGRBlob {
             ]
         ),
         LayerKeyframe(
-            red: 1.0, green: 0.93, blue: 0.7,
             points: [
                 464.73, 286.93, 462.05, 272.29, 467.29, 300.86,
                 448.40, 322.31, 456.62, 299.75, 439.48, 346.79,
@@ -108,7 +102,6 @@ extension VGRBlob {
             ]
         ),
         LayerKeyframe(
-            red: 1.0, green: 0.93, blue: 0.93,
             points: [
                 367.71, 265.64, 382.33, 247.94, 351.53, 285.22,
                 391.80, 323.38, 368.16, 297.25, 426.10, 345.77,
@@ -133,7 +126,6 @@ extension VGRBlob {
 
     static let innerKeyframes: [LayerKeyframe] = [
         LayerKeyframe(
-            red: 0.7345, green: 0.7933, blue: 0.806,
             points: [
                 327.51, 250.00, 327.51, 250.00, 327.51, 259.33,
                 322.84, 276.55, 325.86, 268.27, 319.57, 285.53,
@@ -155,7 +147,6 @@ extension VGRBlob {
             ]
         ),
         LayerKeyframe(
-            red: 0.478, green: 0.863, blue: 0.494,
             points: [
                 427.16, 250.00, 427.16, 250.00, 427.16, 271.32,
                 416.50, 310.68, 423.40, 291.75, 409.01, 331.22,
@@ -177,7 +168,6 @@ extension VGRBlob {
             ]
         ),
         LayerKeyframe(
-            red: 0.8, green: 0.861, blue: 0.286,
             points: [
                 419.82, 300.47, 419.82, 300.47, 413.75, 320.91,
                 392.31, 355.60, 404.32, 339.42, 379.28, 373.15,
@@ -199,7 +189,6 @@ extension VGRBlob {
             ]
         ),
         LayerKeyframe(
-            red: 1.0, green: 0.757, blue: 0.027,
             points: [
                 386.26, 363.22, 386.26, 363.22, 372.63, 379.62,
                 339.28, 403.08, 356.69, 392.93, 320.39, 414.09,
@@ -221,7 +210,6 @@ extension VGRBlob {
             ]
         ),
         LayerKeyframe(
-            red: 1.0, green: 0.7, blue: 0.7,
             points: [
                 338.58, 403.43, 338.58, 403.43, 320.12, 414.09,
                 285.05, 360.45, 304.90, 356.96, 307.50, 413.53,
@@ -246,8 +234,9 @@ extension VGRBlob {
 }
 
 extension VGRBlob.LayerKeyframe {
-    /// The keyframe packed for interpolation, see ``BlobVector``.
-    var vector: BlobVector {
-        BlobVector(values: points + [red, green, blue])
+    /// The keyframe packed for interpolation together with its resolved fill
+    /// color, see ``BlobVector``.
+    func vector(color: Color.Resolved) -> BlobVector {
+        BlobVector(values: points + [Double(color.red), Double(color.green), Double(color.blue)])
     }
 }
