@@ -8,7 +8,7 @@ import Foundation
 // `points` holds 17 vertices, six values each:
 // vertex x, vertex y, incoming control x, incoming control y, outgoing control x,
 // outgoing control y. Control points are absolute, not relative to the vertex.
-extension Blob2 {
+extension VGRBlob {
     static let canvasSize: Double = 500.0
 
     struct LayerKeyframe {
@@ -245,7 +245,7 @@ extension Blob2 {
     ]
 }
 
-extension Blob2.LayerKeyframe {
+extension VGRBlob.LayerKeyframe {
     /// The keyframe packed for interpolation, see ``BlobVector``.
     var vector: BlobVector {
         BlobVector(values: points + [red, green, blue])

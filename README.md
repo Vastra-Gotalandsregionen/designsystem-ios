@@ -2,7 +2,7 @@
 
 Delat Swift Package för Västra Götalandsregionens iOS-appar (dermatologi, migrän, epilepsi med flera). Paketet innehåller Figma-kompatibla UI-komponenter, färg- och typografitokens, samt gemensam logik för notifikationer och spårning. Syftet är enhetligt utseende, mindre duplicerad kod och snabbare utveckling.
 
-Alla publika komponenter är prefixade med `VGR` (t.ex. `VGRButton`, `VGRList`) för att undvika krockar med SwiftUI och tredjepartsbibliotek. Några äldre typer saknar prefix av historiska skäl (`Blob`, `Blob2`, `LevelSlider`, `WebView`, `Recurrence`, `Tracker`, `Notification*`).
+Alla publika komponenter är prefixade med `VGR` (t.ex. `VGRButton`, `VGRList`) för att undvika krockar med SwiftUI och tredjepartsbibliotek. Några äldre typer saknar prefix av historiska skäl (`Blob`, `LevelSlider`, `WebView`, `Recurrence`, `Tracker`, `Notification*`).
 
 ---
 
@@ -122,7 +122,7 @@ Varje mapp under `Sources/DesignSystem/Views` har en README med parametrar och e
 | Enkät | `VGRSurveyScreen` för Microsoft Forms | [WebSurvey](Sources/DesignSystem/Views/WebSurvey/README.md) |
 | Tips | `VGRInlineTipView` (TipKit) | [Tips](Sources/DesignSystem/Views/Tips/README.md) |
 | Slider | `LevelSlider` | [LevelSlider](Sources/DesignSystem/Views/Sliders/LevelSlider/README.md) |
-| Designelement | `VGRIcon`, `VGRShape`, `VGRDivider`, `Blob`, `Blob2` | Källfiler |
+| Designelement | `VGRIcon`, `VGRShape`, `VGRDivider`, `VGRBlob`, `Blob` | Källfiler |
 
 ### Deprecated
 
