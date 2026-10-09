@@ -9,6 +9,7 @@ Hela skärmar och de modeller som driver dem. Alla tre huvuddelarna är datadriv
 | `Content/Views/Feedback/` | `VGRFeedbackView` – "Var innehållet till hjälp?" med valbara orsaker |
 | `WhatsNew/` | `VGRWhatsNewScreen` och `VGRWhatsNewService` – nyhetskarusell per appversion |
 | `WebView.swift` | `WebView` – enkel `WKWebView`-wrapper för en URL                        |
+| Content/Audio/| `VGRAudioCard` – kort för ett ljudklipp med ikon, titel och längd |
 
 ---
 
@@ -146,3 +147,37 @@ NavigationStack {
         .navigationTitle("VGR")
 }
 ```
+
+---
+
+## Audio
+
+`VGRAudioCard` visar ett ljudklipp som ett kort med en färgad cirkel med SF Symbol, titel och längd i minuter. Kortet har ingen egen tryckhantering. Appen lindar in det i en `Button` eller `NavigationLink` och presenterar ljudspelaren själv.
+
+```swift
+VGRAudioCard(
+    title: "Andningsövning",
+    iconName: "waveform",
+    duration: 5
+)
+.frame(width: 192)
+
+// Med egen cirkelfärg
+VGRAudioCard(
+    title: "Avslappning",
+    circleColor: Color.Accent.greenSurface,
+    iconName: "waveform",
+    duration: 12
+)
+```
+
+| Parameter     | Typ     | Default                         | Beskrivning                                              |
+|---------------|---------|---------------------------------|----------------------------------------------------------|
+| `title`       | `String` | –                              | Ljudklippets titel. Trunkeras efter två rader            |
+| `circleColor` | `Color` | `Color.Accent.purpleSurface`    | Bakgrundsfärg på cirkeln bakom ikonen                    |
+| `iconName`    | `String` | –                              | Namn på SF Symbol som visas i cirkeln                    |
+| `duration`    | `Int`   | –                               | Längd i hela minuter. Visas som "1 minut" eller "12 minuter" |
+
+Kortet fyller all yta föräldern erbjuder, så kort i en rad eller ett rutnät får samma höjd. Ange bredd (eller låt layouten göra det) med `.frame(width:)`.
+
+**Tillgänglighet:** Kortet är ett enda VoiceOver-element med etiketten "Ljudklipp, titel, längd".
