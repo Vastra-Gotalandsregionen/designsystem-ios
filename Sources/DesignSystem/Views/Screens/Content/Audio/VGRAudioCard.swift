@@ -78,24 +78,46 @@ public struct VGRAudioCard: View {
     }
 }
 
-#Preview("Kort titel") {
-    VGRAudioCard(title: "Andningsövning", iconName: "waveform", duration: 1)
-        .frame(width: 192)
+#Preview("1 kort i karusell") {
+    VGRCarousel {
+        VGRAudioCard(title: "Andningsövning", iconName: "waveform", duration: 1)
+            .frame(width: 192)
+    }
 }
 
-#Preview("Lång titel, stor text") {
-    VGRAudioCard(
-        title: "En mycket lång titel på en avslappningsövning som inte ryms",
-        iconBackgroundColor: Color.Accent.greenSurface,
-        iconName: "waveform",
-        duration: 12
-    )
-    .frame(width: 192)
-    .environment(\.dynamicTypeSize, .accessibility2)
-}
+#Preview("Mörkt läge 2 karruseller") {
+    VStack {
+        VGRCarousel {
+            VGRAudioCard(title: "Andningsövning", iconName: "waveform", duration: 1)
+                .frame(width: 192)
 
-#Preview("Mörkt läge") {
-    VGRAudioCard(title: "Andningsövning", iconName: "waveform", duration: 5)
-        .frame(width: 192)
-        .preferredColorScheme(.dark)
+            VGRAudioCard(
+                title: "En mycket lång titel på en avslappningsövning som inte ryms",
+                iconBackgroundColor: Color.Accent.greenSurface,
+                iconName: "waveform",
+                duration: 12
+            )
+            .frame(width: 192)
+        }
+        VGRCarousel {
+            VGRAudioCard(title: "Hålla andan övningar", iconName: "waveform", duration: 1)
+                .frame(width: 192)
+
+            VGRAudioCard(
+                title: "Tagga igång övningar med hyped up musik och ljud",
+                iconBackgroundColor: Color.Accent.greenSurface,
+                iconName: "waveform",
+                duration: 12
+            )
+            .frame(width: 192)
+            VGRAudioCard(
+                title: "Ännu fler luft i kroppen övningar",
+                iconBackgroundColor: Color.Accent.greenSurface,
+                iconName: "waveform",
+                duration: 12
+            )
+            .frame(width: 192)
+        }
+    }
+    .preferredColorScheme(.dark)
 }
