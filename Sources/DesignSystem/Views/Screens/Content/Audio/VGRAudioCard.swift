@@ -36,12 +36,12 @@ public struct VGRAudioCard: View {
 
     /// Accessibility label combining type, title & duration
     private var a11yLabel: String {
-        return ["content.type.audio".localizedBundle, title, durationText].joined(separator: ", ")
+        ["content.type.audio".localizedBundle, title, durationText].joined(separator: ", ")
     }
 
     /// Accessibility hint explaining what happens when tapped.
     private var a11yHint: String {
-        return "audiocard.hint".localizedBundle
+        "audiocard.hint".localizedBundle
     }
 
     public var body: some View {
@@ -60,12 +60,14 @@ public struct VGRAudioCard: View {
             Text(title)
                 .font(.title3Bold)
                 .lineLimit(2)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility2)
 
             Spacer(minLength: 16)
 
             Label(durationText, systemImage: "clock")
                 .font(.footnoteRegular)
                 .foregroundStyle(Color.Neutral.textVariant)
+                .dynamicTypeSize(...DynamicTypeSize.large)
         }
         .padding(.Margins.medium)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -74,7 +76,6 @@ public struct VGRAudioCard: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(a11yLabel)
         .accessibilityHint(a11yHint)
-
     }
 }
 
@@ -120,4 +121,20 @@ public struct VGRAudioCard: View {
         }
     }
     .preferredColorScheme(.dark)
+}
+
+#Preview("Stor text (xxxLarge)") {
+    VGRCarousel {
+        VGRAudioCard(title: "Andningsövning", iconName: "waveform", duration: 1)
+            .frame(width: 192)
+
+        VGRAudioCard(
+            title: "En mycket lång titel på en avslappningsövning som inte ryms",
+            iconBackgroundColor: Color.Accent.greenSurface,
+            iconName: "waveform",
+            duration: 12
+        )
+        .frame(width: 192)
+    }
+    .dynamicTypeSize(.xxxLarge)
 }

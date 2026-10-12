@@ -6,7 +6,7 @@ Layouthjälpare utan eget utseende.
 |----------------------------|------------------------------------------------------------------|
 | `VGRFlowLayout`            | Radbrytande layout för chips, taggar och filterpiller            |
 | `VGRPortraitLandscapeView` | Visar olika innehåll beroende på om ytan är stående eller liggande |
-|  VGRCarousel| Horisontellt scrollbar karusell med adaptiv kortbredd och innehållsanpassad höjd |
+|  ` VGRCarousel` | Horisontellt scrollbar karusell med adaptiv kortbredd och innehållsanpassad höjd |
 
 `OrientationViewModifier/` innehåller en intern `onOrientationChange`-modifier som inte är publik.
 

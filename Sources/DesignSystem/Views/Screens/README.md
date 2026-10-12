@@ -165,7 +165,7 @@ VGRAudioCard(
 // Med egen cirkelfärg
 VGRAudioCard(
     title: "Avslappning",
-    circleColor: Color.Accent.greenSurface,
+    iconBackgroundColor: Color.Accent.greenSurface,
     iconName: "waveform",
     duration: 12
 )
@@ -174,10 +174,10 @@ VGRAudioCard(
 | Parameter     | Typ     | Default                         | Beskrivning                                              |
 |---------------|---------|---------------------------------|----------------------------------------------------------|
 | `title`       | `String` | –                              | Ljudklippets titel. Trunkeras efter två rader            |
-| `circleColor` | `Color` | `Color.Accent.purpleSurface`    | Bakgrundsfärg på cirkeln bakom ikonen                    |
+| `iconBackgroundColor` | `Color` | `Color.Accent.purpleSurface`    | Bakgrundsfärg på cirkeln bakom ikonen                    |
 | `iconName`    | `String` | –                              | Namn på SF Symbol som visas i cirkeln                    |
 | `duration`    | `Int`   | –                               | Längd i hela minuter. Visas som "1 minut" eller "12 minuter" |
 
 Kortet fyller all yta föräldern erbjuder, så kort i en rad eller ett rutnät får samma höjd. Ange bredd (eller låt layouten göra det) med `.frame(width:)`.
-
-**Tillgänglighet:** Kortet är ett enda VoiceOver-element med etiketten "Ljudklipp, titel, längd".
+**Dynamic Type:** Titeln skalar med användarens textstorlek, upp till och med .accessibility2. Längden skalar inte utöver standardstorleken (.large), så den förblir liten när användaren förstorar texten medan titeln behåller sin relativa storlek.
+**Tillgänglighet:** Kortet är ett enda VoiceOver-element med etiketten "Ljudklipp, titel, längd". Hinten (audiocard.hint) förklarar vad som händer när kortet trycks.
