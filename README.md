@@ -118,7 +118,7 @@ Varje mapp under `Sources/DesignSystem/Views` har en README med parametrar och e
 | Etiketter | `VGRFlagLabel`, `VGRValidationLabel` | [Labels](Sources/DesignSystem/Views/Labels/README.md) |
 | Väljare | `VGRBodyPickerView`, `VGRCalendarView`, `VGRCalendarWeekView`, `VGRDatePickerPopover`, `VGRDurationPicker`, `VGRMultiPickerView`, `VGRRecurrencePickerView`, `VGRSegmentedPicker`, `VGRSegmentedControl`, `VGRSingleSelectionList`, `VGRMultiSelectionList` | [Pickers](Sources/DesignSystem/Views/Pickers/README.md) |
 | Layout | `VGRFlowLayout`, `VGRPortraitLandscapeView` | [Layouts](Sources/DesignSystem/Views/Layouts/README.md) |
-| Skärmar | `VGRContentScreen`, `VGRWhatsNewScreen`, `VGRVideoCarousel`, `VGRVideoPlayer`, `VGRVideoListScreen`, `VGRFeedbackView`, `WebView` | [Screens](Sources/DesignSystem/Views/Screens/README.md) |
+| Skärmar | `VGRContentScreen`, `VGRWhatsNewScreen`, `VGRVideoCarousel`, `VGRCarousel, VGRAudioCard, VGRVideoPlayer`, `VGRVideoListScreen`, `VGRFeedbackView`, `WebView` | [Screens](Sources/DesignSystem/Views/Screens/README.md) |
 | Enkät | `VGRSurveyScreen` för Microsoft Forms | [WebSurvey](Sources/DesignSystem/Views/WebSurvey/README.md) |
 | Tips | `VGRInlineTipView` (TipKit) | [Tips](Sources/DesignSystem/Views/Tips/README.md) |
 | Slider | `LevelSlider` | [LevelSlider](Sources/DesignSystem/Views/Sliders/LevelSlider/README.md) |

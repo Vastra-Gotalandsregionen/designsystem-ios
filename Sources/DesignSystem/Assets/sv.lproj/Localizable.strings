@@ -173,6 +173,7 @@
 
 "content.type.text" = "Artikel";
 "content.type.video" = "Videoklipp";
+"content.type.audio" = "Ljudklipp";
 "content.type.warning" = "Meddelande";
 "content.type.tips" = "Tips";
 
@@ -197,6 +198,11 @@
 
 "content.link.external" = "Extern länk";
 "content.link.web" = "Intern webblänk";
+
+/* Audio */
+"audiocard.hint" = "Spela upp ljudklipp";
+"audiocard.duration.plural" = "%d minuter";
+"audiocard.duration.singular" = "%d minut";
 
 /* Calendar */
 "calendar.today" = "Idag";
