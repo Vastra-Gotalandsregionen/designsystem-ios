@@ -52,6 +52,9 @@ Kombinera med `VGRValidationLabel` under fältet för att förklara varningen.
 @State private var notes = ""
 VGRTextArea(title: "Anteckningar", value: $notes)
 
+// Platshållare som visas när fältet är tomt
+VGRTextArea(title: "Anteckningar", placeholder: "Skriv din anteckning här…", value: $notes)
+
 // Egen VoiceOver-etikett när rubriken saknas
 VGRTextArea(value: $notes, accessibilityLabel: "Fritextsvar")
 ```
@@ -59,6 +62,7 @@ VGRTextArea(value: $notes, accessibilityLabel: "Fritextsvar")
 | Parameter            | Typ               | Default | Beskrivning                                   |
 |----------------------|-------------------|---------|-----------------------------------------------|
 | `title`              | `String?`         | `nil`   | Rubrik ovanför fältet                         |
+| `placeholder`        | `String?`         | `nil`   | Text i fältet när det är tomt. VoiceOver läser den som hint |
 | `value`              | `Binding<String>` | –       | Texten                                        |
 | `accessibilityLabel` | `String?`         | `nil`   | VoiceOver-etikett för editorn                 |
 
