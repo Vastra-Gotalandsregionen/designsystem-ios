@@ -253,6 +253,8 @@ public class Tracker {
             /// Pass it back to ensure the wrapped tracker has the same setting
             setOptInSetting(isOptedIn)
         }
+
+        reportConsentStateOncePerDay()
     }
 
     /// Indicates whether the user has opted in to analytics tracking.
@@ -292,14 +294,12 @@ public class Tracker {
     /// Sets the user's opt-in preference for analytics tracking.
     ///
     /// This method updates both the UserDefaults preference and configures the underlying
-    /// Matomo tracker accordingly. When the user opts out, no analytics data will be collected.
+    /// Matomo tracker accordingly. When the user opts out, no analytics data will be collected —
+    /// with one exception, the consent state itself, see `reportConsentState(_:)`.
     ///
     /// When the preference genuinely changes (a user-initiated toggle — not the re-application that
-    /// happens on every launch via `initTracker()`), a `consent` event carrying the new value is
-    /// reported. For an opt-**out** the event is tracked and flushed *before* `isOptedOut` is set:
-    /// once that flag is on, `MatomoTracker` discards every event at enqueue time, so the opt-out
-    /// could never otherwise be recorded. This is what lets us measure how many users disable
-    /// tracking.
+    /// happens on every launch via `initTracker()`), the new state is reported immediately as a
+    /// `consent` event, in addition to the daily report made at launch.
     ///
     /// - Parameter isOptedIn: `true` to enable analytics tracking, `false` to disable it.
     public func setOptInSetting(_ isOptedIn: Bool) {
@@ -310,31 +310,66 @@ public class Tracker {
 
         UserDefaults.standard.set(isOptedIn, forKey: personalDataAgreementAccepted)
 
+        if didChange {
+            reportConsentState(isOptedIn)
+        }
+
         guard let tracker = matomoTracker else {
 #if targetEnvironment(simulator)
             print("👀 Tracker is disabled: Opt-in setting should be set to '\(isOptedIn)'")
 #endif
             return
         }
+        tracker.isOptedOut = !isOptedIn
+    }
 
-        /// The consent event goes straight through the wrapped tracker, bypassing the public
-        /// tracking methods: their `getOptInSetting()` guard reads the value we just persisted,
-        /// which for an opt-out would suppress this very event.
-        if isOptedIn {
-            /// Enabling: lift the opt-out first so the event can be queued, then report the change.
-            tracker.isOptedOut = false
-            if didChange {
-                tracker.track(eventWithCategory: "consent", action: "opt_in", value: 1.0)
-            }
-        } else {
-            /// Disabling: report and flush the opt-out while still opted in, BEFORE isOptedOut is
-            /// set — afterwards `queue(event:)` would silently drop it.
-            if didChange {
-                tracker.track(eventWithCategory: "consent", action: "opt_out", value: 0.0)
-                tracker.dispatch()
-            }
-            tracker.isOptedOut = true
+    // MARK: - consent reporting
+
+    /// Throttle key under which the daily consent report is remembered. Deliberately independent of
+    /// the state being reported, so opting in and out on the same day does not yield a second census entry.
+    static let consentReportThrottleKey = "consent/state"
+
+    /// Reports the current consent state once per calendar day, so the share of opted-out users can
+    /// be measured. Called at launch; the throttle persists across launches like any `.day` event.
+    func reportConsentStateOncePerDay() {
+        guard !hasTrackedEvent(key: Self.consentReportThrottleKey, once: .day) else {
+#if targetEnvironment(simulator)
+            print("🔁 Event: already tracked today, skipping consent / \(getOptInSetting() ? "opt_in" : "opt_out")")
+#endif
+            return
         }
+        reportConsentState(getOptInSetting())
+    }
+
+    /// Reports the consent state as a `consent` / `opt_in` (value 1) or `opt_out` (value 0) event,
+    /// **regardless of consent**: this is the one event that is sent for opted-out users too, since
+    /// otherwise they would vanish from the statistics the moment they opt out.
+    ///
+    /// It bypasses the public tracking methods (their `getOptInSetting()` guard would drop it) and
+    /// goes straight through the wrapped tracker. `MatomoTracker` discards events at enqueue time
+    /// while `isOptedOut` is set, so the flag is lifted for the duration of the call and restored
+    /// afterwards. The event is flushed immediately rather than left to the dispatch timer, so an
+    /// opt-out followed by a kill of the app still gets through.
+    ///
+    /// Also records today's throttle key, so a change-triggered report counts as the day's census.
+    private func reportConsentState(_ isOptedIn: Bool) {
+        recordTrackedEvent(key: Self.consentReportThrottleKey, once: .day)
+
+        let action = isOptedIn ? "opt_in" : "opt_out"
+        let value: Float = isOptedIn ? 1.0 : 0.0
+
+        guard let tracker = matomoTracker else {
+#if targetEnvironment(simulator)
+            print("⚡️ Event: consent / \(action) = \(value) (reported regardless of consent)")
+#endif
+            return
+        }
+
+        let wasOptedOut = tracker.isOptedOut
+        tracker.isOptedOut = false
+        tracker.track(eventWithCategory: "consent", action: action, value: value)
+        tracker.dispatch()
+        tracker.isOptedOut = wasOptedOut
     }
 }
 
