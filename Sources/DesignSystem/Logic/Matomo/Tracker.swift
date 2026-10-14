@@ -2,6 +2,22 @@ import Foundation
 import MatomoTracker
 import OSLog
 
+/// How often a throttled event (see `Tracker.trackEvent(_:on:once:)`) may be reported.
+///
+/// The throttle applies per event *identity* — category, action and name — so two warnings with
+/// different names are throttled independently, while the event value is ignored.
+public enum TrackingThrottle {
+    /// At most once per app process. Nothing is persisted; the next launch may report it again.
+    case session
+    /// At most once per calendar day (`Calendar.current`), persisted across launches. Use for
+    /// elements whose visibility is recomputed from data, e.g. a warning that shows when a
+    /// threshold is crossed.
+    case day
+    /// At most once per install, persisted across launches. Use for things meant to be seen once,
+    /// e.g. a guide tip or a what's-new sheet.
+    case ever
+}
+
 /// Tracker is used to pass events to the underlying/wrapped analytics solution, which in our case is Matomo.
 public class Tracker {
     @MainActor public static let shared = Tracker()
@@ -11,7 +27,19 @@ public class Tracker {
     /// matomoTracker is kept private, we do not want to expose its interface to the rest of the app
     private var matomoTracker: MatomoTracker?
 
-    init() {
+    /// Where `.day` and `.ever` throttle state is persisted. Injectable so tests can use an isolated suite.
+    let throttleDefaults: UserDefaults
+
+    /// Clock used by the `.day` throttle. Injectable so tests can step across a day boundary.
+    let now: () -> Date
+
+    /// Keys of events already reported with the `.session` throttle during this app process.
+    private var sessionTrackedEventKeys = Set<String>()
+
+    init(throttleDefaults: UserDefaults = .standard, now: @escaping () -> Date = { Date() }) {
+        self.throttleDefaults = throttleDefaults
+        self.now = now
+
         let matomoSiteId = Bundle.main.object(forInfoDictionaryKey:"MATOMO_SITE_ID") as? String ?? ""
         let matomoURL = Bundle.main.object(forInfoDictionaryKey:"MATOMO_URL") as? String ?? ""
         let appVersionDimensionIndex = Int(Bundle.main.object(forInfoDictionaryKey:"MATOMO_APPVERSION_DIMENSION") as? String ?? "") ?? -1
@@ -128,6 +156,36 @@ public class Tracker {
 #endif
     }
 
+    /// Tracks an event at most once per session, day or install.
+    ///
+    /// Use this for things the app shows **on its own initiative** — warnings, guide tips, callouts,
+    /// what's-new sheets — which VGR's Matomo principles want reported as events with the action
+    /// `shown`. Callers fire it on the transition from hidden to visible (for example when the
+    /// condition behind a warning first becomes true), **not** from `onAppear`: a screen is re-appeared
+    /// far more often than its content changes. The throttle is a safety net against the remaining
+    /// repeats, not the primary dedupe.
+    ///
+    /// The throttle key is the event's category, action and name (`screen.identifier`,
+    /// `interaction.action`, `interaction.name` — a `nil` name counts as empty). The value is not
+    /// part of the key, so the same warning reported with different values is still one event.
+    ///
+    /// When the call is not throttled it is forwarded to `trackEvent(_:on:)`, so the opt-in guard and
+    /// the simulator logging apply unchanged. The key is recorded only when the event was actually
+    /// sent (or logged in the simulator): while the user is **opted out** nothing is recorded, so the
+    /// first display after opting back in is counted.
+    ///
+    /// `.day` and `.ever` state lives in `UserDefaults` under the prefixes `matomo_event_lasttracked_`
+    /// and `matomo_event_tracked_`, separate from the `matomo_lasttracked_` keys of `trackOnceDaily`.
+    /// `.ever` therefore resets with a reinstall. `.session` state is in memory only.
+    ///
+    /// - Parameters:
+    ///   - interaction: The interaction to track, conforming to `TrackableInteraction`.
+    ///   - screen: The screen the interaction happened on; its `identifier` is the event category.
+    ///   - per: How often the event may be reported. See `TrackingThrottle`.
+    public func trackEvent(_ interaction: TrackableInteraction, on screen: TrackableScreen, once per: TrackingThrottle) {
+        trackEventUnlessThrottled(interaction, on: screen, once: per)
+    }
+
     /// Tracks a screen view only once per day.
     ///
     /// This method ensures that the same screen is tracked at most once per calendar day.
@@ -195,6 +253,8 @@ public class Tracker {
             /// Pass it back to ensure the wrapped tracker has the same setting
             setOptInSetting(isOptedIn)
         }
+
+        reportConsentStateOncePerDay()
     }
 
     /// Indicates whether the user has opted in to analytics tracking.
@@ -234,14 +294,12 @@ public class Tracker {
     /// Sets the user's opt-in preference for analytics tracking.
     ///
     /// This method updates both the UserDefaults preference and configures the underlying
-    /// Matomo tracker accordingly. When the user opts out, no analytics data will be collected.
+    /// Matomo tracker accordingly. When the user opts out, no analytics data will be collected —
+    /// with one exception, the consent state itself, see `reportConsentState(_:)`.
     ///
     /// When the preference genuinely changes (a user-initiated toggle — not the re-application that
-    /// happens on every launch via `initTracker()`), a `consent` event carrying the new value is
-    /// reported. For an opt-**out** the event is tracked and flushed *before* `isOptedOut` is set:
-    /// once that flag is on, `MatomoTracker` discards every event at enqueue time, so the opt-out
-    /// could never otherwise be recorded. This is what lets us measure how many users disable
-    /// tracking.
+    /// happens on every launch via `initTracker()`), the new state is reported immediately as a
+    /// `consent` event, in addition to the daily report made at launch.
     ///
     /// - Parameter isOptedIn: `true` to enable analytics tracking, `false` to disable it.
     public func setOptInSetting(_ isOptedIn: Bool) {
@@ -252,30 +310,143 @@ public class Tracker {
 
         UserDefaults.standard.set(isOptedIn, forKey: personalDataAgreementAccepted)
 
+        if didChange {
+            reportConsentState(isOptedIn)
+        }
+
         guard let tracker = matomoTracker else {
 #if targetEnvironment(simulator)
             print("👀 Tracker is disabled: Opt-in setting should be set to '\(isOptedIn)'")
 #endif
             return
         }
+        tracker.isOptedOut = !isOptedIn
+    }
 
-        /// The consent event goes straight through the wrapped tracker, bypassing the public
-        /// tracking methods: their `getOptInSetting()` guard reads the value we just persisted,
-        /// which for an opt-out would suppress this very event.
-        if isOptedIn {
-            /// Enabling: lift the opt-out first so the event can be queued, then report the change.
-            tracker.isOptedOut = false
-            if didChange {
-                tracker.track(eventWithCategory: "consent", action: "opt_in", value: 1.0)
-            }
-        } else {
-            /// Disabling: report and flush the opt-out while still opted in, BEFORE isOptedOut is
-            /// set — afterwards `queue(event:)` would silently drop it.
-            if didChange {
-                tracker.track(eventWithCategory: "consent", action: "opt_out", value: 0.0)
-                tracker.dispatch()
-            }
-            tracker.isOptedOut = true
+    // MARK: - consent reporting
+
+    /// Throttle key under which the daily consent report is remembered. Deliberately independent of
+    /// the state being reported, so opting in and out on the same day does not yield a second census entry.
+    static let consentReportThrottleKey = "consent/state"
+
+    /// Reports the current consent state once per calendar day, so the share of opted-out users can
+    /// be measured. Called at launch; the throttle persists across launches like any `.day` event.
+    func reportConsentStateOncePerDay() {
+        guard !hasTrackedEvent(key: Self.consentReportThrottleKey, once: .day) else {
+#if targetEnvironment(simulator)
+            print("🔁 Event: already tracked today, skipping consent / \(getOptInSetting() ? "opt_in" : "opt_out")")
+#endif
+            return
+        }
+        reportConsentState(getOptInSetting())
+    }
+
+    /// Reports the consent state as a `consent` / `opt_in` or `opt_out` event,
+    /// **regardless of consent**: this is the one event that is sent for opted-out users too, since
+    /// otherwise they would vanish from the statistics the moment they opt out.
+    ///
+    /// It bypasses the public tracking methods (their `getOptInSetting()` guard would drop it) and
+    /// goes straight through the wrapped tracker. `MatomoTracker` discards events at enqueue time
+    /// while `isOptedOut` is set, so the flag is lifted for the duration of the call and restored
+    /// afterwards. The event is flushed immediately rather than left to the dispatch timer, so an
+    /// opt-out followed by a kill of the app still gets through.
+    ///
+    /// Also records today's throttle key, so a change-triggered report counts as the day's census.
+    private func reportConsentState(_ isOptedIn: Bool) {
+        recordTrackedEvent(key: Self.consentReportThrottleKey, once: .day)
+
+        let action = isOptedIn ? "opt_in" : "opt_out"
+
+        guard let tracker = matomoTracker else {
+#if targetEnvironment(simulator)
+            print("⚡️ Event: consent / \(action) (reported regardless of consent)")
+#endif
+            return
+        }
+
+        let wasOptedOut = tracker.isOptedOut
+        tracker.isOptedOut = false
+        tracker.track(eventWithCategory: "consent", action: action)
+        tracker.dispatch()
+        tracker.isOptedOut = wasOptedOut
+    }
+}
+
+// MARK: - Event throttling
+extension Tracker {
+    /// `UserDefaults` prefix for `.day` throttle state. Distinct from `trackOnceDaily`'s `matomo_lasttracked_`.
+    static let dayThrottleKeyPrefix = "matomo_event_lasttracked_"
+
+    /// `UserDefaults` prefix for `.ever` throttle state.
+    static let everThrottleKeyPrefix = "matomo_event_tracked_"
+
+    /// Builds the throttle key for an event: category, action and name. The value is deliberately
+    /// excluded. `/` is used as separator since it cannot appear in a snake_case identifier, so
+    /// `a_b` + `c` and `a` + `b_c` never collide the way they would with `_`.
+    static func throttleKey(for interaction: TrackableInteraction, on screen: TrackableScreen) -> String {
+        "\(screen.identifier)/\(interaction.action)/\(interaction.name ?? "")"
+    }
+
+    /// Worker behind `trackEvent(_:on:once:)`. Returns `false` when the throttle suppressed the call,
+    /// `true` when it was forwarded to `trackEvent(_:on:)` (which may still drop it if opted out).
+    @discardableResult
+    func trackEventUnlessThrottled(_ interaction: TrackableInteraction, on screen: TrackableScreen, once throttle: TrackingThrottle) -> Bool {
+        let key = Self.throttleKey(for: interaction, on: screen)
+
+        guard !hasTrackedEvent(key: key, once: throttle) else {
+#if targetEnvironment(simulator)
+            /// Report the suppression so a silent console distinguishes "throttled" from "the call never happened".
+            let n = interaction.name.map { " / \($0)" } ?? ""
+            print("🔁 Event: already tracked \(throttle.suppressionDescription), skipping \(screen.identifier) / \(interaction.action)\(n)")
+#endif
+            return false
+        }
+
+        trackEvent(interaction, on: screen)
+
+        /// Only remember the event if it was actually sent or logged. While opted out `trackEvent(_:on:)`
+        /// drops it, and we want the first display after opting back in to be counted.
+        if getOptInSetting() {
+            recordTrackedEvent(key: key, once: throttle)
+        }
+        return true
+    }
+
+    /// Whether the event identified by `key` has already been reported within the throttle's window.
+    func hasTrackedEvent(key: String, once throttle: TrackingThrottle) -> Bool {
+        switch throttle {
+            case .session:
+                return sessionTrackedEventKeys.contains(key)
+            case .day:
+                guard let lastTracked = throttleDefaults.object(forKey: Self.dayThrottleKeyPrefix + key) as? Date else {
+                    return false
+                }
+                return Calendar.current.isDate(lastTracked, inSameDayAs: now())
+            case .ever:
+                return throttleDefaults.object(forKey: Self.everThrottleKeyPrefix + key) != nil
+        }
+    }
+
+    /// Remembers that the event identified by `key` was reported now.
+    private func recordTrackedEvent(key: String, once throttle: TrackingThrottle) {
+        switch throttle {
+            case .session:
+                sessionTrackedEventKeys.insert(key)
+            case .day:
+                throttleDefaults.set(now(), forKey: Self.dayThrottleKeyPrefix + key)
+            case .ever:
+                throttleDefaults.set(now(), forKey: Self.everThrottleKeyPrefix + key)
+        }
+    }
+}
+
+private extension TrackingThrottle {
+    /// Fills in "already tracked …" in the simulator suppression line.
+    var suppressionDescription: String {
+        switch self {
+            case .session: return "this session"
+            case .day: return "today"
+            case .ever: return "on this install"
         }
     }
 }

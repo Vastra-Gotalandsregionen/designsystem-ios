@@ -111,6 +111,38 @@ Tracker.shared.trackEvent(HeadacheInteraction.setPainLevel(7),
 // category=create_headache · action=set_pain_level · value=7
 ```
 
+## Throttled events
+
+Things the app shows **on its own initiative** — warnings, guide tips, callouts, what's-new sheets — are reported as events with the action `shown`, fired on the transition from hidden to visible (not from `onAppear`, which repeats every time the screen re-appears). Pass `once:` to let the tracker throttle the repeats that remain:
+
+| Throttle | Window | Persisted | Use for |
+|----------|--------|-----------|---------|
+| `.session` | once per app process | no | elements re-derived on every launch |
+| `.day` | once per calendar day | `UserDefaults` | warnings whose condition is recomputed from data |
+| `.ever` | once per install | `UserDefaults` | guide tips, what's new — things meant to be seen once |
+
+```swift
+enum WarningInteraction: TrackableInteraction {
+    case shown(String)   // name carries which warning
+
+    var action: String { "shown" }
+    var name: String? {
+        switch self {
+            case .shown(let warning): return warning
+        }
+    }
+}
+
+// In the code that flips the warning from hidden to visible:
+Tracker.shared.trackEvent(WarningInteraction.shown("low_battery"), on: AppScreen.home, once: .day)
+// category=home · action=shown · name=low_battery — at most once today
+
+Tracker.shared.trackEvent(TipInteraction.shown("calendar_swipe"), on: AppScreen.calendar, once: .ever)
+// at most once per install
+```
+
+The throttle key is **category + action + name** (the value is ignored), so two warnings with different names are counted independently. Nothing is remembered while the user is opted out: the first display after opting back in is counted. In the simulator a throttled call is logged as `🔁 Event: already tracked …` so it can be told apart from a call that never happened.
+
 ## Consent
 
 Nothing is tracked unless the user is opted in (defaults to opted-in on first launch):
@@ -120,3 +152,12 @@ Tracker.shared.setOptInSetting(false)   // opt out
 Tracker.shared.setOptInSetting(true)    // opt in
 Tracker.shared.isOptedIn                // current state
 ```
+
+**The one exception is the consent state itself.** So that opted-out users do not vanish from the statistics, the tracker reports a `consent` event **once per calendar day** at launch, for opted-in *and* opted-out users:
+
+| Action | Meaning |
+|--------|---------|
+| `opt_in` | user is opted in |
+| `opt_out` | user is opted out |
+
+A genuine toggle via `setOptInSetting` reports the new state immediately as well, and counts as that day's report. Unique visitors per action and day therefore give the share of opted-out users among active users. This bypasses both the tracker's own guard and the Matomo SDK's opt-out flag, which is lifted only for the duration of that one event.
