@@ -341,7 +341,7 @@ public class Tracker {
         reportConsentState(getOptInSetting())
     }
 
-    /// Reports the consent state as a `consent` / `opt_in` (value 1) or `opt_out` (value 0) event,
+    /// Reports the consent state as a `consent` / `opt_in` or `opt_out` event,
     /// **regardless of consent**: this is the one event that is sent for opted-out users too, since
     /// otherwise they would vanish from the statistics the moment they opt out.
     ///
@@ -356,18 +356,17 @@ public class Tracker {
         recordTrackedEvent(key: Self.consentReportThrottleKey, once: .day)
 
         let action = isOptedIn ? "opt_in" : "opt_out"
-        let value: Float = isOptedIn ? 1.0 : 0.0
 
         guard let tracker = matomoTracker else {
 #if targetEnvironment(simulator)
-            print("⚡️ Event: consent / \(action) = \(value) (reported regardless of consent)")
+            print("⚡️ Event: consent / \(action) (reported regardless of consent)")
 #endif
             return
         }
 
         let wasOptedOut = tracker.isOptedOut
         tracker.isOptedOut = false
-        tracker.track(eventWithCategory: "consent", action: action, value: value)
+        tracker.track(eventWithCategory: "consent", action: action)
         tracker.dispatch()
         tracker.isOptedOut = wasOptedOut
     }

@@ -155,9 +155,9 @@ Tracker.shared.isOptedIn                // current state
 
 **The one exception is the consent state itself.** So that opted-out users do not vanish from the statistics, the tracker reports a `consent` event **once per calendar day** at launch, for opted-in *and* opted-out users:
 
-| Action | Value | Meaning |
-|--------|-------|---------|
-| `opt_in` | `1` | user is opted in |
-| `opt_out` | `0` | user is opted out |
+| Action | Meaning |
+|--------|---------|
+| `opt_in` | user is opted in |
+| `opt_out` | user is opted out |
 
 A genuine toggle via `setOptInSetting` reports the new state immediately as well, and counts as that day's report. Unique visitors per action and day therefore give the share of opted-out users among active users. This bypasses both the tracker's own guard and the Matomo SDK's opt-out flag, which is lifted only for the duration of that one event.
