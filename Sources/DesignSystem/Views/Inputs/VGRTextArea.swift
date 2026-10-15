@@ -6,13 +6,22 @@ import SwiftUI
 /// ```swift
 /// @State private var notes: String = ""
 ///
-/// VGRTextArea(title: "Anteckningar", value: $notes)
+/// VGRTextArea(title: "Anteckningar", placeholder: "Skriv här…", value: $notes)
 /// ```
 public struct VGRTextArea: View {
 
     @ScaledMetric private var minHeight: CGFloat = 172
 
+    /// Matches where `TextEditor` draws its first line: the content margin plus UITextView's default insets.
+    private static let placeholderInsets = EdgeInsets(
+        top: .Margins.xtraSmall + 8,
+        leading: .Margins.xtraSmall + 5,
+        bottom: .Margins.xtraSmall + 8,
+        trailing: .Margins.xtraSmall + 5
+    )
+
     let title: String?
+    let placeholder: String?
     let accessibilityLabel: String?
     @Binding var value: String
 
@@ -20,10 +29,17 @@ public struct VGRTextArea: View {
     ///
     /// - Parameters:
     ///   - title: Optional label rendered above the editor. Pass `nil` for an editor without a title.
+    ///   - placeholder: Optional text shown inside the editor while it is empty. VoiceOver reads it as a hint.
     ///   - value: Binding to the edited text.
     ///   - accessibilityLabel: Overrides the accessibility label on the text editor. Defaults to `title` when not provided.
-    public init(title: String? = nil, value: Binding<String>, accessibilityLabel: String? = nil) {
+    public init(
+        title: String? = nil,
+        placeholder: String? = nil,
+        value: Binding<String>,
+        accessibilityLabel: String? = nil
+    ) {
         self.title = title
+        self.placeholder = placeholder
         self.accessibilityLabel = accessibilityLabel ?? title
         self._value = value
     }
@@ -64,16 +80,28 @@ public struct VGRTextArea: View {
             .font(.bodyRegular)
             .clipShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
             .contentShape(RoundedRectangle(cornerRadius: .Radius.mainRadius))
+            .overlay(alignment: .topLeading) {
+                if let placeholder, value.isEmpty {
+                    Text(placeholder)
+                        .font(.bodyRegular)
+                        .foregroundStyle(Color.Neutral.textVariant)
+                        .padding(Self.placeholderInsets)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                }
+            }
             .overlay(
                 RoundedRectangle(cornerRadius: .Radius.mainRadius)
                     .strokeBorder(Color.Neutral.border, style: StrokeStyle(lineWidth: 1))
             )
+            .accessibilityHint(value.isEmpty ? placeholder ?? "" : "")
     }
 }
 
 #Preview {
     @Previewable @State var value: String = "Some value"
     @Previewable @State var value2: String = ""
+    @Previewable @State var value3: String = ""
 
     NavigationStack {
         ScrollView {
@@ -84,6 +112,11 @@ public struct VGRTextArea: View {
                 VGRDivider()
 
                 VGRTextArea(value: $value2)
+                    .padding()
+
+                VGRDivider()
+
+                VGRTextArea(title: "Textarea with placeholder", placeholder: "Skriv din anteckning här…", value: $value3)
                     .padding()
             }
         }
