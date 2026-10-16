@@ -10,7 +10,7 @@ Alla visuella komponenter i designsystemet, grupperade per ansvarsområde. Varje
 | `Design/` | `VGRIcon`, `VGRShape`, `VGRDivider`, `Blob` | Källfiler |
 | `Inputs/` | `VGRTextInput`, `VGRTextArea` | [README](Inputs/README.md) |
 | `Labels/` | `VGRFlagLabel`, `VGRValidationLabel` | [README](Labels/README.md) |
-| `Layouts/` | `VGRFlowLayout`, `VGRPortraitLandscapeView` | [README](Layouts/README.md) |
+| `Layouts/` | `VGRCarousel`,`VGRFlowLayout`, `VGRPortraitLandscapeView`,`VGRGridLayout` | [README](Layouts/README.md) |
 | `Lists/` | `VGRContainer`, `VGRSection`, `VGRList` och radkomponenterna | [README](Lists/README.md) |
 | `Pickers/` | Body-, kalender-, datum/tid-, duration-, multi-, recurrence-, segment- och selection-pickers | [README](Pickers/README.md) |
 | `Screens/` | `VGRContentScreen`, WhatsNew, videokomponenter, `WebView` | [README](Screens/README.md) |

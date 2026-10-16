@@ -6,7 +6,8 @@ Layouthjälpare utan eget utseende.
 |----------------------------|------------------------------------------------------------------|
 | `VGRFlowLayout`            | Radbrytande layout för chips, taggar och filterpiller            |
 | `VGRPortraitLandscapeView` | Visar olika innehåll beroende på om ytan är stående eller liggande |
-|  ` VGRCarousel` | Horisontellt scrollbar karusell med adaptiv kortbredd och innehållsanpassad höjd |
+|  `VGRCarousel` | Horisontellt scrollbar karusell med adaptiv kortbredd och innehållsanpassad höjd |
+|  `VGRGridLayout`|  Rutnätslayout med fast antal kolumner och innehållsanpassade radhöjder|
 
 `OrientationViewModifier/` innehåller en intern `onOrientationChange`-modifier som inte är publik.
 
@@ -89,3 +90,59 @@ VGRCarousel {
 | `spacing`           | `CGFloat`      | `.Margins.medium` | Avstånd mellan korten                                              |
 | `horizontalMargin`  | `CGFloat`      | `.Margins.medium` | Horisontell marginal före första och efter sista kortet            |
 | `content`           | `@ViewBuilder` | –                 | Korten som ska visas i karusellen                                  |
+
+---
+
+## VGRGridLayout
+
+`VGRGridLayout` är en layout som placerar vyer i ett rutnät med ett fast antal kolumner.
+
+- Alla kolumner får samma bredd utifrån det tillgängliga utrymmet.
+- Varje rads höjd anpassas efter den högsta vyn på raden.
+- Vyerna placeras från vänster till höger och uppifrån och ned.
+- Om layouten får en föreslagen bredd används den. Om ingen bredd föreslås beräknas bredden utifrån den bredaste vyn.
+- Antalet kolumner är minst en, även om `columns` anges till ett lägre värde.
+
+### Användning
+
+```swift
+VGRGridLayout(columns: 2) {
+    ForEach(exercises) { exercise in
+        ExerciseCard(exercise)
+    }
+}
+```
+
+Använd `spacing` för samma avstånd mellan både kolumner och rader:
+
+```swift
+VGRGridLayout(columns: 2, spacing: .Margins.medium) {
+    ForEach(exercises) { exercise in
+        ExerciseCard(exercise)
+    }
+}
+```
+
+Använd `horizontalSpacing` och `verticalSpacing` för att ange separata avstånd:
+
+```swift
+VGRGridLayout(
+    columns: 2,
+    horizontalSpacing: .Margins.small,
+    verticalSpacing: .Margins.medium
+) {
+    ForEach(exercises) { exercise in
+        ExerciseCard(exercise)
+    }
+}
+```
+
+### Parametrar
+
+| Parameter           | Typ       | Default            | Beskrivning                                      |
+|---------------------|-----------|--------------------|--------------------------------------------------|
+| `columns`           | `Int`     | `2`                | Antal kolumner i rutnätet. Värden under `1` behandlas som `1`. |
+| `horizontalSpacing` | `CGFloat` | `.Margins.medium`  | Avstånd mellan kolumner.                         |
+| `verticalSpacing`   | `CGFloat` | `.Margins.medium`  | Avstånd mellan rader.                            |
+| `spacing`           | `CGFloat` | –                  | Avstånd mellan både kolumner och rader. Används i den alternativa initializern. |
+
