@@ -137,6 +137,19 @@ VGRGridLayout(
 }
 ```
 
+När ska man använda VGRGridLayout?
+
+| | `VGRGridLayout` | `LazyVGrid` | `Grid` |
+|---|---|---|---|
+| Kolumnbredd | Alltid lika breda | Styrs av `GridItem` | Bestäms av innehållet |
+| Radhöjd | Högsta vyn på raden, och vyerna fyller höjden | Högsta vyn på raden, men vyerna fyller inte alltid höjden | Högsta vyn på raden |
+| Skapande av vyer | Alla direkt | Lazy, bara det som syns | Alla direkt |
+| Passar för | Få kort av olika höjd som ska linjera | Långa eller dynamiska listor | Tabeller och formulär med olika kolumnbredder |
+
+Välj `VGRGridLayout` för en liten, avgränsad mängd kort där alla kort på en rad ska vara lika höga.
+Välj `LazyVGrid` när det kan finnas många vyer, eftersom `VGRGridLayout` skapar alla vyer direkt.
+
+
 ### Parametrar
 
 | Parameter           | Typ       | Default            | Beskrivning                                      |

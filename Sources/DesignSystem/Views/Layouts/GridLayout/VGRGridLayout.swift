@@ -1,4 +1,5 @@
 import SwiftUI
+
 /// A layout that arranges its subviews in a grid with a fixed number of equally wide columns.
 ///
 /// Every column gets the same width. Each row is as tall as its tallest subview, so cards of
