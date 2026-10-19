@@ -51,6 +51,9 @@ Track on appear with the view modifier (preferred in SwiftUI):
 ```swift
 SomeView()
     .track(AppScreen.home)
+
+OtherView()
+    .track(AppScreen.home, note: "from_deeplink")   // optional note
 ```
 
 …or call the tracker directly:
