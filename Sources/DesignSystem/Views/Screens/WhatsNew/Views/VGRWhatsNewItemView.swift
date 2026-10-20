@@ -33,13 +33,18 @@ public struct VGRWhatsNewItemView: View {
                                 .accessibilityAddTraits(.isStaticText)
 
                         case .image:
+                            /// Declared dimensions are an upper bound: the image shrinks to the available
+                            /// width on narrow screens instead of pushing the whole page off-screen.
                             if element.hasDimensions {
                                 Image(element.url)
                                     .resizable()
-                                    .frame(width: element.widthValue, height: element.heightValue, alignment: .center)
+                                    .scaledToFit()
+                                    .frame(maxWidth: element.widthValue, maxHeight: element.heightValue, alignment: .center)
                                     .accessibilityHidden(true)
                             } else {
                                 Image(element.url)
+                                    .resizable()
+                                    .scaledToFit()
                                     .frame(maxWidth: .infinity, alignment: .center)
                                     .accessibilityHidden(true)
                             }
@@ -53,11 +58,14 @@ public struct VGRWhatsNewItemView: View {
                                             if subElement.hasDimensions {
                                                 Image(subElement.url)
                                                     .resizable()
+                                                    .scaledToFit()
                                                     .foregroundColor(.black)
-                                                    .frame(width: subElement.widthValue, height: subElement.heightValue, alignment: .center)
+                                                    .frame(maxWidth: subElement.widthValue, maxHeight: subElement.heightValue, alignment: .center)
                                                     .accessibilityHidden(true)
                                             } else {
                                                 Image(subElement.url)
+                                                    .resizable()
+                                                    .scaledToFit()
                                                     .frame(maxWidth: .infinity, alignment: .center)
                                                     .accessibilityHidden(true)
                                             }
