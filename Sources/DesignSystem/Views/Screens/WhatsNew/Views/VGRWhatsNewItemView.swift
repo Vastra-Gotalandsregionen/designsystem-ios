@@ -79,6 +79,7 @@ public struct VGRWhatsNewItemView: View {
                                     }
                                 }
                             }
+                            .frame(maxWidth: .infinity)
                             .padding(element.paddingValue)
                             .background(Color.Elevation.elevation1)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
