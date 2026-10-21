@@ -3,7 +3,12 @@ import SwiftUI
 /// Destruktiv inline-knappvariant — inline-åtgärd i en lista med röd text.
 /// Semantiken "användaren är på väg att ta bort något" är inbyggd.
 public struct VGRButtonV2DestructiveInlineVariant: VGRButtonV2VariantProtocol {
-    public init() {}
+    private let alignment: Alignment
+
+    /// - Parameter alignment: Textens placering när knappen är fullbredd. Standard är `.leading`.
+    public init(alignment: Alignment = .leading) {
+        self.alignment = alignment
+    }
 
     public func makeBody(configuration: Configuration) -> some View {
         Button(action: configuration.action) {
@@ -15,7 +20,7 @@ public struct VGRButtonV2DestructiveInlineVariant: VGRButtonV2VariantProtocol {
             .foregroundStyle(Color.Status.errorText)
             .padding(.horizontal, configuration.size.padding)
             .padding(.vertical, configuration.size.verticalPadding)
-            .applyFullWidth(configuration.fullWidth, alignment: .leading)
+            .applyFullWidth(configuration.fullWidth, alignment: alignment)
             .background(
                 RoundedRectangle(cornerRadius: .Radius.mainRadius)
                     .fill(Color.Elevation.elevation1)
@@ -42,6 +47,10 @@ public struct VGRButtonV2DestructiveInlineVariant: VGRButtonV2VariantProtocol {
                 VGRButtonV2("Ta bort", variant: .destructiveInline) { } icon: {
                     Image(systemName: "trash")
                 }
+            }
+
+            VGRSection(header: "Centrerad") {
+                VGRButtonV2("Ta bort", customVariant: VGRButtonV2DestructiveInlineVariant(alignment: .center)) { }
             }
 
             VGRSection(header: "Sizes") {
