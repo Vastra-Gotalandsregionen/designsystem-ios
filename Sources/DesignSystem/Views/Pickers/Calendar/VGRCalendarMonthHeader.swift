@@ -41,6 +41,11 @@ final class VGRCalendarMonthHeader: UICollectionReusableView {
         return label
     }()
 
+    /// The month title label, exposed so it can be used as the target of a VoiceOver
+    var accessibilityTitleLabel: UILabel {
+        titleLabel
+    }
+
     /// Stack view for weekday labels
     private let weekdayStack: UIStackView = {
         let stack = UIStackView()

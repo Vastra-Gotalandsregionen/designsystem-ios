@@ -371,16 +371,58 @@ public final class VGRCalendarViewController<DayData: Hashable>: UIViewControlle
         return false
     }
 
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        if UIAccessibility.isVoiceOverRunning {
-            UIAccessibility.post(notification: .layoutChanged, argument: nil)
-        }
+    /// Pending work item that moves VoiceOver focus to the first visible month header.
+    private var pendingFocusWorkItem: DispatchWorkItem?
+
+    /// Moves VoiceOver focus to the topmost month header that is actually visible
+    /// in the collection view's viewport.
+    /// Headers outside the visible bounds are ignored.
+    private func focusFirstVisibleMonthHeader() {
+        let visibleBounds = collectionView.bounds.inset(by: collectionView.adjustedContentInset)
+
+        let header = collectionView
+            .visibleSupplementaryViews(ofKind: VGRCalendarLayout.monthHeaderKind)
+            .compactMap { $0 as? VGRCalendarMonthHeader }
+            .filter { $0.frame.intersects(visibleBounds) }
+            .min { $0.frame.minY < $1.frame.minY }
+
+        guard let header else { return }
+
+        UIAccessibility.post(
+            notification: .layoutChanged,
+            argument: header.accessibilityTitleLabel
+        )
     }
 
-    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if !decelerate && UIAccessibility.isVoiceOverRunning {
-            UIAccessibility.post(notification: .layoutChanged, argument: nil)
+    /// Schedules moving VoiceOver focus to the first visible month header after a short delay.
+    /// The delay lets VoiceOver finish announcing its own page-scroll message
+    /// ("Page x of y") first, so it doesn't interrupt or overwrite our focus change.
+    /// Any previously scheduled focus change is cancelled.
+    private func scheduleFocusOnFirstVisibleMonthHeader() {
+        guard UIAccessibility.isVoiceOverRunning else { return }
+
+        pendingFocusWorkItem?.cancel()
+        let item = DispatchWorkItem { [weak self] in
+            self?.focusFirstVisibleMonthHeader()
         }
+        pendingFocusWorkItem = item
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6, execute: item)
+    }
+
+    /// Scroll ended after a flick/momentum scroll.
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        scheduleFocusOnFirstVisibleMonthHeader()
+    }
+
+    /// Scroll ended right when the finger lifted.
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate { scheduleFocusOnFirstVisibleMonthHeader() }
+    }
+
+    /// Scroll ended after a animated scroll. VoiceOver's three-finger
+    /// page scroll typically ends here rather than in the two methods above.
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        scheduleFocusOnFirstVisibleMonthHeader()
     }
 
     // MARK: - UICollectionViewDataSourcePrefetching
