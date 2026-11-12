@@ -36,6 +36,10 @@ public class Tracker {
     /// Keys of events already reported with the `.session` throttle during this app process.
     private var sessionTrackedEventKeys = Set<String>()
 
+    /// Custom dimensions set with `setDimension(_:forIndex:)`, by index. Kept here as well as in the
+    /// Matomo tracker so the values can be read back, also in the simulator where no tracker exists.
+    private(set) var dimensions: [Int: String] = [:]
+
     init(throttleDefaults: UserDefaults = .standard, now: @escaping () -> Date = { Date() }) {
         self.throttleDefaults = throttleDefaults
         self.now = now
@@ -76,6 +80,35 @@ public class Tracker {
 #endif
 
         initTracker()
+    }
+
+    // MARK: - custom dimensions
+
+    /// Sets a custom dimension that is sent with every following view and event.
+    ///
+    /// Use it for something that describes the user rather than a single view, for example a chosen
+    /// treatment area. Create the dimension in the Matomo backend first (Administration → Custom
+    /// dimensions) and pass its id as `index`. The value lasts until the app process ends, so set it
+    /// at launch and again whenever it changes. Setting a dimension sends nothing on its own, so it
+    /// does not depend on the user's opt-in.
+    ///
+    /// The app version dimension is set by the tracker itself, see `MATOMO_APPVERSION_DIMENSION`.
+    ///
+    /// - Parameters:
+    ///   - value: The value to send, or `nil` to stop sending the dimension.
+    ///   - index: The dimension's id in Matomo.
+    public func setDimension(_ value: String?, forIndex index: Int) {
+        dimensions[index] = value
+
+#if targetEnvironment(simulator)
+        print("📐 Tracker: dimension \(index) = \(value.map { "\"\($0)\"" } ?? "removed")")
+#else
+        if let value {
+            matomoTracker?.setDimension(value, forIndex: index)
+        } else {
+            matomoTracker?.remove(dimensionAtIndex: index)
+        }
+#endif
     }
 
     // MARK: - tracking methods
