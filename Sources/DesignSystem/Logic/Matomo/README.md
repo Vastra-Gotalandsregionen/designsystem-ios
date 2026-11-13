@@ -146,6 +146,17 @@ Tracker.shared.trackEvent(TipInteraction.shown("calendar_swipe"), on: AppScreen.
 
 The throttle key is **category + action + name** (the value is ignored), so two warnings with different names are counted independently. Nothing is remembered while the user is opted out: the first display after opting back in is counted. In the simulator a throttled call is logged as `🔁 Event: already tracked …` so it can be told apart from a call that never happened.
 
+## Custom dimensions
+
+A custom dimension describes the user or the visit rather than a single view, for example a chosen treatment area. Create it in the Matomo backend first (Administration → Custom dimensions, preferably **Visit** scope) and pass its id:
+
+```swift
+Tracker.shared.setDimension("breast", forIndex: 2)   // sent with every following view and event
+Tracker.shared.setDimension(nil, forIndex: 2)        // stop sending it
+```
+
+The value lasts until the app process ends: set it at launch and again whenever it changes. Setting a dimension sends nothing on its own. The app version dimension is set automatically from `MATOMO_APPVERSION_DIMENSION`, see [Setup](#setup).
+
 ## Consent
 
 Nothing is tracked unless the user is opted in (defaults to opted-in on first launch):
